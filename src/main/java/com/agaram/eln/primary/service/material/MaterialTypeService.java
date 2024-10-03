@@ -89,13 +89,15 @@ public class MaterialTypeService {
 	public ResponseEntity<Object> createMaterialType(MaterialType objMaterialType) throws JsonParseException, JsonMappingException, IOException, ParseException {
 		
 		if(objMaterialType.getNmaterialtypecode() == null) {
-			List<MaterialType> objlstTypes = materialTypeRepository.findBySmaterialtypenameIgnoreCaseAndNsitecodeOrderByNmaterialtypecode(objMaterialType.getSmaterialtypename(),objMaterialType.getNsitecode());
+			
+			List<MaterialType> objlstTypes = materialTypeRepository.
+					findBySmaterialtypenameIgnoreCaseAndNsitecodeOrderByNmaterialtypecode(objMaterialType.getSmaterialtypename(),objMaterialType.getNsitecode());
 			
 			if(objlstTypes.isEmpty()) {
 				
-			List<MaterialType> objlstTypes1 = materialTypeRepository.findAll();
-				
-				objMaterialType.setNmaterialtypecode(objlstTypes1.size()+1);
+//				List<MaterialType> objlstTypes1 = materialTypeRepository.findAll();
+//				
+//				objMaterialType.setNmaterialtypecode(objlstTypes1.size()+1);
 				objMaterialType.setNdefaultstatus(3);
 				objMaterialType.setNstatus(1);
 				objMaterialType.setCreatedate(commonfunction.getCurrentUtcTime());

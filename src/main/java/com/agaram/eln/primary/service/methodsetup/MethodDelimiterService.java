@@ -2,6 +2,8 @@ package com.agaram.eln.primary.service.methodsetup;
 
 
 import java.util.HashMap;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -72,13 +74,60 @@ public class MethodDelimiterService {
 	
 		final List<MethodDelimiter> delimiterList = methodDelimiterRepo.findByStatusAndLssitemasterOrLssitemasterIsNull(1,mobj,new Sort(Sort.Direction.DESC, "methoddelimiterkey"));
 	
-		return new ResponseEntity<>(delimiterList, HttpStatus.OK);
+        Set<String> uniqueKeys = new HashSet<>();
+        
+        System.out.println("unfiltered records: " +delimiterList.size() );
+
+        List<MethodDelimiter> filteredDelimiterRecords = delimiterList.stream()
+                .filter(record -> {
+                    String key;
+                    if (record.getLssitemaster() == null) {
+                        key = record.getDelimiter().getDelimiterkey() + "_" + record.getParsermethod().getParsermethodkey() + "_null";
+                    } else {
+                        key = record.getDelimiter().getDelimiterkey() + "_" + record.getParsermethod().getParsermethodkey() + "_" + record.getLssitemaster().getSitecode();
+                    }
+
+                    if (!uniqueKeys.contains(key)) {
+                        uniqueKeys.add(key);
+                        return true;
+                    }
+
+                    return false;
+                })
+                .collect(Collectors.toList());
+
+        System.out.println(filteredDelimiterRecords);
+		return new ResponseEntity<>(filteredDelimiterRecords, HttpStatus.OK);
 	}
 	
 	@Transactional
 	public ResponseEntity<Object> getMethodDelimiter(LSSiteMaster mobj){
 		final List<MethodDelimiter> delimiterList = methodDelimiterRepo.findByLssitemasterOrLssitemasterIsNull(mobj,new Sort(Sort.Direction.DESC, "methoddelimiterkey"));
-		return new ResponseEntity<>(delimiterList, HttpStatus.OK);
+		
+        Set<String> uniqueKeys = new HashSet<>();
+        
+        System.out.println("unfiltered records: " +delimiterList.size() );
+
+        List<MethodDelimiter> filteredDelimiterRecords = delimiterList.stream()
+                .filter(record -> {
+                    String key;
+                    if (record.getLssitemaster() == null) {
+                        key = record.getDelimiter().getDelimiterkey() + "_" + record.getParsermethod().getParsermethodkey() + "_null";
+                    } else {
+                        key = record.getDelimiter().getDelimiterkey() + "_" + record.getParsermethod().getParsermethodkey() + "_" + record.getLssitemaster().getSitecode();
+                    }
+
+                    if (!uniqueKeys.contains(key)) {
+                        uniqueKeys.add(key);
+                        return true;
+                    }
+
+                    return false;
+                })
+                .collect(Collectors.toList());
+
+        System.out.println("filtered records: " +filteredDelimiterRecords.size() );
+		return new ResponseEntity<>(filteredDelimiterRecords, HttpStatus.OK);
 	}
 	
 	/**

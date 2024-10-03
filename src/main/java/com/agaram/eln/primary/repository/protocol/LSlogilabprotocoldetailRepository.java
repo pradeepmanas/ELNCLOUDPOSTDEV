@@ -14,6 +14,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.agaram.eln.primary.fetchmodel.getorders.Logilabprotocolorders;
+import com.agaram.eln.primary.model.instrumentDetails.Lsprotocolorderstructure;
 import com.agaram.eln.primary.model.material.Elnmaterial;
 import com.agaram.eln.primary.model.protocols.Elnprotocolworkflow;
 import com.agaram.eln.primary.model.protocols.LSlogilabprotocoldetail;
@@ -1685,6 +1686,241 @@ List<Logilabprotocolorders> findByOrdercancellAndSitecodeAndLsprojectmasterIsNul
 			Long directorycode2, int j, Integer protocoltype2, LSuserMaster createdby, Date fromdate2, Date todate2,
 			Integer sitecode2, Long directorycode3, int k, Integer protocoltype3, Date fromdate3, Date todate3,
 			Integer[] lstuserMaster, Integer sitecode3);
+
+
+	@Transactional
+	@Modifying
+	@Query(value = "SELECT * FROM lslogilabprotocoldetail o " +
+	        "INNER JOIN lsprotocolmaster l ON o.lsprotocolmaster_protocolmastercode = l.protocolmastercode " +
+	        "INNER JOIN lstestmasterlocal m ON m.testcode = o.testcode " +
+	        "WHERE (" +
+	        // First condition for project-based search
+	        "  o.lsprojectmaster_projectcode IN (" +
+	        "    SELECT lsprojectmaster_projectcode " +
+	        "    FROM LSlogilablimsorderdetail " +
+	        "    WHERE lsprojectmaster_projectcode IN (" +
+	        "      SELECT projectcode FROM LSprojectmaster " +
+	        "      WHERE lsusersteam_teamcode IN (" +
+	        "        SELECT teamcode FROM LSuserteammapping WHERE lsuserMaster_usercode = ?1" +
+	        "      )" +
+	        "    )" +
+	        "  )" +
+	        "  AND o.ordercancell IS NULL " +
+	        "  AND (" +
+	        "    LOWER(o.protocolordername) LIKE LOWER(?2) " +
+	        "    OR LOWER(m.testname) LIKE LOWER(?2) " +
+	        "    OR LOWER(o.keyword) LIKE LOWER(?2) " +
+	        "    OR LOWER(l.protocolmastername) LIKE LOWER(?2)" +
+	        "  )" +
+	        ")" +
+	        // Second condition for null project and assigned to null
+	        " OR (" +
+	        "  o.lsprojectmaster_projectcode IS NULL " +
+	        "  AND o.assignedto_usercode IS NULL " +
+	        "  AND o.elnmaterial_nmaterialcode IN (SELECT nmaterialcode FROM elnmaterial WHERE nsitecode = ?3) " +
+	        "  AND (" +
+	        "    LOWER(o.protocolordername) LIKE LOWER(?2) " +
+	        "    OR LOWER(m.testname) LIKE LOWER(?2) " +
+	        "    OR LOWER(o.keyword) LIKE LOWER(?2) " +
+	        "    OR LOWER(l.protocolmastername) LIKE LOWER(?2)" +
+	        "  ) " +
+	        "  AND o.viewoption = ?4 " +
+	        "  AND o.ordercancell IS NULL" +
+	        ")" +
+	        // Third condition for null project, assigned to null, created by user
+	        " OR (" +
+	        "  o.lsprojectmaster_projectcode IS NULL " +
+	        "  AND o.assignedto_usercode IS NULL " +
+	        "  AND o.elnmaterial_nmaterialcode IN (SELECT nmaterialcode FROM elnmaterial WHERE nsitecode = ?3) " +
+	        "  AND (" +
+	        "    LOWER(o.protocolordername) LIKE LOWER(?2) " +
+	        "    OR LOWER(m.testname) LIKE LOWER(?2) " +
+	        "    OR LOWER(o.keyword) LIKE LOWER(?2) " +
+	        "    OR LOWER(l.protocolmastername) LIKE LOWER(?2)" +
+	        "  ) " +
+	        "  AND o.viewoption = ?5 " +
+	        "  AND o.createby = ?1 " +
+	        "  AND o.ordercancell IS NULL" +
+	        ")" +
+	        // Fourth condition for null project, assigned to null, created by list of users
+	        " OR (" +
+	        "  o.lsprojectmaster_projectcode IS NULL " +
+	        "  AND o.assignedto_usercode IS NULL " +
+	        "  AND o.elnmaterial_nmaterialcode IN (SELECT nmaterialcode FROM elnmaterial WHERE nsitecode = ?3) " +
+	        "  AND (" +
+	        "    LOWER(o.protocolordername) LIKE LOWER(?2) " +
+	        "    OR LOWER(m.testname) LIKE LOWER(?2) " +
+	        "    OR LOWER(o.keyword) LIKE LOWER(?2) " +
+	        "    OR LOWER(l.protocolmastername) LIKE LOWER(?2)" +
+	        "  ) " +
+	        "  AND o.viewoption = ?5 " +
+	        "  AND o.createby IN (?6) " +
+	        "  AND o.ordercancell IS NULL" +
+	        ")" +
+	        // Fifth condition for directory-based filtering
+	        " OR (" +
+	        "  o.directorycode IN (?7) " +
+	        "  AND o.viewoption = ?3 " +
+	        "  AND o.lsprojectmaster_projectcode IS NULL " +
+	        "  AND o.assignedto_usercode IS NULL " +
+	        "  AND o.ordercancell IS NULL " +
+	        "  AND (" +
+	        "    LOWER(o.protocolordername) LIKE LOWER(?2) " +
+	        "    OR LOWER(m.testname) LIKE LOWER(?2) " +
+	        "    OR LOWER(o.keyword) LIKE LOWER(?2) " +
+	        "    OR LOWER(l.protocolmastername) LIKE LOWER(?2)" +
+	        "  )" +
+	        ")" +
+	        // Sixth condition for directory-based filtering with usercode
+	        " OR (" +
+	        "  o.directorycode IN (?7) " +
+	        "  AND o.viewoption = ?4 " +
+	        "  AND o.lsuserMaster_usercode = ?1 " +
+	        "  AND o.lsprojectmaster_projectcode IS NULL " +
+	        "  AND o.assignedto_usercode IS NULL " +
+	        "  AND o.ordercancell IS NULL " +
+	        "  AND (" +
+	        "    LOWER(o.protocolordername) LIKE LOWER(?2) " +
+	        "    OR LOWER(m.testname) LIKE LOWER(?2) " +
+	        "    OR LOWER(o.keyword) LIKE LOWER(?2) " +
+	        "    OR LOWER(l.protocolmastername) LIKE LOWER(?2)" +
+	        "  )" +
+	        ")" +
+	        // Seventh condition for directory-based filtering with list of created users
+	        " OR (" +
+	        "  o.directorycode IN (?7) " +
+	        "  AND o.viewoption = ?5 " +
+	        "  AND o.createby IN (?6) " +
+	        "  AND o.lsprojectmaster_projectcode IS NULL " +
+	        "  AND o.assignedto_usercode IS NULL " +
+	        "  AND o.ordercancell IS NULL " +
+	        "  AND (" +
+	        "    LOWER(o.protocolordername) LIKE LOWER(?2) " +
+	        "    OR LOWER(m.testname) LIKE LOWER(?2) " +
+	        "    OR LOWER(o.keyword) LIKE LOWER(?2) " +
+	        "    OR LOWER(l.protocolmastername) LIKE LOWER(?2)" +
+	        "  )" +
+	        ")ORDER BY protocolordercode DESC OFFSET ?8 ROWS FETCH NEXT ?9 ROWS ONLY ",
+	        nativeQuery = true)
+	List<LSlogilabprotocoldetail> getSearchedRecords(Integer integer, String searchkeywords, int i, int j, int k, List<Integer> userlist, List<Lsprotocolorderstructure> lstdir, int l, Integer integer2);
+
+	
+	@Transactional
+//	@Modifying
+	@Query(value = "SELECT count(*) FROM lslogilabprotocoldetail o " +
+	        "INNER JOIN lsprotocolmaster l ON o.lsprotocolmaster_protocolmastercode = l.protocolmastercode " +
+	        "INNER JOIN lstestmasterlocal m ON m.testcode = o.testcode " +
+	        "WHERE (" +
+	        // First condition for project-based search
+	        "  o.lsprojectmaster_projectcode IN (" +
+	        "    SELECT lsprojectmaster_projectcode " +
+	        "    FROM LSlogilablimsorderdetail " +
+	        "    WHERE lsprojectmaster_projectcode IN (" +
+	        "      SELECT projectcode FROM LSprojectmaster " +
+	        "      WHERE lsusersteam_teamcode IN (" +
+	        "        SELECT teamcode FROM LSuserteammapping WHERE lsuserMaster_usercode = ?1" +
+	        "      )" +
+	        "    )" +
+	        "  )" +
+	        "  AND o.ordercancell IS NULL " +
+	        "  AND (" +
+	        "    LOWER(o.protocolordername) LIKE LOWER(?2) " +
+	        "    OR LOWER(m.testname) LIKE LOWER(?2) " +
+	        "    OR LOWER(o.keyword) LIKE LOWER(?2) " +
+	        "    OR LOWER(l.protocolmastername) LIKE LOWER(?2)" +
+	        "  )" +
+	        ")" +
+	        // Second condition for null project and assigned to null
+	        " OR (" +
+	        "  o.lsprojectmaster_projectcode IS NULL " +
+	        "  AND o.assignedto_usercode IS NULL " +
+	        "  AND o.elnmaterial_nmaterialcode IN (SELECT nmaterialcode FROM elnmaterial WHERE nsitecode = ?3) " +
+	        "  AND (" +
+	        "    LOWER(o.protocolordername) LIKE LOWER(?2) " +
+	        "    OR LOWER(m.testname) LIKE LOWER(?2) " +
+	        "    OR LOWER(o.keyword) LIKE LOWER(?2) " +
+	        "    OR LOWER(l.protocolmastername) LIKE LOWER(?2)" +
+	        "  ) " +
+	        "  AND o.viewoption = ?4 " +
+	        "  AND o.ordercancell IS NULL" +
+	        ")" +
+	        // Third condition for null project, assigned to null, created by user
+	        " OR (" +
+	        "  o.lsprojectmaster_projectcode IS NULL " +
+	        "  AND o.assignedto_usercode IS NULL " +
+	        "  AND o.elnmaterial_nmaterialcode IN (SELECT nmaterialcode FROM elnmaterial WHERE nsitecode = ?3) " +
+	        "  AND (" +
+	        "    LOWER(o.protocolordername) LIKE LOWER(?2) " +
+	        "    OR LOWER(m.testname) LIKE LOWER(?2) " +
+	        "    OR LOWER(o.keyword) LIKE LOWER(?2) " +
+	        "    OR LOWER(l.protocolmastername) LIKE LOWER(?2)" +
+	        "  ) " +
+	        "  AND o.viewoption = ?5 " +
+	        "  AND o.createby = ?1 " +
+	        "  AND o.ordercancell IS NULL" +
+	        ")" +
+	        // Fourth condition for null project, assigned to null, created by list of users
+	        " OR (" +
+	        "  o.lsprojectmaster_projectcode IS NULL " +
+	        "  AND o.assignedto_usercode IS NULL " +
+	        "  AND o.elnmaterial_nmaterialcode IN (SELECT nmaterialcode FROM elnmaterial WHERE nsitecode = ?3) " +
+	        "  AND (" +
+	        "    LOWER(o.protocolordername) LIKE LOWER(?2) " +
+	        "    OR LOWER(m.testname) LIKE LOWER(?2) " +
+	        "    OR LOWER(o.keyword) LIKE LOWER(?2) " +
+	        "    OR LOWER(l.protocolmastername) LIKE LOWER(?2)" +
+	        "  ) " +
+	        "  AND o.viewoption = ?5 " +
+	        "  AND o.createby IN (?6) " +
+	        "  AND o.ordercancell IS NULL" +
+	        ")" +
+	        // Fifth condition for directory-based filtering
+	        " OR (" +
+	        "  o.directorycode IN (?7) " +
+	        "  AND o.viewoption = ?3 " +
+	        "  AND o.lsprojectmaster_projectcode IS NULL " +
+	        "  AND o.assignedto_usercode IS NULL " +
+	        "  AND o.ordercancell IS NULL " +
+	        "  AND (" +
+	        "    LOWER(o.protocolordername) LIKE LOWER(?2) " +
+	        "    OR LOWER(m.testname) LIKE LOWER(?2) " +
+	        "    OR LOWER(o.keyword) LIKE LOWER(?2) " +
+	        "    OR LOWER(l.protocolmastername) LIKE LOWER(?2)" +
+	        "  )" +
+	        ")" +
+	        // Sixth condition for directory-based filtering with usercode
+	        " OR (" +
+	        "  o.directorycode IN (?7) " +
+	        "  AND o.viewoption = ?4 " +
+	        "  AND o.lsuserMaster_usercode = ?1 " +
+	        "  AND o.lsprojectmaster_projectcode IS NULL " +
+	        "  AND o.assignedto_usercode IS NULL " +
+	        "  AND o.ordercancell IS NULL " +
+	        "  AND (" +
+	        "    LOWER(o.protocolordername) LIKE LOWER(?2) " +
+	        "    OR LOWER(m.testname) LIKE LOWER(?2) " +
+	        "    OR LOWER(o.keyword) LIKE LOWER(?2) " +
+	        "    OR LOWER(l.protocolmastername) LIKE LOWER(?2)" +
+	        "  )" +
+	        ")" +
+	        // Seventh condition for directory-based filtering with list of created users
+	        " OR (" +
+	        "  o.directorycode IN (?7) " +
+	        "  AND o.viewoption = ?5 " +
+	        "  AND o.createby IN (?6) " +
+	        "  AND o.lsprojectmaster_projectcode IS NULL " +
+	        "  AND o.assignedto_usercode IS NULL " +
+	        "  AND o.ordercancell IS NULL " +
+	        "  AND (" +
+	        "    LOWER(o.protocolordername) LIKE LOWER(?2) " +
+	        "    OR LOWER(m.testname) LIKE LOWER(?2) " +
+	        "    OR LOWER(o.keyword) LIKE LOWER(?2) " +
+	        "    OR LOWER(l.protocolmastername) LIKE LOWER(?2)" +
+	        "  )" +
+	        ")",
+	        nativeQuery = true)
+	public Long getcountSearchedRecords(Integer integer, String searchkeywords, int i, int j, int k, List<Integer> userlist, List<Lsprotocolorderstructure> lstdir);
+
 
 	}
 

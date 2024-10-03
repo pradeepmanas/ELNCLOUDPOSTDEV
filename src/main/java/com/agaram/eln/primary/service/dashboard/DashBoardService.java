@@ -39,6 +39,7 @@ import com.agaram.eln.primary.model.instrumentDetails.Lsprotocolorderstructure;
 import com.agaram.eln.primary.model.masters.Lslogbooks;
 import com.agaram.eln.primary.model.material.ElnmaterialInventory;
 import com.agaram.eln.primary.model.protocols.Elnprotocolworkflow;
+import com.agaram.eln.primary.model.protocols.LSlogilabprotocoldetail;
 import com.agaram.eln.primary.model.protocols.LSlogilabprotocoldetail.Protocolorder;
 import com.agaram.eln.primary.model.protocols.LSprotocolmaster;
 import com.agaram.eln.primary.model.sheetManipulation.LSparsedparameters;
@@ -47,6 +48,7 @@ import com.agaram.eln.primary.model.sheetManipulation.LSsamplemaster;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflowgroupmapping;
 import com.agaram.eln.primary.model.usermanagement.LSMultiusergroup;
+import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.model.usermanagement.LSusersteam;
@@ -4276,97 +4278,99 @@ public class DashBoardService {
 						rtnobj.put("orders", lstorders);
 
 					} else {
+
+						List<Lsprotocolorderstructure> lstdir;
+						List<Long> immutableNegativeValues = Arrays.asList(-3L, -22L);
+						if (objuser.getUsernotify() == null) {
+							lstdir = lsprotocolorderStructurerepository
+									.findBySitemasterAndViewoptionAndDirectorycodeNotInOrCreatedbyAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(
+											objuser.getLssitemaster(), 1, immutableNegativeValues,
+											objuser, 2, objuser, 3);
+						} else {
+							lstdir = lsprotocolorderStructurerepository
+									.findBySitemasterAndViewoptionAndDirectorycodeNotInOrCreatedbyAndViewoptionOrSitemasterAndViewoptionAndCreatedbyInOrderByDirectorycode(
+											objuser.getLssitemaster(), 1, immutableNegativeValues,
+											objuser, 2, objuser.getLssitemaster(), 3,
+											objuser.getUsernotify());
+						}
+						lstdir.addAll(lsprotocolorderStructurerepository.findByDirectorycodeIn(immutableNegativeValues));
+						List<Long> Directory_Code = lstdir.stream().map(Lsprotocolorderstructure::getDirectorycode)
+								.collect(Collectors.toList());
+						
+						
+						
+						List<LSlogilabprotocoldetail> objt =LSlogilabprotocoldetailRepository.getSearchedRecords(objuser.getUsercode(),"%" + searchkeywords.toLowerCase() + "%",1,2,3,userlist,lstdir,objuser.getPagesize() * objuser.getPageperorder(), objuser.getPageperorder());
+						count=LSlogilabprotocoldetailRepository.getcountSearchedRecords(objuser.getUsercode(),"%" + searchkeywords.toLowerCase() + "%",1,2,3,userlist,lstdir);
+						
+						
+						lstordersprotocol=objt.stream().map(protocolrecord -> new Logilabprotocolorders (protocolrecord.getProtocolordercode(),protocolrecord.getTestcode(),protocolrecord.getProtoclordername()
+								,protocolrecord.getOrderflag(),protocolrecord.getProtocoltype(),protocolrecord.getCreatedtimestamp(),protocolrecord.getCompletedtimestamp(),protocolrecord.getLsprotocolmaster()
+								,protocolrecord.getlSprotocolworkflow(),protocolrecord.getLssamplemaster(),protocolrecord.getLsprojectmaster(),protocolrecord.getKeyword(),protocolrecord.getDirectorycode(),protocolrecord.getCreateby()
+								,protocolrecord.getAssignedto(),protocolrecord.getLsrepositoriesdata(),protocolrecord.getLsrepositories(),protocolrecord.getElnmaterial(),protocolrecord.getElnmaterialinventory()
+								,protocolrecord.getApproved(),protocolrecord.getRejected(),protocolrecord.getOrdercancell(),protocolrecord.getViewoption(),protocolrecord.getOrderstarted(),protocolrecord.getOrderstartedby()
+								,protocolrecord.getOrderstartedon(),protocolrecord.getLockeduser(),protocolrecord.getLockedusername(),protocolrecord.getVersionno(),protocolrecord.getElnprotocolworkflow()
+								,protocolrecord.getLsordernotification(),protocolrecord.getLsautoregister(),protocolrecord.getRepeat(),protocolrecord.getSentforapprovel()
+								,protocolrecord.getApprovelaccept(),protocolrecord.getAutoregistercount(),protocolrecord.getLsuserMaster())).collect(Collectors.toList());
+						
+						
+						
+						
 //						lstordersprotocol = LSlogilabprotocoldetailRepository
-//						.findByLsprojectmasterInAndCreatedtimestampBetweenAndSitecodeAndProtoclordernameContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseOrLsprojectmasterInAndCreatedtimestampBetweenAndSitecodeAndProtoclordernameNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndProtoclordernameContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndProtoclordernameNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatebyAndCreatedtimestampBetweenAndProtoclordernameContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatebyAndCreatedtimestampBetweenAndProtoclordernameNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseOrLsprojectmasterInAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndProtoclordernameContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseOrLsprojectmasterInAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndProtoclordernameNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndCreatebyInAndProtoclordernameContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndCreatebyInAndProtoclordernameNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseOrderByProtocolordercodeDesc(
-//								lstproject, fromdate, todate, objuser.getLssitemaster().getSitecode(),
-//								searchkeywords, searchkeywords, lstproject, fromdate, todate,
-//								objuser.getLssitemaster().getSitecode(), searchkeywords, searchkeywords, 1,
-//								objuser.getLssitemaster().getSitecode(), fromdate, todate, searchkeywords,
-//								searchkeywords, 1, objuser.getLssitemaster().getSitecode(), fromdate, todate,
-//								searchkeywords, searchkeywords, 2, objuser.getLssitemaster().getSitecode(),
-//								objuser.getUsercode(), fromdate, todate, searchkeywords, searchkeywords, 2,
-//								objuser.getLssitemaster().getSitecode(), objuser.getUsercode(), fromdate,
-//								todate, searchkeywords, searchkeywords, lstproject, 3,
-//								objuser.getLssitemaster().getSitecode(), fromdate, todate, searchkeywords,
-//								searchkeywords, lstproject, 3, objuser.getLssitemaster().getSitecode(),
-//								fromdate, todate, searchkeywords, searchkeywords, 3,
-//								objuser.getLssitemaster().getSitecode(), fromdate, todate, userlist,
-//								searchkeywords, searchkeywords, 3, objuser.getLssitemaster().getSitecode(),
-//								fromdate, todate, userlist, searchkeywords, searchkeywords, pageable);
+//								.findByLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndProtoclordernameContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndProtoclordernameNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatebyAndCreatedtimestampBetweenAndProtoclordernameContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatebyAndCreatedtimestampBetweenAndProtoclordernameNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndCreatebyInAndProtoclordernameContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndCreatebyInAndProtoclordernameNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseOrderByProtocolordercodeDesc(
+//										1, objuser.getLssitemaster().getSitecode(), fromdate, todate, searchkeywords,
+//										searchkeywords, 1, objuser.getLssitemaster().getSitecode(), fromdate, todate,
+//										searchkeywords, searchkeywords, 2, objuser.getLssitemaster().getSitecode(),
+//										objuser.getUsercode(), fromdate, todate, searchkeywords, searchkeywords, 2,
+//										objuser.getLssitemaster().getSitecode(), objuser.getUsercode(), fromdate,
+//										todate, searchkeywords, searchkeywords, 3,
+//										objuser.getLssitemaster().getSitecode(), fromdate, todate, userlist,
+//										searchkeywords, searchkeywords, 3, objuser.getLssitemaster().getSitecode(),
+//										fromdate, todate, userlist, searchkeywords, searchkeywords, pageable);
 //
-//				count = LSlogilabprotocoldetailRepository
-//						.countByLsprojectmasterInAndCreatedtimestampBetweenAndSitecodeAndProtoclordernameContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseOrLsprojectmasterInAndCreatedtimestampBetweenAndSitecodeAndProtoclordernameNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndProtoclordernameContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndProtoclordernameNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatebyAndCreatedtimestampBetweenAndProtoclordernameContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatebyAndCreatedtimestampBetweenAndProtoclordernameNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseOrLsprojectmasterInAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndProtoclordernameContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseOrLsprojectmasterInAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndProtoclordernameNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndCreatebyInAndProtoclordernameContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndCreatebyInAndProtoclordernameNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseOrderByProtocolordercodeDesc(
-//								lstproject, fromdate, todate, objuser.getLssitemaster().getSitecode(),
-//								searchkeywords, searchkeywords, lstproject, fromdate, todate,
-//								objuser.getLssitemaster().getSitecode(), searchkeywords, searchkeywords, 1,
-//								objuser.getLssitemaster().getSitecode(), fromdate, todate, searchkeywords,
-//								searchkeywords, 1, objuser.getLssitemaster().getSitecode(), fromdate, todate,
-//								searchkeywords, searchkeywords, 2, objuser.getLssitemaster().getSitecode(),
-//								objuser.getUsercode(), fromdate, todate, searchkeywords, searchkeywords, 2,
-//								objuser.getLssitemaster().getSitecode(), objuser.getUsercode(), fromdate,
-//								todate, searchkeywords, searchkeywords, lstproject, 3,
-//								objuser.getLssitemaster().getSitecode(), fromdate, todate, searchkeywords,
-//								searchkeywords, lstproject, 3, objuser.getLssitemaster().getSitecode(),
-//								fromdate, todate, searchkeywords, searchkeywords, 3,
-//								objuser.getLssitemaster().getSitecode(), fromdate, todate, userlist,
-//								searchkeywords, searchkeywords, 3, objuser.getLssitemaster().getSitecode(),
-//								fromdate, todate, userlist, searchkeywords, searchkeywords);
-						lstordersprotocol = LSlogilabprotocoldetailRepository
-								.findByLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndProtoclordernameContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndProtoclordernameNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatebyAndCreatedtimestampBetweenAndProtoclordernameContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatebyAndCreatedtimestampBetweenAndProtoclordernameNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndCreatebyInAndProtoclordernameContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndCreatebyInAndProtoclordernameNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseOrderByProtocolordercodeDesc(
-										1, objuser.getLssitemaster().getSitecode(), fromdate, todate, searchkeywords,
-										searchkeywords, 1, objuser.getLssitemaster().getSitecode(), fromdate, todate,
-										searchkeywords, searchkeywords, 2, objuser.getLssitemaster().getSitecode(),
-										objuser.getUsercode(), fromdate, todate, searchkeywords, searchkeywords, 2,
-										objuser.getLssitemaster().getSitecode(), objuser.getUsercode(), fromdate,
-										todate, searchkeywords, searchkeywords, 3,
-										objuser.getLssitemaster().getSitecode(), fromdate, todate, userlist,
-										searchkeywords, searchkeywords, 3, objuser.getLssitemaster().getSitecode(),
-										fromdate, todate, userlist, searchkeywords, searchkeywords, pageable);
-
-						lstordersprotocol.addAll(LSlogilabprotocoldetailRepository
-								.findByLsprojectmasterInAndCreatedtimestampBetweenAndSitecodeAndProtoclordernameContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseOrderByProtocolordercodeDesc(
-										lstproject, fromdate, todate, objuser.getLssitemaster().getSitecode(),
-										searchkeywords, searchkeywords, pageable));
-						lstordersprotocol.addAll(LSlogilabprotocoldetailRepository
-								.findByLsprojectmasterInAndCreatedtimestampBetweenAndSitecodeAndProtoclordernameNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseOrderByProtocolordercodeDesc(
-										lstproject, fromdate, todate, objuser.getLssitemaster().getSitecode(),
-										searchkeywords, searchkeywords, pageable));
-						lstordersprotocol.addAll(LSlogilabprotocoldetailRepository
-								.findByLsprojectmasterInAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndProtoclordernameContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseOrderByProtocolordercodeDesc(
-										lstproject, 3, objuser.getLssitemaster().getSitecode(), fromdate, todate,
-										searchkeywords, searchkeywords, pageable));
-						lstordersprotocol.addAll(LSlogilabprotocoldetailRepository
-								.findByLsprojectmasterInAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndProtoclordernameNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseOrderByProtocolordercodeDesc(
-										lstproject, 3, objuser.getLssitemaster().getSitecode(), fromdate, todate,
-										searchkeywords, searchkeywords, pageable));
-						count = LSlogilabprotocoldetailRepository
-								.countByLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndProtoclordernameContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndProtoclordernameNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatebyAndCreatedtimestampBetweenAndProtoclordernameContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatebyAndCreatedtimestampBetweenAndProtoclordernameNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndCreatebyInAndProtoclordernameContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndCreatebyInAndProtoclordernameNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseOrderByProtocolordercodeDesc(
-										1, objuser.getLssitemaster().getSitecode(), fromdate, todate, searchkeywords,
-										searchkeywords, 1, objuser.getLssitemaster().getSitecode(), fromdate, todate,
-										searchkeywords, searchkeywords, 2, objuser.getLssitemaster().getSitecode(),
-										objuser.getUsercode(), fromdate, todate, searchkeywords, searchkeywords, 2,
-										objuser.getLssitemaster().getSitecode(), objuser.getUsercode(), fromdate,
-										todate, searchkeywords, searchkeywords, 3,
-										objuser.getLssitemaster().getSitecode(), fromdate, todate, userlist,
-										searchkeywords, searchkeywords, 3, objuser.getLssitemaster().getSitecode(),
-										fromdate, todate, userlist, searchkeywords, searchkeywords);
-
-						count = count + LSlogilabprotocoldetailRepository
-								.countByLsprojectmasterInAndCreatedtimestampBetweenAndSitecodeAndProtoclordernameContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseOrderByProtocolordercodeDesc(
-										lstproject, fromdate, todate, objuser.getLssitemaster().getSitecode(),
-										searchkeywords, searchkeywords);
-						count = count + LSlogilabprotocoldetailRepository
-								.countByLsprojectmasterInAndCreatedtimestampBetweenAndSitecodeAndProtoclordernameNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseOrderByProtocolordercodeDesc(
-										lstproject, fromdate, todate, objuser.getLssitemaster().getSitecode(),
-										searchkeywords, searchkeywords);
-						count = count + LSlogilabprotocoldetailRepository
-								.countByLsprojectmasterInAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndProtoclordernameContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseOrderByProtocolordercodeDesc(
-										lstproject, 3, objuser.getLssitemaster().getSitecode(), fromdate, todate,
-										searchkeywords, searchkeywords);
-						count = count + LSlogilabprotocoldetailRepository
-								.countByLsprojectmasterInAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndProtoclordernameNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseOrderByProtocolordercodeDesc(
-										lstproject, 3, objuser.getLssitemaster().getSitecode(), fromdate, todate,
-										searchkeywords, searchkeywords);
+//						lstordersprotocol.addAll(LSlogilabprotocoldetailRepository
+//								.findByLsprojectmasterInAndCreatedtimestampBetweenAndSitecodeAndProtoclordernameContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseOrderByProtocolordercodeDesc(
+//										lstproject, fromdate, todate, objuser.getLssitemaster().getSitecode(),
+//										searchkeywords, searchkeywords, pageable));
+//						lstordersprotocol.addAll(LSlogilabprotocoldetailRepository
+//								.findByLsprojectmasterInAndCreatedtimestampBetweenAndSitecodeAndProtoclordernameNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseOrderByProtocolordercodeDesc(
+//										lstproject, fromdate, todate, objuser.getLssitemaster().getSitecode(),
+//										searchkeywords, searchkeywords, pageable));
+//						lstordersprotocol.addAll(LSlogilabprotocoldetailRepository
+//								.findByLsprojectmasterInAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndProtoclordernameContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseOrderByProtocolordercodeDesc(
+//										lstproject, 3, objuser.getLssitemaster().getSitecode(), fromdate, todate,
+//										searchkeywords, searchkeywords, pageable));
+//						lstordersprotocol.addAll(LSlogilabprotocoldetailRepository
+//								.findByLsprojectmasterInAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndProtoclordernameNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseOrderByProtocolordercodeDesc(
+//										lstproject, 3, objuser.getLssitemaster().getSitecode(), fromdate, todate,
+//										searchkeywords, searchkeywords, pageable));
+//						count = LSlogilabprotocoldetailRepository
+//								.countByLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndProtoclordernameContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndProtoclordernameNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatebyAndCreatedtimestampBetweenAndProtoclordernameContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatebyAndCreatedtimestampBetweenAndProtoclordernameNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndCreatebyInAndProtoclordernameContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndCreatebyInAndProtoclordernameNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseOrderByProtocolordercodeDesc(
+//										1, objuser.getLssitemaster().getSitecode(), fromdate, todate, searchkeywords,
+//										searchkeywords, 1, objuser.getLssitemaster().getSitecode(), fromdate, todate,
+//										searchkeywords, searchkeywords, 2, objuser.getLssitemaster().getSitecode(),
+//										objuser.getUsercode(), fromdate, todate, searchkeywords, searchkeywords, 2,
+//										objuser.getLssitemaster().getSitecode(), objuser.getUsercode(), fromdate,
+//										todate, searchkeywords, searchkeywords, 3,
+//										objuser.getLssitemaster().getSitecode(), fromdate, todate, userlist,
+//										searchkeywords, searchkeywords, 3, objuser.getLssitemaster().getSitecode(),
+//										fromdate, todate, userlist, searchkeywords, searchkeywords);
+//
+//						count = count + LSlogilabprotocoldetailRepository
+//								.countByLsprojectmasterInAndCreatedtimestampBetweenAndSitecodeAndProtoclordernameContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseOrderByProtocolordercodeDesc(
+//										lstproject, fromdate, todate, objuser.getLssitemaster().getSitecode(),
+//										searchkeywords, searchkeywords);
+//						count = count + LSlogilabprotocoldetailRepository
+//								.countByLsprojectmasterInAndCreatedtimestampBetweenAndSitecodeAndProtoclordernameNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseOrderByProtocolordercodeDesc(
+//										lstproject, fromdate, todate, objuser.getLssitemaster().getSitecode(),
+//										searchkeywords, searchkeywords);
+//						count = count + LSlogilabprotocoldetailRepository
+//								.countByLsprojectmasterInAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndProtoclordernameContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseOrderByProtocolordercodeDesc(
+//										lstproject, 3, objuser.getLssitemaster().getSitecode(), fromdate, todate,
+//										searchkeywords, searchkeywords);
+//						count = count + LSlogilabprotocoldetailRepository
+//								.countByLsprojectmasterInAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndProtoclordernameNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseOrderByProtocolordercodeDesc(
+//										lstproject, 3, objuser.getLssitemaster().getSitecode(), fromdate, todate,
+//										searchkeywords, searchkeywords);
 
 						rtnobj.put("orders", lstordersprotocol);
 					}

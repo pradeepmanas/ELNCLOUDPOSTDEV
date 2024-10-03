@@ -1,5 +1,7 @@
 package com.agaram.eln.primary.model.cfr;
 
+import java.util.Date;
+
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -8,6 +10,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import com.agaram.eln.primary.model.general.Response;
@@ -27,10 +31,22 @@ public class LScfrreasons {
 	@Column(columnDefinition = "varchar(255)")
 	private String comments;
 	
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date createddate;
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date modifieddate;
+
+	@Column(name = "status") 
+	private Integer status;
+	
+	@ManyToOne
+	private LSuserMaster createdby;
+	
+	@ManyToOne
+	private LSuserMaster modifiedby;
+	
 	@Transient
 	private Response response;
-	@Transient
-	private Integer status;
 	
 	@Transient
 	LScfttransaction objsilentaudit;
@@ -45,8 +61,6 @@ public class LScfrreasons {
 	@Transient
 	LSuserMaster LSuserMaster;
 	
-	@Transient
-	LSuserMaster modifiedby;
 	@ManyToOne 
 	private LSSiteMaster lssitemaster;
 	
@@ -57,6 +71,26 @@ public class LScfrreasons {
 		this.lssitemaster = lssitemaster;
 	}
 	
+
+	public LSuserMaster getCreatedby() {
+		return createdby;
+	}
+	public void setCreatedby(LSuserMaster createdby) {
+		this.createdby = createdby;
+	}
+	
+	public Date getCreateddate() {
+		return createddate;
+	}
+	public void setCreateddate(Date createddate) {
+		this.createddate = createddate;
+	}
+	public Date getModifieddate() {
+		return modifieddate;
+	}
+	public void setModifieddate(Date modifieddate) {
+		this.modifieddate = modifieddate;
+	}
 	
 	public LoggedUser getObjuser() {
 		return objuser;

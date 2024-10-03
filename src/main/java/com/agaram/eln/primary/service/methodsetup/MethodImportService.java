@@ -7,6 +7,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import java.util.*;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
@@ -376,12 +379,10 @@ public class MethodImportService {
 			List<MethodDelimiter> expMethodDelimiter = mapper.readValue(methodDelimiterJson, new TypeReference<List<MethodDelimiter>>(){});
 			final List<MethodDelimiter> currMethodDelimiter = methodDelimiterRepo.findByStatus(1, new Sort(Sort.Direction.ASC, "methoddelimiterkey"));
 			final List<MethodDelimiter> newMethodDelimiter = new ArrayList<>();
-			final List<MethodDelimiter> newMethodDelimiter1 = new ArrayList<>();
+			final List<MethodDelimiter> finalMethoddelimiterlist = new ArrayList<>();
 			
-			 List<MethodDelimiter> expMethodDelimiterStatusList = expMethodDelimiter.stream()
-			            .filter(register -> register.getStatus() == 1 && register.getDelimiter()!=null && register.getDelimiter().getDelimiterkey() != null)
-			            .collect(Collectors.toList());
-			 
+			 List<MethodDelimiter> expMethodDelimiterStatusList = expMethodDelimiter.stream().filter(record -> record.getStatus() == 1).collect(Collectors.toList());
+
 			final List<MethodDelimiter> methodDelimiterExist = getAnyMethodDelimiter(expMethodDelimiterStatusList, currMethodDelimiter);
 		    if(!methodDelimiterExist.isEmpty()) {
 		    	methodDelimiterExist.forEach(methodDelimiterItem -> {
@@ -391,20 +392,19 @@ public class MethodImportService {
 		    		methodDelimiterItem.setLssitemaster(site);
 		    		methodDelimiterItem.setMethoddelimiterstatus("A");
 					
-		    		final Delimiter delimItem = delimiter.stream()															
-		    				.filter(delim -> delim.getDelimitername().equals(methodDelimiterItem.getDelimiter().getDelimitername()))
-							.findAny()
-							.orElse(null);
+		    		final Delimiter delimItem = delimiter.stream()
+		    			    .filter(delim -> delim.getDelimitername().equalsIgnoreCase(methodDelimiterItem.getDelimiter().getDelimitername())) // Using equalsIgnoreCase
+		    			    .findAny()
+		    			    .orElse(null);
 		    		methodDelimiterItem.setDelimiter(delimItem);
-		    		
 		    		newMethodDelimiter.add(methodDelimiterItem);
 
-		    		List<MethodDelimiter> finalMethoddelimiterlist = newMethodDelimiter.stream()
-		    	            .filter(register -> register.getDelimiter()!=null && register.getDelimiter().getDelimiterkey() != null)
-		    	            .collect(Collectors.toList());
-		    		newMethodDelimiter1.addAll(finalMethoddelimiterlist);
 		    	});
-		    	methodDelimiterRepo.save(newMethodDelimiter1);
+		        finalMethoddelimiterlist.addAll(newMethodDelimiter.stream()
+		            .filter(register -> register.getDelimiter() != null && register.getDelimiter().getDelimiterkey() != null)
+		            .collect(Collectors.toList()));
+
+		        methodDelimiterRepo.save(finalMethoddelimiterlist); // Save final list
 		    }
 		    final List<MethodDelimiter> methodDelimiter = methodDelimiterRepo.findByStatus(1, new Sort(Sort.Direction.ASC, "methoddelimiterkey"));
 			
@@ -519,24 +519,38 @@ public class MethodImportService {
     private static List<Delimiter> getAnyDelimiter(List<Delimiter> expDelimiter, List<Delimiter> delimiter)
     {
 		final List<Delimiter> delimiterList = expDelimiter.stream()
-				.filter(expDelimiterItem -> delimiter.stream()
-						.noneMatch(delimiterItem -> delimiterItem.getDelimitername()
-								.equals(expDelimiterItem.getDelimitername())))
-				.collect(Collectors.toList());
+			    .filter(expDelimiterItem -> delimiter.stream()
+			            .noneMatch(delimiterItem -> delimiterItem.getDelimitername()
+			                .equalsIgnoreCase(expDelimiterItem.getDelimitername())))
+			        .collect(Collectors.toList());
 		
 				return delimiterList;
     }
 
     private static List<MethodDelimiter> getAnyMethodDelimiter(List<MethodDelimiter> expMethodDelimiter, List<MethodDelimiter> methodDelimiter)
     {
-		final List<MethodDelimiter> methodDelimiterList = expMethodDelimiter.stream()
-				.filter(expMethodDelimiterItem -> methodDelimiter.stream()
-					.noneMatch(methodDelimiterItem -> methodDelimiterItem.getDelimiter().getDelimitername()
-						.equals(expMethodDelimiterItem.getDelimiter().getDelimitername()) && 
-							methodDelimiterItem.getParsermethod().getParsermethodname()
-								.equals(expMethodDelimiterItem.getParsermethod().getParsermethodname())))
-				.collect(Collectors.toList());
-				
+        Set<String> seen = new HashSet<>();
+
+    	List<MethodDelimiter> filteredMethodDelimiter = expMethodDelimiter.stream()
+    		    .filter(record -> {
+    		      
+    		        String key = record.getDelimiter().getDelimitername().toLowerCase() + "_" + 
+    		                     record.getParsermethod().getParsermethodname().toLowerCase();
+    		        return seen.add(key); 
+    		    })
+    		    .collect(Collectors.toList());
+
+    	
+		 List<MethodDelimiter> methodDelimiterList = filteredMethodDelimiter.stream()
+			    .filter(expMethodDelimiterItem -> methodDelimiter.stream()
+			            .noneMatch(methodDelimiterItem -> 
+			                methodDelimiterItem.getDelimiter().getDelimitername()
+			                    .equalsIgnoreCase(expMethodDelimiterItem.getDelimiter().getDelimitername()) && 
+			                methodDelimiterItem.getParsermethod().getParsermethodname()
+			                    .equalsIgnoreCase(expMethodDelimiterItem.getParsermethod().getParsermethodname()) // Using equalsIgnoreCase for parsermethodname
+			            ))
+			        .collect(Collectors.toList());
+
 				return methodDelimiterList;
     }
 

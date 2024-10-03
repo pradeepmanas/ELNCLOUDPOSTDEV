@@ -208,24 +208,7 @@ public class FreeUserService {
 			}
 			LSSiteMaster site = lSSiteMasterRepository.save(objuser.getLssitemaster());
 			
-			LSPasswordPolicy objpolicy = new LSPasswordPolicy();
 			
-			objpolicy.setComplexpasswrd(0);
-			objpolicy.setDbbased(null);
-			objpolicy.setIdletime(15);
-			objpolicy.setIdletimeshowcheck(1);
-			objpolicy.setLockpolicy(5);
-			objpolicy.setMaxpasswrdlength(10);
-			objpolicy.setMincapitalchar(0);
-			objpolicy.setMinnumericchar(0);
-			objpolicy.setMinpasswrdlength(4);
-			objpolicy.setMinsmallchar(0);
-			objpolicy.setMinspecialchar(0);
-			objpolicy.setPasswordexpiry(90);
-			objpolicy.setPasswordhistory(5);
-			objpolicy.setLssitemaster(site);
-			
-			LSPasswordPolicyRepository.save(objpolicy);
 
 			String unifieduser = objuser.getUsername().toLowerCase().replaceAll("[^a-zA-Z0-9]", "")
 					+ +site.getSitecode() + "@elnlite";
@@ -244,6 +227,26 @@ public class FreeUserService {
 			}
 			objuser.setEdulevel(objuser.getEdulevel());
 			lsuserMasterRepository.save(objuser);
+			
+			LSPasswordPolicy objpolicy = new LSPasswordPolicy();
+			
+			objpolicy.setComplexpasswrd(0);
+			objpolicy.setDbbased(null);
+			objpolicy.setIdletime(15);
+			objpolicy.setIdletimeshowcheck(1);
+			objpolicy.setLockpolicy(5);
+			objpolicy.setMaxpasswrdlength(10);
+			objpolicy.setMincapitalchar(0);
+			objpolicy.setMinnumericchar(0);
+			objpolicy.setMinpasswrdlength(4);
+			objpolicy.setMinsmallchar(0);
+			objpolicy.setMinspecialchar(0);
+			objpolicy.setPasswordexpiry(90);
+			objpolicy.setPasswordhistory(5);
+			objpolicy.setLssitemaster(site);
+			objpolicy.setLsusermaster(objuser);
+			
+			LSPasswordPolicyRepository.save(objpolicy);
 
 			LSMultisites lmultisites = new LSMultisites();
 			lmultisites.setDefaultsiteMaster(objuser.getLssitemaster().getSitecode());
@@ -682,6 +685,7 @@ public class FreeUserService {
 						protocol.put("lsuserMaster", objuser);
 						protocol.put("teamuserscode", lstteamusercode);
 						protocol.put("liteworkflow", workflowprotocol2);
+						protocol.put("protocoldatainfo", protocol.get("protocoldatainfo"));
 						try {
 							ProtocolMasterService.addProtocolMaster(protocol);
 						} catch (java.io.IOException e) {

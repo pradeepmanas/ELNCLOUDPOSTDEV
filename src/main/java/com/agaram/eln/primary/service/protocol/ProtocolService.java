@@ -1604,6 +1604,11 @@ public class ProtocolService {
 					return mapObj;
 				}
 				newProtocolMasterObj.setProtocolmastername((String) argObj.get("protocolmastername"));
+				if(argObj.get("protocoldatainfo") != null && argObj.get("ismultitenant").equals(2)) {					
+					Gson gson = new Gson();
+					String Content = gson.toJson(argObj.get("protocoldatainfo"));
+				newProtocolMasterObj.setProtocoldatainfo(Content);
+				}
 				newProtocolMasterObj.setProtocolstatus((Integer) argObj.get("protocolstatus"));
 				newProtocolMasterObj.setStatus((Integer) argObj.get("status"));
 				newProtocolMasterObj.setCreatedby((Integer) argObj.get("createdby"));

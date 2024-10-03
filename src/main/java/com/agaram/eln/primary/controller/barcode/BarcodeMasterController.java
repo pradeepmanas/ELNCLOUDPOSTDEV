@@ -22,6 +22,7 @@ import com.agaram.eln.primary.model.barcode.BarcodeMaster;
 import com.agaram.eln.primary.model.sheetManipulation.LSfile;
 import com.agaram.eln.primary.model.sheetManipulation.LsfilemapBarcode;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
+import com.agaram.eln.primary.model.usermanagement.LoggedUser;
 import com.agaram.eln.primary.service.barcode.BarcodeMasterService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -41,7 +42,7 @@ public class BarcodeMasterController {
 	}
 
 	@PostMapping("/GetBarcodemaster")
-	public List<BarcodeMaster> GetBarcodemaster(@RequestBody LSuserMaster objuser) {
+	public List<BarcodeMaster> GetBarcodemaster(@RequestBody LoggedUser objuser) {
 		return barcodemasterservice.GetBarcodemaster(objuser);
 	}
 

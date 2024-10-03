@@ -78,7 +78,7 @@ public class AuditService {
 
 	public List<LScfrreasons> getreasons(Map<String, Object> objMap) {
 		List<LScfrreasons> result = new ArrayList<LScfrreasons>();
-		LScfrreasonsRepository.findAll().forEach(result::add);
+		result = LScfrreasonsRepository.findByStatus(1);
 		return result;
 	}
 
@@ -117,25 +117,23 @@ public class AuditService {
 		}
 	}
 	public LScfrreasons InsertupdateReasons(LScfrreasons objClass) {
-
+		LScfrreasons lScfrreasons = LScfrreasonsRepository.findByCommentsAndStatus(objClass.getComments(), 1);
 		objClass.setResponse(new Response());
-		if (objClass.getReasoncode() == null
-				&& LScfrreasonsRepository.findByCommentsIgnoreCase(objClass.getComments()) != null) {
+		if (objClass.getReasoncode() == null && lScfrreasons != null) {
 			objClass.getResponse().setStatus(false);
 			objClass.getResponse().setInformation("ID_CFREXIST");
 
 			return objClass;
 
-		} else if (objClass.getReasoncode() != null && objClass.getStatus() == null
-				&& LScfrreasonsRepository.findByCommentsIgnoreCase(objClass.getComments()) != null) {
+		} else if (objClass.getReasoncode() != null && objClass.getStatus() == 1 && lScfrreasons != null) {
 			objClass.getResponse().setStatus(false);
 			objClass.getResponse().setInformation("ID_CFREXIST");
 
 			return objClass;
 
-		} else if (objClass.getReasoncode() != null && objClass.getStatus() != null
-				&& LScfrreasonsRepository.findByComments(objClass.getComments()) != null) {
-			LScfrreasonsRepository.delete(LScfrreasonsRepository.findByComments(objClass.getComments()));
+		} else if (objClass.getReasoncode() != null && objClass.getStatus() == -1) {
+			objClass.setStatus(-1);
+			LScfrreasonsRepository.save(objClass);
 			objClass.getResponse().setStatus(true);
 			objClass.getResponse().setInformation("ID_DELETEMSG");
 
