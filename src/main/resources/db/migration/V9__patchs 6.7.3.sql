@@ -1630,5 +1630,9 @@ ALTER TABLE IF Exists LsfilemapBarcode ADD Column IF NOT EXISTS tagname characte
 
 ALTER TABLE IF Exists LsfilemapBarcode ADD Column IF NOT EXISTS barocodename character varying(255);
 
+ALTER TABLE IF EXISTS lscfrreasons ADD COLUMN IF NOT EXISTS createddate TIMESTAMP;
+ALTER TABLE IF EXISTS lscfrreasons ADD COLUMN IF NOT EXISTS modifieddate TIMESTAMP;
+ALTER TABLE IF EXISTS lscfrreasons ADD COLUMN IF NOT EXISTS status INTEGER;
+
 UPDATE LScfrreasons SET createddate = CURRENT_TIMESTAMP WHERE createddate IS NULL;
 UPDATE LScfrreasons SET status = 1 WHERE status IS NULL;
