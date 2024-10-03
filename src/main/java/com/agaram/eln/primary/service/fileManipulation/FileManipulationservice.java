@@ -174,15 +174,22 @@ public class FileManipulationservice {
 		return objattachment;
 	}
 
-	public String storeLargeattachment(String title, MultipartFile file,String randomUUIDString) throws IOException {
+	public String storeLargeattachment(String title, MultipartFile file) throws IOException {
 		DBObject metaData = new BasicDBObject();
 		metaData.put("title", title);
 
-//		UUID objGUID = UUID.randomUUID();
-//		String randomUUIDString = objGUID.toString();
+		UUID objGUID = UUID.randomUUID();
+		String randomUUIDString = objGUID.toString();
 
 		gridFsTemplate.store(file.getInputStream(), randomUUIDString, file.getContentType(), metaData);
 
+		return randomUUIDString;
+	}
+	
+	public String storeLargeattachmentBarcode(String title, MultipartFile file,String randomUUIDString) throws IOException {
+		DBObject metaData = new BasicDBObject();
+		metaData.put("title", title);
+		gridFsTemplate.store(file.getInputStream(), randomUUIDString, file.getContentType(), metaData);
 		return randomUUIDString;
 	}
 	

@@ -159,7 +159,7 @@ public class BarcodeMasterService {
 			UUId = cloudFileManipulationservice.storecloudfilesreturnwithpreUUID(file, "barcodefiles", existingUUID,
 					isMultitenant);
 		} else {
-			UUId = fileManipulationservice.storeLargeattachment(file.getOriginalFilename(), file, existingUUID);
+			UUId = fileManipulationservice.storeLargeattachmentBarcode(file.getOriginalFilename(), file, existingUUID);
 		}
 		return UUId;
 	}
