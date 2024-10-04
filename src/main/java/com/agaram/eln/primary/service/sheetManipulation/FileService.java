@@ -40,7 +40,6 @@ import com.agaram.eln.primary.fetchmodel.getorders.LogilabOrderDetails;
 //import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.fetchmodel.gettemplate.Sheettemplatefortest;
 import com.agaram.eln.primary.fetchmodel.gettemplate.Sheettemplateget;
-import com.agaram.eln.primary.model.barcode.BarcodeMaster;
 import com.agaram.eln.primary.model.cloudFileManip.CloudSheetCreation;
 import com.agaram.eln.primary.model.cloudFileManip.CloudSheetVersion;
 import com.agaram.eln.primary.model.general.Response;
@@ -73,7 +72,6 @@ import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.model.usermanagement.LSusersteam;
 import com.agaram.eln.primary.model.usermanagement.LSuserteammapping;
-import com.agaram.eln.primary.repository.barcode.BarcodeMasterRepository;
 import com.agaram.eln.primary.repository.cfr.LSactivityRepository;
 import com.agaram.eln.primary.repository.cfr.LScfttransactionRepository;
 import com.agaram.eln.primary.repository.cloudFileManip.CloudSheetCreationRepository;
@@ -255,8 +253,8 @@ public class FileService {
 	@Autowired
 	private LogilablimsorderdetailsRepository logilablimsorderdetailsRepository;
 	
-	@Autowired
-	private BarcodeMasterRepository barcodeMasterRepository;
+//	@Autowired
+//	private BarcodeMasterRepository barcodeMasterRepository;
 
 	public LSfile InsertupdateSheet(LSfile objfile) throws IOException {
 

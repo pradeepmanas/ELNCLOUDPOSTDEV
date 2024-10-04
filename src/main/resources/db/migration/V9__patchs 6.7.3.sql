@@ -1636,3 +1636,33 @@ ALTER TABLE IF EXISTS lscfrreasons ADD COLUMN IF NOT EXISTS status INTEGER;
 
 UPDATE LScfrreasons SET createddate = CURRENT_TIMESTAMP WHERE createddate IS NULL;
 UPDATE LScfrreasons SET status = 1 WHERE status IS NULL;
+
+ALTER TABLE IF EXISTS lscfrreasons ADD COLUMN IF NOT EXISTS createdby_usercode INTEGER;
+
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_constraint 
+        WHERE conname = 'fkahf5bxsaoc13n98igb65qquno'
+    ) THEN
+        ALTER TABLE lscfrreasons 
+        ADD CONSTRAINT fkahf5bxsaoc13n98igb65qquno 
+        FOREIGN KEY (createdby_usercode) REFERENCES public.lsusermaster (usercode);
+    END IF;
+END $$;
+
+ALTER TABLE IF EXISTS lscfrreasons ADD COLUMN IF NOT EXISTS modifiedby_usercode INTEGER;
+
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_constraint 
+        WHERE conname = 'fkc4kvyprk3q2cwje336e5gsw3i'
+    ) THEN
+        ALTER TABLE lscfrreasons 
+        ADD CONSTRAINT fkc4kvyprk3q2cwje336e5gsw3i 
+        FOREIGN KEY (modifiedby_usercode) REFERENCES public.lsusermaster (usercode);
+    END IF;
+END $$;
+
+update lsusergrouprights set screate = '1', sedit = '1' where modulename = 'IDS_MDL_INVENTORY' and screenname = 'IDS_SCN_MATERIALTYPEPARAMS' and displaytopic = 'IDS_SCN_MATERIALTYPEPARAMS' and usergroupid_usergroupcode = 1;

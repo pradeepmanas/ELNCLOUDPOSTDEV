@@ -13,8 +13,6 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -196,7 +194,6 @@ import com.agaram.eln.primary.repository.notification.EmailRepository;
 import com.agaram.eln.primary.repository.protocol.ElnprotocolworkflowRepository;
 import com.agaram.eln.primary.repository.protocol.ElnprotocolworkflowgroupmapRepository;
 import com.agaram.eln.primary.repository.protocol.LSlogilabprotocoldetailRepository;
-import com.agaram.eln.primary.repository.protocol.LSprotocolorderstephistoryRepository;
 import com.agaram.eln.primary.repository.reports.ReportfileRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSfileRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSfilemethodRepository;
@@ -233,7 +230,6 @@ import com.agaram.eln.primary.service.webParser.WebparserService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.gridfs.GridFSDBFile;
-import java.util.UUID;
 
 @Service
 //@EnableJpaRepositories(basePackageClasses = LsMethodFieldsRepository.class)
@@ -460,8 +456,8 @@ public class InstrumentService {
 	@Autowired
 	private LSactiveUserRepository lSactiveUserRepository;
 
-	@Autowired
-	private LSprotocolorderstephistoryRepository lsprotocolorderstephistoryRepository;
+//	@Autowired
+//	private LSprotocolorderstephistoryRepository lsprotocolorderstephistoryRepository;
 
 	@Autowired
 	private JavaMailSender mailSender;
@@ -5144,11 +5140,11 @@ public class InstrumentService {
 		for (LSfile lSfile : lSfiles) {
 			List<LSlogilablimsorderdetail> lstorder = new ArrayList<>();
 
-			if ("administrator".equalsIgnoreCase(lsusMaster.getUsername().trim())) {
-				lstorder = lslogilablimsorderdetailRepository
-						.findByFiletypeAndLsfileAndApprovelstatusNotAndOrdercancellIsNullOrFiletypeAndLsfileAndApprovelstatusIsNullAndOrdercancellIsNullOrderByBatchcodeDesc(
-								filetype, lSfile, 3, filetype, lSfile);
-			} else {
+//			if ("administrator".equalsIgnoreCase(lsusMaster.getUsername().trim())) {
+//				lstorder = lslogilablimsorderdetailRepository
+//						.findByFiletypeAndLsfileAndApprovelstatusNotAndOrdercancellIsNullOrFiletypeAndLsfileAndApprovelstatusIsNullAndOrdercancellIsNullOrderByBatchcodeDesc(
+//								filetype, lSfile, 3, filetype, lSfile);
+//			} else {
 				List<LSuserteammapping> lstteammap = lsuserteammappingRepository.findBylsuserMaster(lsusMaster);
 				List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(lstteammap,
 						lsusMaster.getLssitemaster());
@@ -5197,7 +5193,7 @@ public class InstrumentService {
 
 				lstorderlimsobj.addAll(lstorder);
 				lstallorders.addAll(lstorderlimsobj);
-			}
+//			}
 			lstallorders.addAll(lstorder);
 		}
 

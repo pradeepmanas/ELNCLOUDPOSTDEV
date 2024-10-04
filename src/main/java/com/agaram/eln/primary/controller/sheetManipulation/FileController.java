@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.agaram.eln.primary.fetchmodel.gettemplate.Sheettemplateget;
-import com.agaram.eln.primary.model.barcode.BarcodeMaster;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 import com.agaram.eln.primary.model.protocols.ElnprotocolTemplateworkflow;
