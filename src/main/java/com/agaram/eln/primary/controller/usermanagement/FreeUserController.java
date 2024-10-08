@@ -60,4 +60,13 @@ public class FreeUserController {
 	public Map<String, Object> GetStartSkip(@RequestBody LSuserMaster objuser) throws Exception {
 		return freeuserservice.GetStartSkip(objuser);
 	}
+	@RequestMapping(value = "/ValidateEmail")
+	public LSuserMaster ValidateEmail(@RequestBody LSuserMaster objuser) throws Exception {		
+		return  freeuserservice.getValidateEmail(objuser);
+	}
+	
+	@RequestMapping(value = "/Sentotpmail")
+	public LSuserMaster Sentotpmail(@RequestBody LSuserMaster objuser) throws Exception {		
+		return  freeuserservice.Sentotpmail(objuser);
+	}
 }

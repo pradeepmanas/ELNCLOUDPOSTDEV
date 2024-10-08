@@ -2148,11 +2148,11 @@ public class FileService {
 	}
 	
 	public List<LSfile> getApprovedTemplatesForResult(Integer approvelstatus, LSuserMaster objuser) {
-		if (objuser.getUsername().equals("Administrator")) {
-			return lSfileRepository.getsheetGreaterthanoneandapprovel(objuser.getLssitemaster().getSitecode());
-		} else {
+//		if (objuser.getUsername().equals("Administrator")) {
+//			return lSfileRepository.getsheetGreaterthanoneandapprovel(objuser.getLssitemaster().getSitecode());
+//		} else {
 			return GetApprovedTemplatesbyuser(approvelstatus, objuser);
-		}
+//		}
 	}
 	
 	public List<LSfile> GetApprovedTemplatesbyuser(Integer approvelstatus, LSuserMaster objuser) {

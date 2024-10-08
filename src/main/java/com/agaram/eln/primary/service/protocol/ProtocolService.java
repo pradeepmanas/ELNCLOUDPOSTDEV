@@ -5954,6 +5954,8 @@ public class ProtocolService {
 		lsprotocolimagesRepository.save(objimg);
 
 		map.put("extension", "." + objimg.getExtension());
+		map.put("filename", filename);
+		map.put("name", filename);
 		map.put("link", originurl + "/protocol/downloadprotocolimage/" + objimg.getFileid() + "/"
 				+ TenantContext.getCurrentTenant() + "/" + filename + "/" + objimg.getExtension());
 
@@ -7556,6 +7558,8 @@ public class ProtocolService {
 		protocolImage = protocolImageRepository.insert(protocolImage);
 
 		map.put("extension", "." + objimg.getExtension());
+		map.put("filename", filename);
+		map.put("name", filename);
 		map.put("link", originurl + "/protocol/downloadprotocolimagesql/" + protocolImage.getFileid() + "/" + filename
 				+ "/" + objimg.getExtension());
 

@@ -1665,5 +1665,5 @@ BEGIN
     END IF;
 END $$;
 
-
 update lsusergrouprights set screate = '1', sedit = '1' where modulename = 'IDS_MDL_INVENTORY' and screenname = 'IDS_SCN_MATERIALTYPEPARAMS' and displaytopic = 'IDS_SCN_MATERIALTYPEPARAMS' and usergroupid_usergroupcode = 1;
+ALTER TABLE IF Exists lsusermaster ADD Column IF NOT EXISTS forgetstatus INTEGER;

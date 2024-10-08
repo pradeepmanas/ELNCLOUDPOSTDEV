@@ -3262,7 +3262,7 @@ public class InstrumentService {
 
 		if (objupdatedorder.getLockeduser() != null) {
 
-			if (objupdatedorder.getFiletype() != 1 && !objupdatedorder.getOrderflag().trim().equalsIgnoreCase("R")
+			if (objupdatedorder.getFiletype() != 1 && objupdatedorder.getFiletype()!=0 && !objupdatedorder.getOrderflag().trim().equalsIgnoreCase("R")
 					&& objupdatedorder.getAssignedto() == null
 					&& objupdatedorder.getLockeduser().equals(objorder.getObjLoggeduser().getUsercode())) {
 
@@ -3270,7 +3270,7 @@ public class InstrumentService {
 				objupdatedorder.getResponse().setStatus(false);
 
 				return objupdatedorder;
-			} else if (!objorder.getIsmultitenant().equals(2)) {
+			} else if (!objorder.getIsmultitenant().equals(2) && objupdatedorder.getFiletype()!=0) {
 				LSuserMaster user = new LSuserMaster();
 				user.setUsercode(objupdatedorder.getLockeduser());
 				List<LSactiveUser> LSactiveUsr = lSactiveUserRepository.findByLsusermaster(user);
@@ -5140,11 +5140,11 @@ public class InstrumentService {
 		for (LSfile lSfile : lSfiles) {
 			List<LSlogilablimsorderdetail> lstorder = new ArrayList<>();
 
-//			if ("administrator".equalsIgnoreCase(lsusMaster.getUsername().trim())) {
-//				lstorder = lslogilablimsorderdetailRepository
-//						.findByFiletypeAndLsfileAndApprovelstatusNotAndOrdercancellIsNullOrFiletypeAndLsfileAndApprovelstatusIsNullAndOrdercancellIsNullOrderByBatchcodeDesc(
-//								filetype, lSfile, 3, filetype, lSfile);
-//			} else {
+			if ("administrator".equalsIgnoreCase(lsusMaster.getUsername().trim())) {
+				lstorder = lslogilablimsorderdetailRepository
+						.findByFiletypeAndLsfileAndApprovelstatusNotAndOrdercancellIsNullOrFiletypeAndLsfileAndApprovelstatusIsNullAndOrdercancellIsNullOrderByBatchcodeDesc(
+								filetype, lSfile, 3, filetype, lSfile);
+			} else {
 				List<LSuserteammapping> lstteammap = lsuserteammappingRepository.findBylsuserMaster(lsusMaster);
 				List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(lstteammap,
 						lsusMaster.getLssitemaster());
@@ -5193,7 +5193,7 @@ public class InstrumentService {
 
 				lstorderlimsobj.addAll(lstorder);
 				lstallorders.addAll(lstorderlimsobj);
-//			}
+			}
 			lstallorders.addAll(lstorder);
 		}
 
@@ -10729,13 +10729,14 @@ public class InstrumentService {
 			logiobj.get(0).setRepeat(false);
 			logiobj.get(0).setCanuserprocess(true);
 			lsautoregisterrepo.save(autoobj);
+			String timerId = autoobj.get(0).getTimerIdname();
+			if (timerId != null) {
+				stopTimer(timerId);
+
+			}
 		}
 		lslogilablimsorderdetailRepository.save(logiobj);
-		String timerId = autoobj.get(0).getTimerIdname();
-		if (timerId != null) {
-			stopTimer(timerId);
-
-		}
+		
 		return logiobj.get(0);
 	}
 

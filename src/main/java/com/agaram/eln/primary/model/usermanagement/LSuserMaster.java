@@ -119,6 +119,16 @@ public class LSuserMaster {
 	private Integer verificationcode;
 	private Integer isadsuser = 0;
 
+	private Integer forgetstatus;
+
+	public Integer getForgetstatus() {
+		return forgetstatus;
+	}
+
+	public void setForgetstatus(Integer forgetstatus) {
+		this.forgetstatus = forgetstatus;
+	}
+	
 	public Integer getIsadsuser() {
 		return isadsuser;
 	}
