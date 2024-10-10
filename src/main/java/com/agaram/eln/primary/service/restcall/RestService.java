@@ -1201,12 +1201,12 @@ public class RestService {
 		
 		String result = "";
 		
-		String getInst=sdmsService("basemaster/getInstrumentList");
+		String getInst=sdmsService("IntegrationSDMS/getInstrumentList");
 		Map<String, Object> mapInstObj = mapper.readValue(getInst,new TypeReference<Map<String, Object>>() {});
 		List<LsMappedInstruments> instrumentLst = mapper.convertValue(mapInstObj.get("InstrumentList"),new TypeReference<List<LsMappedInstruments>>() {});
 //		List<LsMappedInstruments> instrumentLst = (List<LsMappedInstruments>) new ObjectMapper().readValue(getInst, Map.class).get("InstrumentList");
 		
-		String getFields=sdmsService("ftpviewdata/getMasterFieldsByMethod");
+		String getFields=sdmsService("IntegrationSDMS/getMasterFieldsByMethod");
 		List<LsMappedFields> fieldsLst = (List<LsMappedFields>) new ObjectMapper().readValue(getFields, new TypeReference<List<LsMappedFields>>() {});
 //		List<LsMappedFields> mapParam = mapper.readValue(getFields,new TypeReference<List<LsMappedFields>>() {});
 	    

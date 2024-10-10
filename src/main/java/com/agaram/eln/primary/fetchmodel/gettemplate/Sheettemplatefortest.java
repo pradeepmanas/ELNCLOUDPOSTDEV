@@ -11,24 +11,14 @@ public class Sheettemplatefortest {
 	private List<LSfiletest> lstest;
 	private Date createddate;
 	private Integer tagsheet;
-	private Date modifieddate;
 
 	public Sheettemplatefortest(Integer filecode, String filenameuser, Date createddate, List<LSfiletest> lstest,
-			Integer tagsheet,Date modifieddate) {
+			Integer tagsheet) {
 		this.filecode = filecode;
 		this.filenameuser = filenameuser;
 		this.lstest = lstest;
 		this.createddate = createddate;
 		this.tagsheet = tagsheet;
-		this.modifieddate=modifieddate;
-	}
-
-	public Date getModifieddate() {
-		return modifieddate;
-	}
-
-	public void setModifieddate(Date modifieddate) {
-		this.modifieddate = modifieddate;
 	}
 
 	public Integer getTagsheet() {
