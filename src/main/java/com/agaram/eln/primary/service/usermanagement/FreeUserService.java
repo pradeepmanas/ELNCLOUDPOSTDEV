@@ -9,8 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import javax.mail.MessagingException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -199,8 +197,8 @@ public class FreeUserService {
 	@SuppressWarnings("unchecked")
 	public LSuserMaster Createuser( LSuserMaster objuser) throws Exception {
 
-		Long usercount = lsuserMasterRepository.countByUsernameIgnoreCaseAndSubcodeAndEmailidIgnoreCase(
-				objuser.getUsername(), objuser.getSubcode(),objuser.getEmailid());
+		Long usercount = lsuserMasterRepository.countByUsernameIgnoreCaseAndAutenticatefromAndSubcode(
+				objuser.getUsername(), objuser.getAutenticatefrom(), objuser.getSubcode());
 		if (usercount <= 0) {
 			if (objuser.getLssitemaster() != null) {
 				Calendar current = Calendar.getInstance();
@@ -1036,7 +1034,7 @@ public class FreeUserService {
 	public Usermaster Validateuser(LSuserMaster objuser) throws Exception {
 		 Usermaster validuser = objuser.getUsername().equalsIgnoreCase("Administrator") ? 
 				 lsuserMasterRepository.findTop1ByUsernameIgnoreCase(objuser.getUsername())
-				: lsuserMasterRepository.findTop1ByUsernameIgnoreCase(objuser.getUsername());
+				: lsuserMasterRepository.findTop1ByUsernameIgnoreCaseAndAutenticatefrom(objuser.getUsername(),objuser.getAutenticatefrom());
 		 return validuser!= null ?validuser:new Usermaster(null,null,null,null,null);
 	}
 	
@@ -1146,62 +1144,5 @@ public class FreeUserService {
 		}
 		objstart.put("getactive", objuserstart);
 		return objstart;
-	}
-	
-	public LSuserMaster getValidateEmail(LSuserMaster objuser) {
-		LSuserMaster validuser = null;
-		Response objResponse = new Response();
-		if(objuser != null && objuser.getPasswordstatus() != null  && objuser.getPasswordstatus() == 1 && objuser.getEmailid() != null && objuser.getEmailid() != "" ) {			
-			String emailid = objuser.getEmailid().trim();
-			validuser = lsuserMasterRepository.findTop1ByEmailid(emailid);
-			Integer usercode = validuser.getUsercode();		
-			// update password status
-			if(objuser.getForgetstatus() == 1 && validuser.getForgetstatus() == 0) {
-				lsuserMasterRepository.UpdateForgetPassword(1,usercode);
-			}	
-			return objuser;
-		}
-		if(objuser.getEmailid() != null) {			
-			String emailid = objuser.getEmailid().trim();
-			if(objuser.getForgetstatus() != null && objuser.getForgetstatus() == 0) {
-				validuser = lsuserMasterRepository.findTop1ByEmailidAndAutenticatefrom(emailid,0);		
-			}else {
-				validuser = lsuserMasterRepository.findTop1ByEmailid(emailid);	
-			}			
-				if(validuser != null) {				
-				objResponse.setStatus(true);
-				objResponse.setInformation("User present");				
-			}else {
-				objResponse.setStatus(false);
-				objResponse.setInformation("Invalid Email ID");	
-			}
-			objuser.setObjResponse(objResponse);
-			}
-		
-		return objuser; 
-	}
-
-	public LSuserMaster Sentotpmail(LSuserMaster objuser) {
-		LSuserMaster usermaster = null;		
-		Response objResponse = new Response();
-		String emailid = objuser.getEmailid().trim();
-		usermaster = lsuserMasterRepository.findTop1ByEmailid(emailid);		
-		usermaster.setIsmultitenant(2);
-		//usermaster.setPasswordstatus(1);
-		objResponse.setStatus(true);
-		objResponse.setInformation("Forget password");	
-		usermaster.setObjResponse(objResponse);
-		usermaster.setUserloginlink(objuser.getUserloginlink());
-		
-		try {
-			userService.Usersendpasswormail(usermaster);
-		} catch (MessagingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}		
-			objResponse.setStatus(true);
-			objResponse.setInformation("EMail sent");				
-			objuser.setObjResponse(objResponse);
-		return objuser;
 	}
 }

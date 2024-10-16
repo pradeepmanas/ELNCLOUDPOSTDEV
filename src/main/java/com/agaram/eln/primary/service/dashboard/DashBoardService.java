@@ -48,7 +48,6 @@ import com.agaram.eln.primary.model.sheetManipulation.LSsamplemaster;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflowgroupmapping;
 import com.agaram.eln.primary.model.usermanagement.LSMultiusergroup;
-import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.model.usermanagement.LSusersteam;
@@ -60,6 +59,7 @@ import com.agaram.eln.primary.repository.instrumentDetails.LSSheetOrderStructure
 import com.agaram.eln.primary.repository.instrumentDetails.LSlogilablimsorderdetailRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSprotocolfolderfilesRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSsheetfolderfilesRepository;
+import com.agaram.eln.primary.repository.instrumentDetails.LogilablimsorderdetailsRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsordersharedbyRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsordersharetoRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsprotocolOrderStructureRepository;
@@ -87,6 +87,9 @@ import com.agaram.eln.primary.repository.usermanagement.LSuserteammappingReposit
 public class DashBoardService {
 	@Autowired
 	private LSlogilablimsorderdetailRepository lslogilablimsorderdetailRepository;
+	
+	@Autowired
+	private LogilablimsorderdetailsRepository LogilablimsorderdetailsRepository;
 	
 //	@Autowired
 //    private DataSourceConfigRepository configRepo;
@@ -749,19 +752,61 @@ public class DashBoardService {
 								.countByOrderflagAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndLsprojectmasterInAndOrdercancellIsNullAndAssignedtoIsNull(
 										"R", 3, objuser, fromdate, todate, 3, lstproject));
 
-						lstpending.addAndGet(lslogilablimsorderdetailRepository
-								.countByOrderflagAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndOrdercancellIsNullAndCreatedtimestampBetweenAndLsuserMasterInAndAssignedtoIsNullOrOrderflagAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullOrOrderflagAndAssignedtoAndCreatedtimestampBetweenOrderByBatchcodeDesc(
-										"N", 0, fromdate, todate, "N", 1, objuser, fromdate, todate, "N", 2, objuser,
-										fromdate, todate, "N", 3, fromdate, todate, objuser.getUsernotify(), "N",
-										objuser, objuser, fromdate, todate, "N", objuser, fromdate, todate));
+//						lstpending.addAndGet(lslogilablimsorderdetailRepository
+//								.countByOrderflagAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndOrdercancellIsNullAndCreatedtimestampBetweenAndLsuserMasterInAndAssignedtoIsNullOrOrderflagAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullOrOrderflagAndAssignedtoAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+//										"N", 0, fromdate, todate, "N", 1, objuser, fromdate, todate, "N", 2, objuser,
+//										fromdate, todate, "N", 3, fromdate, todate, objuser.getUsernotify(), "N",
+//										objuser, objuser, fromdate, todate, "N", objuser, fromdate, todate));
+						
+					    lstpending.addAndGet(LogilablimsorderdetailsRepository.countByOrderflagAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndApprovelstatusNotOrOrderflagAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndApprovelstatusIsNull(
+					    	    "N", 0, fromdate, todate, 3, "N", 0, fromdate, todate));
 
-						lstpending.addAndGet(lslogilablimsorderdetailRepository
-								.countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndOrdercancellIsNullAndAssignedtoIsNull(
-										"N", lstproject, fromdate, todate));
 
-						lstpending.addAndGet(lslogilablimsorderdetailRepository
-								.countByOrderflagAndLsprojectmasterInAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNull(
-										"N", lstproject, 3, objuser, fromdate, todate));
+					    	lstpending.addAndGet(LogilablimsorderdetailsRepository.countByOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullAndApprovelstatusNotOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullAndApprovelstatusIsNull(
+					    	    "N", 1, objuser, fromdate, todate, 3, "N", 1, objuser, fromdate, todate));
+
+
+					    	lstpending.addAndGet(LogilablimsorderdetailsRepository.countByOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullAndApprovelstatusNotOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullAndApprovelstatusIsNull(
+					    	    "N", 2, objuser, fromdate, todate, 3, "N", 2, objuser, fromdate, todate));
+
+
+					    	lstpending.addAndGet(LogilablimsorderdetailsRepository.countByOrderflagAndLsprojectmasterIsNullAndViewoptionAndOrdercancellIsNullAndCreatedtimestampBetweenAndLsuserMasterInAndAssignedtoIsNullAndApprovelstatusNotOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndOrdercancellIsNullAndCreatedtimestampBetweenAndLsuserMasterInAndAssignedtoIsNullAndApprovelstatusIsNull(
+					    	    "N", 3, fromdate, todate, objuser.getUsernotify(), 3, "N", 3, fromdate, todate, objuser.getUsernotify()));
+
+
+					    	lstpending.addAndGet(LogilablimsorderdetailsRepository.countByOrderflagAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndApprovelstatusNotOrOrderflagAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndApprovelstatusIsNull(
+					    	    "N", objuser, objuser, fromdate, todate, 3, "N", objuser, objuser, fromdate, todate));
+
+
+					    	lstpending.addAndGet(LogilablimsorderdetailsRepository.countByOrderflagAndAssignedtoAndCreatedtimestampBetweenAndApprovelstatusNotOrOrderflagAndAssignedtoAndCreatedtimestampBetweenAndApprovelstatusIsNull(
+					    	    "N", objuser, fromdate, todate, 3, "N", objuser, fromdate, todate));
+						
+					    	lstpending.addAndGet(LogilablimsorderdetailsRepository
+					    		    .countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndOrdercancellIsNullAndAssignedtoIsNullAndApprovelstatusNotOrOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndOrdercancellIsNullAndAssignedtoIsNullAndApprovelstatusIsNull(
+					    		        "N", lstproject, fromdate, todate, 3, "N", lstproject, fromdate, todate)); 
+
+					    		lstpending.addAndGet(LogilablimsorderdetailsRepository
+					    		    .countByOrderflagAndLsprojectmasterInAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullAndApprovelstatusNotOrOrderflagAndLsprojectmasterInAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullAndApprovelstatusIsNull(
+					    		        "N", lstproject, 3, objuser, fromdate, todate, 3, "N", lstproject, 3, objuser, fromdate, todate));
+
+//						lstpending.addAndGet(LogilablimsorderdetailsRepository
+//							    .countByOrderflagAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndApprovelstatusNotOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullAndApprovelstatusNotOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullAndApprovelstatusNotOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndOrdercancellIsNullAndCreatedtimestampBetweenAndLsuserMasterInAndAssignedtoIsNullAndApprovelstatusNotOrOrderflagAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndApprovelstatusNotOrOrderflagAndAssignedtoAndCreatedtimestampBetweenAndApprovelstatusNotOrderByBatchcodeDesc(
+//							        "N", 0, fromdate, todate, 3,
+//							        "N", 1, objuser, fromdate, todate, 3,
+//							        "N", 2, objuser,
+//							        fromdate, todate, 3,
+//							        "N", 3, fromdate, todate, objuser.getUsernotify(), 3,
+//							         "N",
+//							        objuser, objuser, fromdate, todate, 3,
+//							        "N", objuser, fromdate, todate, 3));
+//
+//						lstpending.addAndGet(LogilablimsorderdetailsRepository
+//								.countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndOrdercancellIsNullAndAssignedtoIsNullAndApprovelstatusNot(
+//										"N", lstproject, fromdate, todate,3));
+//
+//						lstpending.addAndGet(LogilablimsorderdetailsRepository
+//								.countByOrderflagAndLsprojectmasterInAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullAndApprovelstatusNot(
+//										"N", lstproject, 3, objuser, fromdate, todate,3));
 
 						lstRejected.addAndGet(lslogilablimsorderdetailRepository
 								.countByLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndLsprojectmasterIsNullAndAssignedtoIsNullOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndApprovelstatusOrAssignedtoAndCreatedtimestampBetweenAndApprovelstatus(
@@ -1905,7 +1950,7 @@ public class DashBoardService {
 					lstordersdem = lslogilablimsorderdetailRepository.getLSlogilablimsorderdetaildashboardforpending(
 							"N", 0, fromdate, todate, objuser, 1, 2, 3, objuser.getUsernotify(),
 							objuser.getLssitemaster(), objuser.getPagesize() * objuser.getPageperorder(),
-							objuser.getPageperorder());
+							objuser.getPageperorder(),3);
 
 //					count = count + lslogilablimsorderdetailRepository
 //							.countByOrderflagAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndOrdercancellIsNullAndCreatedtimestampBetweenAndLsuserMasterInAndAssignedtoIsNullOrOrderflagAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullOrOrderflagAndAssignedtoAndCreatedtimestampBetweenOrderByBatchcodeDesc(

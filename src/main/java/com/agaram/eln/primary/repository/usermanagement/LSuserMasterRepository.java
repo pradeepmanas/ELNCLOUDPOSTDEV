@@ -69,12 +69,7 @@ public interface LSuserMasterRepository extends JpaRepository<LSuserMaster, Inte
 	@Modifying
 	@Query("update LSuserMaster u set u.password = ?1,u.passwordstatus = ?2 where u.usercode = ?3")
 	void setpasswordandpasswordstatusByusercode(String password, Integer integer, Integer usercode);
-	
-	@Transactional
-	@Modifying
-	@Query("update LSuserMaster u set u.password = ?1,u.passwordstatus = ?2,u.forgetstatus = 0 where u.usercode = ?3")
-	void setpasswordandpasswordstatusandforgetstatusByusercode(String password, Integer integer, Integer usercode);
-	
+
 	public List<LSuserMaster> findByLssitemasterAndUsercodeNotInAndUserstatusAndUserretirestatusAndUnifieduseridNotNullOrderByUsercodeDesc(
 			LSSiteMaster lssitemaster, List<Integer> usercode, String string, Integer userretirestatus);
 
@@ -207,16 +202,4 @@ public interface LSuserMasterRepository extends JpaRepository<LSuserMaster, Inte
 	public LSuserMaster findByUsercodeAndGetstart(Integer usercode, String string);
 
 	public List<LSuserMaster> findByUsercodeIn(List<Integer> usercode);
-
-	public LSuserMaster findTop1ByEmailid(String emailid);
-
-	@Transactional
-	@Modifying
-	@Query(value = "update LSuserMaster set passwordstatus = ?1, forgetstatus = 1 where usercode = ?2" ,nativeQuery = true)
-	public void UpdateForgetPassword(int i, Integer usercode);
-
-	public Long countByUsernameIgnoreCaseAndSubcodeAndEmailidIgnoreCase(String username, String subcode,
-			String emailid);
-
-	public LSuserMaster findTop1ByEmailidAndAutenticatefrom(String emailid, int i);
 }

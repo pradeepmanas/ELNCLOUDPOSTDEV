@@ -228,10 +228,9 @@ public class Converter extends AbstractHttpMessageConverter<Object> {
 				    "/DashBoardDemo/Getdashboardordercount",
 	                "/DashBoardDemo/Getdashboardorders","/documenteditor/api/wordeditor/Import","/smartdevice/Getdata"
 	                ,"/documenteditor/Import","/documenteditor/api/wordeditor/RestrictEditing","/Instrument/uploadfilessheetfolder"
-	                ,"/Instrument/uploadfilesprotocolfolder"
-	          
-//				"/protocol/Uploadprotocolimageondrag"
-,"/Barcode/Getbarcodefileoncode","/Barcode/GetbarcodefilecodeonOrderscreen","/Barcode/handleBarcode"
+	                ,"/Instrument/uploadfilesprotocolfolder","/Barcode/Getbarcodefileoncode","/Barcode/GetbarcodefilecodeonOrderscreen"
+	                ,"/Barcode/handleBarcode","/iotconnect/getInstcategory","/iotconnect/getInstruments"
+
 		);
 		
 		Integer secondindex = StringUtils.ordinalIndexOf(requestUrl, "/", 3);

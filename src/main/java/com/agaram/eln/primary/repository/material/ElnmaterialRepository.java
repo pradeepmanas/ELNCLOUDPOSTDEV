@@ -62,4 +62,7 @@ public interface ElnmaterialRepository extends JpaRepository<Elnmaterial, Intege
 	@Query(value = "select * from elnmaterial where smaterialname = ?1 and nsitecode = ?2",nativeQuery = true)
 	Elnmaterial getMaterialDetails(String material_name, Number sitecode);
 
+	Elnmaterial findByNsitecodeAndSmaterialnameIgnoreCaseAndMaterialcategory(Integer nsitecode, String smaterialname,
+			MaterialCategory materialcategory);
+
 }
