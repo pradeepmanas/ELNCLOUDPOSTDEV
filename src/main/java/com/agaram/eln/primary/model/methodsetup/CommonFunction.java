@@ -615,7 +615,7 @@ public class CommonFunction {
 					 System.out.println("getdatablock-outputList:"+outputList);
 					
 				 }else if (delimiter.equalsIgnoreCase(",")) {        //adding Empty string due to trailing comma used only for comma delimiter
-					    String[] str = data.split(delimiter , -1);
+					    String[] str = trimmedData.split(delimiter , -1);
 						System.out.println("getdatablock-str:"+str);
 						outputList.add(Arrays.asList(str));	 
 				 }
@@ -626,11 +626,7 @@ public class CommonFunction {
 					System.out.println("getdatablock-str:"+str);
 					outputList.add(Arrays.asList(str));	 
 				 }
-				 
-				 
-				
 			 }	
-			 
 		   }
 		 }
 		 System.out.println("getdatablock-outputList:"+outputList);
