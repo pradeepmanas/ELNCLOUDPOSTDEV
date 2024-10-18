@@ -732,7 +732,7 @@ public class FileService {
 
 		if (lstfiles != null && lstfiles.size() > 0) {
 			listfiles = lstfiles.stream().map(lsfile -> new Sheettemplatefortest(lsfile.getFilecode(),
-					lsfile.getFilenameuser(), lsfile.getCreatedate(), lsfile.getLstest(),lsfile.getTagsheet(),lsfile.getModifieddate())).collect(Collectors.toList());
+					lsfile.getFilenameuser(), lsfile.getCreatedate(), lsfile.getLstest(),lsfile.getTagsheet())).collect(Collectors.toList());
 		}
 
 		mapOrders.put("sheets", listfiles);
@@ -802,7 +802,7 @@ public class FileService {
 		return response;
 	}
 
-	public LSfile updateworkflowforFile(LSfile objfile) throws ParseException {
+	public LSfile updateworkflowforFile(LSfile objfile) {
 
 		LSfile objcurrentfile = lSfileRepository.findByfilecode(objfile.getFilecode());
 
@@ -821,7 +821,7 @@ public class FileService {
 		}
 		lssheetworkflowhistoryRepository.save(objfile.getLssheetworkflowhistory());
 		lSfileRepository.updateFileWorkflow(objfile.getLssheetworkflow(), objfile.getApproved(), objfile.getRejected(),
-				objfile.getFilecode(),commonfunction.getCurrentUtcTime());
+				objfile.getFilecode());
 
 		if (objfile.getLssheetworkflowhistory().get(objfile.getLssheetworkflowhistory().size() - 1)
 				.getObjsilentaudit() != null) {

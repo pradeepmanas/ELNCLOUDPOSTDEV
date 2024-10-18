@@ -111,7 +111,8 @@ public class ParserFieldService {
 			
 			if(lstparserblock != null)
 			{
-				lstparserfield = parserFieldRepo.findByParserblockInAndStatus(lstparserblock, 1);
+				//lstparserfield = parserFieldRepo.findByParserblockInAndStatus(lstparserblock, 1);
+				lstparserfield = parserFieldRepo.findByParserblockInAndStatusOrderByParserfieldkeyAsc(lstparserblock, 1);
 			}
 		}
 		return new ResponseEntity<>(lstparserfield, HttpStatus.OK); 

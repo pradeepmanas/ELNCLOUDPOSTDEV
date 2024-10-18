@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.OptionalInt;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -4188,71 +4189,53 @@ public class InstrumentService {
 	}
 
 	public LSlogilablimsorderdetail SheetChangeForLimsOrder(LSlogilablimsorderdetail objorder) throws IOException {
-		List<LSlogilablimsorder> lstorder = lslogilablimsorderRepository.findBybatchid(objorder.getBatchid());
+		List<LSlogilablimsorder> lstorder = lslogilablimsorderRepository.findByBatchidOrderByOrderidDesc(objorder.getBatchid());
 		List<Lsbatchdetails> lstbatch = LsbatchdetailsRepository.findByBatchcode(objorder.getBatchcode());
 
-		if (!LSfilemethodRepository.findByFilecodeOrderByFilemethodcode(objorder.getLsfile().getFilecode()).isEmpty()) {
-			objorder.setInstrumentcode(LSfilemethodRepository
-					.findByFilecodeOrderByFilemethodcode(objorder.getLsfile().getFilecode()).get(0).getInstrumentid());
-			objorder.setMethodcode(LSfilemethodRepository
-					.findByFilecodeOrderByFilemethodcode(objorder.getLsfile().getFilecode()).get(0).getMethodid());
-		} else {
-			objorder.setInstrumentcode(objorder.getMethodcode());
-			objorder.setMethodcode(objorder.getMethodcode());
-		}
+//		if (!LSfilemethodRepository.findByFilecodeOrderByFilemethodcode(objorder.getLsfile().getFilecode()).isEmpty()) {
+//			objorder.setInstrumentcode(LSfilemethodRepository
+//					.findByFilecodeOrderByFilemethodcode(objorder.getLsfile().getFilecode()).get(0).getInstrumentid());
+//			objorder.setMethodcode(LSfilemethodRepository
+//					.findByFilecodeOrderByFilemethodcode(objorder.getLsfile().getFilecode()).get(0).getMethodid());
+//		} else {
+//			objorder.setInstrumentcode(objorder.getMethodcode());
+//			objorder.setMethodcode(objorder.getMethodcode());
+//		}
 		objorder.getLsfile().setLsparameter(
 				lsFileparameterRepository.findByFilecodeOrderByFileparametercode(objorder.getLsfile().getFilecode()));
 
-		lslogilablimsorderRepository.delete(lstorder);
+//		lslogilablimsorderRepository.delete(lstorder);
 
 		List<LSlogilablimsorder> lsorder = new ArrayList<LSlogilablimsorder>();
-		String Limsorder = objorder.getBatchcode().toString();
+		Long Limsorder = lstorder.get(0).getOrderid();
 
 		if (objorder.getLsfile() != null) {
 			objorder.getLsfile().setLsmethods(
 					LSfilemethodRepository.findByFilecodeOrderByFilemethodcode(objorder.getLsfile().getFilecode()));
 			if (objorder.getLsfile().getLsmethods() != null && objorder.getLsfile().getLsmethods().size() > 0) {
-				int methodindex = 0;
+				int methodindex = 1;
 				for (LSfilemethod objmethod : objorder.getLsfile().getLsmethods()) {
-					LSlogilablimsorder objLimsOrder = new LSlogilablimsorder();
-					String order = "";
-					if (methodindex < 10) {
-						order = Limsorder.concat("0" + methodindex);
-					} else {
-						order = Limsorder.concat("" + methodindex);
+					OptionalInt methodExist = IntStream.range(0, lstorder.size())
+				            .filter(i -> lstorder.get(i).getInstrumentcode().equals(objmethod.getInstrumentid()) 
+				            		&& lstorder.get(i).getMethodcode().equals(objmethod.getMethodid()))
+				            .findFirst();
+					if (!methodExist.isPresent()) {
+						LSlogilablimsorder objLimsOrder = new LSlogilablimsorder();
+						objLimsOrder.setOrderid(Limsorder + methodindex);
+						objLimsOrder.setBatchid(objorder.getBatchid());
+						objLimsOrder.setMethodcode(objmethod.getMethodid());
+						objLimsOrder.setInstrumentcode(objmethod.getInstrumentid());
+						objLimsOrder.setTestcode(objorder.getTestcode() != null ? objorder.getTestcode().toString() : null);
+						objLimsOrder.setOrderflag("N");
+						objLimsOrder.setCreatedtimestamp(objorder.getCreatedtimestamp());
+	
+						lsorder.add(objLimsOrder);
+	
+						methodindex++;
 					}
-					objLimsOrder.setOrderid(Long.parseLong(order));
-					objLimsOrder.setBatchid(objorder.getBatchid());
-					objLimsOrder.setMethodcode(objmethod.getMethodid());
-					objLimsOrder.setInstrumentcode(objmethod.getInstrumentid());
-					objLimsOrder.setTestcode(objorder.getTestcode() != null ? objorder.getTestcode().toString() : null);
-					objLimsOrder.setOrderflag("N");
-					objLimsOrder.setCreatedtimestamp(objorder.getCreatedtimestamp());
-
-					lsorder.add(objLimsOrder);
-
-					methodindex++;
 				}
 
 				lslogilablimsorderRepository.save(lsorder);
-			} else {
-
-				LSlogilablimsorder objLimsOrder = new LSlogilablimsorder();
-				if (LSfilemethodRepository.findByFilecode(objorder.getLsfile().getFilecode()) != null) {
-					objLimsOrder.setMethodcode(
-							LSfilemethodRepository.findByFilecode(objorder.getLsfile().getFilecode()).getMethodid());
-					objLimsOrder.setInstrumentcode(LSfilemethodRepository
-							.findByFilecode(objorder.getLsfile().getFilecode()).getInstrumentid());
-				}
-				objLimsOrder.setOrderid(Long.parseLong(Limsorder.concat("00")));
-				objLimsOrder.setBatchid(objorder.getBatchid());
-				objLimsOrder.setTestcode(objorder.getTestcode() != null ? objorder.getTestcode().toString() : null);
-				objLimsOrder.setOrderflag("N");
-				objLimsOrder.setCreatedtimestamp(objorder.getCreatedtimestamp());
-
-				lslogilablimsorderRepository.save(objLimsOrder);
-				lsorder.add(objLimsOrder);
-
 			}
 		}
 

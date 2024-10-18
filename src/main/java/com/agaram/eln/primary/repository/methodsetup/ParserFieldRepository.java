@@ -75,5 +75,7 @@ public interface ParserFieldRepository extends JpaRepository<ParserField, Intege
 	
 	List<ParserField> getParserFieldByMethodKey(Integer methodkey);
 
+	List<ParserField> findByParserblockInAndStatusOrderByParserfieldkeyAsc(List<ParserBlock> lstparserblock, int i);
+
 
 }

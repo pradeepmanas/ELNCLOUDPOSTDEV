@@ -572,7 +572,7 @@ public class DesingerService {
 				.findBySitemasterAndViewoptionAndTemplatetypeAndCreatedbyInOrSitemasterAndViewoptionAndTemplatetypeAndCreatedbyOrSitemasterAndViewoptionAndTemplatetypeAndCreatedbyInOrderByTemplatecodeDesc(
 						objdir.getSitemaster(), 1, objdir.getTemplatetype(), objdir.getLstuserMaster(),
 						objdir.getSitemaster(), 2, objdir.getTemplatetype(), objdir.getCreatedby(),
-						objdir.getSitemaster(), 1, objdir.getTemplatetype(), objdir.getLstuserMaster());
+						objdir.getSitemaster(), 3, objdir.getTemplatetype(), objdir.getLstuserMaster());
 	}
 
 	public Reporttemplate updatereporttemplatemapping(Reporttemplate objdir) {

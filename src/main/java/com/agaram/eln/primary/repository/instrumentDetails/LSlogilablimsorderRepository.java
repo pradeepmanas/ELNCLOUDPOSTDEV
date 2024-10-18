@@ -15,4 +15,6 @@ public interface LSlogilablimsorderRepository extends JpaRepository<LSlogilablim
 	public LSlogilablimsorder findFirstByBatchidOrderByOrderidDesc(String batchid);
 	
 	public List<LSlogilablimsorder> findByorderflag(String orderflag);
+
+	public List<LSlogilablimsorder> findByBatchidOrderByOrderidDesc(String batchid);
 }

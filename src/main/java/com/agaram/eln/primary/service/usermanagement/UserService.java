@@ -808,7 +808,7 @@ public class UserService {
 			return map;
 		}
 		map.put("user", lsuserMasterRepository.findByUsernameNotAndLssitemaster("Administrator", objclass));
-		map.put("obj", lsusersteamRepository.findBylssitemasterOrderByTeamcodeDesc(objclass));
+		map.put("obj", lsusersteamRepository.findBylssitemaster(objclass));
 		return map;
 	}
 
