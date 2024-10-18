@@ -118,7 +118,7 @@ public class LSuserMaster {
 	private String profileimagename;
 	private Integer verificationcode;
 	private Integer isadsuser = 0;
-
+	
 	private Integer forgetstatus;
 
 	public Integer getForgetstatus() {

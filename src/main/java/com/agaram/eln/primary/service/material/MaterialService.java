@@ -1013,7 +1013,7 @@ public class MaterialService {
 	
 	public ResponseEntity<Object> createElnMaterial(Elnmaterial obj) throws ParseException, JsonProcessingException {
 		
-		Elnmaterial objElnmaterial = elnmaterialRepository.findByNsitecodeAndSmaterialnameAndMaterialcategory(
+		Elnmaterial objElnmaterial = elnmaterialRepository.findByNsitecodeAndSmaterialnameIgnoreCaseAndMaterialcategory(
 				obj.getNsitecode(),obj.getSmaterialname(),obj.getMaterialcategory());
 		
 		obj.setResponse(new Response());

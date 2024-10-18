@@ -400,7 +400,7 @@ public class LoginService {
 	public Map<String, Object> Login(LoggedUser objuser) {
 		Map<String, Object> obj = new HashMap<>();
 		LSuserMaster objExitinguser = new LSuserMaster();
-		String username = objuser.getsUsername();
+		String username = objuser.getsUsername();	
 		LSSiteMaster objsiteobj = lSSiteMasterRepository.findBysitecode(Integer.parseInt(objuser.getsSiteCode()));
 		List<LSMultisites> objformultisite = LSMultisitesRepositery.findByLssiteMaster(objsiteobj);
 		List<Integer> usercode = objformultisite.stream().map(LSMultisites::getUsercode).collect(Collectors.toList());
@@ -611,6 +611,9 @@ public class LoginService {
 					activeUser.setLssitemaster(tempobj[0]);
 					activeUser.setLsusermaster(objUser);
 					objUser.setLastloggedon(commonfunction.getCurrentUtcTime());
+					activeUser.setUsergroupcode(objuser.getLsusergroup().getUsergroupcode());
+					activeUser.setUsergroupname(objuser.getLsusergroup().getUsergroupname());
+				
 				} catch (ParseException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
