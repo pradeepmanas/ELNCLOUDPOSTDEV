@@ -3455,7 +3455,7 @@ public class ProtocolService {
 	        }
 	    }
 
-	public Map<String, Object> addProtocolOrder(LSlogilabprotocoldetail lSlogilabprotocoldetail) throws ParseException {
+	public Map<String, Object> addProtocolOrder(LSlogilabprotocoldetail lSlogilabprotocoldetail) throws ParseException, IOException {
 		Map<String, Object> mapObj = new HashMap<String, Object>();
 		String Content = "";
 		try {
@@ -3668,80 +3668,100 @@ public class ProtocolService {
 				} else {
 					LSprotocolmaster lsprotocolmasterobj = LSProtocolMasterRepositoryObj.findByprotocolmastercode(
 							lSlogilabprotocoldetail.getLsprotocolmaster().getProtocolmastercode());
-					if (lSlogilabprotocoldetail.getIsmultitenant() == 1
-							|| lSlogilabprotocoldetail.getIsmultitenant() == 2) {
-						if (lsprotocolmasterobj.getContainerstored() == null
-								&& lSlogilabprotocoldetail.getContent() != null
-								&& !lSlogilabprotocoldetail.getContent().isEmpty()) {
-							// Content = cloudSheetCreationRepository.findById((long)
-							// objorder.getLsfile().getFilecode())
-							// .getContent();
-							try {
-								JSONObject protocolJson = new JSONObject(lSlogilabprotocoldetail.getContent());
-								protocolJson.put("protocolname", lSlogilabprotocoldetail.getProtoclordername());
-								updateProtocolOrderContent(protocolJson.toString(), lSlogilabprotocoldetail,
-										lSlogilabprotocoldetail.getIsmultitenant());
-							} catch (IOException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
+					if(lsprotocolmasterobj.getApproved() == 0) {
+						List<LSprotocolversion> lstproversions = lsprotocolversionRepository.findByprotocolmastercodeOrderByVersionnoDesc(
+								lsprotocolmasterobj.getProtocolmastercode());
+						if (lSlogilabprotocoldetail.getIsmultitenant() == 1	|| lSlogilabprotocoldetail.getIsmultitenant() == 2) {
+							String tenant = TenantContext.getCurrentTenant();
+							if (lSlogilabprotocoldetail.getIsmultitenant() == 2) {
+								tenant = "freeusers";
 							}
+							Content = objCloudFileManipulationservice.retrieveCloudSheets(lstproversions.get(1).getFileuid(),
+									tenant + "protocolversion");
+//							Map<String, Object> objMap = objCloudFileManipulationservice
+//									.storecloudSheetsreturnwithpreUUID(content, tenant + "protocolversion");
+							JSONObject protocolJson = new JSONObject(Content);
+							protocolJson.put("protocolname", lSlogilabprotocoldetail.getProtoclordername());
+							updateProtocolOrderContent(protocolJson.toString(), lSlogilabprotocoldetail,
+									lSlogilabprotocoldetail.getIsmultitenant());
 						} else {
-							try {
-								Content = objCloudFileManipulationservice.retrieveCloudSheets(
-										lsprotocolmasterobj.getFileuid(),
-										commonfunction.getcontainername(lSlogilabprotocoldetail.getIsmultitenant(),
-												TenantContext.getCurrentTenant()) + "protocol");
-								JSONObject protocolJson = new JSONObject(Content);
-								protocolJson.put("protocolname", lSlogilabprotocoldetail.getProtoclordername());
-								updateProtocolOrderContent(protocolJson.toString(), lSlogilabprotocoldetail,
-										lSlogilabprotocoldetail.getIsmultitenant());
-							} catch (IOException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
+							GridFSDBFile largefile = gridFsTemplate.findOne(new Query(Criteria.where("filename").is("protocol_"
+									+ lsprotocolmasterobj.getProtocolmastercode() + "version_" + lstproversions.get(1).getVersionno())));
+							if (largefile != null) {
+								Content = new BufferedReader(
+										new InputStreamReader(largefile.getInputStream(), StandardCharsets.UTF_8)).lines()
+										.collect(Collectors.joining("\n"));
+							}
+
+							if (gridFsTemplate.findOne(new Query(Criteria.where("filename")
+									.is("protocolorder_" + lSlogilabprotocoldetail.getProtocolordercode()))) == null) {
+								try {
+									gridFsTemplate.store(new ByteArrayInputStream(Content.getBytes(StandardCharsets.UTF_8)),
+											"protocolorder_" + lSlogilabprotocoldetail.getProtocolordercode(),
+											StandardCharsets.UTF_16);
+								} catch (Exception e) {
+									System.out.println("error protocoldata lslogilabprotocoldetail content update mongodb"
+											+ lSlogilabprotocoldetail.getProtocolordercode());
+								}
 							}
 						}
 					} else {
-
-//						Lsprotocoltemplatedata lsprotocoltemplatedata = mongoTemplate
-//								.findById(lsprotocolmasterobj.getProtocolmastercode(), Lsprotocoltemplatedata.class);
-
-//						Lsprotocolorderdata lsprotocolorderdata = new Lsprotocolorderdata();
-//						if(lsprotocoltemplatedata == null) {
-//							JSONObject protocolJson = new JSONObject(lSlogilabprotocoldetail.getContent());
-//							lsprotocolorderdata.setContent(protocolJson.toString());	
-//						}else {
-//							lsprotocolorderdata.setContent(lsprotocoltemplatedata.getContent());
-//						}	
-//						lsprotocolorderdata.setId(lSlogilabprotocoldetail.getProtocolordercode());
-//						mongoTemplate.insert(lsprotocolorderdata);
-
-//						if(lsprotocoltemplatedata == null) {
-//						}else {
-//						byte[] bytes = lsprotocoltemplatedata.getContent().getBytes(StandardCharsets.UTF_16);
-//						Content = new String(bytes, StandardCharsets.UTF_16);
-//					}
-						GridFSDBFile data = gridFsTemplate.findOne(new Query(Criteria.where("filename")
-								.is("protocol_" + lsprotocolmasterobj.getProtocolmastercode())));
-						if (data == null && lSlogilabprotocoldetail.getContent() != null
-								&& !lSlogilabprotocoldetail.getContent().isEmpty()) {
-							JSONObject protocolJson = new JSONObject(lSlogilabprotocoldetail.getContent());
-							protocolJson.put("protocolname", lSlogilabprotocoldetail.getProtoclordername());
-							Content = protocolJson.toString();
+						if (lSlogilabprotocoldetail.getIsmultitenant() == 1
+								|| lSlogilabprotocoldetail.getIsmultitenant() == 2) {
+							if (lsprotocolmasterobj.getContainerstored() == null
+									&& lSlogilabprotocoldetail.getContent() != null
+									&& !lSlogilabprotocoldetail.getContent().isEmpty()) {
+								// Content = cloudSheetCreationRepository.findById((long)
+								// objorder.getLsfile().getFilecode())
+								// .getContent();
+								try {
+									JSONObject protocolJson = new JSONObject(lSlogilabprotocoldetail.getContent());
+									protocolJson.put("protocolname", lSlogilabprotocoldetail.getProtoclordername());
+									updateProtocolOrderContent(protocolJson.toString(), lSlogilabprotocoldetail,
+											lSlogilabprotocoldetail.getIsmultitenant());
+								} catch (IOException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+							} else {
+								try {
+									Content = objCloudFileManipulationservice.retrieveCloudSheets(
+											lsprotocolmasterobj.getFileuid(),
+											commonfunction.getcontainername(lSlogilabprotocoldetail.getIsmultitenant(),
+													TenantContext.getCurrentTenant()) + "protocol");
+									JSONObject protocolJson = new JSONObject(Content);
+									protocolJson.put("protocolname", lSlogilabprotocoldetail.getProtoclordername());
+									updateProtocolOrderContent(protocolJson.toString(), lSlogilabprotocoldetail,
+											lSlogilabprotocoldetail.getIsmultitenant());
+								} catch (IOException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+							}
 						} else {
-							Content = new BufferedReader(
-									new InputStreamReader(data.getInputStream(), StandardCharsets.UTF_8)).lines()
-									.collect(Collectors.joining("\n"));
-						}
-
-						if (gridFsTemplate.findOne(new Query(Criteria.where("filename")
-								.is("protocolorder_" + lSlogilabprotocoldetail.getProtocolordercode()))) == null) {
-							try {
-								gridFsTemplate.store(new ByteArrayInputStream(Content.getBytes(StandardCharsets.UTF_8)),
-										"protocolorder_" + lSlogilabprotocoldetail.getProtocolordercode(),
-										StandardCharsets.UTF_16);
-							} catch (Exception e) {
-								System.out.println("error protocoldata lslogilabprotocoldetail content update mongodb"
-										+ lSlogilabprotocoldetail.getProtocolordercode());
+							GridFSDBFile data = gridFsTemplate.findOne(new Query(Criteria.where("filename")
+									.is("protocol_" + lsprotocolmasterobj.getProtocolmastercode())));
+							if (data == null && lSlogilabprotocoldetail.getContent() != null
+									&& !lSlogilabprotocoldetail.getContent().isEmpty()) {
+								JSONObject protocolJson = new JSONObject(lSlogilabprotocoldetail.getContent());
+								protocolJson.put("protocolname", lSlogilabprotocoldetail.getProtoclordername());
+								Content = protocolJson.toString();
+							} else {
+								Content = new BufferedReader(
+										new InputStreamReader(data.getInputStream(), StandardCharsets.UTF_8)).lines()
+										.collect(Collectors.joining("\n"));
+							}
+	
+							if (gridFsTemplate.findOne(new Query(Criteria.where("filename")
+									.is("protocolorder_" + lSlogilabprotocoldetail.getProtocolordercode()))) == null) {
+								try {
+									gridFsTemplate.store(new ByteArrayInputStream(Content.getBytes(StandardCharsets.UTF_8)),
+											"protocolorder_" + lSlogilabprotocoldetail.getProtocolordercode(),
+											StandardCharsets.UTF_16);
+								} catch (Exception e) {
+									System.out.println("error protocoldata lslogilabprotocoldetail content update mongodb"
+											+ lSlogilabprotocoldetail.getProtocolordercode());
+								}
 							}
 						}
 					}
@@ -7500,19 +7520,16 @@ public class ProtocolService {
 				lstteammap = lstteamuser.stream().map(LSuserMaster::getUsercode).collect(Collectors.toList());
 			} else {
 				lstteammap.add(objtest.getObjLoggeduser().getUsercode());
-//				lsfiles = LSProtocolMasterRepositoryObj
-//						.findByLstestInAndStatusAndCreatedbyInAndViewoptionAndRetirestatusAndApprovedOrLstestInAndStatusAndCreatedbyAndViewoptionAndRetirestatusAndApprovedOrLstestInAndStatusAndCreatedbyInAndViewoptionAndRetirestatusAndApprovedOrderByProtocolmastercodeDesc(
-//								lsfiletest, 1, lstteammap, 1, 1, lsfiletest, 1, 0,
-//								objtest.getObjLoggeduser().getUsercode(), 2, 0, 1, lsfiletest, 1, lstteammap, 3, 0, 1);
-
 			}
-
+			
 			lsfiles = LSProtocolMasterRepositoryObj
-					.findByLstestInAndStatusAndCreatedbyInAndViewoptionAndRetirestatusAndApprovedOrLstestInAndStatusAndCreatedbyAndViewoptionAndRetirestatusAndApprovedOrLstestInAndStatusAndCreatedbyInAndViewoptionAndRetirestatusAndApprovedOrderByProtocolmastercodeDesc(
-							lsfiletest, 1, lstteammap, 1, 0, 1, lsfiletest, 1, objtest.getObjLoggeduser().getUsercode(),
-							2, 0, 1, lsfiletest, 1, lstteammap, 3, 0, 1);
-			// lsfiles = LSProtocolMasterRepositoryObj.findByLstestInAndStatus(lsfiletest,
-			// 1);
+					.findByCreatedbyInAndLstestInAndProtocolmastercodeGreaterThanAndRetirestatusAndViewoptionAndApprovedOrCreatedbyAndLstestInAndProtocolmastercodeGreaterThanAndRetirestatusAndViewoptionAndApprovedOrCreatedbyInAndLstestInAndProtocolmastercodeGreaterThanAndRetirestatusAndViewoptionAndApprovedOrderByProtocolmastercodeDesc(
+							lstteammap, lsfiletest, 1,0, 1, 1, objtest.getObjLoggeduser().getUsercode(), lsfiletest, 1, 0,2, 1,
+							lstteammap, lsfiletest, 1,0, 3, 1);
+			lsfiles.addAll(LSProtocolMasterRepositoryObj
+					.findByCreatedbyInAndLstestInAndProtocolmastercodeGreaterThanAndRetirestatusAndViewoptionAndApprovedAndVersionnoGreaterThanOrCreatedbyAndLstestInAndProtocolmastercodeGreaterThanAndRetirestatusAndViewoptionAndApprovedAndVersionnoGreaterThanOrCreatedbyInAndLstestInAndProtocolmastercodeGreaterThanAndRetirestatusAndViewoptionAndApprovedAndVersionnoGreaterThanOrderByProtocolmastercodeDesc(
+							lstteammap, lsfiletest, 1,0, 1, 0, 1, objtest.getObjLoggeduser().getUsercode(), lsfiletest, 1,0, 2, 0, 1,
+							lstteammap, lsfiletest, 1,0, 3, 0, 1));
 		}
 
 		return lsfiles;

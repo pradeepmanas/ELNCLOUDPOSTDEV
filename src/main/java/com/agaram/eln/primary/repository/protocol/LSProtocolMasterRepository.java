@@ -460,4 +460,13 @@ public interface LSProtocolMasterRepository extends JpaRepository<LSprotocolmast
 	@Query(value = "select retirestatus from lsprotocolmaster where protocolmastername = ?1", nativeQuery = true)
 	String getRetirestatus(String templatename);
 	
+	List<LSprotocolmaster> findByCreatedbyInAndLstestInAndProtocolmastercodeGreaterThanAndRetirestatusAndViewoptionAndApprovedOrCreatedbyAndLstestInAndProtocolmastercodeGreaterThanAndRetirestatusAndViewoptionAndApprovedOrCreatedbyInAndLstestInAndProtocolmastercodeGreaterThanAndRetirestatusAndViewoptionAndApprovedOrderByProtocolmastercodeDesc(
+			List<Integer> lstteamuser, List<LSprotocolmastertest> lsfiletest, int i, int j, int k, int l,
+			Integer objLoggeduser, List<LSprotocolmastertest> lsfiletest2, int m, int n, int o, int p,
+			List<Integer> lstteamuser2, List<LSprotocolmastertest> lsfiletest3, int q, int r, int s, int t);
+
+	List<LSprotocolmaster> findByCreatedbyInAndLstestInAndProtocolmastercodeGreaterThanAndRetirestatusAndViewoptionAndApprovedAndVersionnoGreaterThanOrCreatedbyAndLstestInAndProtocolmastercodeGreaterThanAndRetirestatusAndViewoptionAndApprovedAndVersionnoGreaterThanOrCreatedbyInAndLstestInAndProtocolmastercodeGreaterThanAndRetirestatusAndViewoptionAndApprovedAndVersionnoGreaterThanOrderByProtocolmastercodeDesc(
+			List<Integer> lstteamuser, List<LSprotocolmastertest> lsfiletest, int i, int j, int k, int l, int m,
+			Integer objLoggeduser, List<LSprotocolmastertest> lsfiletest2, int n, int o, int p, int q, int r,
+			List<Integer> lstteamuser2, List<LSprotocolmastertest> lsfiletest3, int s, int t, int u, int v, int w);
 }

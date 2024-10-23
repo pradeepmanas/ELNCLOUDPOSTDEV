@@ -7686,7 +7686,7 @@ public class InstrumentService {
 				.findByOrderflagAndAssignedtoAndLockeduserIsNotNullOrderByBatchcodeDesc("N", order.getLsuserMaster());
 	}
 
-	public List<LSlogilablimsorderdetail> GetLockedOrders(LSlogilablimsorderdetail objorder) {
+	public List<LogilabOrderDetails> GetLockedOrders(LSlogilablimsorderdetail objorder) {
 
 		if (objorder.getLsuserMaster().getUsername().equalsIgnoreCase("Administrator")) {
 			List<LSMultisites> obj = LSMultisitesRepositery
@@ -7696,7 +7696,7 @@ public class InstrumentService {
 					.findByOrderflagAndLockeduserIsNotNullAndLockeduserInAndAssignedtoIsNullOrderByBatchcodeDesc("N",
 							usercode);
 		} else {
-			List<LSlogilablimsorderdetail> lstorder = new ArrayList<LSlogilablimsorderdetail>();
+			List<LogilabOrderDetails> lstorder = new ArrayList<LogilabOrderDetails>();
 			List<Elnmaterial> nmaterialcode = elnmaterialRepository
 					.findByNsitecode(objorder.getLsuserMaster().getLssitemaster().getSitecode());
 			lstorder = lslogilablimsorderdetailRepository
@@ -7705,12 +7705,12 @@ public class InstrumentService {
 
 			int chunkSize = Integer.parseInt(env.getProperty("lssamplecount"));
 			int totalSamples = nmaterialcode.size();
-			List<LSlogilablimsorderdetail> lstorderobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize)
+			List<LogilabOrderDetails> lstorderobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize)
 					.parallel().mapToObj(i -> {
 						int startIndex = i * chunkSize;
 						int endIndex = Math.min(startIndex + chunkSize, totalSamples);
 						List<Elnmaterial> currentChunk = nmaterialcode.subList(startIndex, endIndex);
-						List<LSlogilablimsorderdetail> orderChunk = new ArrayList<>();
+						List<LogilabOrderDetails> orderChunk = new ArrayList<>();
 						orderChunk.addAll(lslogilablimsorderdetailRepository
 								.findByOrderflagAndLsprojectmasterIsNullAndElnmaterialInAndAssignedtoIsNullAndViewoptionAndLockeduserIsNotNull(
 										"N", currentChunk, 1));

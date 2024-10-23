@@ -993,7 +993,7 @@ public class InstrumentController {
 	}
 	
 	@PostMapping("/getLockedOrders")
-	private List<LSlogilablimsorderdetail> GetLockedOrders(@RequestBody LSlogilablimsorderdetail objorder) {
+	private List<LogilabOrderDetails> GetLockedOrders(@RequestBody LSlogilablimsorderdetail objorder) {
 		return instrumentService.GetLockedOrders(objorder);
 	}
 	
