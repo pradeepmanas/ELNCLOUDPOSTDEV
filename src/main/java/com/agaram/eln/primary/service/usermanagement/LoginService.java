@@ -586,6 +586,7 @@ public class LoginService {
 				objExitinguser.getObjResponse().setStatus(false);
 
 				obj.put("user", objExitinguser);
+				
 				return obj;
 			}
 
@@ -634,6 +635,8 @@ public class LoginService {
 		}
 		obj.put("user", objExitinguser);
 
+		LSpreferences IsRegulated = LSpreferencesRepository.findByTasksettingsAndValuesettings("RegulatedIndustry","1");
+		obj.put("IsRegulated", IsRegulated);
 		return obj;
 	}
 

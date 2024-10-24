@@ -54,7 +54,7 @@ public class LSSheetOrderStructure {
 	
 	private Boolean projectfolder;
 	
-	public Boolean isProjectfolder() {
+	public Boolean getProjectfolder() {
 		return projectfolder;
 	}
 

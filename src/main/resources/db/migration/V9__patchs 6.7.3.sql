@@ -1673,3 +1673,4 @@ update lsusergrouprights set screate = '1', sedit = '1' where modulename = 'IDS_
 ALTER TABLE IF Exists lsusermaster ADD Column IF NOT EXISTS forgetstatus INTEGER;
 
 ALTER TABLE IF EXISTS LsAutoregister ADD COLUMN IF NOT EXISTS delayinminutes bigint;
+insert into LSpreferences (serialno,tasksettings,valuesettings) values(6,'RegulatedIndustry','1') on conflict(serialno) do nothing;
