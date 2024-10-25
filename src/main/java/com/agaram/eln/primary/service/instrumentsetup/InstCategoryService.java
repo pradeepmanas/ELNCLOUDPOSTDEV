@@ -115,6 +115,16 @@ public class InstCategoryService {
 	public ResponseEntity<Object> updateInstCategory(final InstrumentCategory category, final boolean saveAuditTrial,
 			final String comments, final HttpServletRequest request) {
 
+		final Optional<InstrumentCategory> categoryByName = categoryRepo
+				.findByInstcatnameAndStatusAndLssitemaster(category.getInstcatname(), 1, category.getLssitemaster());
+		if (categoryByName.isPresent()) {
+			// Conflict =409 - Duplicate entry
+			return new ResponseEntity<>("Duplicate Entry - " + categoryByName.get().getInstcatname(),
+					HttpStatus.CONFLICT);
+//			return new ResponseEntity<>("Duplicate Entry", 
+// 					 HttpStatus.OK);
+		} 
+	else {
 		if (category.getInstcatkey() == 1) {
 			// statuscode =423
 			// Default Category cannot be deleted
@@ -123,8 +133,8 @@ public class InstCategoryService {
 			return new ResponseEntity<>(category,
 					HttpStatus.LOCKED);// status code - 423
 		} else {
-			final Optional<InstrumentCategory> categoryByName = categoryRepo
-					.findByInstcatnameAndStatus(category.getInstcatname(), 1);
+//			final Optional<InstrumentCategory> categoryByName = categoryRepo
+//					.findByInstcatnameAndStatus(category.getInstcatname(), 1);
 
 //			if (categoryByName.isPresent()) {
 //
@@ -148,7 +158,7 @@ public class InstCategoryService {
 				return new ResponseEntity<>(savedCategory, HttpStatus.OK);
 			//}
 		}
-
+	}
 	}
 
 	/**

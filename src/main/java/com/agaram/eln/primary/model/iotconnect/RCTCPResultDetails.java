@@ -18,6 +18,8 @@ import javax.persistence.Transient;
 import org.hibernate.validator.constraints.Range;
 
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
+import com.agaram.eln.primary.model.instrumentsetup.InstrumentMaster;
+import com.agaram.eln.primary.model.methodsetup.Method;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 
@@ -32,8 +34,8 @@ private static final long serialVersionUID = 1L;
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer resultid;
 	
-	@Column(name = "methodkey")
-	private Integer methodkey;	
+//	@Column(name = "methodkey")
+//	private Integer methodkey;	
 	
 	@Column(name = "parserfieldkey")
 	private Integer parserfieldkey;	
@@ -41,8 +43,8 @@ private static final long serialVersionUID = 1L;
 	@Column(name = "parserblockkey")
 	private Integer parserblockkey;
 	
-	@Column(name = "paramname")
-	private String paramname;
+	@Column(name = "fieldname")
+	private String fieldname;
 	
 	@Column(name = "seqnumber")
 	private Integer seqnumber;
@@ -50,8 +52,10 @@ private static final long serialVersionUID = 1L;
 	@Column(name = "results")
 	private String results;
 	
-	@Column(name = "instmastkey")
-	private Integer instmastkey;
+//	@Column(name = "instmastkey")
+//	private Integer instmastkey;
+	
+	
 	
 	@Range(min=-1, max=1)
 	@Column(name = "status")
@@ -68,6 +72,14 @@ private static final long serialVersionUID = 1L;
     @JoinColumn(name = "sitecode", nullable = false)
 	private LSSiteMaster site;
 	
+	@ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "methodkey", nullable = false)
+	private Method method;
+	
+	@ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "instmasterkey", nullable = false)
+	private InstrumentMaster instrument;
+	
 	@Transient
 	LScfttransaction objsilentaudit;
 	
@@ -81,14 +93,6 @@ private static final long serialVersionUID = 1L;
 
 	public void setResultid(Integer resultid) {
 		this.resultid = resultid;
-	}
-
-	public Integer getMethodkey() {
-		return methodkey;
-	}
-
-	public void setMethodkey(Integer methodkey) {
-		this.methodkey = methodkey;
 	}
 
 	public Integer getParserfieldkey() {
@@ -107,12 +111,12 @@ private static final long serialVersionUID = 1L;
 		this.parserblockkey = parserblockkey;
 	}
 
-	public String getParamname() {
-		return paramname;
+	public String getFieldname() {
+		return fieldname;
 	}
 
-	public void setParamname(String paramname) {
-		this.paramname = paramname;
+	public void setFieldname(String fieldname) {
+		this.fieldname = fieldname;
 	}
 
 	public Integer getSeqnumber() {
@@ -179,13 +183,21 @@ private static final long serialVersionUID = 1L;
 		RCTCPResultFieldValues = rCTCPResultFieldValues;
 	}
 
-	public Integer getInstmastkey() {
-		return instmastkey;
+	public Method getMethod() {
+		return method;
 	}
 
-	public void setInstmastkey(Integer instmastkey) {
-		this.instmastkey = instmastkey;
+	public void setMethod(Method method) {
+		this.method = method;
 	}
-	
+
+	public InstrumentMaster getInstrument() {
+		return instrument;
+	}
+
+	public void setInstrument(InstrumentMaster instrument) {
+		this.instrument = instrument;
+	}
+
 	
 }

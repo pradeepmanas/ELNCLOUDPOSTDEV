@@ -15,8 +15,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.agaram.eln.primary.config.TenantContext;
+import com.agaram.eln.primary.model.cfr.LSpreferences;
 import com.agaram.eln.primary.model.instrumentsetup.InstrumentCategory;
 import com.agaram.eln.primary.model.instrumentsetup.InstrumentMaster;
+import com.agaram.eln.primary.model.iotconnect.RCTCPResultDetails;
 import com.agaram.eln.primary.model.methodsetup.Method;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
@@ -71,5 +73,18 @@ public class IotconnectController {
 		System.out.println("parsedData:" +parsedData);
 
 		iotconnectservice.InsertRCTCPResultDetails(parsedData.getBody());
+	}
+	
+	
+	@RequestMapping(value = "/getiotresultdetails")
+	public  List<RCTCPResultDetails> getiotresultdetails(final HttpServletRequest request, @RequestBody RCTCPResultDetails rctcpResultDetails) throws Exception {
+
+		return iotconnectservice.getiotresultdetails(rctcpResultDetails);
+	}
+	
+	@RequestMapping("/getpreferencedata")
+	public LSpreferences getpreferencedata(@RequestBody Map<String, Object> mapObject){
+		return iotconnectservice.getpreferencedata(mapObject);
+		
 	}
 }

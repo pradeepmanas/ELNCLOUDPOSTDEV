@@ -46,6 +46,7 @@ public class LogilabOrdermastersh implements Comparable<LogilabOrdermastersh> {
 	private String aa;
 	private Integer arc;
 	private String mn;
+	private String loc;
 
 	public LogilabOrdermastersh(Long batchcode, String batchid, LSworkflow lsworkflow, String testname, LSfile lsfile,
 			LSsamplemaster lssamplemaster, LSprojectmaster lsprojectmaster, Integer filetype, String orderflag,
@@ -53,7 +54,7 @@ public class LogilabOrdermastersh implements Comparable<LogilabOrdermastersh> {
 			LStestmasterlocal lstestmasterlocal, Integer ordercancell, Integer viewoption, LSuserMaster lsuserMaster,
 			Integer testcode, Integer approvelstatus, LSOrdernotification lsordernotification, Integer ordersaved,
 			Boolean repeat, LsAutoregister lsautoregisterorders, Boolean sentforapprovel, String approvelaccept,
-			Integer autoregistercount, Elnmaterial elnmaterial) {
+			Integer autoregistercount, Elnmaterial elnmaterial, String lockedusername) {
 		this.bc = batchcode;
 		this.bi = batchid;
 		this.wc = lsworkflow != null ? lsworkflow.getWorkflowcode() : null;
@@ -67,8 +68,7 @@ public class LogilabOrdermastersh implements Comparable<LogilabOrdermastersh> {
 		this.ct = createdtimestamp;
 		this.cot = completedtimestamp;
 		this.kw = keyword;
-		this.lsw = lsworkflow != null
-				? new LSworkflow(lsworkflow.getWorkflowcode(), lsworkflow.getWorkflowname())
+		this.lsw = lsworkflow != null ? new LSworkflow(lsworkflow.getWorkflowcode(), lsworkflow.getWorkflowname())
 				: null;
 		this.oc = ordercancell;
 		this.at = assignedto;
@@ -84,7 +84,15 @@ public class LogilabOrdermastersh implements Comparable<LogilabOrdermastersh> {
 		this.aa = approvelaccept;
 		this.arc = autoregistercount;
 		this.mn = elnmaterial != null ? elnmaterial.getSmaterialname() : null;
+		this.loc = lockedusername;
+	}
 
+	public String getLoc() {
+		return loc;
+	}
+
+	public void setLoc(String loc) {
+		this.loc = loc;
 	}
 
 	public Long getBc() {
@@ -359,7 +367,7 @@ public class LogilabOrdermastersh implements Comparable<LogilabOrdermastersh> {
 	public void setMn(String mn) {
 		this.mn = mn;
 	}
-	
+
 	@Override
 	public int compareTo(LogilabOrdermastersh o) {
 		return this.getBc().compareTo(o.getBc());

@@ -17,8 +17,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.config.TenantContext;
+import com.agaram.eln.primary.model.cfr.LSpreferences;
 import com.agaram.eln.primary.model.instrumentsetup.InstrumentCategory;
 import com.agaram.eln.primary.model.instrumentsetup.InstrumentMaster;
+import com.agaram.eln.primary.model.instrumentsetup.InstrumentType;
+import com.agaram.eln.primary.model.methodsetup.Method;
 import com.agaram.eln.primary.model.methodsetup.MethodFieldTechnique;
 
 
@@ -29,11 +32,13 @@ import com.agaram.eln.primary.model.iotconnect.RCTCPResultDetails;
 //import com.agaram.eln.primary.model.methodsetup.RCTCPResultFieldValues;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
+import com.agaram.eln.primary.repository.cfr.LSpreferencesRepository;
 import com.agaram.eln.primary.repository.instrumentsetup.InstCategoryRepository;
 import com.agaram.eln.primary.repository.instrumentsetup.InstMasterRepository;
 import com.agaram.eln.primary.repository.iotconnect.RCTCPFileDetailsRepository;
 import com.agaram.eln.primary.repository.iotconnect.RCTCPResultDetailsRepository;
 import com.agaram.eln.primary.repository.iotconnect.RCTCPResultFieldValuesRepository;
+import com.agaram.eln.primary.repository.methodsetup.MethodRepository;
 import com.agaram.eln.primary.service.cloudFileManip.CloudFileManipulationservice;
 import com.agaram.eln.primary.service.fileManipulation.FileManipulationservice;
 import com.agaram.eln.primary.service.fileuploaddownload.FileStorageService;
@@ -45,7 +50,14 @@ public class IotconnectService {
 	InstMasterRepository masterRepo;
 	
 	@Autowired
+	MethodRepository methodRepo;
+	
+	
+	@Autowired
 	InstCategoryRepository categoryRepo;
+	
+	@Autowired
+	private LSpreferencesRepository LSpreferencesRepository;
 	
 	@Autowired
 	private FileStorageService fileStorageService;
@@ -65,6 +77,7 @@ public class IotconnectService {
 	@Autowired
 	private CloudFileManipulationservice cloudFileManipulationservice;
 	
+	
 	public List<InstrumentCategory> getInstcategory()
 	{
 		return categoryRepo.findAll();
@@ -72,7 +85,9 @@ public class IotconnectService {
 	
 	public List<InstrumentMaster> getInstruments(InstrumentCategory instcat)
 	{
-		return masterRepo.findByInstcategoryAndStatus(instcat,1);
+		InstrumentType insttype = new InstrumentType();
+		insttype.setInsttypekey(1);
+		return masterRepo.findByInstcategoryAndStatusAndInsttypeNotIn(instcat,1,insttype);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -148,10 +163,10 @@ public class IotconnectService {
 	                 RCTCPResultDetails rctcpresultdetailsobj = new RCTCPResultDetails();
 	                 
 	                 rctcpresultdetailsobj.setParserblockkey(technique.getParserfield().getParserblock().getParserblockkey());     
-	                 rctcpresultdetailsobj.setMethodkey(technique.getParserfield().getParserblock().getMethod().getMethodkey());     
-	                 rctcpresultdetailsobj.setInstmastkey(technique.getParserfield().getParserblock().getMethod().getInstmaster().getInstmastkey());   
+	                 rctcpresultdetailsobj.setMethod(technique.getParserfield().getParserblock().getMethod());     
+	                 rctcpresultdetailsobj.setInstrument(technique.getParserfield().getParserblock().getMethod().getInstmaster());   
 	                 rctcpresultdetailsobj.setParserfieldkey(technique.getParserfield().getParserfieldkey());    
-	                 rctcpresultdetailsobj.setParamname(technique.getFieldname());     
+	                 rctcpresultdetailsobj.setFieldname(technique.getFieldname());     
 	                 rctcpresultdetailsobj.setCreateddate(commonfunction.getCurrentUtcTime());
 	                 rctcpresultdetailsobj.setCreatedby(userobj);
 	                 rctcpresultdetailsobj.setSite(siteobj);
@@ -181,5 +196,24 @@ public class IotconnectService {
 
 	}
 
+public List<RCTCPResultDetails> getiotresultdetails(RCTCPResultDetails resultdetailsobj) {
+		
+		System.out.println(resultdetailsobj);
+		
+		List<RCTCPResultDetails> rctcpresultdetails  = RCTCPResultDetailsRepository.findByMethodAndInstrument(resultdetailsobj.getMethod(),resultdetailsobj.getInstrument());
+		System.out.println(rctcpresultdetails);
+		return rctcpresultdetails;
+		//return null;
+	}
 
+	public LSpreferences getpreferencedata(Map<String, Object> mapObject) {
+		LSpreferences IsRegulated = LSpreferencesRepository.findByTasksettingsAndValuesettings("RegulatedIndustry","1");
+		return IsRegulated;
+	}
+	
+	public List<Method> getMethods(InstrumentMaster instmast)
+	{
+		return methodRepo.findByInstmasterAndStatus(instmast,1);
+		
+	}
 }

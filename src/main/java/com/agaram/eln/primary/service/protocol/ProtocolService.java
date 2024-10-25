@@ -3668,7 +3668,7 @@ public class ProtocolService {
 				} else {
 					LSprotocolmaster lsprotocolmasterobj = LSProtocolMasterRepositoryObj.findByprotocolmastercode(
 							lSlogilabprotocoldetail.getLsprotocolmaster().getProtocolmastercode());
-					if(lsprotocolmasterobj.getApproved() == 0) {
+					if(lsprotocolmasterobj.getApproved() != null && lsprotocolmasterobj.getApproved() == 0) {
 						List<LSprotocolversion> lstproversions = lsprotocolversionRepository.findByprotocolmastercodeOrderByVersionnoDesc(
 								lsprotocolmasterobj.getProtocolmastercode());
 						if (lSlogilabprotocoldetail.getIsmultitenant() == 1	|| lSlogilabprotocoldetail.getIsmultitenant() == 2) {

@@ -105,4 +105,6 @@ public interface MethodRepository extends JpaRepository<Method, Integer>{
 	List<Method> findByStatusAndSite(int i, LSSiteMaster lssiteMaster);
 
 	List<Method> findByInstrawdataurl(String fileName);
+
+	List<Method> findByInstmasterAndStatus(InstrumentMaster instmast, int i);
 }
