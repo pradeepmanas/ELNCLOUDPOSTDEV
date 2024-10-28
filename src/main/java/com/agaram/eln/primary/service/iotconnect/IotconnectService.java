@@ -21,6 +21,8 @@ import com.agaram.eln.primary.model.cfr.LSpreferences;
 import com.agaram.eln.primary.model.instrumentsetup.InstrumentCategory;
 import com.agaram.eln.primary.model.instrumentsetup.InstrumentMaster;
 import com.agaram.eln.primary.model.instrumentsetup.InstrumentType;
+import com.agaram.eln.primary.model.methodsetup.ELNResultDetails;
+import com.agaram.eln.primary.model.methodsetup.LSResultFieldValues;
 import com.agaram.eln.primary.model.methodsetup.Method;
 import com.agaram.eln.primary.model.methodsetup.MethodFieldTechnique;
 
@@ -38,6 +40,8 @@ import com.agaram.eln.primary.repository.instrumentsetup.InstMasterRepository;
 import com.agaram.eln.primary.repository.iotconnect.RCTCPFileDetailsRepository;
 import com.agaram.eln.primary.repository.iotconnect.RCTCPResultDetailsRepository;
 import com.agaram.eln.primary.repository.iotconnect.RCTCPResultFieldValuesRepository;
+import com.agaram.eln.primary.repository.methodsetup.ELNResultDetailsRepository;
+import com.agaram.eln.primary.repository.methodsetup.LSResultFieldValuesRepository;
 import com.agaram.eln.primary.repository.methodsetup.MethodRepository;
 import com.agaram.eln.primary.service.cloudFileManip.CloudFileManipulationservice;
 import com.agaram.eln.primary.service.fileManipulation.FileManipulationservice;
@@ -77,6 +81,11 @@ public class IotconnectService {
 	@Autowired
 	private CloudFileManipulationservice cloudFileManipulationservice;
 	
+	@Autowired
+	private LSResultFieldValuesRepository LSResultFieldValuesRepository;
+	
+	@Autowired
+	private ELNResultDetailsRepository ELNResultDetailsRepository;
 	
 	public List<InstrumentCategory> getInstcategory()
 	{
@@ -196,6 +205,63 @@ public class IotconnectService {
 
 	}
 
+	public void InsertIntoOrders(Object parsedData , Long batchcode) throws IOException, ParseException {
+		
+
+		System.out.println(parsedData); 
+		Map<String, List<List<MethodFieldTechnique>>> textBlocks = (Map<String, List<List<MethodFieldTechnique>>>) parsedData; // Your map initialization
+
+		LSuserMaster userobj = new LSuserMaster();
+       	userobj.setUsercode(1);
+       	
+       	LSSiteMaster siteobj =new LSSiteMaster();
+       	siteobj.setSitecode(1);
+       	
+	     for (Map.Entry<String, List<List<MethodFieldTechnique>>> entry : textBlocks.entrySet()) {
+	         String key = entry.getKey();
+	         List<List<MethodFieldTechnique>> value = entry.getValue();
+
+	         System.out.println("Key: " + key);
+
+	         for (List<MethodFieldTechnique> innerList : value) {
+	             for (MethodFieldTechnique technique : innerList) {
+	                 
+	            	 System.out.println(technique);  
+	                // RCTCPResultDetails rctcpresultdetailsobj = new RCTCPResultDetails();
+	                 ELNResultDetails elnresultdetails = new ELNResultDetails();
+	                 
+	                 elnresultdetails.setParserblockkey(technique.getParserfield().getParserblock().getParserblockkey());     
+	                 elnresultdetails.setMethodkey(technique.getParserfield().getParserblock().getMethod().getMethodkey());     
+	                 elnresultdetails.setBatchcode(batchcode);
+	                 elnresultdetails.setParserfieldkey(technique.getParserfield().getParserfieldkey());    
+	                 elnresultdetails.setParamname(technique.getFieldname());     
+	                 elnresultdetails.setCreateddate(commonfunction.getCurrentUtcTime());
+	                 elnresultdetails.setCreatedby(userobj);
+	                 elnresultdetails.setSite(siteobj);
+	                 	
+	                 if(technique.getParseddata().size() == 1) {
+	                	 elnresultdetails.setResults(technique.getParseddata().get(0));
+	                 }else {
+	                	 elnresultdetails.setResults(technique.getParseddata().get(0));
+	                	 List<String> fieldresults = technique.getParseddata();
+	                	 
+	                	 List<LSResultFieldValues> resultfieldvaluearray = new ArrayList<>();
+	                	 for(int i=0;i<fieldresults.size();i++) {
+	                		 LSResultFieldValues LSResultFieldValuesobj = new LSResultFieldValues();
+
+	                		 LSResultFieldValuesobj.setFieldname(technique.getFieldname());
+	                		 LSResultFieldValuesobj.setFieldvalue(technique.getParseddata().get(i));
+		                	 resultfieldvaluearray.add(LSResultFieldValuesobj);
+	                	 }
+	                	 LSResultFieldValuesRepository.save(resultfieldvaluearray);
+	                	 elnresultdetails.setLsresultfieldvalues(resultfieldvaluearray); 
+	          
+	                 }
+	                 ELNResultDetailsRepository.save(elnresultdetails);
+	             }
+	         }
+	     }
+	}
 public List<RCTCPResultDetails> getiotresultdetails(RCTCPResultDetails resultdetailsobj) {
 		
 		System.out.println(resultdetailsobj);

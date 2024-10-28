@@ -198,7 +198,7 @@ public class EmailService {
 
 	public Email sendEmailelnLite(Email email) throws MessagingException {
 		String from = env.getProperty("spring.mail.username");
-		String cc = env.getProperty("spring.mail.mailcc");
+//		String cc = env.getProperty("spring.mail.mailcc");
         String to = email.getMailto();
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true); // true indicates multipart message
@@ -206,7 +206,7 @@ public class EmailService {
         helper.setSubject(email.getSubject());
         helper.setFrom(from);
         helper.setTo(to);
-        helper.setCc(cc);
+//        helper.setCc(cc);
         // Create the multipart for mixed content (text and images)
         MimeMultipart multipart = new MimeMultipart("related");
 
@@ -233,6 +233,43 @@ public class EmailService {
         return email;
 		
 	}
+	public Email sendEmailelnLiteCopy(Email email) throws MessagingException {
+		String from = env.getProperty("spring.mail.username");
+		String copy = env.getProperty("spring.mail.mailcopy");
+        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, true); // true indicates multipart message
+
+        helper.setSubject(email.getSubject());
+        helper.setFrom(from);
+        helper.setTo(copy);
+        
+        // Create the multipart for mixed content (text and images)
+        MimeMultipart multipart = new MimeMultipart("related");
+
+        // Part 1: HTML content
+        BodyPart htmlPart = new MimeBodyPart();
+        String htmlText = email.getMailcontent(); // Ensure this HTML has correct cid references
+        htmlPart.setContent(htmlText, "text/html; charset=utf-8"); // Set HTML content
+        multipart.addBodyPart(htmlPart);
+
+        // Attach inline images
+        attachInlineImage(multipart, "images/eln_lite_logo.png", "<image1>");
+        attachInlineImage(multipart, "images/ag_logo.png", "<image2>");
+        attachInlineImage(multipart, "images/Agaram_Technologies_horizontal.png", "<image3>");
+
+        // Set the multipart as the message content
+        message.setContent(multipart);
+
+        // Send the message
+        mailSender.send(message);
+
+        // Optionally, save the email to repository
+        EmailRepository.save(email);
+
+        return email;
+		
+	}
+	
 	private void attachInlineImage(MimeMultipart multipart, String imagePath, String contentId) throws MessagingException {
         try {
             ClassLoader classLoader = getClass().getClassLoader();

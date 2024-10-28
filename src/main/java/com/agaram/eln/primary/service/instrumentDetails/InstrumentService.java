@@ -67,6 +67,7 @@ import com.agaram.eln.primary.config.TenantContext;
 import com.agaram.eln.primary.fetchmodel.getmasters.Projectmaster;
 import com.agaram.eln.primary.fetchmodel.getorders.LogilabOrderDetails;
 import com.agaram.eln.primary.fetchmodel.getorders.LogilabOrdermastersh;
+import com.agaram.eln.primary.fetchmodel.getorders.LogilabProtocolOrderssh;
 import com.agaram.eln.primary.fetchmodel.getorders.Logilabordermaster;
 import com.agaram.eln.primary.fetchmodel.getorders.Logilaborders;
 import com.agaram.eln.primary.fetchmodel.getorders.Logilaborderssh;
@@ -3527,14 +3528,15 @@ public class InstrumentService {
 		String content = "";
 
 		if (lssamplefile != null) {
-			if (ismultitenant == 1) {
+			if (ismultitenant == 1 || ismultitenant == 2) {
 				CloudOrderCreation objCreation = cloudOrderCreationRepository
 						.findById((long) lssamplefile.getFilesamplecode());
 				if (objCreation != null && objCreation.getContainerstored() == 0) {
 					content = objCreation.getContent();
 				} else {
 					content = objCloudFileManipulationservice.retrieveCloudSheets(objCreation.getFileuid(),
-							TenantContext.getCurrentTenant() + "ordercreation");
+							commonfunction.getcontainername(ismultitenant,
+									TenantContext.getCurrentTenant()) + "ordercreation");
 				}
 			} else {
 				if (mongoTemplate.findById(lssamplefile.getFilesamplecode(), OrderCreation.class) != null) {
@@ -6949,7 +6951,7 @@ public class InstrumentService {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("file", lssheetfolderfilesRepository.findByUuid(uid));
 		lssheetfolderfilesRepository.deleteByUuid(uid);
-		if (ismultitenant == 1) {
+		if (ismultitenant == 1 || ismultitenant == 2) {
 			cloudFileManipulationservice.deletecloudFile(uid, "sheetfolderfiles");
 		} else {
 			fileManipulationservice.deletelargeattachments(uid);
@@ -6973,7 +6975,7 @@ public class InstrumentService {
 
 			for (String uuididex : lstfilesid) {
 
-				if (ismultitenant == 1) {
+				if (ismultitenant == 1 || ismultitenant == 2) {
 					cloudFileManipulationservice.deletecloudFile(uuididex, "sheetfolderfiles");
 				} else {
 					fileManipulationservice.deletelargeattachments(uuididex);
@@ -9109,7 +9111,7 @@ public class InstrumentService {
 		List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(lstteammap,
 				objorder.getLsuserMaster().getLssitemaster());
 		List<LSprojectmaster> lstproject = lsprojectmasterRepository.findByLsusersteamIn(lstteam);
-		List<Logilabprotocolorders> lstorder = new ArrayList<Logilabprotocolorders>();
+		List<LogilabProtocolOrderssh> lstorder = new ArrayList<LogilabProtocolOrderssh>();
 		Date fromdate = objorder.getFromdate();
 		Date todate = objorder.getTodate();
 		Integer protocoltype = objorder.getProtocoltype();
@@ -9150,12 +9152,12 @@ public class InstrumentService {
 //					.findByOrderflagAndLsprojectmasterInAndProtocoltypeAndCreatedtimestampBetween(
 //							objorder.getOrderflag(), lstproject, protocoltype, fromdate, todate));
 
-			List<Logilabprotocolorders> lstorderobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize)
+			List<LogilabProtocolOrderssh> lstorderobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize)
 					.parallel().mapToObj(i -> {
 						int startIndex = i * chunkSize;
 						int endIndex = Math.min(startIndex + chunkSize, totalSamples);
 						List<Elnmaterial> currentChunk = nmaterialcode.subList(startIndex, endIndex);
-						List<Logilabprotocolorders> orderChunk = new ArrayList<>();
+						List<LogilabProtocolOrderssh> orderChunk = new ArrayList<>();
 //						AndElnmaterialIn
 						orderChunk.addAll(LSlogilabprotocoldetailRepository
 								.findByOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndElnmaterialInAndViewoptionAndOrdercancellIsNull(
@@ -9192,12 +9194,12 @@ public class InstrumentService {
 		} else if (objorder.getTestcode() == null && objorder.getLsprojectmaster() == null
 				&& objorder.getRejected() != null) {
 
-			List<Logilabprotocolorders> lstorderobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize)
+			List<LogilabProtocolOrderssh> lstorderobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize)
 					.parallel().mapToObj(i -> {
 						int startIndex = i * chunkSize;
 						int endIndex = Math.min(startIndex + chunkSize, totalSamples);
 						List<Elnmaterial> currentChunk = nmaterialcode.subList(startIndex, endIndex);
-						List<Logilabprotocolorders> orderChunk = new ArrayList<>();
+						List<LogilabProtocolOrderssh> orderChunk = new ArrayList<>();
 						orderChunk = LSlogilabprotocoldetailRepository
 								.findByOrderflagAndRejectedAndLsprojectmasterInAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndRejectedAndLsprojectmasterIsNullAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndElnmaterialInOrderByProtocolordercodeDesc(
 										objorder.getOrderflag(), 1, lstproject, protocoltype, fromdate, todate,
@@ -9226,12 +9228,12 @@ public class InstrumentService {
 		} else if (objorder.getTestcode() == null && objorder.getLsprojectmaster() != null
 				&& objorder.getRejected() == null) {
 
-			List<Logilabprotocolorders> lstorderobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize)
+			List<LogilabProtocolOrderssh> lstorderobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize)
 					.parallel().mapToObj(i -> {
 						int startIndex = i * chunkSize;
 						int endIndex = Math.min(startIndex + chunkSize, totalSamples);
 						List<Elnmaterial> currentChunk = nmaterialcode.subList(startIndex, endIndex);
-						List<Logilabprotocolorders> orderChunk = new ArrayList<>();
+						List<LogilabProtocolOrderssh> orderChunk = new ArrayList<>();
 						orderChunk = LSlogilabprotocoldetailRepository
 								.findByOrderflagAndLsprojectmasterAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndElnmaterialInOrderByProtocolordercodeDesc(
 										objorder.getOrderflag(), objorder.getLsprojectmaster(), protocoltype, fromdate,
@@ -9243,12 +9245,12 @@ public class InstrumentService {
 		} else if (objorder.getTestcode() != null && objorder.getLsprojectmaster() == null
 				&& objorder.getRejected() == null) {
 
-			List<Logilabprotocolorders> lstorderobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize)
+			List<LogilabProtocolOrderssh> lstorderobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize)
 					.parallel().mapToObj(i -> {
 						int startIndex = i * chunkSize;
 						int endIndex = Math.min(startIndex + chunkSize, totalSamples);
 						List<Elnmaterial> currentChunk = nmaterialcode.subList(startIndex, endIndex);
-						List<Logilabprotocolorders> orderChunk = new ArrayList<>();
+						List<LogilabProtocolOrderssh> orderChunk = new ArrayList<>();
 						orderChunk = LSlogilabprotocoldetailRepository
 								.findByOrderflagAndLsprojectmasterInAndTestcodeAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndTestcodeAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndElnmaterialInOrderByProtocolordercodeDesc(
 										objorder.getOrderflag(), lstproject, objorder.getTestcode(), protocoltype,
@@ -9280,12 +9282,12 @@ public class InstrumentService {
 		} else if (objorder.getTestcode() != null && objorder.getLsprojectmaster() != null
 				&& objorder.getRejected() == null) {
 
-			List<Logilabprotocolorders> lstorderobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize)
+			List<LogilabProtocolOrderssh> lstorderobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize)
 					.parallel().mapToObj(i -> {
 						int startIndex = i * chunkSize;
 						int endIndex = Math.min(startIndex + chunkSize, totalSamples);
 						List<Elnmaterial> currentChunk = nmaterialcode.subList(startIndex, endIndex);
-						List<Logilabprotocolorders> orderChunk = new ArrayList<>();
+						List<LogilabProtocolOrderssh> orderChunk = new ArrayList<>();
 						orderChunk = LSlogilabprotocoldetailRepository
 								.findByOrderflagAndLsprojectmasterAndTestcodeAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndTestcodeAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndElnmaterialInOrderByProtocolordercodeDesc(
 										objorder.getOrderflag(), objorder.getLsprojectmaster(), objorder.getTestcode(),
@@ -9298,12 +9300,12 @@ public class InstrumentService {
 		} else if (objorder.getTestcode() != null && objorder.getLsprojectmaster() == null
 				&& objorder.getRejected() != null) {
 
-			List<Logilabprotocolorders> lstorderobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize)
+			List<LogilabProtocolOrderssh> lstorderobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize)
 					.parallel().mapToObj(i -> {
 						int startIndex = i * chunkSize;
 						int endIndex = Math.min(startIndex + chunkSize, totalSamples);
 						List<Elnmaterial> currentChunk = nmaterialcode.subList(startIndex, endIndex);
-						List<Logilabprotocolorders> orderChunk = new ArrayList<>();
+						List<LogilabProtocolOrderssh> orderChunk = new ArrayList<>();
 						orderChunk = LSlogilabprotocoldetailRepository
 								.findByOrderflagAndRejectedAndLsprojectmasterInAndTestcodeAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndRejectedAndLsprojectmasterIsNullAndTestcodeAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndElnmaterialInOrderByProtocolordercodeDesc(
 										objorder.getOrderflag(), 1, lstproject, objorder.getTestcode(), protocoltype,
@@ -9335,12 +9337,12 @@ public class InstrumentService {
 		} else if (objorder.getTestcode() == null && objorder.getLsprojectmaster() != null
 				&& objorder.getRejected() != null) {
 
-			List<Logilabprotocolorders> lstorderobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize)
+			List<LogilabProtocolOrderssh> lstorderobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize)
 					.parallel().mapToObj(i -> {
 						int startIndex = i * chunkSize;
 						int endIndex = Math.min(startIndex + chunkSize, totalSamples);
 						List<Elnmaterial> currentChunk = nmaterialcode.subList(startIndex, endIndex);
-						List<Logilabprotocolorders> orderChunk = new ArrayList<>();
+						List<LogilabProtocolOrderssh> orderChunk = new ArrayList<>();
 						orderChunk = LSlogilabprotocoldetailRepository
 								.findByOrderflagAndRejectedAndLsprojectmasterAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndRejectedAndLsprojectmasterIsNullAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndElnmaterialInOrderByProtocolordercodeDesc(
 										objorder.getOrderflag(), 1, objorder.getLsprojectmaster(), protocoltype,
@@ -9353,12 +9355,12 @@ public class InstrumentService {
 		} else if (objorder.getTestcode() != null && objorder.getLsprojectmaster() != null
 				&& objorder.getRejected() != null) {
 
-			List<Logilabprotocolorders> lstorderobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize)
+			List<LogilabProtocolOrderssh> lstorderobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize)
 					.parallel().mapToObj(i -> {
 						int startIndex = i * chunkSize;
 						int endIndex = Math.min(startIndex + chunkSize, totalSamples);
 						List<Elnmaterial> currentChunk = nmaterialcode.subList(startIndex, endIndex);
-						List<Logilabprotocolorders> orderChunk = new ArrayList<>();
+						List<LogilabProtocolOrderssh> orderChunk = new ArrayList<>();
 						orderChunk = LSlogilabprotocoldetailRepository
 								.findByOrderflagAndRejectedAndLsprojectmasterAndTestcodeAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndRejectedAndLsprojectmasterIsNullAndTestcodeAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndElnmaterialInOrderByProtocolordercodeDesc(
 										objorder.getOrderflag(), 1, objorder.getLsprojectmaster(),
@@ -9371,10 +9373,10 @@ public class InstrumentService {
 		}
 
 		lstorder.forEach(
-				objorderDetail -> objorderDetail.setLstelnprotocolworkflow(objorder.getLstelnprotocolworkflow()));
+				objorderDetail -> objorderDetail.setLsepw(objorder.getLstelnprotocolworkflow()));
 		List<Long> protocolordercode = new ArrayList<>();
 		if (lstorder.size() > 0 && objorder.getSearchCriteriaType() != null) {
-			protocolordercode = lstorder.stream().map(Logilabprotocolorders::getProtocolordercode)
+			protocolordercode = lstorder.stream().map(LogilabProtocolOrderssh::getPc)
 					.collect(Collectors.toList());
 			retuobjts.put("protocolordercodeslist", protocolordercode);
 		}
@@ -9938,7 +9940,7 @@ public class InstrumentService {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("file", lsprotocolfolderfilesRepository.findByUuid(uid));
 		lsprotocolfolderfilesRepository.deleteByUuid(uid);
-		if (ismultitenant == 1) {
+		if (ismultitenant == 1 || ismultitenant == 2) {
 			cloudFileManipulationservice.deletecloudFile(uid, "protocolfolderfiles");
 		} else {
 			fileManipulationservice.deletelargeattachments(uid);
@@ -10088,7 +10090,7 @@ public class InstrumentService {
 
 			for (String uuididex : lstfilesid) {
 
-				if (ismultitenant == 1) {
+				if (ismultitenant == 1 || ismultitenant == 2 ) {
 					cloudFileManipulationservice.deletecloudFile(uuididex, "protocolfolderfiles");
 				} else {
 					fileManipulationservice.deletelargeattachments(uuididex);

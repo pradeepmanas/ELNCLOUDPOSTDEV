@@ -1159,7 +1159,7 @@ public class FreeUserService {
 		Response objResponse = new Response();
 		if(objuser != null && objuser.getPasswordstatus() != null  && objuser.getPasswordstatus() == 1 && objuser.getEmailid() != null && objuser.getEmailid() != "" ) {			
 			String emailid = objuser.getEmailid().trim();
-			validuser = lsuserMasterRepository.findTop1ByEmailid(emailid);
+			validuser = lsuserMasterRepository.findTop1ByEmailidIgnoreCase(emailid);
 			Integer usercode = validuser.getUsercode();		
 			// update password status
 			if(objuser.getForgetstatus() == 1 && validuser.getForgetstatus() == 0) {
@@ -1170,9 +1170,9 @@ public class FreeUserService {
 		if(objuser.getEmailid() != null) {			
 			String emailid = objuser.getEmailid().trim();
 			if(objuser.getForgetstatus() != null && objuser.getForgetstatus() == 0) {
-				validuser = lsuserMasterRepository.findTop1ByEmailidAndAutenticatefrom(emailid,0);		
+				validuser = lsuserMasterRepository.findTop1ByEmailidIgnoreCaseAndAutenticatefrom(emailid,0);		
 			}else {
-				validuser = lsuserMasterRepository.findTop1ByEmailid(emailid);	
+				validuser = lsuserMasterRepository.findTop1ByEmailidIgnoreCase(emailid);	
 			}			
 				if(validuser != null) {				
 				objResponse.setStatus(true);
@@ -1191,7 +1191,7 @@ public class FreeUserService {
 		LSuserMaster usermaster = null;		
 		Response objResponse = new Response();
 		String emailid = objuser.getEmailid().trim();
-		usermaster = lsuserMasterRepository.findTop1ByEmailid(emailid);		
+		usermaster = lsuserMasterRepository.findTop1ByEmailidIgnoreCase(emailid);		
 		usermaster.setIsmultitenant(2);
 		//usermaster.setPasswordstatus(1);
 		objResponse.setStatus(true);

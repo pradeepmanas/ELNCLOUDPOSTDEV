@@ -729,7 +729,7 @@ END $$;
 DO $$
 BEGIN
     -- Attempt to insert the new record
-    INSERT INTO lsusergrouprightsmaster(orderno, displaytopic, modulename, screenname, sallow, screate, sdelete, sedit, status, sequenceorder) VALUES (164, 'IDS_TSK_ACTDEACT', 'IDS_MDL_INVENTORY', 'IDS_SCN_EQUIPMENTMASTER', '0', 'NA', 'NA', 'NA', '0,0,0', 115) ON CONFLICT (orderno) DO NOTHING;
+    INSERT INTO lsusergrouprightsmaster(orderno, displaytopic, modulename, screenname, sallow, screate, sdelete, sedit, status, sequenceorder) VALUES (164, 'IDS_TSK_ACTDEACT', 'IDS_MDL_INVENTORY', 'IDS_TSK_EQUIPMENTMASTER', '0', 'NA', 'NA', 'NA', '0,0,0', 115) ON CONFLICT (orderno) DO NOTHING;
 
     -- Check if the record was inserted
     IF FOUND THEN
@@ -738,12 +738,12 @@ BEGIN
     END IF;
 END $$;
 
-INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_ACTDEACT', 'IDS_MDL_INVENTORY', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_EQUIPMENTMASTER' WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_ACTDEACT' and screenname='IDS_SCN_EQUIPMENTMASTER' and usergroupid_usergroupcode = 1); 
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_ACTDEACT', 'IDS_MDL_INVENTORY', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_TSK_EQUIPMENTMASTER' WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_ACTDEACT' and screenname='IDS_TSK_EQUIPMENTMASTER' and usergroupid_usergroupcode = 1); 
 
 DO $$
 BEGIN
     -- Attempt to insert the new record
-    INSERT INTO lsusergrouprightsmaster(orderno, displaytopic, modulename, screenname, sallow, screate, sdelete, sedit, status, sequenceorder) VALUES (165, 'IDS_TSK_CALIBRATE', 'IDS_MDL_INVENTORY', 'IDS_SCN_EQUIPMENTMASTER', '0', 'NA', 'NA', 'NA', '0,0,0', 116) ON CONFLICT (orderno) DO NOTHING;
+    INSERT INTO lsusergrouprightsmaster(orderno, displaytopic, modulename, screenname, sallow, screate, sdelete, sedit, status, sequenceorder) VALUES (165, 'IDS_TSK_CALIBRATE', 'IDS_MDL_INVENTORY', 'IDS_TSK_EQUIPMENTMASTER', '0', 'NA', 'NA', 'NA', '0,0,0', 116) ON CONFLICT (orderno) DO NOTHING;
 
     -- Check if the record was inserted
     IF FOUND THEN
@@ -752,12 +752,12 @@ BEGIN
     END IF;
 END $$;
 
-INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_CALIBRATE', 'IDS_MDL_INVENTORY', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_EQUIPMENTMASTER' WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_CALIBRATE' and screenname='IDS_SCN_EQUIPMENTMASTER' and usergroupid_usergroupcode = 1); 
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_CALIBRATE', 'IDS_MDL_INVENTORY', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_TSK_EQUIPMENTMASTER' WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_CALIBRATE' and screenname='IDS_TSK_EQUIPMENTMASTER' and usergroupid_usergroupcode = 1); 
 
 DO $$
 BEGIN
     -- Attempt to insert the new record
-    INSERT INTO lsusergrouprightsmaster(orderno, displaytopic, modulename, screenname, sallow, screate, sdelete, sedit, status, sequenceorder) VALUES (166, 'IDS_TSK_MAINTANN', 'IDS_MDL_INVENTORY', 'IDS_SCN_EQUIPMENTMASTER', '0', 'NA', 'NA', 'NA', '0,0,0', 117) ON CONFLICT (orderno) DO NOTHING;
+    INSERT INTO lsusergrouprightsmaster(orderno, displaytopic, modulename, screenname, sallow, screate, sdelete, sedit, status, sequenceorder) VALUES (166, 'IDS_TSK_MAINTANN', 'IDS_MDL_INVENTORY', 'IDS_TSK_EQUIPMENTMASTER', '0', 'NA', 'NA', 'NA', '0,0,0', 117) ON CONFLICT (orderno) DO NOTHING;
 
     -- Check if the record was inserted
     IF FOUND THEN
@@ -766,7 +766,7 @@ BEGIN
     END IF;
 END $$;
 
-INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_MAINTANN', 'IDS_MDL_INVENTORY', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_EQUIPMENTMASTER' WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_MAINTANN' and screenname='IDS_SCN_EQUIPMENTMASTER' and usergroupid_usergroupcode = 1); 
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_MAINTANN', 'IDS_MDL_INVENTORY', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_TSK_EQUIPMENTMASTER' WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_MAINTANN' and screenname='IDS_TSK_EQUIPMENTMASTER' and usergroupid_usergroupcode = 1); 
 
 DO $$
 BEGIN
@@ -780,12 +780,12 @@ BEGIN
     END IF;
 END $$;
 
-INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_SCN_MATERIALTYPEPARAMS', 'IDS_MDL_INVENTORY', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_MATERIALTYPEPARAMS' WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_MAINTANN' and screenname='IDS_SCN_MATERIALTYPEPARAMS' and usergroupid_usergroupcode = 1); 
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_SCN_MATERIALTYPEPARAMS', 'IDS_MDL_INVENTORY', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_MATERIALTYPEPARAMS' WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_SCN_MATERIALTYPEPARAMS' and screenname='IDS_SCN_MATERIALTYPEPARAMS' and usergroupid_usergroupcode = 1); 
 
 DO $$
 BEGIN
     -- Attempt to insert the new record
-    INSERT INTO lsusergrouprightsmaster(orderno, displaytopic, modulename, screenname, sallow, screate, sdelete, sedit, status, sequenceorder) VALUES (168, 'IDS_SCN_SUPPLIER', 'IDS_MDL_INVENTORY', 'IDS_SCN_MATERIALTYPEPARAMS', '0', '0', '0', '0', '0,0,0', 113) ON CONFLICT (orderno) DO NOTHING;
+    INSERT INTO lsusergrouprightsmaster(orderno, displaytopic, modulename, screenname, sallow, screate, sdelete, sedit, status, sequenceorder) VALUES (168, 'IDS_SCN_SUPPLIER', 'IDS_MDL_INVENTORY', 'IDS_SCN_SUPPLIER', '0', '0', '0', '0', '0,0,0', 113) ON CONFLICT (orderno) DO NOTHING;
 
     -- Check if the record was inserted
     IF FOUND THEN
@@ -794,12 +794,12 @@ BEGIN
     END IF;
 END $$;
 
-INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_SCN_SUPPLIER', 'IDS_MDL_INVENTORY', 'administrator', '1', '0', '0', '0', 1,1,'IDS_SCN_MATERIALTYPEPARAMS' WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_SCN_SUPPLIER' and screenname='IDS_SCN_MATERIALTYPEPARAMS' and usergroupid_usergroupcode = 1); 
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_SCN_SUPPLIER', 'IDS_MDL_INVENTORY', 'administrator', '1', '1', '1', '1', 1,1,'IDS_SCN_SUPPLIER' WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_SCN_SUPPLIER' and screenname='IDS_SCN_SUPPLIER' and usergroupid_usergroupcode = 1); 
 
 DO $$
 BEGIN
     -- Attempt to insert the new record
-    INSERT INTO lsusergrouprightsmaster(orderno, displaytopic, modulename, screenname, sallow, screate, sdelete, sedit, status, sequenceorder) VALUES (169, 'IDS_SCN_MANUFACTURER', 'IDS_MDL_INVENTORY', 'IDS_SCN_MATERIALTYPEPARAMS', '0', '0', '0', '0', '0,0,0', 114) ON CONFLICT (orderno) DO NOTHING;
+    INSERT INTO lsusergrouprightsmaster(orderno, displaytopic, modulename, screenname, sallow, screate, sdelete, sedit, status, sequenceorder) VALUES (169, 'IDS_SCN_MANUFACTURER', 'IDS_MDL_INVENTORY', 'IDS_SCN_MANUFACTURER', '0', '0', '0', '0', '0,0,0', 114) ON CONFLICT (orderno) DO NOTHING;
 
     -- Check if the record was inserted
     IF FOUND THEN
@@ -808,12 +808,12 @@ BEGIN
     END IF;
 END $$;
 
-INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_SCN_MANUFACTURER', 'IDS_MDL_INVENTORY', 'administrator', '1', '0', '0', '0', 1,1,'IDS_SCN_MATERIALTYPEPARAMS' WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_SCN_MANUFACTURER' and screenname='IDS_SCN_MATERIALTYPEPARAMS' and usergroupid_usergroupcode = 1); 
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_SCN_MANUFACTURER', 'IDS_MDL_INVENTORY', 'administrator', '1', '1', '1', '1', 1,1,'IDS_SCN_MANUFACTURER' WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_SCN_MANUFACTURER' and screenname='IDS_SCN_MANUFACTURER' and usergroupid_usergroupcode = 1); 
 
 DO $$
 BEGIN
     -- Attempt to insert the new record
-    INSERT INTO lsusergrouprightsmaster(orderno, displaytopic, modulename, screenname, sallow, screate, sdelete, sedit, status, sequenceorder) VALUES (170, 'IDS_SCN_GRADEMASTER', 'IDS_MDL_INVENTORY', 'IDS_SCN_MATERIALTYPEPARAMS', '0', '0', '0', '0', '0,0,0', 115) ON CONFLICT (orderno) DO NOTHING;
+    INSERT INTO lsusergrouprightsmaster(orderno, displaytopic, modulename, screenname, sallow, screate, sdelete, sedit, status, sequenceorder) VALUES (170, 'IDS_SCN_GRADEMASTER', 'IDS_MDL_INVENTORY', 'IDS_SCN_GRADEMASTER', '0', '0', '0', '0', '0,0,0', 115) ON CONFLICT (orderno) DO NOTHING;
 
     -- Check if the record was inserted
     IF FOUND THEN
@@ -822,7 +822,7 @@ BEGIN
     END IF;
 END $$;
 
-INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_SCN_GRADEMASTER', 'IDS_MDL_INVENTORY', 'administrator', '1', '0', '0', '0', 1,1,'IDS_SCN_MATERIALTYPEPARAMS' WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_SCN_GRADEMASTER' and screenname='IDS_SCN_MATERIALTYPEPARAMS' and usergroupid_usergroupcode = 1); 
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_SCN_GRADEMASTER', 'IDS_MDL_INVENTORY', 'administrator', '1', '1', '1', '1', 1,1,'IDS_SCN_GRADEMASTER' WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_SCN_GRADEMASTER' and screenname='IDS_SCN_GRADEMASTER' and usergroupid_usergroupcode = 1); 
 
 
 DO $$
@@ -1100,7 +1100,7 @@ SELECT count(*) into multiusergroupcount FROM
 information_schema.table_constraints WHERE constraint_name='fkms9ayvec5kyd981y26m8hb5pj'
 AND table_name='reporttemplatemapping';
  IF multiusergroupcount =0 THEN
- 	ALTER TABLE ONLY reporttemplatemapping ADD CONSTRAINT fkms9ayvec5kyd981y26m8hb5pj FOREIGN KEY (lsprojectmaster_projectcode) REFERENCES lsprojectmaster (projectcode);
+    ALTER TABLE ONLY reporttemplatemapping ADD CONSTRAINT fkms9ayvec5kyd981y26m8hb5pj FOREIGN KEY (lsprojectmaster_projectcode) REFERENCES lsprojectmaster (projectcode);
    END IF;
 END
 $do$; 
@@ -1198,7 +1198,7 @@ SET ordersequnce = CASE
 
     WHEN screenname = 'IDS_SCN_REPORTDESIGNER' THEN 27
     WHEN screenname = 'IDS_SCN_REPORTVIEWER' THEN 28
-	WHEN screenname = 'IDS_SCN_REPORTMAPPING' THEN 29
+    WHEN screenname = 'IDS_SCN_REPORTMAPPING' THEN 29
 
     WHEN screenname = 'IDS_SCN_MATERIALCATEGORY' THEN 30
     WHEN screenname = 'IDS_SCN_STORAGELOCATION' THEN 31
@@ -1299,6 +1299,8 @@ ALTER TABLE IF Exists reporttemplate ADD COLUMN IF NOT EXISTS lockeduser INTEGER
 
 ALTER TABLE IF Exists reporttemplate ADD COLUMN IF NOT EXISTS lockedusername character varying(255);
 
+--BEGIN INSERT [dbo].[LSusergrouprights] ([createdby], [createdon], [displaytopic], [modifiedby], [modifiedon], [modulename], [screenname], [sallow], [screate], [sdelete], [sedit], [lssitemaster_sitecode], [usergroupid_usergroupcode],[screenname]) VALUES (N'administrator', CAST(N'2020-02-21T14:50:55.727' AS DateTime), N'IDS_TSK_RETIRE', NULL, NULL, N'IDS_MDL_SETUP', N'IDS_SCN_USERMASTER', N'1', N'NA', N'NA', N'NA', 1, 1,'IDS_SCN_USERMASTER') END 
+
 DO $$
 BEGIN
     -- Attempt to insert the new record
@@ -1356,121 +1358,6 @@ update lsusergrouprights set screenname = 'IDS_SCN_REPORTMAPPER' where screennam
 UPDATE lsusergrouprightsmaster SET screenname = 'IDS_SCN_REPORTVIEVER' WHERE screenname = 'IDS_SCN_REPORTS' AND (displaytopic = 'IDS_SCN_REPORTVIEWER' OR displaytopic = 'IDS_SCN_REPORTVIEWERNEWFOLDER');
 update lsusergrouprightsmaster set screenname = 'IDS_SCN_REPORTMAPPER' where screenname = 'IDS_SCN_REPORTVIEWER' and displaytopic = 'IDS_TSK_REPORTMAPPING';
 
-UPDATE lsusergrouprightsmaster SET sequenceorder = CASE
-    WHEN screenname = 'IDS_SCN_DASHBOARD' THEN 1
-
-    WHEN screenname = 'IDS_SCN_SHEETORDERS' THEN 2
-    WHEN screenname = 'IDS_SCN_PROTOCOLORDERS' THEN 3
-    WHEN screenname = 'IDS_SCN_UNLOCKORDERS' THEN 4
-
-    WHEN screenname = 'IDS_SCN_SHEETTEMPLATE' THEN 5
-    WHEN screenname = 'IDS_SCN_PROTOCOLTEMPLATE' THEN 6
-    WHEN screenname = 'IDS_SCN_TEMPLATEMAPPING' THEN 7
-
-    WHEN screenname = 'IDS_SCN_USERGROUP' THEN 8
-    WHEN screenname = 'IDS_SCN_SITEMASTER' THEN 9
-    WHEN screenname = 'IDS_SCN_USERMASTER' THEN 10
-    WHEN screenname = 'IDS_SCN_USERRIGHTS' THEN 11
-    WHEN screenname = 'IDS_SCN_PROJECTMASTER' THEN 12
-    WHEN screenname = 'IDS_SCN_PROJECTTEAM' THEN 13
-    WHEN screenname = 'IDS_SCN_TASKMASTER' THEN 14
-    WHEN screenname = 'IDS_SCN_ORDERWORKLOW' THEN 15
-    WHEN screenname = 'IDS_SCN_TEMPLATEWORKFLOW' THEN 16
-    WHEN screenname = 'IDS_SCN_DOMAIN' THEN 17
-    WHEN screenname = 'IDS_SCN_PASSWORDPOLICY' THEN 18
-
-    WHEN screenname = 'IDS_SCN_DELIMITER' THEN 19
-    WHEN screenname = 'IDS_SCN_INSTRUMENTCATEGORY' THEN 20
-    WHEN screenname = 'IDS_SCN_INSTRUMENTMASTER' THEN 21
-    WHEN screenname = 'IDS_SCN_METHODDELIMITER' THEN 22
-    WHEN screenname = 'IDS_SCN_METHODMASTER' THEN 23
-
-    WHEN screenname = 'IDS_SCN_AUDITTRAILHIS' THEN 24
-    WHEN screenname = 'IDS_SCN_CFRSETTINGS' THEN 25
-    WHEN screenname = 'IDS_SCN_AUDITTRAILCONFIG' THEN 26
-
-    WHEN screenname = 'IDS_SCN_REPORTS' THEN 27
-    WHEN screenname = 'IDS_SCN_REPORTVIEVER' THEN 28
-    WHEN screenname = 'IDS_SCN_REPORTMAPPER' THEN 29
-
-    WHEN screenname = 'IDS_SCN_MATERIAL' THEN 30
-    WHEN screenname = 'IDS_SCN_MATERIALINVENTORY' THEN 31
-    WHEN screenname = 'IDS_SCN_MATERIALTYPEPARAMS' THEN 32
-    WHEN screenname = 'IDS_SCN_MATERIALCATEGORY' THEN 33
-    WHEN screenname = 'IDS_SCN_GRADEMASTER' THEN 34
-    WHEN screenname = 'IDS_SCN_SUPPLIER' THEN 35
-    WHEN screenname = 'IDS_SCN_STORAGELOCATION' THEN 36
-    WHEN screenname = 'IDS_SCN_SECTIONMASTER' THEN 37
-    WHEN screenname = 'IDS_SCN_MANUFACTURER' THEN 38
-    WHEN screenname = 'IDS_SCN_UNITMASTER' THEN 39
-    WHEN screenname = 'IDS_SCN_MATERIAL' THEN 40
-    WHEN screenname = 'IDS_SCN_MATERIALINVENTORY' THEN 41
-
-    WHEN screenname = 'IDS_SCN_EQUIPMENT' THEN 42
-    WHEN screenname = 'IDS_SCN_EQUIPMENTMASTER' THEN 43
-    WHEN screenname = 'IDS_TSK_EQUIPMENTMASTER' THEN 44
-
-    WHEN screenname = 'IDS_SCN_LOGBOOK' THEN 45
-    ELSE sequenceorder -- Retain the current value if no match
-END;
-
-UPDATE lsusergrouprights SET sequenceorder = CASE
-    WHEN screenname = 'IDS_SCN_DASHBOARD' THEN 1
-
-    WHEN screenname = 'IDS_SCN_SHEETORDERS' THEN 2
-    WHEN screenname = 'IDS_SCN_PROTOCOLORDERS' THEN 3
-    WHEN screenname = 'IDS_SCN_UNLOCKORDERS' THEN 4
-
-    WHEN screenname = 'IDS_SCN_SHEETTEMPLATE' THEN 5
-    WHEN screenname = 'IDS_SCN_PROTOCOLTEMPLATE' THEN 6
-    WHEN screenname = 'IDS_SCN_TEMPLATEMAPPING' THEN 7
-
-    WHEN screenname = 'IDS_SCN_USERGROUP' THEN 8
-    WHEN screenname = 'IDS_SCN_SITEMASTER' THEN 9
-    WHEN screenname = 'IDS_SCN_USERMASTER' THEN 10
-    WHEN screenname = 'IDS_SCN_USERRIGHTS' THEN 11
-    WHEN screenname = 'IDS_SCN_PROJECTMASTER' THEN 12
-    WHEN screenname = 'IDS_SCN_PROJECTTEAM' THEN 13
-    WHEN screenname = 'IDS_SCN_TASKMASTER' THEN 14
-    WHEN screenname = 'IDS_SCN_ORDERWORKLOW' THEN 15
-    WHEN screenname = 'IDS_SCN_TEMPLATEWORKFLOW' THEN 16
-    WHEN screenname = 'IDS_SCN_DOMAIN' THEN 17
-    WHEN screenname = 'IDS_SCN_PASSWORDPOLICY' THEN 18
-
-    WHEN screenname = 'IDS_SCN_DELIMITER' THEN 19
-    WHEN screenname = 'IDS_SCN_INSTRUMENTCATEGORY' THEN 20
-    WHEN screenname = 'IDS_SCN_INSTRUMENTMASTER' THEN 21
-    WHEN screenname = 'IDS_SCN_METHODDELIMITER' THEN 22
-    WHEN screenname = 'IDS_SCN_METHODMASTER' THEN 23
-
-    WHEN screenname = 'IDS_SCN_AUDITTRAILHIS' THEN 24
-    WHEN screenname = 'IDS_SCN_CFRSETTINGS' THEN 25
-    WHEN screenname = 'IDS_SCN_AUDITTRAILCONFIG' THEN 26
-
-    WHEN screenname = 'IDS_SCN_REPORTS' THEN 27
-    WHEN screenname = 'IDS_SCN_REPORTVIEVER' THEN 28
-    WHEN screenname = 'IDS_SCN_REPORTMAPPER' THEN 29
-
-    WHEN screenname = 'IDS_SCN_MATERIAL' THEN 30
-    WHEN screenname = 'IDS_SCN_MATERIALINVENTORY' THEN 31
-    WHEN screenname = 'IDS_SCN_MATERIALTYPEPARAMS' THEN 32
-    WHEN screenname = 'IDS_SCN_MATERIALCATEGORY' THEN 33
-    WHEN screenname = 'IDS_SCN_GRADEMASTER' THEN 34
-    WHEN screenname = 'IDS_SCN_SUPPLIER' THEN 35
-    WHEN screenname = 'IDS_SCN_STORAGELOCATION' THEN 36
-    WHEN screenname = 'IDS_SCN_SECTIONMASTER' THEN 37
-    WHEN screenname = 'IDS_SCN_MANUFACTURER' THEN 38
-    WHEN screenname = 'IDS_SCN_UNITMASTER' THEN 39
-    WHEN screenname = 'IDS_SCN_MATERIAL' THEN 40
-    WHEN screenname = 'IDS_SCN_MATERIALINVENTORY' THEN 41
-
-    WHEN screenname = 'IDS_SCN_EQUIPMENT' THEN 42
-    WHEN screenname = 'IDS_SCN_EQUIPMENTMASTER' THEN 43
-    WHEN screenname = 'IDS_TSK_EQUIPMENTMASTER' THEN 44
-
-    WHEN screenname = 'IDS_SCN_LOGBOOK' THEN 45
-    ELSE sequenceorder -- Retain the current value if no match
-END;
 
 CREATE TABLE IF NOT EXISTS public.screenmaster
 (
@@ -1571,10 +1458,6 @@ ALTER TABLE IF Exists LsAutoregister ADD Column IF NOT EXISTS timerIdname charac
 
 ALTER TABLE IF Exists materialtype ADD COLUMN IF NOT EXISTS barcode_barcodeno integer;
 
-ALTER TABLE IF EXISTS lsactiveuser ADD COLUMN IF NOT EXISTS usergroupcode INTEGER;
- 
-ALTER TABLE IF EXISTS lsactiveuser ADD COLUMN IF NOT EXISTS usergroupname character varying(255);
-
 DO
 $do$
 declare
@@ -1584,7 +1467,7 @@ SELECT count(*) into barcodecount FROM
 information_schema.table_constraints WHERE constraint_name='fkgv6y6qb9lh0sos5hkblhhmb5u'
 AND table_name='materialtype';
  IF barcodecount =0 THEN
- 	ALTER TABLE ONLY materialtype ADD CONSTRAINT fkgv6y6qb9lh0sos5hkblhhmb5u FOREIGN KEY (barcode_barcodeno) REFERENCES barcodemaster (barcodeno);
+    ALTER TABLE ONLY materialtype ADD CONSTRAINT fkgv6y6qb9lh0sos5hkblhhmb5u FOREIGN KEY (barcode_barcodeno) REFERENCES barcodemaster (barcodeno);
    END IF;
 END
 $do$; 
@@ -1673,5 +1556,342 @@ update lsusergrouprights set screate = '1', sedit = '1' where modulename = 'IDS_
 ALTER TABLE IF Exists lsusermaster ADD Column IF NOT EXISTS forgetstatus INTEGER;
 
 ALTER TABLE IF EXISTS LsAutoregister ADD COLUMN IF NOT EXISTS delayinminutes bigint;
+
+update lsusergrouprightsmaster set screate = '0' where displaytopic = 'IDS_SCN_MATERIALTYPEPARAMS';
+
+delete from LSusergrouprights where screenname = 'IDS_SCN_MATERIALTYPE';
+delete from LSusergrouprights where screenname = 'IDS_SCN_SAMPLEMASTER';
+delete from LSusergrouprightsmaster where screenname = 'IDS_SCN_MATERIALTYPE';
+delete from LSusergrouprightsmaster where screenname = 'IDS_SCN_SAMPLEMASTER';
+UPDATE lsusergrouprightsmaster SET screenname = 'IDS_SCN_EQUIPMENTMASTER' WHERE screenname = 'IDS_TSK_EQUIPMENTMASTER';
+UPDATE lsusergrouprights SET screenname = 'IDS_SCN_EQUIPMENTMASTER' WHERE screenname = 'IDS_TSK_EQUIPMENTMASTER';
+update LSusergrouprightsmaster set screenname = 'IDS_SCN_REPORTVIEVER' where screenname = 'IDS_SCN_REPORTVIEWER';
+update LSusergrouprights set screenname = 'IDS_SCN_REPORTVIEVER' where screenname = 'IDS_SCN_REPORTVIEWER';
+
+UPDATE lsusergrouprightsmaster SET sequenceorder = CASE
+    WHEN screenname = 'IDS_SCN_DASHBOARD' THEN 1
+
+    WHEN screenname = 'IDS_SCN_SHEETORDERS' THEN 2
+    WHEN screenname = 'IDS_SCN_PROTOCOLORDERS' THEN 3
+    WHEN screenname = 'IDS_SCN_UNLOCKORDERS' THEN 4
+
+    WHEN screenname = 'IDS_SCN_SHEETTEMPLATE' THEN 5
+    WHEN screenname = 'IDS_SCN_PROTOCOLTEMPLATE' THEN 6
+    WHEN screenname = 'IDS_SCN_TEMPLATEMAPPING' THEN 7
+
+    WHEN screenname = 'IDS_SCN_USERGROUP' THEN 8
+    WHEN screenname = 'IDS_SCN_SITEMASTER' THEN 9
+    WHEN screenname = 'IDS_SCN_ACTIVEUSER' THEN 9
+    WHEN screenname = 'IDS_SCN_USERMASTER' THEN 10
+    WHEN screenname = 'IDS_SCN_USERRIGHTS' THEN 11
+    WHEN screenname = 'IDS_SCN_PROJECTMASTER' THEN 12
+    WHEN screenname = 'IDS_SCN_PROJECTTEAM' THEN 13
+    WHEN screenname = 'IDS_SCN_TASKMASTER' THEN 14
+    WHEN screenname = 'IDS_SCN_ORDERWORKLOW' THEN 15
+    WHEN screenname = 'IDS_SCN_TEMPLATEWORKFLOW' THEN 16
+    WHEN screenname = 'IDS_SCN_DOMAIN' THEN 17
+    WHEN screenname = 'IDS_SCN_PASSWORDPOLICY' THEN 18
+    WHEN screenname = 'IDS_SCN_BARCODEMASTER' THEN 18
+
+    WHEN screenname = 'IDS_SCN_PARSER' THEN 19
+    WHEN screenname = 'IDS_SCN_DELIMITER' THEN 19
+    WHEN screenname = 'IDS_SCN_INSTRUMENTCATEGORY' THEN 20
+    WHEN screenname = 'IDS_SCN_INSTRUMENTMASTER' THEN 21
+    WHEN screenname = 'IDS_SCN_METHODDELIMITER' THEN 22
+    WHEN screenname = 'IDS_SCN_METHODMASTER' THEN 23
+
+    WHEN screenname = 'IDS_SCN_AUDITTRAILHIS' THEN 24
+    WHEN screenname = 'IDS_SCN_CFRSETTINGS' THEN 25
+    WHEN screenname = 'IDS_SCN_AUDITTRAILCONFIG' THEN 26
+
+    WHEN screenname = 'IDS_SCN_REPORTS' THEN 27
+    WHEN screenname = 'IDS_SCN_REPORTVIEVER' THEN 28
+    WHEN screenname = 'IDS_SCN_REPORTMAPPER' THEN 29
+
+    WHEN screenname = 'IDS_SCN_MATERIAL' THEN 30
+    WHEN screenname = 'IDS_SCN_MATERIALINVENTORY' THEN 31
+    WHEN screenname = 'IDS_SCN_MATERIALTYPEPARAMS' THEN 32
+    WHEN screenname = 'IDS_SCN_MATERIALCATEGORY' THEN 33
+    WHEN screenname = 'IDS_SCN_GRADEMASTER' THEN 34
+    WHEN screenname = 'IDS_SCN_SUPPLIER' THEN 35
+    WHEN screenname = 'IDS_SCN_STORAGELOCATION' THEN 36
+    WHEN screenname = 'IDS_SCN_SECTIONMASTER' THEN 37
+    WHEN screenname = 'IDS_SCN_MANUFACTURER' THEN 38
+    WHEN screenname = 'IDS_SCN_UNITMASTER' THEN 39
+    WHEN screenname = 'IDS_SCN_MATERIAL' THEN 40
+    WHEN screenname = 'IDS_SCN_MATERIALINVENTORY' THEN 41
+
+    WHEN screenname = 'IDS_SCN_EQUIPMENT' THEN 42
+    WHEN screenname = 'IDS_SCN_EQUIPMENTMASTER' THEN 43
+    WHEN screenname = 'IDS_TSK_EQUIPMENTMASTER' THEN 44
+
+    WHEN screenname = 'IDS_SCN_LOGBOOK' THEN 45
+    ELSE sequenceorder -- Retain the current value if no match
+END;
+
+UPDATE lsusergrouprights SET sequenceorder = CASE
+    WHEN screenname = 'IDS_SCN_DASHBOARD' THEN 1
+
+    WHEN screenname = 'IDS_SCN_SHEETORDERS' THEN 2
+    WHEN screenname = 'IDS_SCN_PROTOCOLORDERS' THEN 3
+    WHEN screenname = 'IDS_SCN_UNLOCKORDERS' THEN 4
+
+    WHEN screenname = 'IDS_SCN_SHEETTEMPLATE' THEN 5
+    WHEN screenname = 'IDS_SCN_PROTOCOLTEMPLATE' THEN 6
+    WHEN screenname = 'IDS_SCN_TEMPLATEMAPPING' THEN 7
+
+    WHEN screenname = 'IDS_SCN_USERGROUP' THEN 8
+    WHEN screenname = 'IDS_SCN_SITEMASTER' THEN 9
+    WHEN screenname = 'IDS_SCN_ACTIVEUSER' THEN 9
+    WHEN screenname = 'IDS_SCN_USERMASTER' THEN 10
+    WHEN screenname = 'IDS_SCN_USERRIGHTS' THEN 11
+    WHEN screenname = 'IDS_SCN_PROJECTMASTER' THEN 12
+    WHEN screenname = 'IDS_SCN_PROJECTTEAM' THEN 13
+    WHEN screenname = 'IDS_SCN_TASKMASTER' THEN 14
+    WHEN screenname = 'IDS_SCN_ORDERWORKLOW' THEN 15
+    WHEN screenname = 'IDS_SCN_TEMPLATEWORKFLOW' THEN 16
+    WHEN screenname = 'IDS_SCN_DOMAIN' THEN 17
+    WHEN screenname = 'IDS_SCN_PASSWORDPOLICY' THEN 18
+    WHEN screenname = 'IDS_SCN_BARCODEMASTER' THEN 18
+
+    WHEN screenname = 'IDS_SCN_PARSER' THEN 19
+    WHEN screenname = 'IDS_SCN_DELIMITER' THEN 19
+    WHEN screenname = 'IDS_SCN_INSTRUMENTCATEGORY' THEN 20
+    WHEN screenname = 'IDS_SCN_INSTRUMENTMASTER' THEN 21
+    WHEN screenname = 'IDS_SCN_METHODDELIMITER' THEN 22
+    WHEN screenname = 'IDS_SCN_METHODMASTER' THEN 23
+
+    WHEN screenname = 'IDS_SCN_AUDITTRAILHIS' THEN 24
+    WHEN screenname = 'IDS_SCN_CFRSETTINGS' THEN 25
+    WHEN screenname = 'IDS_SCN_AUDITTRAILCONFIG' THEN 26
+
+    WHEN screenname = 'IDS_SCN_REPORTS' THEN 27
+    WHEN screenname = 'IDS_SCN_REPORTVIEVER' THEN 28
+    WHEN screenname = 'IDS_SCN_REPORTMAPPER' THEN 29
+
+    WHEN screenname = 'IDS_SCN_MATERIAL' THEN 30
+    WHEN screenname = 'IDS_SCN_MATERIALINVENTORY' THEN 31
+    WHEN screenname = 'IDS_SCN_MATERIALTYPEPARAMS' THEN 32
+    WHEN screenname = 'IDS_SCN_MATERIALCATEGORY' THEN 33
+    WHEN screenname = 'IDS_SCN_GRADEMASTER' THEN 34
+    WHEN screenname = 'IDS_SCN_SUPPLIER' THEN 35
+    WHEN screenname = 'IDS_SCN_STORAGELOCATION' THEN 36
+    WHEN screenname = 'IDS_SCN_SECTIONMASTER' THEN 37
+    WHEN screenname = 'IDS_SCN_MANUFACTURER' THEN 38
+    WHEN screenname = 'IDS_SCN_UNITMASTER' THEN 39
+    WHEN screenname = 'IDS_SCN_MATERIAL' THEN 40
+    WHEN screenname = 'IDS_SCN_MATERIALINVENTORY' THEN 41
+
+    WHEN screenname = 'IDS_SCN_EQUIPMENT' THEN 42
+    WHEN screenname = 'IDS_SCN_EQUIPMENTMASTER' THEN 43
+    WHEN screenname = 'IDS_TSK_EQUIPMENTMASTER' THEN 44
+
+    WHEN screenname = 'IDS_SCN_LOGBOOK' THEN 45
+    ELSE sequenceorder -- Retain the current value if no match
+END;
+
 insert into LSpreferences (serialno,tasksettings,valuesettings) values(6,'RegulatedIndustry','1') on conflict(serialno) do nothing;
 
+
+ DO
+$do$
+DECLARE
+   _kind "char";
+BEGIN
+   SELECT relkind
+   FROM   pg_class
+   WHERE  relname = 'lsfileelnmethod_seq' 
+   INTO  _kind;
+
+   IF NOT FOUND THEN CREATE SEQUENCE lsfileelnmethod_seq;
+   ELSIF _kind = 'S' THEN  
+     
+   ELSE                  
+    
+   END IF;
+END
+$do$;
+
+CREATE TABLE IF NOT EXISTS public.lsfileelnmethod
+(
+    fileelnmethodcode integer NOT NULL,
+    filecode integer,
+    instmasterkey integer NOT NULL,
+    methodkey integer NOT NULL,
+    CONSTRAINT lsfileelnmethod_pkey PRIMARY KEY (fileelnmethodcode),
+    CONSTRAINT fk8dce8e4ym594ljg5mnn7r6ywo FOREIGN KEY (instmasterkey)
+        REFERENCES public.instrumentmaster (instmasterkey) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT fk8dh6t6caqk9rx3reij6b6apa8 FOREIGN KEY (methodkey)
+        REFERENCES public.method (methodkey) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT fkjbido3fgbr49nh8nd6p2immq6 FOREIGN KEY (filecode)
+        REFERENCES public.lsfile (filecode) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.lsfileelnmethod
+    OWNER to postgres;
+    
+    
+ DO
+$do$
+DECLARE
+   _kind "char";
+BEGIN
+   SELECT relkind
+   FROM   pg_class
+   WHERE  relname = 'lsorderelnmethod_seq' 
+   INTO  _kind;
+
+   IF NOT FOUND THEN CREATE SEQUENCE lsorderelnmethod_seq;
+   ELSIF _kind = 'S' THEN  
+     
+   ELSE                  
+    
+   END IF;
+END
+$do$;
+
+CREATE TABLE IF NOT EXISTS public.lsorderelnmethod
+(
+    orderelnmethodcode integer NOT NULL,
+    batchcode numeric(17,0),
+    batchid character varying(250) COLLATE pg_catalog."default",
+    createdtimestamp timestamp without time zone,
+    usercode integer NOT NULL,
+    instmasterkey integer NOT NULL,
+    methodkey integer NOT NULL,
+    CONSTRAINT lsorderelnmethod_pkey PRIMARY KEY (orderelnmethodcode),
+    CONSTRAINT fk1pcnevo3a6ggq9avocyios7oc FOREIGN KEY (instmasterkey)
+        REFERENCES public.instrumentmaster (instmasterkey) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT fk2rk7hkiwbsvtqtgv59667trw FOREIGN KEY (batchcode)
+        REFERENCES public.lslogilablimsorderdetail (batchcode) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT fkaglu06hria5eifsjq1c7ahd1e FOREIGN KEY (methodkey)
+        REFERENCES public.method (methodkey) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT fko9srm7ji0pyfb85v5pgrvybr8 FOREIGN KEY (usercode)
+        REFERENCES public.lsusermaster (usercode) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.lsorderelnmethod
+    OWNER to postgres;
+    
+
+DO
+$do$
+DECLARE
+   _kind "char";
+BEGIN
+   SELECT relkind
+   FROM   pg_class
+   WHERE  relname = 'rctcpresultdetails_resultid_seq' 
+   INTO  _kind;
+
+   IF NOT FOUND THEN CREATE SEQUENCE rctcpresultdetails_resultid_seq;
+   ELSIF _kind = 'S' THEN  
+     
+   ELSE                  
+    
+   END IF;
+END
+$do$;
+
+CREATE TABLE IF NOT EXISTS public.rctcpresultdetails
+(
+    resultid integer NOT NULL DEFAULT nextval('rctcpresultdetails_resultid_seq'::regclass),
+    createddate timestamp without time zone,
+    instmastkey integer,
+    methodkey integer,
+    paramname character varying(255) COLLATE pg_catalog."default",
+    parserblockkey integer,
+    parserfieldkey integer,
+    results character varying(255) COLLATE pg_catalog."default",
+    seqnumber integer,
+    status integer,
+    usercode integer NOT NULL,
+    sitecode integer NOT NULL,
+    fieldname character varying(255) COLLATE pg_catalog."default",
+    instmasterkey integer NOT NULL,
+    CONSTRAINT rctcpresultdetails_pkey PRIMARY KEY (resultid),
+    CONSTRAINT fk7hhsu6pfqtofl28l3r6wmt2se FOREIGN KEY (methodkey)
+        REFERENCES public.method (methodkey) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT fkl2xh6s2w8fpyeaf71h9y2hylr FOREIGN KEY (sitecode)
+        REFERENCES public.lssitemaster (sitecode) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT fkric7owd4wwscqecu6dh85kqeu FOREIGN KEY (usercode)
+        REFERENCES public.lsusermaster (usercode) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT fksm696qjhmpowab2v55grca3u4 FOREIGN KEY (instmasterkey)
+        REFERENCES public.instrumentmaster (instmasterkey) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT fksy4d35but1667y3839kcnks5b FOREIGN KEY (instmastkey)
+        REFERENCES public.instrumentmaster (instmasterkey) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT rctcpresultdetails_status_check CHECK (status >= '-1'::integer AND status <= 1)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.rctcpresultdetails
+    OWNER to postgres;
+    
+    
+DO
+$do$
+DECLARE
+   _kind "char";
+BEGIN
+   SELECT relkind
+   FROM   pg_class
+   WHERE  relname = 'rctcpresultfieldvalues_sno_seq' 
+   INTO  _kind;
+
+   IF NOT FOUND THEN CREATE SEQUENCE rctcpresultfieldvalues_sno_seq;
+   ELSIF _kind = 'S' THEN  
+     
+   ELSE                  
+    
+   END IF;
+END
+$do$;
+
+
+CREATE TABLE IF NOT EXISTS public.rctcpresultfieldvalues
+(
+    sno integer NOT NULL DEFAULT nextval('rctcpresultfieldvalues_sno_seq'::regclass),
+    fieldname character varying(100) COLLATE pg_catalog."default",
+    fieldvalue character varying(100) COLLATE pg_catalog."default",
+    resseqno integer,
+    resultid integer,
+    CONSTRAINT rctcpresultfieldvalues_pkey PRIMARY KEY (sno),
+    CONSTRAINT fkllo5l7pce04r3yvkuxv07w8s6 FOREIGN KEY (resultid)
+        REFERENCES public.rctcpresultdetails (resultid) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.rctcpresultfieldvalues
+    OWNER to postgres;

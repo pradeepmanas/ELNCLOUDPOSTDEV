@@ -60,6 +60,16 @@ public class IotconnectController {
 		final String rawData =  mapper.convertValue(mapObject.get("rawData"), String.class);
 		final LSuserMaster userobj = mapper.convertValue(mapObject.get("user"), LSuserMaster.class);
 		final Integer isMultitenant = mapper.convertValue(mapObject.get("ismultitenant"), Integer.class);
+		//final Long batchcode = mapper.convertValue(mapObject.get("batchcode"),long.class);
+		
+		Object batchcodeObject = mapObject.get("batchcode");
+		Long batchcode = null;
+		if (batchcodeObject instanceof Number) {
+		    batchcode = ((Number) batchcodeObject).longValue();
+		} else if (batchcodeObject instanceof String) {
+		    batchcode = Long.parseLong((String) batchcodeObject);
+		}
+		
 		final  String tenant = TenantContext.getCurrentTenant();
 		
 		final ResponseEntity<Object> parsedData ;
@@ -72,9 +82,13 @@ public class IotconnectController {
 		}
 		System.out.println("parsedData:" +parsedData);
 
+		if(batchcode == null) {
 		iotconnectservice.InsertRCTCPResultDetails(parsedData.getBody());
+		}else {
+		iotconnectservice.InsertIntoOrders(parsedData.getBody(),batchcode);
+		}
+
 	}
-	
 	
 	@RequestMapping(value = "/getiotresultdetails")
 	public  List<RCTCPResultDetails> getiotresultdetails(final HttpServletRequest request, @RequestBody RCTCPResultDetails rctcpResultDetails) throws Exception {

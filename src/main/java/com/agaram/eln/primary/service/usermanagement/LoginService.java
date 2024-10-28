@@ -635,7 +635,7 @@ public class LoginService {
 		}
 		obj.put("user", objExitinguser);
 
-		LSpreferences IsRegulated = LSpreferencesRepository.findByTasksettingsAndValuesettings("RegulatedIndustry","1");
+		LSpreferences IsRegulated = LSpreferencesRepository.findByTasksettings("RegulatedIndustry");
 		obj.put("IsRegulated", IsRegulated);
 		return obj;
 	}

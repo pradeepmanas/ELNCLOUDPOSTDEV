@@ -2454,6 +2454,47 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 			Date todate, LSuserMaster objuser, int j, int k, int l, List<LSuserMaster> usernotify,
 			LSSiteMaster lssitemaster, int m, Integer pageperorder,Integer approvelstatus);
 
+	
+	@Query(value = "WITH TeamProjects AS (SELECT lsprojectmaster_projectcode "
+            + " FROM LSlogilablimsorderdetail WHERE lsprojectmaster_projectcode IN ("
+            + " SELECT DISTINCT projectcode FROM LSprojectmaster WHERE lsusersteam_teamcode IN ("
+            + " SELECT teamcode FROM LSuserteammapping WHERE lsuserMaster_usercode = ?5 AND teamcode IS NOT NULL)"
+            + " AND status = 1))"
+            + "SELECT COUNT(*) FROM LSlogilablimsorderdetail o WHERE "
+            // Condition 1: orderflag, filetype, Approvelstatus check
+            + "((o.orderflag = ?1 AND filetype = ?2 AND createdtimestamp BETWEEN ?3 AND ?4 AND (o.Approvelstatus != ?11 OR o.Approvelstatus IS NULL))"
+            // Condition 2: no project code and viewoption 6
+            + "OR (o.orderflag = ?1 AND lsprojectmaster_projectcode IS NULL AND viewoption = ?6 AND lsusermaster_usercode = ?5 "
+            + "AND ordercancell IS NULL AND createdtimestamp BETWEEN ?3 AND ?4 AND assignedto_usercode IS NULL AND (o.Approvelstatus != ?11 OR o.Approvelstatus IS NULL))"
+            // Condition 3: no project code and viewoption 7
+            + "OR (o.orderflag = ?1 AND lsprojectmaster_projectcode IS NULL AND viewoption = ?7 AND lsusermaster_usercode = ?5 "
+            + "AND ordercancell IS NULL AND createdtimestamp BETWEEN ?3 AND ?4 AND assignedto_usercode IS NULL AND (o.Approvelstatus != ?11 OR o.Approvelstatus IS NULL))"
+            // Condition 4: no project code and viewoption 8
+            + "OR (o.orderflag = ?1 AND lsprojectmaster_projectcode IS NULL AND viewoption = ?8 AND ordercancell IS NULL "
+            + "AND createdtimestamp BETWEEN ?3 AND ?4 AND lsusermaster_usercode IN (?9) AND assignedto_usercode IS NULL AND (o.Approvelstatus != ?11 OR o.Approvelstatus IS NULL))"
+            // Condition 5: assigned to different user
+            + "OR (o.orderflag = ?1 AND lsusermaster_usercode = ?5 AND assignedto_usercode != ?5 "
+            + "AND createdtimestamp BETWEEN ?3 AND ?4 AND assignedto_usercode IS NOT NULL AND (o.Approvelstatus != ?11 OR o.Approvelstatus IS NULL))"
+            // Condition 6: assigned to current user
+            + "OR (o.orderflag = ?1 AND assignedto_usercode = ?5 AND createdtimestamp BETWEEN ?3 AND ?4 AND (o.Approvelstatus != ?11 OR o.Approvelstatus IS NULL))"
+            // Condition 7: team project
+            + "OR (o.orderflag = ?1 AND o.lsprojectmaster_projectcode IN (SELECT lsprojectmaster_projectcode FROM TeamProjects) "
+            + "AND createdtimestamp BETWEEN ?3 AND ?4 AND ordercancell IS NULL AND assignedto_usercode IS NULL AND (o.Approvelstatus != ?11 OR o.Approvelstatus IS NULL))"
+            // Condition 8: team project with viewoption 8
+            + "OR (o.orderflag = ?1 AND o.lsprojectmaster_projectcode IN (SELECT lsprojectmaster_projectcode FROM TeamProjects) "
+            + "AND viewoption = ?8 AND lsusermaster_usercode = ?5 AND createdtimestamp BETWEEN ?3 AND ?4 "
+            + "AND ordercancell IS NULL AND assignedto_usercode IS NULL AND (o.Approvelstatus != ?11 OR o.Approvelstatus IS NULL))"
+            // Condition 9: material code from site
+            + "OR (o.orderflag = ?1 AND lsprojectmaster_projectcode IS NULL AND elnmaterial_nmaterialcode IN "
+            + "(SELECT DISTINCT elnmaterial_nmaterialcode FROM lslogilablimsorderdetail WHERE elnmaterial_nmaterialcode IN "
+            + "(SELECT m.nmaterialcode FROM elnmaterial m WHERE m.nsitecode = ?10)) AND createdtimestamp BETWEEN ?3 AND ?4 "
+            + "AND ordercancell IS NULL AND assignedto_usercode IS NULL AND lsusermaster_usercode != ?5 AND (o.Approvelstatus != ?11 OR o.Approvelstatus IS NULL)))", 
+      nativeQuery = true)
+	long countLSlogilablimsorderdetaildashboardforpending(String string, int i, Date fromdate,
+        Date todate, LSuserMaster objuser, int j, int k, int l, List<LSuserMaster> usernotify,
+        LSSiteMaster lssitemaster, Integer approvelstatus);
+	
+	
 	@Transactional
 //	@Modifying
 	@Query(value = "SELECT  *  FROM LSlogilablimsorderdetail o "
