@@ -1931,5 +1931,13 @@ List<Logilabprotocolorders> findByOrdercancellAndSitecodeAndLsprojectmasterIsNul
 			Date todate4, List<LSprojectmaster> lstproject, Pageable pageable);
 
 
+	List<ProtocolOrdersDashboard> findByLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatedtimestampBetweenOrLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatebyAndCreatedtimestampBetweenOrLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndCreatebyInOrLsprojectmasterInAndViewoptionAndSitecodeAndCreatedtimestampBetweenOrLsprojectmasterInAndCreatedtimestampBetweenAndSitecodeOrderByProtocolordercodeDesc(
+			int i, Integer sitecode, Date fromdate, Date todate, int j, Integer sitecode2, Integer usercode,
+			Date fromdate2, Date todate2, int k, Integer sitecode3, Date fromdate3, Date todate3,
+			List<Integer> userlist, List<LSprojectmaster> lstproject, int l, Integer sitecode4, Date fromdate4,
+			Date todate4, List<LSprojectmaster> lstproject2, Date fromdate5, Date todate5, Integer sitecode5,
+			Pageable pageable);
+
+
 	}
 
