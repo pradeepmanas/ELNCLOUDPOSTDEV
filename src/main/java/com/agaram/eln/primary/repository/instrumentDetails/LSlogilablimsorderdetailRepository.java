@@ -2525,12 +2525,12 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 	long getLSlogilablimsorderdetaildashboardforcount(String string, int i, Date fromdate, Date todate,
 			LSuserMaster objuser, LSSiteMaster lssitemaster);
 
-	@Transactional
-//	@Modifying
-	@Query(value = "SELECT  count(*) FROM LSlogilablimsorderdetail o "
-			+ "WHERE (o.orderflag =?1 And lsprojectmaster_projectcode IS NULL And elnmaterial_nmaterialcode in (select DISTINCT elnmaterial_nmaterialcode from lslogilablimsorderdetail where elnmaterial_nmaterialcode in (select m.nmaterialcode from elnmaterial m where  m.nsitecode =?2))And createdtimestamp BETWEEN ?3 And ?4  And ordercancell IS NULL And assignedto_usercode IS NULL And lsusermaster_usercode !=?5)", nativeQuery = true)
-	long getLSlogilablimsorderdetaildashboardforpendingcount(String string, LSSiteMaster lssitemaster, Date fromdate,
-			Date todate, LSuserMaster objuser);
+//	@Transactional
+////	@Modifying
+//	@Query(value = "SELECT  count(*) FROM LSlogilablimsorderdetail o "
+//			+ "WHERE (o.orderflag =?1 And lsprojectmaster_projectcode IS NULL And elnmaterial_nmaterialcode in (select DISTINCT elnmaterial_nmaterialcode from lslogilablimsorderdetail where elnmaterial_nmaterialcode in (select m.nmaterialcode from elnmaterial m where  m.nsitecode =?2))And createdtimestamp BETWEEN ?3 And ?4  And ordercancell IS NULL And assignedto_usercode IS NULL And lsusermaster_usercode !=?5)", nativeQuery = true)
+//	long getLSlogilablimsorderdetaildashboardforpendingcount(String string, LSSiteMaster lssitemaster, Date fromdate,
+//			Date todate, LSuserMaster objuser);
 
 	@Transactional
 //	@Modifying

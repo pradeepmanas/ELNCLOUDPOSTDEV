@@ -753,7 +753,7 @@ public class LoginService {
 		LSPasswordPolicy passHistorycount = null ;
 		if(objExitinguser != null) {
 			passHistorycount = LSPasswordPolicyRepository
-				.findByLssitemaster(objExitinguser.getLssitemaster());
+				.findByLssitemaster(objsiteobj);
 		}
 		listofpwd = LSPasswordHistoryDetailsRepository
 				.findTop5ByAndLsusermasterInOrderByPasswordcodeDesc(objExitinguser);

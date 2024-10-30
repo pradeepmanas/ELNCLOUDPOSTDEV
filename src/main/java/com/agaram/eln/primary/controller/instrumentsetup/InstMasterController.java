@@ -183,4 +183,18 @@ public class InstMasterController {
 			return masterService.getInstListByCategoryAndSite(instCategory, site);
 		}
 	}
+	
+	@SuppressWarnings("unchecked")
+	@PostMapping(value = "/getInstListBySite")
+	public ResponseEntity<Object> getInstListBySite(@Valid @RequestBody Map<String, Object> mapObject)
+			throws Exception {
+		final ObjectMapper mapper = new ObjectMapper();
+		Map<String, Object> obj = (Map<String, Object>) mapObject.get("inputData");
+	
+		final LSSiteMaster site = mapper.convertValue(obj.get("site"), LSSiteMaster.class);
+
+		return masterService.getInstListBySite(site);
+
+
+	}
 }

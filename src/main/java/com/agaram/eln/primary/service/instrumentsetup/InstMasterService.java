@@ -538,5 +538,9 @@ public class InstMasterService {
    		return createdUser;
    	}
 
+    public ResponseEntity<Object> getInstListBySite(final LSSiteMaster site){
+   		return new ResponseEntity<>(masterRepo.findByStatusAndSite(1,site),
+   				HttpStatus.OK);
+   	}
    	
 }
