@@ -7,6 +7,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import com.agaram.eln.primary.model.equipment.Equipment;
 import com.agaram.eln.primary.model.instrumentsetup.InstrumentMaster;
 import com.agaram.eln.primary.model.methodsetup.Method;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
@@ -107,4 +108,13 @@ public interface MethodRepository extends JpaRepository<Method, Integer>{
 	List<Method> findByInstrawdataurl(String fileName);
 
 	List<Method> findByInstmasterAndStatus(InstrumentMaster instmast, int i);
+
+	Optional<Method> findByMethodnameAndEquipmentAndStatusAndSite(String methodname, Equipment equipment, int i,
+			LSSiteMaster site);
+
+	List<Method> findByMethodnameContainingAndEquipmentAndStatus(String concat, Equipment equipment, int i);
+
+	Optional<Method> findByMethodnameAndEquipmentAndStatus(String methodname, Equipment equipment, int i);
+
+	List<Method> findByStatusAndSiteAndEquipmentIsNotNull(int i, LSSiteMaster lssiteMaster);
 }

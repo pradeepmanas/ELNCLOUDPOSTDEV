@@ -73,6 +73,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.agaram.eln.primary.exception.FileStorageException;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
+import com.agaram.eln.primary.model.equipment.Equipment;
 import com.agaram.eln.primary.model.instrumentsetup.InstrumentMaster;
 import com.agaram.eln.primary.model.methodsetup.CloudParserFile;
 import com.agaram.eln.primary.model.methodsetup.CustomField;
@@ -90,6 +91,7 @@ import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.property.FileStorageProperties;
 import com.agaram.eln.primary.repository.cfr.LScfttransactionRepository;
+import com.agaram.eln.primary.repository.equipment.EquipmentRepository;
 import com.agaram.eln.primary.repository.instrumentsetup.InstMasterRepository;
 import com.agaram.eln.primary.repository.methodsetup.CloudParserFileRepository;
 import com.agaram.eln.primary.repository.methodsetup.CustomFieldRepository;
@@ -202,6 +204,8 @@ public class MethodService {
 
 	private Path fileStorageLocation;
 
+	@Autowired
+	private EquipmentRepository equipmentrepository;
     
     @Autowired
     public MethodService(FileStorageProperties fileStorageProperties) {
@@ -253,23 +257,96 @@ public class MethodService {
     * @param request [HttpServletRequest] Request object to ip address of remote client
     * @return Response of newly added method entity
     */
+//	@Transactional
+//	public ResponseEntity<Object> createMethod(final Method methodMaster, final LSSiteMaster site, final HttpServletRequest request,Method auditdetails)
+//	{			
+//		boolean saveAuditTrail=true;
+//		final InstrumentMaster instMaster = instMastRepo.findOne(methodMaster.getInstmaster().getInstmastkey());
+//		final LSuserMaster createdUser = getCreatedUserByKey(methodMaster.getCreatedby().getUsercode());
+//		
+//		if (instMaster != null) {			
+//			final Optional<Method> methodByName = methodRepo.findByMethodnameAndInstmasterAndStatusAndSite(
+//					methodMaster.getMethodname(), instMaster, 1,site);
+//			if (methodByName.isPresent())
+//			{
+//				//Conflict =409 - Duplicate entry
+//				if (saveAuditTrail == true)
+//				{	
+//				}
+//				methodMaster.setInfo("Duplicate Entry - " + methodMaster.getMethodname() + " for inst : " + instMaster.getInstrumentcode());
+//				methodMaster.setObjsilentaudit(auditdetails.getObjsilentaudit());
+//
+//				return new ResponseEntity<>(methodMaster, HttpStatus.CONFLICT);
+//			}
+//			else
+//			{							
+//				methodMaster.setCreatedby(createdUser);
+//				methodMaster.setInstmaster(instMaster);					
+//				final Method savedMethod = methodRepo.save(methodMaster);
+//				 
+//				methodversionrepository.save(methodMaster.getMethodversion());
+//				
+//				savedMethod.setDisplayvalue(savedMethod.getMethodname());
+//				savedMethod.setScreenname("Methodmaster");
+//				savedMethod.setObjsilentaudit(auditdetails.getObjsilentaudit());
+//					final Map<String, String> fieldMap = new HashMap<String, String>();
+//					fieldMap.put("site", "sitename");				
+//					fieldMap.put("createdby", "loginid");				
+//					fieldMap.put("instmaster", "instrumentcode");				
+//
+//				return new ResponseEntity<>( savedMethod, HttpStatus.OK);			
+//			}
+//		}
+//		else {
+//			//Instrument not found
+//			if (saveAuditTrail == true)
+//			{						
+////				final String comments = "Create Failed as Instrument not found";
+//				
+////				cfrTransService.saveCfrTransaction(page, EnumerationInfo.CFRActionType.SYSTEM.getActionType(),
+////						"Create", comments, site, "",
+////						createdUser, request.getRemoteAddr());
+//				  LScfttransaction LScfttransaction = new LScfttransaction();
+//					
+//					LScfttransaction.setActions("Insert");
+//					LScfttransaction.setComments("Create Failed as Instrument not found");
+//					LScfttransaction.setLssitemaster(site.getSitecode());
+//					LScfttransaction.setLsuserMaster(methodMaster.getCreatedby().getUsercode());
+//					LScfttransaction.setManipulatetype("View/Load");
+//					LScfttransaction.setModuleName("Method Delimiter");
+//					LScfttransaction.setTransactiondate(methodMaster.getCreateddate());
+//					LScfttransaction.setUsername(methodMaster.getUsername());
+//					LScfttransaction.setTableName("Method");
+//					LScfttransaction.setSystemcoments("System Generated");
+//					
+//					lscfttransactionrepo.save(LScfttransaction);
+//			}
+//  			return new ResponseEntity<>("Invalid Instrument", HttpStatus.NOT_FOUND);
+//		}		
+//	}		
+	
+	
+	/* equipment change*/
+	
 	@Transactional
 	public ResponseEntity<Object> createMethod(final Method methodMaster, final LSSiteMaster site, final HttpServletRequest request,Method auditdetails)
 	{			
 		boolean saveAuditTrail=true;
-		final InstrumentMaster instMaster = instMastRepo.findOne(methodMaster.getInstmaster().getInstmastkey());
-		final LSuserMaster createdUser = getCreatedUserByKey(methodMaster.getCreatedby().getUsercode());
+//		final InstrumentMaster instMaster = instMastRepo.findOne(methodMaster.getInstmaster().getInstmastkey());
 		
-		if (instMaster != null) {			
-			final Optional<Method> methodByName = methodRepo.findByMethodnameAndInstmasterAndStatusAndSite(
-					methodMaster.getMethodname(), instMaster, 1,site);
+		final LSuserMaster createdUser = getCreatedUserByKey(methodMaster.getCreatedby().getUsercode());
+		final Equipment equipment = equipmentrepository.findOne(methodMaster.getEquipment().getNequipmentcode());
+		 
+		if (equipment != null) {			
+			final Optional<Method> methodByName = methodRepo.findByMethodnameAndEquipmentAndStatusAndSite(
+					methodMaster.getMethodname(), equipment, 1,site);
 			if (methodByName.isPresent())
 			{
 				//Conflict =409 - Duplicate entry
 				if (saveAuditTrail == true)
 				{	
 				}
-				methodMaster.setInfo("Duplicate Entry - " + methodMaster.getMethodname() + " for inst : " + instMaster.getInstrumentcode());
+				methodMaster.setInfo("Duplicate Entry - " + methodMaster.getMethodname() + " for Equipment : " + equipment.getNequipmentcode());
 				methodMaster.setObjsilentaudit(auditdetails.getObjsilentaudit());
 
 				return new ResponseEntity<>(methodMaster, HttpStatus.CONFLICT);
@@ -277,7 +354,7 @@ public class MethodService {
 			else
 			{							
 				methodMaster.setCreatedby(createdUser);
-				methodMaster.setInstmaster(instMaster);					
+				methodMaster.setEquipment(equipment);					
 				final Method savedMethod = methodRepo.save(methodMaster);
 				 
 				methodversionrepository.save(methodMaster.getMethodversion());
@@ -297,11 +374,7 @@ public class MethodService {
 			//Instrument not found
 			if (saveAuditTrail == true)
 			{						
-//				final String comments = "Create Failed as Instrument not found";
-				
-//				cfrTransService.saveCfrTransaction(page, EnumerationInfo.CFRActionType.SYSTEM.getActionType(),
-//						"Create", comments, site, "",
-//						createdUser, request.getRemoteAddr());
+
 				  LScfttransaction LScfttransaction = new LScfttransaction();
 					
 					LScfttransaction.setActions("Insert");
@@ -320,6 +393,9 @@ public class MethodService {
   			return new ResponseEntity<>("Invalid Instrument", HttpStatus.NOT_FOUND);
 		}		
 	}		
+	
+	
+	
 	/**
 	 * This method is used to update selected Method object.
 	 * The method name can be updated any time.
@@ -334,24 +410,133 @@ public class MethodService {
 	 * @param request [HttpServletRequest] Request object to ip address of remote client
 	 * @return Response of updated method master entity
 	 */
-	@Transactional
 	
+	/* change for equipment*/
+//	@Transactional
+//	
+//	public ResponseEntity<Object> updateMethod(final Method method, final LSSiteMaster site, final int doneByUserKey, 
+//			    final HttpServletRequest request,Method auditdetails)
+//	{	  		
+//		boolean saveAuditTrail=true;	
+//		final InstrumentMaster instMaster = instMastRepo.findOne(method.getInstmaster().getInstmastkey());
+//		
+//		 final Optional<Method> methodByKey = methodRepo.findByMethodkeyAndStatusAndSite(method.getMethodkey(), 1,site);
+//		 
+//		 if(methodByKey.isPresent()) {		   
+//
+//		
+//		if (instMaster != null) 
+//		{
+//
+//			final Optional<Method> methodByName = methodRepo.findByMethodnameAndInstmasterAndStatusAndSite(
+//					method.getMethodname(), instMaster, 1,site);
+//			
+//		
+//			if (methodByName.isPresent())
+//        {
+//				 
+//				if(methodByName.get().getMethodkey().equals(method.getMethodkey()))
+//		    	{   
+//				//copy of object for using 'Diffable' to compare objects
+////	    			final Method methodBeforeSave = new Method(methodByName.get());
+//	    			
+//					method.setInstmaster(instMaster);		    			
+//		    		final Method savedMethod = methodRepo.save(method);
+//		    		
+//		    		savedMethod.setDisplayvalue(savedMethod.getMethodname());
+//		    		savedMethod.setScreenname("Methodmaster");
+//		    		savedMethod.setObjsilentaudit(auditdetails.getObjsilentaudit());	
+//		    		return new ResponseEntity<>(savedMethod , HttpStatus.OK);	
+//		    	}
+//				else {
+//					method.setInfo("Duplicate Entry - " + method.getMethodname() + " for inst " + instMaster.getInstrumentcode());
+//					method.setObjsilentaudit(auditdetails.getObjsilentaudit());
+//	    			return new ResponseEntity<>(method, HttpStatus.CONFLICT);   
+//				}
+//		   }
+//			
+//			
+//			else
+//	    	{			    		
+//	    	
+//	    		final Method savedMethod = methodRepo.save(method);
+//	    		
+//	    		savedMethod.setDisplayvalue(savedMethod.getMethodname());
+//	    		savedMethod.setObjsilentaudit(auditdetails.getObjsilentaudit());
+//
+//				savedMethod.setScreenname("Methodmaster");
+//					    		return new ResponseEntity<>(savedMethod , HttpStatus.OK);			    		
+//	    	}	
+//			   }
+//			
+//			
+//			
+//		   else
+//		   {
+//			   //Invalid methodkey		   
+//			   if (saveAuditTrail) {				
+////					cfrTransService.saveCfrTransaction(page, EnumerationInfo.CFRActionType.SYSTEM.getActionType(),
+////							"Edit", "Update Failed - Method Not Found", site, "", createdUser, request.getRemoteAddr());
+//				   LScfttransaction LScfttransaction = new LScfttransaction();
+//					
+//					LScfttransaction.setActions("Update");
+//					LScfttransaction.setComments(" Update Failed - Method Not Found");
+//					LScfttransaction.setLssitemaster(site.getSitecode());
+//					LScfttransaction.setLsuserMaster(method.getCreatedby().getUsercode());
+//					LScfttransaction.setManipulatetype("View/Load");
+//					LScfttransaction.setModuleName("Method Master");
+//					LScfttransaction.setTransactiondate(method.getCreateddate());
+//					LScfttransaction.setUsername(method.getUsername());
+//					LScfttransaction.setTableName("Method");
+//					LScfttransaction.setSystemcoments("System Generated");
+//					
+//					lscfttransactionrepo.save(LScfttransaction);
+//	   		    }			
+//				return new ResponseEntity<>("Update Failed - Method Not Found", HttpStatus.NOT_FOUND);
+//		   }
+//		}
+//		else {
+//			//Instrument not found
+//			if (saveAuditTrail == true)
+//			{		
+//				 LScfttransaction LScfttransaction = new LScfttransaction();
+//					
+//					LScfttransaction.setActions("Update");
+//					LScfttransaction.setComments("Invalid Instrument");
+//					LScfttransaction.setLssitemaster(site.getSitecode());
+//					LScfttransaction.setLsuserMaster(method.getCreatedby().getUsercode());
+//					LScfttransaction.setManipulatetype("View/Load");
+//					LScfttransaction.setModuleName("Method Master");
+//					LScfttransaction.setTransactiondate(method.getCreateddate());
+//					LScfttransaction.setUsername(method.getUsername());
+//					LScfttransaction.setTableName("Method");
+//					LScfttransaction.setSystemcoments("System Generated");
+//					
+//					lscfttransactionrepo.save(LScfttransaction);
+//
+//			}
+//			return new ResponseEntity<>("Invalid Instrument", HttpStatus.NOT_FOUND);
+//		}
+//}	
+	
+	
+    @Transactional
 	public ResponseEntity<Object> updateMethod(final Method method, final LSSiteMaster site, final int doneByUserKey, 
 			    final HttpServletRequest request,Method auditdetails)
 	{	  		
 		boolean saveAuditTrail=true;	
-		final InstrumentMaster instMaster = instMastRepo.findOne(method.getInstmaster().getInstmastkey());
-		
+		//final InstrumentMaster instMaster = instMastRepo.findOne(method.getInstmaster().getInstmastkey());
+		 final Equipment equipment = equipmentrepository.findOne(method.getEquipment().getNequipmentcode());
 		 final Optional<Method> methodByKey = methodRepo.findByMethodkeyAndStatusAndSite(method.getMethodkey(), 1,site);
 		 
 		 if(methodByKey.isPresent()) {		   
 
 		
-		if (instMaster != null) 
+		if (equipment != null) 
 		{
 
-			final Optional<Method> methodByName = methodRepo.findByMethodnameAndInstmasterAndStatusAndSite(
-					method.getMethodname(), instMaster, 1,site);
+			final Optional<Method> methodByName = methodRepo.findByMethodnameAndEquipmentAndStatusAndSite(
+					method.getMethodname(), equipment, 1,site);
 			
 		
 			if (methodByName.isPresent())
@@ -359,10 +544,7 @@ public class MethodService {
 				 
 				if(methodByName.get().getMethodkey().equals(method.getMethodkey()))
 		    	{   
-				//copy of object for using 'Diffable' to compare objects
-//	    			final Method methodBeforeSave = new Method(methodByName.get());
-	    			
-					method.setInstmaster(instMaster);		    			
+					method.setEquipment(equipment);		    			
 		    		final Method savedMethod = methodRepo.save(method);
 		    		
 		    		savedMethod.setDisplayvalue(savedMethod.getMethodname());
@@ -371,16 +553,13 @@ public class MethodService {
 		    		return new ResponseEntity<>(savedMethod , HttpStatus.OK);	
 		    	}
 				else {
-					method.setInfo("Duplicate Entry - " + method.getMethodname() + " for inst " + instMaster.getInstrumentcode());
+					method.setInfo("Duplicate Entry - " + method.getMethodname() + " for equipment " + equipment.getNequipmentcode());
 					method.setObjsilentaudit(auditdetails.getObjsilentaudit());
 	    			return new ResponseEntity<>(method, HttpStatus.CONFLICT);   
 				}
 		   }
-			
-			
 			else
 	    	{			    		
-	    	
 	    		final Method savedMethod = methodRepo.save(method);
 	    		
 	    		savedMethod.setDisplayvalue(savedMethod.getMethodname());
@@ -390,15 +569,11 @@ public class MethodService {
 					    		return new ResponseEntity<>(savedMethod , HttpStatus.OK);			    		
 	    	}	
 			   }
-			
-			
-			
+		
 		   else
 		   {
 			   //Invalid methodkey		   
 			   if (saveAuditTrail) {				
-//					cfrTransService.saveCfrTransaction(page, EnumerationInfo.CFRActionType.SYSTEM.getActionType(),
-//							"Edit", "Update Failed - Method Not Found", site, "", createdUser, request.getRemoteAddr());
 				   LScfttransaction LScfttransaction = new LScfttransaction();
 					
 					LScfttransaction.setActions("Update");
@@ -435,13 +610,10 @@ public class MethodService {
 					LScfttransaction.setSystemcoments("System Generated");
 					
 					lscfttransactionrepo.save(LScfttransaction);
-
 			}
 			return new ResponseEntity<>("Invalid Instrument", HttpStatus.NOT_FOUND);
 		}
 }	
-	
-	
 	/**
 	 * This method is used to delete selected Method object based on its primary key.
 	 * Need to validate that sample splitting /parsing is not done for that Method before deleting.
@@ -1017,7 +1189,9 @@ public String getFileData(final String fileName,String tenant,Integer methodKey)
     * @return Method entity based on primary key
     */
    public ResponseEntity<Object> findById(final int methodKey) {
-	   return new ResponseEntity<>(methodRepo.findOne(methodKey), HttpStatus.OK);
+	   //Method method = methodRepo.findOne(methodKey);
+	   List<Method> method = methodRepo.findByMethodkey(methodKey);
+	   return new ResponseEntity<>(method.get(0), HttpStatus.OK);
    }
 	  
    
@@ -1043,21 +1217,25 @@ public String getFileData(final String fileName,String tenant,Integer methodKey)
 	   //final Page page = mapper.convertValue(mapObject.get("modulePage"), Page.class);
 	   final int methodKey= (Integer) mapObject.get("methodKey");
 	   final String methodName= (String) mapObject.get("methodName");
-	   final int instrumentKey = (Integer) mapObject.get("instMasterKey");
+//	   final int instrumentKey = (Integer) mapObject.get("instMasterKey");
+	   final int nequipmentcode = (Integer) mapObject.get("nequipmentcode");
 	   final String methodstatus= (String) mapObject.get("methodstatus");
-//	   final String comments = (String) mapObject.get("comments");
-	   
+   
 	   final MethodVersion methodversion = mapper.convertValue(mapObject.get("methodversion"), MethodVersion.class);   
 	   final Optional<Method> methodByKey = methodRepo.findByMethodkeyAndStatus(methodKey, 1);	   
-	   final InstrumentMaster instMaster = instMastRepo.findOne(instrumentKey);
+	   final Equipment equipment = equipmentrepository.findOne(nequipmentcode);
 	   final LSuserMaster createdUser = getCreatedUserByKey(doneByUserKey);
 	   
 	   final Method cft = mapper.convertValue(mapObject.get("auditdetails"), Method.class);
 	   Date date = new Date();
 
-	   if (methodByKey.isPresent() && instMaster != null) {		 
+	   final Optional<Method> methodByName = methodRepo.findByMethodnameAndEquipmentAndStatusAndSite(
+			   methodName, equipment, 1,site);
+	   
+	   if (methodByKey.isPresent() && equipment != null) {		 
 		   
-		   if(methodName.equals(methodByKey.get().getMethodname()))
+//		   if(methodName.equals(methodByKey.get().getMethodname()))
+		   if(methodByName.isPresent())
 		   {
                if(saveAuditTrail) {			   
 			   LScfttransaction LScfttransaction = new LScfttransaction();
@@ -1087,7 +1265,7 @@ public String getFileData(final String fileName,String tenant,Integer methodKey)
 		   MethodVersion versionobj =  methodversionrepository.save(methodversion);
 		   newMethod.setMethodkey(0);
 		   newMethod.setMethodname(methodName);
-		   newMethod.setInstmaster(instMaster);
+		   newMethod.setEquipment(equipment);
 		   newMethod.setCreatedby(createdUser);
 		   newMethod.setCreateddate(date);
 		   newMethod.setMethodstatus(methodstatus);
@@ -1351,7 +1529,32 @@ public String getFileData(final String fileName,String tenant,Integer methodKey)
    }
 
 
-
+   @Transactional
+   public ResponseEntity<Object> getMethodContainingByEquipment(final Method method, final int nequipmentcode){
+	   
+	   //final InstrumentMaster instMaster = instMastRepo.findOne(instMasterKey);
+	   final Equipment equipment = equipmentrepository.findOne(nequipmentcode);
+	   final List<Method> methodByVersion = methodRepo.findByMethodnameContainingAndEquipmentAndStatus(method.getMethodname().split("@")[0].concat("@"), 
+			   equipment, 1);
+	   String existingMethod = "";
+	   
+	   if(methodByVersion.size()>0) {
+		   final List<Integer> version = methodByVersion.stream().map((item) -> Integer.parseInt(item.getMethodname().substring(item.getMethodname().indexOf('@')+2))).collect(Collectors.toList());
+		   Integer max = version.stream().max(Integer::compare).get();
+		   existingMethod = method.getMethodname().split("@")[0].concat("@v").concat( String.valueOf(max+1));
+	   } else {
+		   final Optional<Method> methodByCopy = methodRepo.findByMethodnameAndEquipmentAndStatus(method.getMethodname(), equipment, 1);
+		   if (methodByCopy.isPresent()) {
+			   existingMethod = method.getMethodname() + "@v2";
+		   } else {
+			   existingMethod = method.getMethodname().split("@")[0]; 
+		   }
+		   
+		   
+	   }	   
+		   
+	   return new ResponseEntity<>(existingMethod, HttpStatus.OK);
+   }
 
    
 }

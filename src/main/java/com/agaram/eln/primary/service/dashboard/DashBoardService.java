@@ -1246,7 +1246,7 @@ public class DashBoardService {
 	}
 
 	private Map<String, Object> getallorders(List<LSprojectmaster> lstproject, Date fromdate, Date todate,
-			LSuserMaster objuser, Integer testcode, Pageable pageable, List<LSsamplemaster> lstsample1) {
+			LSuserMaster objuser, Integer testcode, Pageable pageable, List<LSsamplemaster> lstsample1, List<LSworkflow> lstworkflow) {
 		List<LogilabOrdermastersh> lstorders = new ArrayList<LogilabOrdermastersh>();
 		List<LogilabOrdermastersh> lstorderobj = new ArrayList<LogilabOrdermastersh>();
 		Map<String, Object> mapOrders = new HashMap<>();
@@ -1255,33 +1255,58 @@ public class DashBoardService {
 		int totalSamples = lstsample1.size();
 		if (testcode == -1 && objuser.getLstprojectforfilter() == null) {
 
-			if (env.getProperty("app.datasource.eln.url").toLowerCase().contains("postgres")) {
+//			if (env.getProperty("app.datasource.eln.url").toLowerCase().contains("postgres")) {
 
-				lstorders = lslogilablimsorderdetailRepository
-						.findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndLsprojectmasterInAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndLsprojectmasterIsNullAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullOrOrderflagAndAssignedtoAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterInAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndOrdercancellIsNullAndCreatedtimestampBetweenAndLsuserMasterInAndAssignedtoIsNullOrOrderflagAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullOrOrderflagAndAssignedtoAndCreatedtimestampBetweenOrApprovelstatusAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndLsprojectmasterIsNullAndAssignedtoIsNullOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndApprovelstatusOrAssignedtoAndCreatedtimestampBetweenAndApprovelstatusOrOrdercancellAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterIsNullAndAssignedtoIsNullOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndOrdercancellOrAssignedtoAndCreatedtimestampBetweenAndOrdercancellOrderByBatchcodeDesc(
-								"R", lstproject, fromdate, todate, 3, "R", lstproject, fromdate, todate, "R", 0,
-								fromdate, todate, "R", 1, objuser, fromdate, todate, 3, "R", 2, objuser, fromdate,
-								todate, 3, "R", 3, objuser, fromdate, todate, 3, lstproject, "R", 1, objuser, fromdate,
-								todate, "R", 2, objuser, fromdate, todate, "R", 3, objuser, fromdate, todate, "R",
-								objuser, objuser, fromdate, todate, "R", objuser, fromdate, todate, "N", lstproject,
-								fromdate, todate, "N", 0, fromdate, todate, "N", 1, objuser, fromdate, todate, "N", 2,
-								objuser, fromdate, todate, "N", lstproject, 3, objuser, fromdate, todate, "N", 3,
-								fromdate, todate, objuser.getUsernotify(), "N", objuser, objuser, fromdate, todate, "N",
-								objuser, fromdate, todate, 3, lstproject, fromdate, todate, 1, objuser, fromdate,
-								todate, 3, 2, objuser, fromdate, todate, 3, 3, objuser, fromdate, todate, 3, 3, objuser,
-								fromdate, todate, 3, objuser, objuser, fromdate, todate, 3, objuser, fromdate, todate,
-								3, 1, lstproject, fromdate, todate, 1, objuser, fromdate, todate, 1, 2, objuser,
-								fromdate, todate, 1, 3, objuser, fromdate, todate, 1, objuser, objuser, fromdate,
-								todate, 1, objuser, fromdate, todate, 1, pageable);
+//				lstorders = lslogilablimsorderdetailRepository
+//						.findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndLsprojectmasterInAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndLsprojectmasterIsNullAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullOrOrderflagAndAssignedtoAndCreatedtimestampBetweenOrOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterInAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndOrdercancellIsNullAndCreatedtimestampBetweenAndLsuserMasterInAndAssignedtoIsNullOrOrderflagAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullOrOrderflagAndAssignedtoAndCreatedtimestampBetweenOrApprovelstatusAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndLsprojectmasterIsNullAndAssignedtoIsNullOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndApprovelstatusOrAssignedtoAndCreatedtimestampBetweenAndApprovelstatusOrOrdercancellAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterIsNullAndAssignedtoIsNullOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndOrdercancellOrAssignedtoAndCreatedtimestampBetweenAndOrdercancellOrderByBatchcodeDesc(
+//								"R", lstproject, fromdate, todate, 3, "R", lstproject, fromdate, todate, "R", 0,
+//								fromdate, todate, "R", 1, objuser, fromdate, todate, 3, "R", 2, objuser, fromdate,
+//								todate, 3, "R", 3, objuser, fromdate, todate, 3, lstproject, "R", 1, objuser, fromdate,
+//								todate, "R", 2, objuser, fromdate, todate, "R", 3, objuser, fromdate, todate, "R",
+//								objuser, objuser, fromdate, todate, "R", objuser, fromdate, todate, "N", lstproject,
+//								fromdate, todate, "N", 0, fromdate, todate, "N", 1, objuser, fromdate, todate, "N", 2,
+//								objuser, fromdate, todate, "N", lstproject, 3, objuser, fromdate, todate, "N", 3,
+//								fromdate, todate, objuser.getUsernotify(), "N", objuser, objuser, fromdate, todate, "N",
+//								objuser, fromdate, todate, 3, lstproject, fromdate, todate, 1, objuser, fromdate,
+//								todate, 3, 2, objuser, fromdate, todate, 3, 3, objuser, fromdate, todate, 3, 3, objuser,
+//								fromdate, todate, 3, objuser, objuser, fromdate, todate, 3, objuser, fromdate, todate,
+//								3, 1, lstproject, fromdate, todate, 1, objuser, fromdate, todate, 1, 2, objuser,
+//								fromdate, todate, 1, 3, objuser, fromdate, todate, 1, objuser, objuser, fromdate,
+//								todate, 1, objuser, fromdate, todate, 1, pageable);
 
-				List<LSlogilablimsorderdetail> lstordersdem = lslogilablimsorderdetailRepository
-						.getLSlogilablimsorderdetaildashboardformaterial("R", 3, fromdate, todate, objuser,
-								objuser.getLssitemaster());
-				lstordersdem.addAll(lslogilablimsorderdetailRepository.getLSlogilablimsorderdetaildashboardformaterial(
-						"N", objuser.getLssitemaster(), fromdate, todate, objuser));
-				lstordersdem.addAll(
-						lslogilablimsorderdetailRepository.getLSlogilablimsorderdetaildashboardforrejectmaterial(3,
-								fromdate, todate, objuser, objuser.getLssitemaster()));
+//				List<LSlogilablimsorderdetail> lstordersdem = lslogilablimsorderdetailRepository
+//						.getLSlogilablimsorderdetaildashboardformaterial("R", 3, fromdate, todate, objuser,
+//								objuser.getLssitemaster());
+//				lstordersdem.addAll(lslogilablimsorderdetailRepository.getLSlogilablimsorderdetaildashboardformaterial(
+//						"N", objuser.getLssitemaster(), fromdate, todate, objuser));
+//				lstordersdem.addAll(
+//						lslogilablimsorderdetailRepository.getLSlogilablimsorderdetaildashboardforrejectmaterial(3,
+//								fromdate, todate, objuser, objuser.getLssitemaster()));
+
+				List<LSlogilablimsorderdetail> lstordersdem = LogilablimsorderdetailsRepository.getLSlogilablimsorderdetaildashboardforallorders("N",
+						0, fromdate, todate, objuser, 1, 2, 3, objuser.getUsernotify(), objuser.getLssitemaster(),
+						objuser.getPagesize() * objuser.getPageperorder(), objuser.getPageperorder(), 3, "R");
+				
+//				if(lstordersdem.size()<objuser.getPageperorder()) {
+//					Pageable pageableobj = new PageRequest(0, Integer.MAX_VALUE);
+//					 lstorders = lslogilablimsorderdetailRepository
+//								.findByLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusAndLsprojectmasterIsNullAndAssignedtoIsNullOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndApprovelstatusOrAssignedtoAndCreatedtimestampBetweenAndApprovelstatus(
+//										1, objuser, fromdate, todate, 3, 2, objuser, fromdate, todate, 3, 3, objuser,
+//										fromdate, todate, 3, 3, objuser, fromdate, todate, 3, objuser, objuser, fromdate,
+//										todate, 3, objuser, fromdate, todate, 3, pageableobj);
+//
+//						lstorders.addAll(lslogilablimsorderdetailRepository
+//								.findByApprovelstatusAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNull(3,
+//										lstproject, fromdate, todate, pageableobj));
+//
+//
+//						lstorders.addAll(lslogilablimsorderdetailRepository
+//								.LsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullOrOrdercancellAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterIsNullAndAssignedtoIsNullOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndOrdercancellOrAssignedtoAndCreatedtimestampBetweenAndOrdercancell(
+//										1, objuser, fromdate, todate, 1, 1, lstproject, fromdate, todate, 2, objuser,
+//										fromdate, todate, 1, 3, objuser, fromdate, todate, 1, objuser, objuser, fromdate,
+//										todate, 1, objuser, fromdate, todate, 1, pageableobj));
+//				}
+	           
 				if (!lstordersdem.isEmpty()) {
 					lstorders.addAll(lstordersdem.stream()
 							.map(lsOrderDetail -> new LogilabOrdermastersh(lsOrderDetail.getBatchcode(),
@@ -1301,28 +1326,28 @@ public class DashBoardService {
 									lsOrderDetail.getLockedusername()))
 							.collect(Collectors.toList()));
 				}
-			} else {
-				List<LSlogilablimsorderdetail> lstordersdem = lslogilablimsorderdetailRepository
-						.getLSlogilablimsorderdetaildashboard("R", 0, fromdate, todate, objuser, 3, 1, 2, 3, "N",
-								objuser.getUsernotify(), 1, objuser.getLssitemaster(),
-								objuser.getPagesize() * objuser.getPageperorder(), objuser.getPageperorder());
-				lstorders = lstordersdem.stream()
-						.map(lsOrderDetail -> new LogilabOrdermastersh(lsOrderDetail.getBatchcode(),
-								lsOrderDetail.getBatchid(), lsOrderDetail.getLsworkflow(), lsOrderDetail.getTestname(),
-								lsOrderDetail.getLsfile(), lsOrderDetail.getLssamplemaster(),
-								lsOrderDetail.getLsprojectmaster(), lsOrderDetail.getFiletype(),
-								lsOrderDetail.getOrderflag(), lsOrderDetail.getAssignedto(),
-								lsOrderDetail.getCreatedtimestamp(), lsOrderDetail.getCompletedtimestamp(),
-								lsOrderDetail.getKeyword(), lsOrderDetail.getLstestmasterlocal(),
-								lsOrderDetail.getOrdercancell(), lsOrderDetail.getViewoption(),
-								lsOrderDetail.getLsuserMaster(), lsOrderDetail.getTestcode(),
-								lsOrderDetail.getApprovelstatus(), lsOrderDetail.getLsordernotification(),
-								lsOrderDetail.getOrdersaved(), lsOrderDetail.getRepeat(),
-								lsOrderDetail.getLsautoregisterorders(), lsOrderDetail.getSentforapprovel(),
-								lsOrderDetail.getApprovelaccept(), lsOrderDetail.getAutoregistercount(),
-								lsOrderDetail.getElnmaterial(), lsOrderDetail.getLockedusername()))
-						.collect(Collectors.toList());
-			}
+//			} else {
+//				List<LSlogilablimsorderdetail> lstordersdem = lslogilablimsorderdetailRepository
+//						.getLSlogilablimsorderdetaildashboard("R", 0, fromdate, todate, objuser, 3, 1, 2, 3, "N",
+//								objuser.getUsernotify(), 1, objuser.getLssitemaster(),
+//								objuser.getPagesize() * objuser.getPageperorder(), objuser.getPageperorder());
+//				lstorders = lstordersdem.stream()
+//						.map(lsOrderDetail -> new LogilabOrdermastersh(lsOrderDetail.getBatchcode(),
+//								lsOrderDetail.getBatchid(), lsOrderDetail.getLsworkflow(), lsOrderDetail.getTestname(),
+//								lsOrderDetail.getLsfile(), lsOrderDetail.getLssamplemaster(),
+//								lsOrderDetail.getLsprojectmaster(), lsOrderDetail.getFiletype(),
+//								lsOrderDetail.getOrderflag(), lsOrderDetail.getAssignedto(),
+//								lsOrderDetail.getCreatedtimestamp(), lsOrderDetail.getCompletedtimestamp(),
+//								lsOrderDetail.getKeyword(), lsOrderDetail.getLstestmasterlocal(),
+//								lsOrderDetail.getOrdercancell(), lsOrderDetail.getViewoption(),
+//								lsOrderDetail.getLsuserMaster(), lsOrderDetail.getTestcode(),
+//								lsOrderDetail.getApprovelstatus(), lsOrderDetail.getLsordernotification(),
+//								lsOrderDetail.getOrdersaved(), lsOrderDetail.getRepeat(),
+//								lsOrderDetail.getLsautoregisterorders(), lsOrderDetail.getSentforapprovel(),
+//								lsOrderDetail.getApprovelaccept(), lsOrderDetail.getAutoregistercount(),
+//								lsOrderDetail.getElnmaterial(), lsOrderDetail.getLockedusername()))
+//						.collect(Collectors.toList());
+//			}
 
 		} else if (testcode != -1 && objuser.getLstprojectforfilter() == null) {
 //			-----------------completed order ---------------------------------
@@ -1518,6 +1543,7 @@ public class DashBoardService {
 //				    ).reversed())
 //				    .collect(Collectors.toList());
 		}
+		lstorders.forEach(objorder -> objorder.setLw(lstworkflow));
 		mapOrders.put("orderlst", lstorders);
 		mapOrders.put("count", count);
 		return mapOrders;
@@ -1553,7 +1579,7 @@ public class DashBoardService {
 			objuser.getUsernotify().add(objuser);
 			if (objuser.getObjuser().getOrderselectiontype() == 1) {
 
-				return mapOrders = getallorders(lstproject, fromdate, todate, objuser, testcode, pageable, lstsample1);
+				return mapOrders = getallorders(lstproject, fromdate, todate, objuser, testcode, pageable, lstsample1,lstworkflow);
 
 			} else if (objuser.getObjuser().getOrderselectiontype() == 2) {
 				if (testcode == -1 && objuser.getLstprojectforfilter() == null) {

@@ -6,11 +6,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.agaram.eln.primary.model.equipment.EquipmentCategory;
 import com.agaram.eln.primary.model.instrumentsetup.InstrumentCategory;
 import com.agaram.eln.primary.model.instrumentsetup.InstrumentMaster;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
@@ -162,11 +166,6 @@ public class InstMasterController {
 	public ResponseEntity<Object> getInstListByCategoryAndSite(@Valid @RequestBody Map<String, Object> mapObject)
 			throws Exception {
 
-//    	  final ObjectMapper mapper = new ObjectMapper();	
-//    	  final LSSiteMaster site = mapper.convertValue(mapObject.get("site"), LSSiteMaster.class);
-//    	  final InstrumentCategory instCategory = mapper.convertValue(mapObject.get("instCategory"), InstrumentCategory.class);
-//		  
-//		  return masterService.getInstListByCategoryAndSite(instCategory, site);
 		final ObjectMapper mapper = new ObjectMapper();
 		Map<String, Object> obj = (Map<String, Object>) mapObject.get("inputData");
 		if (obj == null) {
@@ -196,5 +195,36 @@ public class InstMasterController {
 		return masterService.getInstListBySite(site);
 
 
+	}
+	
+	@RequestMapping(value = "/getAllEquipment", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> getAllEquipment(@Valid @RequestBody Map<String, Object> mapObject) throws Exception {
+		
+		final ObjectMapper mapper = new ObjectMapper();
+		Map<String, Object> obj = (Map<String, Object>) mapObject.get("inputData");
+	
+		final LSSiteMaster site = mapper.convertValue(obj.get("site"), LSSiteMaster.class);
+
+		return (ResponseEntity<Object>) masterService.getAllEquipment(site);
+	}
+	
+	@RequestMapping(value = "/getEquipmentCatBasedOnSite", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> getEquipmentCatBased(@Valid @RequestBody Map<String, Object> mapObject) throws Exception {
+		
+		final ObjectMapper mapper = new ObjectMapper();
+		Map<String, Object> obj = (Map<String, Object>) mapObject.get("inputData");
+		if (obj == null) {
+
+			final LSSiteMaster site = mapper.convertValue(mapObject.get("site"), LSSiteMaster.class);
+			final EquipmentCategory equipmentcategory = mapper.convertValue(mapObject.get("equipmentcategory"),
+					EquipmentCategory.class);
+			return masterService.getEquipmentCatBasedOnSite(equipmentcategory, site);
+		} else {
+
+			final LSSiteMaster site = mapper.convertValue(obj.get("site"), LSSiteMaster.class);
+			final EquipmentCategory equipmentcategory = mapper.convertValue(obj.get("equipmentcategory"),
+					EquipmentCategory.class);
+			return masterService.getEquipmentCatBasedOnSite(equipmentcategory, site);
+		}
 	}
 }

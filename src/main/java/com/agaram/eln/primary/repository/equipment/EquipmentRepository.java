@@ -3,6 +3,7 @@ package com.agaram.eln.primary.repository.equipment;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -101,5 +102,10 @@ public interface EquipmentRepository extends JpaRepository<Equipment, Integer>{
 
 	List<Equipment> findBySequipmentnameStartingWithIgnoreCaseAndNsitecodeOrderByNequipmentcodeDesc(String searchString,
 			Integer nsiteInteger);
+
+	List<Equipment> findByNsitecodeOrderByNequipmentcodeDesc(Integer nsiteInteger);
+
+	Optional<Equipment> findByNequipmentcodeAndNsitecodeAndNstatus(Integer nequipmentcode, Integer sitecode, int i);
+
 
 }

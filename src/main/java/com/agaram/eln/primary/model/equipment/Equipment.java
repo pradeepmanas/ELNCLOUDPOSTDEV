@@ -44,6 +44,7 @@ public class Equipment implements Serializable{
 	private String sequipmentmake;
 	private String sequipmentmodel;
 	private String sequipmentlotno;
+	private String sequipmentelectrodeno;
 	
 	private Integer ntransactionstatus;
 	
@@ -359,5 +360,13 @@ public class Equipment implements Serializable{
 
 	public static long getSerialversionuid() {
 		return serialVersionUID;
+	}
+
+	public String getSequipmentelectrodeno() {
+		return sequipmentelectrodeno;
+	}
+
+	public void setSequipmentelectrodeno(String sequipmentelectrodeno) {
+		this.sequipmentelectrodeno = sequipmentelectrodeno;
 	}
 }

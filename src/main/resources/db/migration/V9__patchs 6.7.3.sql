@@ -1895,3 +1895,42 @@ TABLESPACE pg_default;
 
 ALTER TABLE IF EXISTS public.rctcpresultfieldvalues
     OWNER to postgres;
+
+ALTER TABLE IF Exists method ADD COLUMN IF NOT EXISTS nequipmentcode Integer;
+    
+DO
+$do$
+declare
+  multiusergroupcount integer :=0;
+begin
+SELECT count(*) into multiusergroupcount FROM
+information_schema.table_constraints WHERE constraint_name='fka9b6b740h2ntpqvyhohcyc9ry'
+AND table_name='method';
+ IF multiusergroupcount =0 THEN
+ 	ALTER TABLE ONLY method ADD CONSTRAINT fka9b6b740h2ntpqvyhohcyc9ry FOREIGN KEY (nequipmentcode) REFERENCES equipment(nequipmentcode);
+   END IF;
+END
+$do$; 
+
+ALTER TABLE IF Exists equipment ADD Column IF NOT EXISTS sequipmentelectrodeno character varying(255);
+ALTER TABLE IF Exists lsactiveuser ADD Column IF NOT EXISTS usergroupcode integer;
+ALTER TABLE IF Exists lsactiveuser ADD Column IF NOT EXISTS usergroupname character varying(100);
+
+DO $$
+BEGIN
+    IF EXISTS (
+        SELECT 1
+        FROM information_schema.columns 
+        WHERE table_name = 'method' 
+        AND column_name = 'instmasterkey'
+        AND is_nullable = 'NO'
+    ) THEN
+        ALTER TABLE public.method
+        ALTER COLUMN instmasterkey DROP NOT NULL;
+    END IF;
+END $$;
+
+UPDATE delimiter SET delimiterstatus = 'A' WHERE delimiterkey = 10 AND delimiterstatus IS NULL;
+
+update instrumenttype set status = 1 where instrumenttype.insttypename='RS232'  and status =-1;
+update instrumenttype set status = 1 where instrumenttype.insttypename='TCP/IP' and status =-1;

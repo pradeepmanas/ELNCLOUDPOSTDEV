@@ -156,8 +156,16 @@ public class BarcodeMasterService {
 	    return new ResponseEntity<>(returnMap, HttpStatus.OK);
 	}
 
-	private String processFileUpload(MultipartFile multipartFile, String barcodefileid, Integer isMultitenant) {
-		return null;
+	private String processFileUpload(MultipartFile file, String existingUUID, Integer isMultitenant)
+			throws IOException {
+		String UUId;
+		if (isMultitenant == 1 || isMultitenant == 2) {
+			UUId = cloudFileManipulationservice.storecloudfilesreturnwithpreUUID(file, "barcodefiles", existingUUID,
+					isMultitenant);
+		} else {
+			UUId = fileManipulationservice.storeLargeattachmentBarcode(file.getOriginalFilename(), file, existingUUID);
+		}
+		return UUId;
 	}
 
 	public List<BarcodeMaster> GetBarcodemaster(LoggedUser objuser) {

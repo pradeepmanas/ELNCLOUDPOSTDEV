@@ -69,7 +69,10 @@ public class MethodExportService {
 		
 		final Map<String, Object> exportMethodMap = new HashMap<String, Object>();
 //		Method Setup
-		final Method method = methodRepo.findOne(methodKey);
+//		final Method method = methodRepo.findOne(methodKey);
+		
+		final List<Method> methodlist = methodRepo.findByMethodkey(methodKey);
+		Method method = methodlist.get(0);
 		
 		exportMethodMap.put("Method", method);
 		

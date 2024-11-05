@@ -14,10 +14,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.agaram.eln.primary.model.equipment.Equipment;
+import com.agaram.eln.primary.model.equipment.EquipmentCategory;
 import com.agaram.eln.primary.model.instrumentsetup.InstrumentCategory;
 import com.agaram.eln.primary.model.instrumentsetup.InstrumentMaster;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
+import com.agaram.eln.primary.repository.equipment.EquipmentCategoryRepository;
 import com.agaram.eln.primary.repository.instrumentsetup.InstCategoryRepository;
 import com.agaram.eln.primary.repository.instrumentsetup.InstMasterRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
@@ -48,6 +51,9 @@ public class InstCategoryService {
 
 	@Autowired
 	InstMasterRepository instMasterRepo;
+	
+	@Autowired
+	EquipmentCategoryRepository  equipmentcategoryrepository;
 
 	/**
 	 * This method is used to add new instrument category.
@@ -350,5 +356,19 @@ public class InstCategoryService {
 		createdUser.setUsercode(createdBy.getUsercode());
 
 		return createdUser;
+	}
+	
+	@Transactional
+	public ResponseEntity<Object> getEquipmentCategory(LSSiteMaster lssitemaster) {
+
+//		List<InstrumentCategory> list = categoryRepo.findByLssitemaster(lssitemaster,
+//				new Sort(Sort.Direction.DESC, "instcatkey"));
+		
+		//List<EquipmentCategory> equipmentCategories = equipmentCategoryRepository.findByNsitecodeOrderByNequipmentcatcodeDesc(nsiteInteger);
+
+		List<EquipmentCategory> list = equipmentcategoryrepository.findByNsitecodeOrderByNequipmentcatcodeDesc(lssitemaster.getSitecode());
+		
+		return new ResponseEntity<>(list, HttpStatus.OK);
+
 	}
 }

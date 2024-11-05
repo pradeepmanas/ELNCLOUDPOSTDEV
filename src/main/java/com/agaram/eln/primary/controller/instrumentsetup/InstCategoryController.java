@@ -103,6 +103,12 @@ public class InstCategoryController {
 		  return categoryService.deleteInstCategory((Integer) mapObject.get("instcatkey"), saveAuditTrail, 
 				   (String)mapObject.get("comments"), userKey, request,otherdetails,site);
     }
+    
+    @PostMapping(value = "/getEquipmentCategory")
+    
+    public ResponseEntity<Object> getEquipmentCategory(@RequestBody LSSiteMaster lssitemaster)throws Exception {
+        return  categoryService.getEquipmentCategory(lssitemaster);
+    }
 }
 
 

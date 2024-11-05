@@ -260,4 +260,13 @@ public class MethodController {
 		return methodService.getMethodContainingByInstrument(method, instMasterKey);
 	}
 
+	@PostMapping(value = "/getMethodByEquipment")
+	public ResponseEntity<Object> getMethodByEquipment(@Valid @RequestBody Map<String, Object> mapObject)
+			throws Exception {
+		final ObjectMapper mapper = new ObjectMapper();
+		final Method method = mapper.convertValue(mapObject.get("method"), Method.class);
+		final int nequipmentcode = (Integer) mapObject.get("nequipmentcode");
+
+		return methodService.getMethodContainingByEquipment(method, nequipmentcode);
+	}
 }
