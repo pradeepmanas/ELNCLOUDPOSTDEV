@@ -64,9 +64,9 @@ public class Method implements Serializable, Diffable<Method>{
 	@Column(name = "methodname")
 	private String methodname;	
 
-	@ManyToOne(fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "instmasterkey", nullable = false)
-	private InstrumentMaster instmaster;	
+//	@ManyToOne(fetch = FetchType.EAGER, optional = false)
+//    @JoinColumn(name = "instmasterkey", nullable = false)
+//	private InstrumentMaster instmaster;	
 	
 	@ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "nequipmentcode")
@@ -152,10 +152,14 @@ public class Method implements Serializable, Diffable<Method>{
 		this.methodname = methodname;
 	}
 
-	@XmlElement	(nillable=true)
-	public InstrumentMaster getInstmaster() {
-		return instmaster;
-	}
+//	@XmlElement	(nillable=true)
+//	public InstrumentMaster getInstmaster() {
+//		return instmaster;
+//	}
+//
+//	public void setInstmaster(InstrumentMaster instmaster) {
+//		this.instmaster = instmaster;
+//	}
 
 	@Transient
 	private String username;
@@ -164,10 +168,6 @@ public class Method implements Serializable, Diffable<Method>{
 	@Temporal(TemporalType.TIMESTAMP)
 	Date transactiondate;
 	
-	public void setInstmaster(InstrumentMaster instmaster) {
-		this.instmaster = instmaster;
-	}
-
 	@XmlElement	
 	public String getInstrawdataurl() {
 		return instrawdataurl;
@@ -378,7 +378,7 @@ public class Method implements Serializable, Diffable<Method>{
 		
 	     return new DiffBuilder(this, obj, ToStringStyle.SHORT_PREFIX_STYLE)
 	       .append("methodname", this.methodname, obj.methodname) 
-	       .append("instmaster", getInstCode(this.instmaster), getInstCode(obj.instmaster))	    
+	     //  .append("instmaster", getInstCode(this.instmaster), getInstCode(obj.instmaster))	    
 	       
 	       .append("equipment", this.getEquipment(), obj.getEquipment())
 	       
@@ -425,7 +425,7 @@ public class Method implements Serializable, Diffable<Method>{
 	{
 		this.methodkey = method.methodkey;
 		this.methodname = method.methodname;
-		this.instmaster = method.instmaster;
+		//this.instmaster = method.instmaster;
 		
 		this.instrawdataurl = method.instrawdataurl;
 		this.samplesplit = method.samplesplit;

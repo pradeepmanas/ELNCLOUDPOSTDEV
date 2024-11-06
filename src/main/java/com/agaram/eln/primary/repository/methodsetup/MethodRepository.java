@@ -79,9 +79,9 @@ public interface MethodRepository extends JpaRepository<Method, Integer>{
 	 * @param status  [int] 1 - Active or -1- Inactive
 	 * @return Method entity matching specified inputs.
 	 */
-	Optional<Method> findByMethodnameAndInstmasterAndStatus(final String methodName, final InstrumentMaster instMaster, final int status);
+	//Optional<Method> findByMethodnameAndInstmasterAndStatus(final String methodName, final InstrumentMaster instMaster, final int status);
 
-	List<Method> findByMethodnameContainingAndInstmasterAndStatus(final String methodName, final InstrumentMaster instMaster, final int status);
+	//List<Method> findByMethodnameContainingAndInstmasterAndStatus(final String methodName, final InstrumentMaster instMaster, final int status);
 
 //	Optional<Method> findBySiteMethodnameAndInstmasterAndStatus(final Site site, final String methodName, final InstrumentMaster instMaster, final int status);
 
@@ -98,8 +98,8 @@ public interface MethodRepository extends JpaRepository<Method, Integer>{
 
 	Optional<Method> findByMethodkeyAndStatusAndSite(int methodKey, int i, LSSiteMaster site);
 
-	Optional<Method> findByMethodnameAndInstmasterAndStatusAndSite(String methodname, InstrumentMaster instMaster,
-			int i, LSSiteMaster site);
+//	Optional<Method> findByMethodnameAndInstmasterAndStatusAndSite(String methodname, InstrumentMaster instMaster,
+//			int i, LSSiteMaster site);
 
 	List<Method> findBySite(LSSiteMaster site, Sort sort);
 
@@ -107,7 +107,7 @@ public interface MethodRepository extends JpaRepository<Method, Integer>{
 
 	List<Method> findByInstrawdataurl(String fileName);
 
-	List<Method> findByInstmasterAndStatus(InstrumentMaster instmast, int i);
+//	List<Method> findByInstmasterAndStatus(InstrumentMaster instmast, int i);
 
 	Optional<Method> findByMethodnameAndEquipmentAndStatusAndSite(String methodname, Equipment equipment, int i,
 			LSSiteMaster site);

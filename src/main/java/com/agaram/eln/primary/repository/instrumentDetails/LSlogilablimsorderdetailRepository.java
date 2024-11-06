@@ -2971,5 +2971,11 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 	List<LSlogilablimsorderdetail> findByLsprojectmasterIsNullAndElnmaterialInAndFiletypeAndAssignedtoIsNullAndViewoption(
 			List<Elnmaterial> currentChunk, Integer filetype, int i);
 
+	@Transactional
+	@Modifying
+	@Query("update LSlogilablimsorderdetail o set o.lockeduser = null, o.lockedusername = null, o.activeuser = null where o.batchcode in (?1)")
+	int updateLockedUser(List<Long> batcode);
+
+
 
 }

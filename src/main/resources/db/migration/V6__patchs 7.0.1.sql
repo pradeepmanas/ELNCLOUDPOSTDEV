@@ -1,6 +1,3 @@
-
-
-
 update lslogilablimsorderdetail set directorycode = null where directorycode in (select directorycode from lssheetorderstructure where directoryname = 'my order');
 delete from lssheetorderstructure where parentdircode in (select directorycode from lssheetorderstructure where directoryname = 'my order');
 delete from lssheetorderstructure where directoryname = 'my order';
@@ -342,6 +339,7 @@ TABLESPACE pg_default;
 ALTER TABLE IF EXISTS public.materialcategory
     OWNER to postgres;
 
+ALTER TABLE IF Exists materialcategory ADD COLUMN IF NOT EXISTS smaterialtypename character varying(255);
 
 ALTER TABLE IF Exists lsprotocolorderstructure ADD COLUMN IF NOT EXISTS modifiedby_usercode integer;
 
@@ -1274,35 +1272,35 @@ update instrumenttype set status = -1 where instrumenttype.insttypename='TCP\IP'
 
 ALTER TABLE IF Exists methoddelimiter ADD COLUMN IF NOT EXISTS defaultvalue integer;
 
--- DO
--- $do$
--- DECLARE
---     counter integer := 0;
--- BEGIN
---   select count(*) into counter from methoddelimiter where delimiterkey = 1 and parsermethodkey =6;
+DO
+$do$
+DECLARE
+    counter integer := 0;
+BEGIN
+  select count(*) into counter from methoddelimiter where delimiterkey = 1 and parsermethodkey =6;
 
---    IF counter=0 THEN       -- name is free
--- INSERT into methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue)
--- SELECT 1,1,1,6,1
--- WHERE NOT EXISTS (select * from methoddelimiter where delimiterkey = 1 and parsermethodkey =6); 
---    END IF;
--- END
--- $do$;
+   IF counter=0 THEN       -- name is free
+INSERT into methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue)
+SELECT 1,1,1,6,1
+WHERE NOT EXISTS (select * from methoddelimiter where delimiterkey = 1 and parsermethodkey =6); 
+   END IF;
+END
+$do$;
 
--- DO
--- $do$
--- DECLARE
---     counter integer := 0;
--- BEGIN
---   select count(*) into counter from methoddelimiter where delimiterkey = 1 and parsermethodkey =7;
+DO
+$do$
+DECLARE
+    counter integer := 0;
+BEGIN
+  select count(*) into counter from methoddelimiter where delimiterkey = 1 and parsermethodkey =7;
 
---    IF counter=0 THEN       -- name is free
--- INSERT into methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue)
--- SELECT 1,1,1,7,1
--- WHERE NOT EXISTS (select * from methoddelimiter where delimiterkey = 1 and parsermethodkey =7); 
---    END IF;
--- END
--- $do$;
+   IF counter=0 THEN       -- name is free
+INSERT into methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue)
+SELECT 1,1,1,7,1
+WHERE NOT EXISTS (select * from methoddelimiter where delimiterkey = 1 and parsermethodkey =7); 
+   END IF;
+END
+$do$;
 
 update methoddelimiter set defaultvalue =1 where delimiterkey = 1 and parsermethodkey =1;
 
@@ -1448,6 +1446,8 @@ TABLESPACE pg_default;
 ALTER TABLE public.lssheetfolderfiles
     OWNER to postgres;
     
+
+ ALTER TABLE IF Exists ParserField ADD COLUMN IF NOT EXISTS datatype varchar(50);
  
  Do
  $do$
@@ -1480,27 +1480,71 @@ WITH (
 )
 TABLESPACE pg_default;
 
-ALTER TABLE IF EXISTS public.datatype OWNER to postgres;
+ALTER TABLE IF EXISTS public.datatype
+    OWNER to postgres;
+    
+ ALTER TABLE IF Exists ParserField Drop COLUMN IF EXISTS datatype;
  
-ALTER TABLE IF Exists ParserField ADD COLUMN IF NOT EXISTS datatypekey integer;
-     
- DO
- $do$
- declare
- resultvalues integer :=0;
- begin
+ ALTER TABLE IF Exists ParserField ADD COLUMN IF NOT EXISTS datatypekey integer;
+ 
+DO
+$do$
+declare
+  resultvalues integer :=0;
+begin
 
- SELECT count(*) into resultvalues FROM
- information_schema.table_constraints WHERE constraint_name='fk6xm923bww44i2t95jw2b8keo4'
- AND table_name='parserfield';
+SELECT count(*) into resultvalues FROM
+information_schema.table_constraints WHERE constraint_name='fk6xm923bww44i2t95jw2b8keo4'
+AND table_name='parserfield';
  IF resultvalues =0 THEN
     ALTER TABLE ONLY parserfield ADD CONSTRAINT fk6xm923bww44i2t95jw2b8keo4 FOREIGN KEY (datatypekey) REFERENCES datatype (datatypekey);
-    END IF;
- END
- $do$;  
--- ALTER TABLE IF Exists LSprojectmaster ADD COLUMN IF NOT EXISTS createdby character varying(255);
--- ALTER TABLE IF Exists LSprojectmaster ADD COLUMN IF NOT EXISTS createdon character varying(255);
+   END IF;
+END
+$do$;  
+ALTER TABLE IF Exists LSprojectmaster ADD COLUMN IF NOT EXISTS createdby character varying(255);
+ALTER TABLE IF Exists LSprojectmaster ADD COLUMN IF NOT EXISTS createdon character varying(255);
 
+    
+DO
+$do$
+DECLARE
+    counter integer := 0;
+BEGIN
+    SELECT COUNT(*) INTO counter FROM datatype WHERE datatypename = 'string';
+
+    IF counter = 0 THEN -- No record with 'string' datatype exists
+        INSERT INTO datatype (datatypekey, datatypename)
+        SELECT 1, 'string'
+        WHERE NOT EXISTS (
+            SELECT 1 FROM datatype WHERE datatypename = 'string'
+        ) AND NOT EXISTS (
+            SELECT 1 FROM datatype WHERE datatypekey = 1
+        );
+    END IF;
+END
+$do$;
+
+
+DO
+$do$
+DECLARE
+    counter integer := 0;
+BEGIN
+  select count(*) into counter from datatype where datatypename = 'Integer';
+
+   IF counter=0 THEN       -- name is free
+INSERT INTO datatype (datatypekey, datatypename)
+SELECT 2, 'Integer'
+WHERE NOT EXISTS (
+    SELECT 1 FROM datatype 
+    WHERE datatypename = 'Integer'
+) AND NOT EXISTS (
+    SELECT 1 FROM datatype 
+    WHERE datatypekey = 2
+);
+END IF;
+END
+$do$;
  
  
  DO
@@ -1599,6 +1643,8 @@ CREATE TABLE IF NOT EXISTS public.materialgrade
 TABLESPACE pg_default;
 
 ALTER TABLE public.materialgrade OWNER to postgres; 
+
+ALTER TABLE IF Exists materialgrade ADD COLUMN IF NOT EXISTS smaterialgradename character varying(50);
 
 DO
 $do$
@@ -1850,6 +1896,23 @@ ALTER TABLE IF Exists lspasswordpolicy ADD COLUMN IF NOT EXISTS idletimeshowchec
 
 update lspasswordpolicy set idletimeshowcheck=0 where idletimeshowcheck is null;
 
+
+DO
+$do$
+DECLARE
+    counter integer := 0;
+BEGIN
+  select count(*) into counter from datatype where datatypename = 'Number';
+
+   IF counter=0 THEN       -- name is free
+insert into datatype (datatypekey,datatypename)SELECT 3,'Number'
+WHERE NOT EXISTS (select * from datatype where datatypename = 'Number'); 
+   END IF;
+END
+$do$;
+ 
+delete from datatype where datatype.datatypename='Integer';
+
 update lsusergrouprights set modulename='IDS_MDL_LOGBOOK' where screenname='IDS_SCN_LOGBOOK';
 
 INSERT into lsusergrouprightsmaster(orderno, displaytopic, modulename, sallow, screate,sdelete, sedit, status,sequenceorder,screenname) VALUES (99, 'IDS_SCN_UNITMASTER', 'IDS_MDL_INVENTORY', '0', '0', '0', '0', '1,1,1',78,'IDS_SCN_UNITMASTER') ON CONFLICT(orderno)DO NOTHING;
@@ -2015,249 +2078,248 @@ INSERT INTO public.materialtype (nmaterialtypecode, jsondata, ndefaultstatus, ns
 
 INSERT INTO public.materialtype (nmaterialtypecode, jsondata, ndefaultstatus, nsitecode, nstatus) VALUES (4, '{"prefix": "I", "sdescription": "IQC Standard Material Type", "needSectionwise": 3, "smaterialtypename": {"en-US": "IQC Standard Material Type", "ru-RU": "Стандартный тип материала IQC", "tg-TG": "Стандарти намуди маводи IQC"}, "ismaterialSectionneed": 4}', 4, -1, 1)on conflict (nmaterialtypecode) do nothing; 
 
--- DO
--- $do$
--- DECLARE
---     counter integer := 0;
--- BEGIN
---   select count(*) into counter from methoddelimiter where delimiterkey = 2 and parsermethodkey =1; --resultwithoutspace for datablock
+DO
+$do$
+DECLARE
+    counter integer := 0;
+BEGIN
+  select count(*) into counter from methoddelimiter where delimiterkey = 2 and parsermethodkey =1; --resultwithoutspace for datablock
 
---    IF counter=0 THEN       -- name is free
--- INSERT into methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue)
--- SELECT 1,1,2,1,1
--- WHERE NOT EXISTS (select * from methoddelimiter where delimiterkey = 2 and parsermethodkey =1); 
---    END IF;
--- END
--- $do$;
+   IF counter=0 THEN       -- name is free
+INSERT into methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue)
+SELECT 1,1,2,1,1
+WHERE NOT EXISTS (select * from methoddelimiter where delimiterkey = 2 and parsermethodkey =1); 
+   END IF;
+END
+$do$;
 
--- DO
--- $do$
--- DECLARE
---     counter integer := 0;
--- BEGIN
---   select count(*) into counter from methoddelimiter where delimiterkey = 3 and parsermethodkey =1;--resultwithspace for datablock
+DO
+$do$
+DECLARE
+    counter integer := 0;
+BEGIN
+  select count(*) into counter from methoddelimiter where delimiterkey = 3 and parsermethodkey =1;--resultwithspace for datablock
 
---    IF counter=0 THEN       -- name is free
--- INSERT into methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue)
--- SELECT 1,1,3,1,1
--- WHERE NOT EXISTS (select * from methoddelimiter where delimiterkey = 3 and parsermethodkey =1); 
---    END IF;
--- END
--- $do$;
+   IF counter=0 THEN       -- name is free
+INSERT into methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue)
+SELECT 1,1,3,1,1
+WHERE NOT EXISTS (select * from methoddelimiter where delimiterkey = 3 and parsermethodkey =1); 
+   END IF;
+END
+$do$;
 
--- DO
--- $do$
--- DECLARE
---     counter integer := 0;
--- BEGIN
---   select count(*) into counter from methoddelimiter where delimiterkey = 5 and parsermethodkey =1;--comma for datablock
+DO
+$do$
+DECLARE
+    counter integer := 0;
+BEGIN
+  select count(*) into counter from methoddelimiter where delimiterkey = 5 and parsermethodkey =1;--comma for datablock
 
---    IF counter=0 THEN       -- name is free
--- INSERT into methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue)
--- SELECT 1,1,5,1,1
--- WHERE NOT EXISTS (select * from methoddelimiter where delimiterkey = 5 and parsermethodkey =1); 
---    END IF;
--- END
--- $do$;
+   IF counter=0 THEN       -- name is free
+INSERT into methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue)
+SELECT 1,1,5,1,1
+WHERE NOT EXISTS (select * from methoddelimiter where delimiterkey = 5 and parsermethodkey =1); 
+   END IF;
+END
+$do$;
 
 --for split
--- DO
--- $do$
--- DECLARE
---     counter integer := 0;
--- BEGIN
---   select count(*) into counter from methoddelimiter where delimiterkey = 2 and parsermethodkey =7;--resultwithoutspace for split
+DO
+$do$
+DECLARE
+    counter integer := 0;
+BEGIN
+  select count(*) into counter from methoddelimiter where delimiterkey = 2 and parsermethodkey =7;--resultwithoutspace for split
 
---    IF counter=0 THEN       -- name is free
--- INSERT into methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue)
--- SELECT 1,1,2,7,1
--- WHERE NOT EXISTS (select * from methoddelimiter where delimiterkey = 2 and parsermethodkey =7); 
---    END IF;
--- END
--- $do$;
+   IF counter=0 THEN       -- name is free
+INSERT into methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue)
+SELECT 1,1,2,7,1
+WHERE NOT EXISTS (select * from methoddelimiter where delimiterkey = 2 and parsermethodkey =7); 
+   END IF;
+END
+$do$;
 
--- DO
--- $do$
--- DECLARE
---     counter integer := 0;
--- BEGIN
---   select count(*) into counter from methoddelimiter where delimiterkey = 3 and parsermethodkey =7;--resultwithspace for split
+DO
+$do$
+DECLARE
+    counter integer := 0;
+BEGIN
+  select count(*) into counter from methoddelimiter where delimiterkey = 3 and parsermethodkey =7;--resultwithspace for split
 
---    IF counter=0 THEN       -- name is free
--- INSERT into methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue)
--- SELECT 1,1,3,7,1
--- WHERE NOT EXISTS (select * from methoddelimiter where delimiterkey = 3 and parsermethodkey =7); 
---    END IF;
--- END
--- $do$;
+   IF counter=0 THEN       -- name is free
+INSERT into methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue)
+SELECT 1,1,3,7,1
+WHERE NOT EXISTS (select * from methoddelimiter where delimiterkey = 3 and parsermethodkey =7); 
+   END IF;
+END
+$do$;
 
--- DO
--- $do$
--- DECLARE
---     counter integer := 0;
--- BEGIN
---   select count(*) into counter from methoddelimiter where delimiterkey = 4 and parsermethodkey =7;--colon for split
+DO
+$do$
+DECLARE
+    counter integer := 0;
+BEGIN
+  select count(*) into counter from methoddelimiter where delimiterkey = 4 and parsermethodkey =7;--colon for split
 
---    IF counter=0 THEN       -- name is free
--- INSERT into methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue)
--- SELECT 1,1,4,7,1
--- WHERE NOT EXISTS (select * from methoddelimiter where delimiterkey = 4 and parsermethodkey =7); 
---    END IF;
--- END
--- $do$;
+   IF counter=0 THEN       -- name is free
+INSERT into methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue)
+SELECT 1,1,4,7,1
+WHERE NOT EXISTS (select * from methoddelimiter where delimiterkey = 4 and parsermethodkey =7); 
+   END IF;
+END
+$do$;
 
--- DO
--- $do$
--- DECLARE
---     counter integer := 0;
--- BEGIN
---   select count(*) into counter from methoddelimiter where delimiterkey = 5 and parsermethodkey =7;--comma for split
+DO
+$do$
+DECLARE
+    counter integer := 0;
+BEGIN
+  select count(*) into counter from methoddelimiter where delimiterkey = 5 and parsermethodkey =7;--comma for split
 
---    IF counter=0 THEN       -- name is free
--- INSERT into methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue)
--- SELECT 1,1,5,7,1
--- WHERE NOT EXISTS (select * from methoddelimiter where delimiterkey = 5 and parsermethodkey =7); 
---    END IF;
--- END
--- $do$;
+   IF counter=0 THEN       -- name is free
+INSERT into methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue)
+SELECT 1,1,5,7,1
+WHERE NOT EXISTS (select * from methoddelimiter where delimiterkey = 5 and parsermethodkey =7); 
+   END IF;
+END
+$do$;
 
--- DO
--- $do$
--- DECLARE
---     counter integer := 0;
--- BEGIN
---   select count(*) into counter from methoddelimiter where delimiterkey = 6 and parsermethodkey =7;--space for split
+DO
+$do$
+DECLARE
+    counter integer := 0;
+BEGIN
+  select count(*) into counter from methoddelimiter where delimiterkey = 6 and parsermethodkey =7;--space for split
 
---    IF counter=0 THEN       -- name is free
--- INSERT into methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue)
--- SELECT 1,1,6,7,1
--- WHERE NOT EXISTS (select * from methoddelimiter where delimiterkey = 6 and parsermethodkey =7); 
---    END IF;
--- END
--- $do$;
+   IF counter=0 THEN       -- name is free
+INSERT into methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue)
+SELECT 1,1,6,7,1
+WHERE NOT EXISTS (select * from methoddelimiter where delimiterkey = 6 and parsermethodkey =7); 
+   END IF;
+END
+$do$;
 
--- DO
--- $do$
--- DECLARE
---     counter integer := 0;
--- BEGIN
---   select count(*) into counter from methoddelimiter where delimiterkey = 7 and parsermethodkey =7;--splitdot for split
+DO
+$do$
+DECLARE
+    counter integer := 0;
+BEGIN
+  select count(*) into counter from methoddelimiter where delimiterkey = 7 and parsermethodkey =7;--splitdot for split
 
---    IF counter=0 THEN       -- name is free
--- INSERT into methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue)
--- SELECT 1,1,7,7,1
--- WHERE NOT EXISTS (select * from methoddelimiter where delimiterkey = 7 and parsermethodkey =7); 
---    END IF;
--- END
--- $do$;
+   IF counter=0 THEN       -- name is free
+INSERT into methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue)
+SELECT 1,1,7,7,1
+WHERE NOT EXISTS (select * from methoddelimiter where delimiterkey = 7 and parsermethodkey =7); 
+   END IF;
+END
+$do$;
 
--- DO
--- $do$
--- DECLARE
---     counter integer := 0;
--- BEGIN
---   select count(*) into counter from methoddelimiter where delimiterkey = 8 and parsermethodkey =7;--mergedot for split
+DO
+$do$
+DECLARE
+    counter integer := 0;
+BEGIN
+  select count(*) into counter from methoddelimiter where delimiterkey = 8 and parsermethodkey =7;--mergedot for split
 
---    IF counter=0 THEN       -- name is free
--- INSERT into methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue)
--- SELECT 1,1,8,7,1
--- WHERE NOT EXISTS (select * from methoddelimiter where delimiterkey = 8 and parsermethodkey =7); 
---    END IF;
--- END
--- $do$;
+   IF counter=0 THEN       -- name is free
+INSERT into methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue)
+SELECT 1,1,8,7,1
+WHERE NOT EXISTS (select * from methoddelimiter where delimiterkey = 8 and parsermethodkey =7); 
+   END IF;
+END
+$do$;
 
--- DO
--- $do$
--- DECLARE
---     counter integer := 0;
--- BEGIN
---   select count(*) into counter from methoddelimiter where delimiterkey = 9 and parsermethodkey =7;--slash for split
+DO
+$do$
+DECLARE
+    counter integer := 0;
+BEGIN
+  select count(*) into counter from methoddelimiter where delimiterkey = 9 and parsermethodkey =7;--slash for split
 
---    IF counter=0 THEN       -- name is free
--- INSERT into methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue)
--- SELECT 1,1,9,7,1
--- WHERE NOT EXISTS (select * from methoddelimiter where delimiterkey = 9 and parsermethodkey =7); 
---    END IF;
--- END
--- $do$;
+   IF counter=0 THEN       -- name is free
+INSERT into methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue)
+SELECT 1,1,9,7,1
+WHERE NOT EXISTS (select * from methoddelimiter where delimiterkey = 9 and parsermethodkey =7); 
+   END IF;
+END
+$do$;
 
 ---merge
 
--- DO
--- $do$
--- DECLARE
---     counter integer := 0;
--- BEGIN
---   select count(*) into counter from methoddelimiter where delimiterkey = 8 and parsermethodkey =6;--mergedot for merge
+DO
+$do$
+DECLARE
+    counter integer := 0;
+BEGIN
+  select count(*) into counter from methoddelimiter where delimiterkey = 8 and parsermethodkey =6;--mergedot for merge
 
---    IF counter=0 THEN       -- name is free
--- INSERT into methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue)
--- SELECT 1,1,8,6,1
--- WHERE NOT EXISTS (select * from methoddelimiter where delimiterkey = 8 and parsermethodkey =6); 
---    END IF;
--- END
--- $do$;
+   IF counter=0 THEN       -- name is free
+INSERT into methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue)
+SELECT 1,1,8,6,1
+WHERE NOT EXISTS (select * from methoddelimiter where delimiterkey = 8 and parsermethodkey =6); 
+   END IF;
+END
+$do$;
 
--- DO
--- $do$
--- DECLARE
---     counter integer := 0;
--- BEGIN
---   select count(*) into counter from methoddelimiter where delimiterkey = 9 and parsermethodkey =6;--slash for merge
+DO
+$do$
+DECLARE
+    counter integer := 0;
+BEGIN
+  select count(*) into counter from methoddelimiter where delimiterkey = 9 and parsermethodkey =6;--slash for merge
 
---    IF counter=0 THEN       -- name is free
--- INSERT into methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue)
--- SELECT 1,1,9,6,1
--- WHERE NOT EXISTS (select * from methoddelimiter where delimiterkey = 9 and parsermethodkey =6); 
---    END IF;
--- END
--- $do$;
+   IF counter=0 THEN       -- name is free
+INSERT into methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue)
+SELECT 1,1,9,6,1
+WHERE NOT EXISTS (select * from methoddelimiter where delimiterkey = 9 and parsermethodkey =6); 
+   END IF;
+END
+$do$;
 
--- DO
--- $do$
--- DECLARE
---     counter integer := 0;
--- BEGIN
---   select count(*) into counter from methoddelimiter where delimiterkey = 4 and parsermethodkey =6;--colon for merge
+DO
+$do$
+DECLARE
+    counter integer := 0;
+BEGIN
+  select count(*) into counter from methoddelimiter where delimiterkey = 4 and parsermethodkey =6;--colon for merge
 
---    IF counter=0 THEN       -- name is free
--- INSERT into methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue)
--- SELECT 1,1,4,6,1
--- WHERE NOT EXISTS (select * from methoddelimiter where delimiterkey = 4 and parsermethodkey =6); 
---    END IF;
--- END
--- $do$;
+   IF counter=0 THEN       -- name is free
+INSERT into methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue)
+SELECT 1,1,4,6,1
+WHERE NOT EXISTS (select * from methoddelimiter where delimiterkey = 4 and parsermethodkey =6); 
+   END IF;
+END
+$do$;
 
--- DO
--- $do$
--- DECLARE
---     counter integer := 0;
--- BEGIN
---   select count(*) into counter from methoddelimiter where delimiterkey = 5 and parsermethodkey =6;--comma for merge
+DO
+$do$
+DECLARE
+    counter integer := 0;
+BEGIN
+  select count(*) into counter from methoddelimiter where delimiterkey = 5 and parsermethodkey =6;--comma for merge
 
---    IF counter=0 THEN       -- name is free
--- INSERT into methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue)
--- SELECT 1,1,5,6,1
--- WHERE NOT EXISTS (select * from methoddelimiter where delimiterkey = 5 and parsermethodkey =6); 
---    END IF;
--- END
--- $do$;
+   IF counter=0 THEN       -- name is free
+INSERT into methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue)
+SELECT 1,1,5,6,1
+WHERE NOT EXISTS (select * from methoddelimiter where delimiterkey = 5 and parsermethodkey =6); 
+   END IF;
+END
+$do$;
 
--- DO
--- $do$
--- DECLARE
---     counter integer := 0;
--- BEGIN
---   select count(*) into counter from methoddelimiter where delimiterkey = 6 and parsermethodkey =6;--space for merge
+DO
+$do$
+DECLARE
+    counter integer := 0;
+BEGIN
+  select count(*) into counter from methoddelimiter where delimiterkey = 6 and parsermethodkey =6;--space for merge
 
---    IF counter=0 THEN       -- name is free
--- INSERT into methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue)
--- SELECT 1,1,6,6,1
--- WHERE NOT EXISTS (select * from methoddelimiter where delimiterkey = 6 and parsermethodkey =6); 
---    END IF;
--- END
--- $do$;
-
+   IF counter=0 THEN       -- name is free
+INSERT into methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue)
+SELECT 1,1,6,6,1
+WHERE NOT EXISTS (select * from methoddelimiter where delimiterkey = 6 and parsermethodkey =6); 
+   END IF;
+END
+$do$;
 
 update methoddelimiter set defaultvalue = 1 where defaultvalue is Null; 
 
@@ -2762,7 +2824,7 @@ update lslogbooks set reviewstatus='' where reviewstatus is null;
 ALTER TABLE IF Exists lslogbooksdata ADD COLUMN IF NOT EXISTS logitemstatus character varying(255); 
 update lslogbooksdata set logitemstatus='A' where logitemstatus is null;
 
--- update parserfield set datatypekey = 1 where datatypekey is Null;
+update parserfield set datatypekey = 1 where datatypekey is Null;
 ALTER TABLE IF Exists lsprotocolmaster ADD COLUMN IF NOT EXISTS viewoption integer;
 
 update lsprotocolmaster set viewoption = 1 where viewoption is null;
@@ -3089,7 +3151,6 @@ ALTER TABLE public.lsmethodfields
     
     
 ALTER TABLE IF Exists lsrepositoriesdata ADD COLUMN IF NOT EXISTS expirydate date;
-ALTER TABLE IF Exists LSprojectmaster ADD COLUMN IF NOT EXISTS createdby varchar(100);
 update LSprojectmaster set createdby = 'Administrator' where createdby is Null;
 ALTER TABLE IF Exists lsrepositoriesdata ADD COLUMN IF NOT EXISTS inventoryid varchar(255);
 ALTER TABLE IF Exists LSlogilabprotocoldetail ADD COLUMN IF NOT EXISTS approvelstatus integer;
@@ -3560,98 +3621,100 @@ update lsusergrouprights set sequenceorder=65 where displaytopic ='IDS_TSK_NEWDO
 update lsusergrouprights set sequenceorder=66 where displaytopic ='IDS_TSK_NEWTEMP' ;
 update lsusergrouprights set sequenceorder=67 where displaytopic ='IDS_TSK_GENERATEREPORT' ;
 update lsusergrouprights set sequenceorder=68 where displaytopic ='IDS_TSK_OPENREPORT' ;
-update lsusergrouprights set screenname='IDS_SCN_AUDITTRAILCONFIG'	where displaytopic ='IDS_SCN_AUDITTRAILCONFIG';
-update lsusergrouprights set screenname='IDS_SCN_AUDITTRAILHIS'	where displaytopic ='IDS_SCN_AUDITTRAILHIS';
-update lsusergrouprights set screenname='IDS_SCN_CFRSETTINGS'	where displaytopic ='IDS_SCN_CFRSETTINGS';
-update lsusergrouprights set screenname='IDS_SCN_DELIMITER'	where displaytopic ='IDS_SCN_DELIMITER';
-update lsusergrouprights set screenname='IDS_SCN_INSTRUMENTCATEGORY'	where displaytopic ='IDS_SCN_INSTRUMENTCATEGORY';
-update lsusergrouprights set screenname='IDS_SCN_INSTRUMENTMASTER'	where displaytopic ='IDS_SCN_INSTRUMENTMASTER';
-update lsusergrouprights set screenname='IDS_SCN_INVENTORY'	where displaytopic ='IDS_SCN_INVENTORY';
-update lsusergrouprights set screenname='IDS_SCN_LOGBOOK'	where displaytopic ='IDS_SCN_LOGBOOK';
-update lsusergrouprights set screenname='IDS_SCN_MATERIAL'	where displaytopic ='IDS_SCN_MATERIAL';
-update lsusergrouprights set screenname='IDS_SCN_MATERIALCATEGORY'	where displaytopic ='IDS_SCN_MATERIALCATEGORY';
-update lsusergrouprights set screenname='IDS_SCN_MATERIALINVENTORY'	where displaytopic ='IDS_SCN_MATERIALINVENTORY';
-update lsusergrouprights set screenname='IDS_SCN_MATERIALTYPE'	where displaytopic ='IDS_SCN_MATERIALTYPE';
-update lsusergrouprights set screenname='IDS_SCN_METHODDELIMITER'	where displaytopic ='IDS_SCN_METHODDELIMITER';
-update lsusergrouprights set screenname='IDS_SCN_METHODMASTER'	where displaytopic ='IDS_SCN_METHODMASTER';
-update lsusergrouprights set screenname='IDS_SCN_ORDERWORKLOW'	where displaytopic ='IDS_SCN_ORDERWORKLOW';
-update lsusergrouprights set screenname='IDS_SCN_PARSER'	where displaytopic ='IDS_SCN_PARSER';
-update lsusergrouprights set screenname='IDS_SCN_PASSWORDPOLICY'	where displaytopic ='IDS_SCN_PASSWORDPOLICY';
-update lsusergrouprights set screenname='IDS_SCN_PROJECTMASTER'	where displaytopic ='IDS_SCN_PROJECTMASTER';
-update lsusergrouprights set screenname='IDS_SCN_PROJECTTEAM'	where displaytopic ='IDS_SCN_PROJECTTEAM';
-update lsusergrouprights set screenname='IDS_SCN_PROTOCOLORDERS'	where displaytopic ='IDS_SCN_PROTOCOLORDERS';
-update lsusergrouprights set screenname='IDS_SCN_PROTOCOLTEMPLATE'	where displaytopic ='IDS_SCN_PROTOCOLTEMPLATE';
-update lsusergrouprights set screenname='IDS_SCN_REPORTS'	where displaytopic ='IDS_SCN_REPORTS';
-update lsusergrouprights set screenname='IDS_SCN_SAMPLEMASTER'	where displaytopic ='IDS_SCN_SAMPLEMASTER';
-update lsusergrouprights set screenname='IDS_SCN_SECTIONMASTER'	where displaytopic ='IDS_SCN_SECTIONMASTER';
-update lsusergrouprights set screenname='IDS_SCN_SHEETORDERS'	where displaytopic ='IDS_SCN_SHEETORDERS';
-update lsusergrouprights set screenname='IDS_SCN_SHEETTEMPLATE'	where displaytopic ='IDS_SCN_SHEETTEMPLATE';
-update lsusergrouprights set screenname='IDS_SCN_STORAGELOCATION'	where displaytopic ='IDS_SCN_STORAGELOCATION';
-update lsusergrouprights set screenname='IDS_SCN_TASKMASTER'	where displaytopic ='IDS_SCN_TASKMASTER';
-update lsusergrouprights set screenname='IDS_SCN_TEMPLATEWORKFLOW'	where displaytopic ='IDS_SCN_TEMPLATEWORKFLOW';
-update lsusergrouprights set screenname='IDS_SCN_UNITMASTER'	where displaytopic ='IDS_SCN_UNITMASTER';
-update lsusergrouprights set screenname='IDS_SCN_UNLOCKORDERS'	where displaytopic ='IDS_SCN_UNLOCKORDERS';
-update lsusergrouprights set screenname='IDS_SCN_USERGROUP'	where displaytopic ='IDS_SCN_USERGROUP';
-update lsusergrouprights set screenname='IDS_SCN_USERMASTER'	where displaytopic ='IDS_SCN_USERMASTER';
-update lsusergrouprights set screenname='IDS_SCN_USERRIGHTS'	where displaytopic ='IDS_SCN_USERRIGHTS';
-update lsusergrouprights set screenname='IDS_SCN_USERGROUP'	where displaytopic ='IDS_TSK_ACTDEACT';
-update lsusergrouprights set screenname='IDS_SCN_USERMASTER'	where displaytopic ='IDS_TSK_ACTDEACTUSERMASTER';
-update lsusergrouprights set screenname='IDS_SCN_DASHBOARD'	where displaytopic ='IDS_TSK_ACTIVITIES';
-update lsusergrouprights set screenname='IDS_SCN_LOGBOOK'	where displaytopic ='IDS_TSK_ADDLOGBOOK';
-update lsusergrouprights set screenname='IDS_SCN_INVENTORY'	where displaytopic ='IDS_TSK_ADDREPO';
-update lsusergrouprights set screenname='IDS_SCN_AUDITTRAILHIS'	where displaytopic ='IDS_TSK_CREATEARCHIVE';
-update lsusergrouprights set screenname='IDS_SCN_PROTOCOLORDERS'	where displaytopic ='IDS_TSK_DYNAMICPROTOCOL';
-update lsusergrouprights set screenname='IDS_SCN_LOGBOOK' where displaytopic ='IDS_TSK_EDITLOGBOOK';
-update lsusergrouprights set screenname='IDS_SCN_INVENTORY'	where displaytopic ='IDS_TSK_EDITREPO';
-update lsusergrouprights set screenname='IDS_SCN_PROTOCOLORDERS'	where displaytopic ='IDS_TSK_ELNPROTOCOL';
-update lsusergrouprights set screenname='IDS_SCN_SHEETORDERS'	where displaytopic ='IDS_TSK_ELNTASKORDER';
-update lsusergrouprights set screenname='IDS_SCN_AUDITTRAILHIS'	where displaytopic ='IDS_TSK_EXPORT';
-update lsusergrouprights set screenname='IDS_SCN_PROTOCOLTEMPLATE'	where displaytopic ='IDS_TSK_EXPORTPDF';
-update lsusergrouprights set screenname='IDS_SCN_SHEETORDERS'	where displaytopic ='IDS_TSK_FOLDERCREATION';
-update lsusergrouprights set screenname='IDS_SCN_PROTOCOLORDERS'	where displaytopic ='IDS_TSK_FOLDERCREATIONPROTOCOL';
-update lsusergrouprights set screenname='IDS_SCN_REPORTS'	where displaytopic ='IDS_TSK_GENERATEREPORT';
-update lsusergrouprights set screenname='IDS_SCN_REPORTS'	where displaytopic ='IDS_TSK_IMPORTDOCX';
-update lsusergrouprights set screenname='IDS_SCN_SHEETORDERS'	where displaytopic ='IDS_TSK_MANAGEEXCEL';
-update lsusergrouprights set screenname='IDS_SCN_SHEETORDERS'	where displaytopic ='IDS_TSK_MOVEORDERS';
-update lsusergrouprights set screenname='IDS_SCN_PROTOCOLORDERS'	where displaytopic ='IDS_TSK_MOVEORDERSPROTOCOL';
-update lsusergrouprights set screenname='IDS_SCN_REPORTS'	where displaytopic ='IDS_TSK_NEWDOCUMENT';
-update lsusergrouprights set screenname='IDS_SCN_REPORTS'	where displaytopic ='IDS_TSK_NEWDOCUMENT';
-update lsusergrouprights set screenname='IDS_SCN_PROTOCOLTEMPLATE'	where displaytopic ='IDS_TSK_NEWSTEP';
-update lsusergrouprights set screenname='IDS_SCN_REPORTS'	where displaytopic ='IDS_TSK_NEWTEMP';
-update lsusergrouprights set screenname='IDS_SCN_AUDITTRAILHIS'	where displaytopic ='IDS_TSK_OPENARCHIVE';
-update lsusergrouprights set screenname='IDS_SCN_REPORTS'	where displaytopic ='IDS_TSK_OPENREPORT';
-update lsusergrouprights set screenname='IDS_SCN_DASHBOARD'	where displaytopic ='IDS_TSK_ORDEROVERVIEW';
-update lsusergrouprights set screenname='IDS_SCN_SHEETORDERS'	where displaytopic ='IDS_TSK_ORDERSHAREDBYME';
-update lsusergrouprights set screenname='IDS_SCN_PROTOCOLORDERS'	where displaytopic ='IDS_TSK_ORDERSHAREDBYMEPROTOCOL';
-update lsusergrouprights set screenname='IDS_SCN_SHEETORDERS'	where displaytopic ='IDS_TSK_ORDERSHAREDTOME';
-update lsusergrouprights set screenname='IDS_SCN_PROTOCOLORDERS'	where displaytopic ='IDS_TSK_ORDERSHAREDTOMEPROTOCOL';
-update lsusergrouprights set screenname='IDS_SCN_TEMPLATEMAPPING'	where displaytopic ='IDS_TSK_PROTOCOL';
-update lsusergrouprights set screenname='IDS_SCN_PROTOCOLTEMPLATE'	where displaytopic =' IDS_TSK_PROTOCOLTEMPSHAREBYME';
-update lsusergrouprights set screenname='IDS_SCN_PROTOCOLTEMPLATE'	where displaytopic ='IDS_TSK_PROTOCOLTEMPSHARETOME';
-update lsusergrouprights set screenname='IDS_SCN_SHEETORDERS'	where displaytopic ='IDS_TSK_RESEARCHACTIVITY';
-update lsusergrouprights set screenname='IDS_SCN_USERMASTER'	where displaytopic ='IDS_TSK_RESETPASSWORD';
-update lsusergrouprights set screenname='IDS_SCN_USERMASTER'	where displaytopic ='IDS_TSK_RETIRE';
-update lsusergrouprights set screenname='IDS_SCN_LOGBOOK'	where displaytopic ='IDS_TSK_RETIRELOGBOOK';
-update lsusergrouprights set screenname='IDS_SCN_AUDITTRAILHIS'	where displaytopic ='IDS_TSK_REVIEW';
-update lsusergrouprights set screenname='IDS_SCN_AUDITTRAILHIS'	where displaytopic ='IDS_TSK_REVIEWHISTORY';
-update lsusergrouprights set screenname='IDS_SCN_LOGBOOK'	where displaytopic ='IDS_TSK_REVIEWLOGBOOK';
-update lsusergrouprights set screenname='IDS_SCN_TEMPLATEMAPPING'	where displaytopic ='IDS_TSK_SHEET';
-update lsusergrouprights set screenname='IDS_SCN_SHEETORDERS' where displaytopic ='IDS_TSK_SHEETEVALUATION';
-update lsusergrouprights set screenname='IDS_SCN_SHEETORDERS'	where displaytopic ='IDS_TSK_SHEETORDEREXPORT';
-update lsusergrouprights set screenname='IDS_SCN_SHEETTEMPLATE'	where displaytopic ='IDS_TSK_SHEETTEMPEXPORT';
-update lsusergrouprights set screenname='IDS_SCN_DASHBOARD'	where displaytopic ='IDS_TSK_TEMPLATEOVERVIEW';
-update lsusergrouprights set screenname='IDS_SCN_SHEETTEMPLATE'	where displaytopic ='IDS_TSK_TEMPLATESHAREDBYME';
-update lsusergrouprights set screenname='IDS_SCN_SHEETTEMPLATE'	where displaytopic ='IDS_TSK_TEMPLATESHAREDTOME';
-update lsusergrouprights set screenname='IDS_SCN_USERMASTER'	where displaytopic ='IDS_TSK_UNLOCK';
-update lsusergrouprights set screenname='IDS_SCN_PROTOCOLORDERS'	where displaytopic ='IDS_TSK_UPLOADPROTOCOLORDER';
-update lsusergrouprights set screenname='IDS_SCN_SHEETORDERS'	where displaytopic ='IDS_TSK_UPLOADSHEETORDER';
 
-update lsusergrouprights set screate='1' where displaytopic='IDS_SCN_USERRIGHTS' and screate='NA' and usergroupid_usergroupcode !=1;  
-update lsusergrouprights set screate='1' where displaytopic='IDS_SCN_TEMPLATEWORKFLOW'and screate='NA' and usergroupid_usergroupcode !=1; 
-update lsusergrouprights set screate='1' where displaytopic='IDS_SCN_PASSWORDPOLICY' and screate='NA'  and usergroupid_usergroupcode !=1; 
-update lsusergrouprights set screate='1' where displaytopic='IDS_SCN_ORDERWORKLOW' and screate='NA'  and usergroupid_usergroupcode !=1; 
-update lsusergrouprights set screate='1' where displaytopic='IDS_SCN_AUDITTRAILCONFIG' and screate='NA'  and usergroupid_usergroupcode !=1;
-update lsusergrouprights set sdelete='1' where displaytopic='IDS_SCN_PROJECTTEAM' and sdelete='NA'  and usergroupid_usergroupcode !=1; 
+
+update lsusergrouprights set screenname='IDS_SCN_AUDITTRAILCONFIG' where displaytopic ='IDS_SCN_AUDITTRAILCONFIG';
+update lsusergrouprights set screenname='IDS_SCN_AUDITTRAILHIS' where displaytopic ='IDS_SCN_AUDITTRAILHIS';
+update lsusergrouprights set screenname='IDS_SCN_CFRSETTINGS' where displaytopic ='IDS_SCN_CFRSETTINGS';
+update lsusergrouprights set screenname='IDS_SCN_DELIMITER' where displaytopic ='IDS_SCN_DELIMITER';
+update lsusergrouprights set screenname='IDS_SCN_INSTRUMENTCATEGORY' where displaytopic ='IDS_SCN_INSTRUMENTCATEGORY';
+update lsusergrouprights set screenname='IDS_SCN_INSTRUMENTMASTER' where displaytopic ='IDS_SCN_INSTRUMENTMASTER';
+update lsusergrouprights set screenname='IDS_SCN_INVENTORY' where displaytopic ='IDS_SCN_INVENTORY';
+update lsusergrouprights set screenname='IDS_SCN_LOGBOOK' where displaytopic ='IDS_SCN_LOGBOOK';
+update lsusergrouprights set screenname='IDS_SCN_MATERIAL' where displaytopic ='IDS_SCN_MATERIAL';
+update lsusergrouprights set screenname='IDS_SCN_MATERIALCATEGORY' where displaytopic ='IDS_SCN_MATERIALCATEGORY';
+update lsusergrouprights set screenname='IDS_SCN_MATERIALINVENTORY' where displaytopic ='IDS_SCN_MATERIALINVENTORY';
+update lsusergrouprights set screenname='IDS_SCN_MATERIALTYPE' where displaytopic ='IDS_SCN_MATERIALTYPE';
+update lsusergrouprights set screenname='IDS_SCN_METHODDELIMITER' where displaytopic ='IDS_SCN_METHODDELIMITER';
+update lsusergrouprights set screenname='IDS_SCN_METHODMASTER' where displaytopic ='IDS_SCN_METHODMASTER';
+update lsusergrouprights set screenname='IDS_SCN_ORDERWORKLOW' where displaytopic ='IDS_SCN_ORDERWORKLOW';
+update lsusergrouprights set screenname='IDS_SCN_PARSER' where displaytopic ='IDS_SCN_PARSER';
+update lsusergrouprights set screenname='IDS_SCN_PASSWORDPOLICY' where displaytopic ='IDS_SCN_PASSWORDPOLICY';
+update lsusergrouprights set screenname='IDS_SCN_PROJECTMASTER' where displaytopic ='IDS_SCN_PROJECTMASTER';
+update lsusergrouprights set screenname='IDS_SCN_PROJECTTEAM' where displaytopic ='IDS_SCN_PROJECTTEAM';
+update lsusergrouprights set screenname='IDS_SCN_PROTOCOLORDERS' where displaytopic ='IDS_SCN_PROTOCOLORDERS';
+update lsusergrouprights set screenname='IDS_SCN_PROTOCOLTEMPLATE' where displaytopic ='IDS_SCN_PROTOCOLTEMPLATE';
+update lsusergrouprights set screenname='IDS_SCN_REPORTS' where displaytopic ='IDS_SCN_REPORTS';
+update lsusergrouprights set screenname='IDS_SCN_SAMPLEMASTER' where displaytopic ='IDS_SCN_SAMPLEMASTER';
+update lsusergrouprights set screenname='IDS_SCN_SECTIONMASTER' where displaytopic ='IDS_SCN_SECTIONMASTER';
+update lsusergrouprights set screenname='IDS_SCN_SHEETORDERS' where displaytopic ='IDS_SCN_SHEETORDERS';
+update lsusergrouprights set screenname='IDS_SCN_SHEETTEMPLATE' where displaytopic ='IDS_SCN_SHEETTEMPLATE';
+update lsusergrouprights set screenname='IDS_SCN_STORAGELOCATION' where displaytopic ='IDS_SCN_STORAGELOCATION';
+update lsusergrouprights set screenname='IDS_SCN_TASKMASTER' where displaytopic ='IDS_SCN_TASKMASTER';
+update lsusergrouprights set screenname='IDS_SCN_TEMPLATEWORKFLOW' where displaytopic ='IDS_SCN_TEMPLATEWORKFLOW';
+update lsusergrouprights set screenname='IDS_SCN_UNITMASTER' where displaytopic ='IDS_SCN_UNITMASTER';
+update lsusergrouprights set screenname='IDS_SCN_UNLOCKORDERS' where displaytopic ='IDS_SCN_UNLOCKORDERS';
+update lsusergrouprights set screenname='IDS_SCN_USERGROUP' where displaytopic ='IDS_SCN_USERGROUP';
+update lsusergrouprights set screenname='IDS_SCN_USERMASTER' where displaytopic ='IDS_SCN_USERMASTER';
+update lsusergrouprights set screenname='IDS_SCN_USERRIGHTS' where displaytopic ='IDS_SCN_USERRIGHTS';
+update lsusergrouprights set screenname='IDS_SCN_USERGROUP' where displaytopic ='IDS_TSK_ACTDEACT';
+update lsusergrouprights set screenname='IDS_SCN_USERMASTER' where displaytopic ='IDS_TSK_ACTDEACTUSERMASTER';
+update lsusergrouprights set screenname='IDS_SCN_DASHBOARD' where displaytopic ='IDS_TSK_ACTIVITIES';
+update lsusergrouprights set screenname='IDS_SCN_LOGBOOK' where displaytopic ='IDS_TSK_ADDLOGBOOK';
+update lsusergrouprights set screenname='IDS_SCN_INVENTORY' where displaytopic ='IDS_TSK_ADDREPO';
+update lsusergrouprights set screenname='IDS_SCN_AUDITTRAILHIS' where displaytopic ='IDS_TSK_CREATEARCHIVE';
+update lsusergrouprights set screenname='IDS_SCN_PROTOCOLORDERS' where displaytopic ='IDS_TSK_DYNAMICPROTOCOL';
+update lsusergrouprights set screenname='IDS_SCN_LOGBOOK' where displaytopic ='IDS_TSK_EDITLOGBOOK';
+update lsusergrouprights set screenname='IDS_SCN_INVENTORY' where displaytopic ='IDS_TSK_EDITREPO';
+update lsusergrouprights set screenname='IDS_SCN_PROTOCOLORDERS' where displaytopic ='IDS_TSK_ELNPROTOCOL';
+update lsusergrouprights set screenname='IDS_SCN_SHEETORDERS' where displaytopic ='IDS_TSK_ELNTASKORDER';
+update lsusergrouprights set screenname='IDS_SCN_AUDITTRAILHIS' where displaytopic ='IDS_TSK_EXPORT';
+update lsusergrouprights set screenname='IDS_SCN_PROTOCOLTEMPLATE' where displaytopic ='IDS_TSK_EXPORTPDF';
+update lsusergrouprights set screenname='IDS_SCN_SHEETORDERS' where displaytopic ='IDS_TSK_FOLDERCREATION';
+update lsusergrouprights set screenname='IDS_SCN_PROTOCOLORDERS' where displaytopic ='IDS_TSK_FOLDERCREATIONPROTOCOL';
+update lsusergrouprights set screenname='IDS_SCN_REPORTS' where displaytopic ='IDS_TSK_GENERATEREPORT';
+update lsusergrouprights set screenname='IDS_SCN_REPORTS' where displaytopic ='IDS_TSK_IMPORTDOCX';
+update lsusergrouprights set screenname='IDS_SCN_SHEETORDERS' where displaytopic ='IDS_TSK_MANAGEEXCEL';
+update lsusergrouprights set screenname='IDS_SCN_SHEETORDERS' where displaytopic ='IDS_TSK_MOVEORDERS';
+update lsusergrouprights set screenname='IDS_SCN_PROTOCOLORDERS' where displaytopic ='IDS_TSK_MOVEORDERSPROTOCOL';
+update lsusergrouprights set screenname='IDS_SCN_REPORTS' where displaytopic ='IDS_TSK_NEWDOCUMENT';
+update lsusergrouprights set screenname='IDS_SCN_REPORTS' where displaytopic ='IDS_TSK_NEWDOCUMENT';
+update lsusergrouprights set screenname='IDS_SCN_PROTOCOLTEMPLATE' where displaytopic ='IDS_TSK_NEWSTEP';
+update lsusergrouprights set screenname='IDS_SCN_REPORTS' where displaytopic ='IDS_TSK_NEWTEMP';
+update lsusergrouprights set screenname='IDS_SCN_AUDITTRAILHIS' where displaytopic ='IDS_TSK_OPENARCHIVE';
+update lsusergrouprights set screenname='IDS_SCN_REPORTS' where displaytopic ='IDS_TSK_OPENREPORT';
+update lsusergrouprights set screenname='IDS_SCN_DASHBOARD' where displaytopic ='IDS_TSK_ORDEROVERVIEW';
+update lsusergrouprights set screenname='IDS_SCN_SHEETORDERS' where displaytopic ='IDS_TSK_ORDERSHAREDBYME';
+update lsusergrouprights set screenname='IDS_SCN_PROTOCOLORDERS' where displaytopic ='IDS_TSK_ORDERSHAREDBYMEPROTOCOL';
+update lsusergrouprights set screenname='IDS_SCN_SHEETORDERS' where displaytopic ='IDS_TSK_ORDERSHAREDTOME';
+update lsusergrouprights set screenname='IDS_SCN_PROTOCOLORDERS' where displaytopic ='IDS_TSK_ORDERSHAREDTOMEPROTOCOL';
+update lsusergrouprights set screenname='IDS_SCN_TEMPLATEMAPPING' where displaytopic ='IDS_TSK_PROTOCOL';
+update lsusergrouprights set screenname='IDS_SCN_PROTOCOLTEMPLATE' where displaytopic =' IDS_TSK_PROTOCOLTEMPSHAREBYME';
+update lsusergrouprights set screenname='IDS_SCN_PROTOCOLTEMPLATE' where displaytopic ='IDS_TSK_PROTOCOLTEMPSHARETOME';
+update lsusergrouprights set screenname='IDS_SCN_SHEETORDERS' where displaytopic ='IDS_TSK_RESEARCHACTIVITY';
+update lsusergrouprights set screenname='IDS_SCN_USERMASTER' where displaytopic ='IDS_TSK_RESETPASSWORD';
+update lsusergrouprights set screenname='IDS_SCN_USERMASTER' where displaytopic ='IDS_TSK_RETIRE';
+update lsusergrouprights set screenname='IDS_SCN_LOGBOOK' where displaytopic ='IDS_TSK_RETIRELOGBOOK';
+update lsusergrouprights set screenname='IDS_SCN_AUDITTRAILHIS' where displaytopic ='IDS_TSK_REVIEW';
+update lsusergrouprights set screenname='IDS_SCN_AUDITTRAILHIS' where displaytopic ='IDS_TSK_REVIEWHISTORY';
+update lsusergrouprights set screenname='IDS_SCN_LOGBOOK' where displaytopic ='IDS_TSK_REVIEWLOGBOOK';
+update lsusergrouprights set screenname='IDS_SCN_TEMPLATEMAPPING' where displaytopic ='IDS_TSK_SHEET';
+update lsusergrouprights set screenname='IDS_SCN_SHEETORDERS' where displaytopic ='IDS_TSK_SHEETEVALUATION';
+update lsusergrouprights set screenname='IDS_SCN_SHEETORDERS' where displaytopic ='IDS_TSK_SHEETORDEREXPORT';
+update lsusergrouprights set screenname='IDS_SCN_SHEETTEMPLATE' where displaytopic ='IDS_TSK_SHEETTEMPEXPORT';
+update lsusergrouprights set screenname='IDS_SCN_DASHBOARD' where displaytopic ='IDS_TSK_TEMPLATEOVERVIEW';
+update lsusergrouprights set screenname='IDS_SCN_SHEETTEMPLATE' where displaytopic ='IDS_TSK_TEMPLATESHAREDBYME';
+update lsusergrouprights set screenname='IDS_SCN_SHEETTEMPLATE' where displaytopic ='IDS_TSK_TEMPLATESHAREDTOME';
+update lsusergrouprights set screenname='IDS_SCN_USERMASTER' where displaytopic ='IDS_TSK_UNLOCK';
+update lsusergrouprights set screenname='IDS_SCN_PROTOCOLORDERS' where displaytopic ='IDS_TSK_UPLOADPROTOCOLORDER';
+update lsusergrouprights set screenname='IDS_SCN_SHEETORDERS' where displaytopic ='IDS_TSK_UPLOADSHEETORDER';
+
+update  lsusergrouprights set screate='1' where displaytopic='IDS_SCN_USERRIGHTS' and screate='NA' and usergroupid_usergroupcode !=1;  
+update  lsusergrouprights set screate='1' where displaytopic='IDS_SCN_TEMPLATEWORKFLOW'and screate='NA' and usergroupid_usergroupcode !=1; 
+update  lsusergrouprights set screate='1' where displaytopic='IDS_SCN_PASSWORDPOLICY' and screate='NA'  and usergroupid_usergroupcode !=1; 
+update  lsusergrouprights set screate='1' where displaytopic='IDS_SCN_ORDERWORKLOW' and screate='NA'  and usergroupid_usergroupcode !=1; 
+update  lsusergrouprights set screate='1' where displaytopic='IDS_SCN_AUDITTRAILCONFIG' and screate='NA'  and usergroupid_usergroupcode !=1;
+update  lsusergrouprights set sdelete='1' where displaytopic='IDS_SCN_PROJECTTEAM' and sdelete='NA'  and usergroupid_usergroupcode !=1; 
 
 ALTER TABLE IF Exists material ADD COLUMN IF NOT EXISTS createddate date default CURRENT_DATE;
 
@@ -3673,14 +3736,8 @@ update lsaudittrailconfiguration set modulename='IDS_MDL_SETUP' where modulename
 delete from lsusergrouprights where screenname='IDS_SCN_PARSER';
 delete from lsusergrouprightsmaster where screenname='IDS_SCN_PARSER';
 
-update lsusergrouprights set sedit ='1' where displaytopic='IDS_TSK_FOLDERCREATION' and sedit='NA' and usergroupid_usergroupcode =1;
-update lsusergrouprights set sedit ='0' where displaytopic='IDS_TSK_FOLDERCREATION' and sedit='NA' and usergroupid_usergroupcode !=1;
-update lsusergrouprights set sdelete ='1' where displaytopic='IDS_TSK_FOLDERCREATION' and sdelete='NA' and usergroupid_usergroupcode =1;
-update lsusergrouprights set sdelete ='0' where displaytopic='IDS_TSK_FOLDERCREATION' and sdelete='NA' and usergroupid_usergroupcode !=1;
-update lsusergrouprights set sedit ='1' where displaytopic='IDS_TSK_FOLDERCREATIONPROTOCOL' and sedit='NA' and usergroupid_usergroupcode =1;
-update lsusergrouprights set sedit ='0' where displaytopic='IDS_TSK_FOLDERCREATIONPROTOCOL' and sedit='NA' and usergroupid_usergroupcode !=1;
-update lsusergrouprights set sdelete ='1' where displaytopic='IDS_TSK_FOLDERCREATIONPROTOCOL' and sdelete='NA' and usergroupid_usergroupcode =1;
-update lsusergrouprights set sdelete ='0' where displaytopic='IDS_TSK_FOLDERCREATIONPROTOCOL' and sdelete='NA' and usergroupid_usergroupcode !=1;
+update lsusergrouprights set sedit ='1',sdelete='1' where displaytopic='IDS_TSK_FOLDERCREATION' and sedit='NA' and sdelete='NA' and usergroupid_usergroupcode !=1;
+update lsusergrouprights set sedit ='1',sdelete='1' where displaytopic='IDS_TSK_FOLDERCREATIONPROTOCOL' and sedit='NA' and sdelete='NA' and usergroupid_usergroupcode !=1;
 update lsusergrouprightsmaster set sedit ='0',sdelete='0' where displaytopic='IDS_TSK_FOLDERCREATION' and sedit='NA' and sdelete='NA';
 update lsusergrouprightsmaster set sedit ='0',sdelete='0' where displaytopic='IDS_TSK_FOLDERCREATIONPROTOCOL' and sedit='NA' and sdelete='NA';
 
@@ -4020,335 +4077,6 @@ update lsaudittrailconfiguration set ordersequnce=30 where screenname ='IDS_SCN_
 update lsaudittrailconfiguration set ordersequnce=31 where screenname ='IDS_SCN_SUPPLIER' ;
 update lsaudittrailconfiguration set ordersequnce=32 where screenname ='IDS_SCN_MANUFACTURER' ;
 
+delete from datatype where datatypename='Integer';
 
 ALTER TABLE IF EXISTS lsbatchdetails ADD COLUMN IF NOT EXISTS limsprimarycode numeric(17,0);
-
-update lsusergrouprightsmaster set sdelete='0' where sdelete='NA' and displaytopic='IDS_SCN_ORDERWORKLOW';
-update lsusergrouprights set sdelete='1' where displaytopic='IDS_SCN_ORDERWORKLOW' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sdelete='0' where sdelete='NA' and displaytopic='IDS_SCN_ORDERWORKLOW' and usergroupid_usergroupcode!=1;
-update lsusergrouprightsmaster set sdelete='0' where sdelete='NA' and displaytopic='IDS_SCN_TEMPLATEWORKFLOW';
-update lsusergrouprights set sdelete='1' where displaytopic='IDS_SCN_TEMPLATEWORKFLOW' and usergroupid_usergroupcode=1;
-update lsusergrouprights set sdelete='0' where sdelete='NA' and displaytopic='IDS_SCN_TEMPLATEWORKFLOW' and usergroupid_usergroupcode!=1;
-update lsusergrouprightsmaster set screate='0' where screate='NA' and displaytopic='IDS_SCN_MATERIALTYPE';
-update lsusergrouprights set screate='1' where displaytopic='IDS_SCN_MATERIALTYPE' and usergroupid_usergroupcode=1;
-update lsusergrouprights set screate='0' where screate='NA' and displaytopic='IDS_SCN_MATERIALTYPE' and usergroupid_usergroupcode!=1;
-
-delete from lsaudittrailconfigmaster where modulename = 'IDS_MDL_INVENTORY';
-delete from lsaudittrailconfiguration where modulename = 'IDS_MDL_INVENTORY';
-
-update lsusergrouprights set sedit = 1 where sedit = 'NA' and displaytopic = 'IDS_SCN_PROJECTMASTER' and modulename ='IDS_MDL_MASTERS';
-update lsusergrouprights set sedit = 1 where sedit = 'NA' and displaytopic = 'IDS_SCN_SAMPLEMASTER' and modulename ='IDS_MDL_MASTERS';
-update lsusergrouprights set sedit = 1 where sedit = 'NA' and displaytopic = 'IDS_SCN_TASKMASTER' and modulename ='IDS_MDL_MASTERS';
-
-ALTER TABLE IF Exists lsprotocolorderstructure ADD COLUMN IF NOT EXISTS floatvalues bigint;
-ALTER TABLE IF Exists lssheetorderstructure ADD COLUMN IF NOT EXISTS floatvalues bigint;
-
-ALTER TABLE IF Exists materialinventory ADD Column IF NOT EXISTS isexpiryneed BOOLEAN;
-ALTER TABLE IF Exists materialinventory ADD Column IF NOT EXISTS expirydate DATE;
-ALTER TABLE IF Exists materialinventory ADD Column IF NOT EXISTS validationneed Boolean;
-ALTER TABLE IF Exists materialinventory ADD Column IF NOT EXISTS validationdate TIMESTAMP;
-
-ALTER TABLE IF Exists material ADD Column IF NOT EXISTS expirypolicy BOOLEAN;
-ALTER TABLE IF Exists material ADD Column IF NOT EXISTS expirypolicyvalue character varying(50);
-ALTER TABLE IF Exists material ADD Column IF NOT EXISTS expirypolicyperiod character varying(50);
-
-ALTER TABLE IF Exists material ADD Column IF NOT EXISTS openexpiry BOOLEAN;
-ALTER TABLE IF Exists material ADD Column IF NOT EXISTS openexpiryvalue character varying(50);
-ALTER TABLE IF Exists material ADD Column IF NOT EXISTS openexpiryperiod character varying(50);
-
-ALTER TABLE IF Exists material ADD Column IF NOT EXISTS nextvalidation BOOLEAN;
-ALTER TABLE IF Exists material ADD Column IF NOT EXISTS nextvalidationvalue character varying(50);
-ALTER TABLE IF Exists material ADD Column IF NOT EXISTS nextvalidationperiod character varying(50);
-
-ALTER TABLE IF Exists LSusermaster ADD Column IF NOT EXISTS isadsuser integer;
-
-update LSusermaster set isadsuser = 0 where isadsuser is null;
-
-CREATE TABLE IF NOT EXISTS tbladssettings
-(
-    ldaplocationid character varying(255) COLLATE pg_catalog."default" NOT NULL,
-    createddate timestamp without time zone,
-    groupname integer,
-    lastsyncdate timestamp without time zone,
-    ldaplocation character varying(255) COLLATE pg_catalog."default",
-    ldapserverdomainname character varying(255) COLLATE pg_catalog."default",
-    ldapstatus integer,
-    CONSTRAINT tbladssettings_pkey PRIMARY KEY (ldaplocationid)
-)
-WITH (OIDS = FALSE) TABLESPACE pg_default;
-
-ALTER TABLE tbladssettings OWNER to postgres;
-
-ALTER TABLE IF Exists LSusersteam ADD Column IF NOT EXISTS createdate DATE;
-
-update LSusersteam set createdate=modifieddate where createdate is Null;
-
-ALTER TABLE IF EXISTS materialinventory ALTER COLUMN expirydate TYPE timestamp without time zone;
-
-ALTER TABLE IF Exists lslogilablimsorderdetail ADD COLUMN IF NOT EXISTS activeuser integer;
-
-ALTER TABLE IF Exists lsactiveuser ADD Column IF NOT EXISTS removeinititated BOOLEAN;
-
-INSERT INTO datatype(datatypekey,datatypename)SELECT 1,'Number'WHERE NOT EXISTS (select * from datatype where datatypename = 'string');
-INSERT INTO datatype(datatypekey,datatypename)SELECT 2,'Number'WHERE NOT EXISTS (select * from datatype where datatypename = 'Integer');
- INSERT INTO datatype(datatypekey,datatypename)SELECT 3,'Number'WHERE NOT EXISTS (select * from datatype where datatypename = 'Number');
-
- --datablock
-
-
-DO $$
-DECLARE
-  dvalue Integer;
-BEGIN
-  SELECT delimiterkey INTO dvalue FROM delimiter WHERE delimitername='None';
-  
-  IF NOT EXISTS (SELECT 1 FROM methoddelimiter WHERE delimiterkey = dvalue and parsermethodkey =1) THEN
-  
-  INSERT INTO methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue,methoddelimiterstatus) VALUES 
-  (1,1,dvalue,1,1,'A');
-  END IF;
-END $$;
-
-
-DO $$
-DECLARE
-  dvalue Integer;
-BEGIN
- 
-  SELECT delimiterkey INTO dvalue FROM delimiter WHERE delimitername='Result without space';
- 
-  IF NOT EXISTS (SELECT 1 FROM methoddelimiter WHERE delimiterkey = dvalue and parsermethodkey =1) THEN
-
-  INSERT INTO methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue,methoddelimiterstatus) VALUES 
-  (1,1,dvalue,1,1,'A');
-  END IF;
-END $$;
-
-DO $$
-DECLARE
-  dvalue Integer;
-BEGIN
- 
-  SELECT delimiterkey INTO dvalue FROM delimiter WHERE delimitername='Result with space';
- 
-  IF NOT EXISTS (SELECT 1 FROM methoddelimiter WHERE delimiterkey = dvalue and parsermethodkey =1) THEN
- 
-  INSERT INTO methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue,methoddelimiterstatus) VALUES 
-  (1,1,dvalue,1,1,'A');
-  END IF;
-END $$;
-
-DO $$
-DECLARE
-  dvalue Integer;
-BEGIN
-  
-  SELECT delimiterkey INTO dvalue FROM delimiter WHERE delimitername='Comma';
-
-  IF NOT EXISTS (SELECT 1 FROM methoddelimiter WHERE delimiterkey = dvalue and parsermethodkey =1) THEN
-  
-  INSERT INTO methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue,methoddelimiterstatus) VALUES 
-  (1,1,dvalue,1,1,'A');
-  END IF;
-END $$;
-
---for split
-
-DO $$
-DECLARE
-  dvalue Integer;
-BEGIN
-  SELECT delimiterkey INTO dvalue FROM delimiter WHERE delimitername='Result without space';
-
-  IF NOT EXISTS (SELECT 1 FROM methoddelimiter WHERE delimiterkey = dvalue and parsermethodkey =7) THEN
-
-     INSERT INTO methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue,methoddelimiterstatus) VALUES 
-  (1,1,dvalue,7,1,'A');
-  END IF;
-END $$;
-
-DO $$
-DECLARE
-  dvalue Integer;
-BEGIN
-
-  SELECT delimiterkey INTO dvalue FROM delimiter WHERE delimitername='Result with space';
-
-
-  IF NOT EXISTS (SELECT 1 FROM methoddelimiter WHERE delimiterkey = dvalue and parsermethodkey =7) THEN
-
-     INSERT INTO methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue,methoddelimiterstatus) VALUES 
-  (1,1,dvalue,7,1,'A');
-  END IF;
-END $$;
-
-DO $$
-DECLARE
-  dvalue Integer;
-BEGIN
-  SELECT delimiterkey INTO dvalue FROM delimiter WHERE delimitername='Colon';
-
-  IF NOT EXISTS (SELECT 1 FROM methoddelimiter WHERE delimiterkey = dvalue and parsermethodkey =7) THEN
-
-  INSERT INTO methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue,methoddelimiterstatus) VALUES 
-  (1,1,dvalue,7,1,'A');
-  END IF;
-END $$;
-
-DO $$
-DECLARE
-  dvalue Integer;
-BEGIN
-  SELECT delimiterkey INTO dvalue FROM delimiter WHERE delimitername='Comma';
-
-  IF NOT EXISTS (SELECT 1 FROM methoddelimiter WHERE delimiterkey = dvalue and parsermethodkey =7) THEN
-
-  INSERT INTO methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue,methoddelimiterstatus) VALUES 
-  (1,1,dvalue,7,1,'A');
-  END IF;
-END $$;
-
-DO $$
-DECLARE
-  dvalue Integer;
-BEGIN
-  SELECT delimiterkey INTO dvalue FROM delimiter WHERE delimitername='Space';
-
-  IF NOT EXISTS (SELECT 1 FROM methoddelimiter WHERE delimiterkey = dvalue and parsermethodkey =7) THEN
-
-  INSERT INTO methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue,methoddelimiterstatus) VALUES 
-  (1,1,dvalue,7,1,'A');
-  END IF;
-END $$;
-
-DO $$
-DECLARE
-  dvalue Integer;
-BEGIN
-  SELECT delimiterkey INTO dvalue FROM delimiter WHERE delimitername='Split Dot';
-
-  IF NOT EXISTS (SELECT 1 FROM methoddelimiter WHERE delimiterkey = dvalue and parsermethodkey =7) THEN
-
-  INSERT INTO methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue,methoddelimiterstatus) VALUES 
-  (1,1,dvalue,7,1,'A');
-  END IF;
-END $$;
-
-DO $$
-DECLARE
-  dvalue Integer;
-BEGIN
-  SELECT delimiterkey INTO dvalue FROM delimiter WHERE delimitername='Merge Dot';
-
-  IF NOT EXISTS (SELECT 1 FROM methoddelimiter WHERE delimiterkey = dvalue and parsermethodkey =7) THEN
-
-  INSERT INTO methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue,methoddelimiterstatus) VALUES 
-  (1,1,dvalue,7,1,'A');
-  END IF;
-END $$;
-
-DO $$
-DECLARE
-  dvalue Integer;
-BEGIN
-  SELECT delimiterkey INTO dvalue FROM delimiter WHERE delimitername='Slash';
-
-  IF NOT EXISTS (SELECT 1 FROM methoddelimiter WHERE delimiterkey = dvalue and parsermethodkey =7) THEN
-
-  INSERT INTO methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue,methoddelimiterstatus) VALUES 
-  (1,1,dvalue,7,1,'A');
-  END IF;
-END $$;
-
-DO $$
-DECLARE
-  dvalue Integer;
-BEGIN
-  SELECT delimiterkey INTO dvalue FROM delimiter WHERE delimitername='None';
-
-  IF NOT EXISTS (SELECT 1 FROM methoddelimiter WHERE delimiterkey = dvalue and parsermethodkey =7) THEN
-
-  INSERT INTO methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue,methoddelimiterstatus) VALUES 
-  (1,1,dvalue,7,1,'A');
-  END IF;
-END $$;
-
----merge
-
-DO $$
-DECLARE
-  dvalue Integer;
-BEGIN
-  SELECT delimiterkey INTO dvalue FROM delimiter WHERE delimitername='Merge Dot';
-
-  IF NOT EXISTS (SELECT 1 FROM methoddelimiter WHERE delimiterkey = dvalue and parsermethodkey =6) THEN
-
-  INSERT INTO methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue,methoddelimiterstatus) VALUES 
-  (1,1,dvalue,6,1,'A');
-  END IF;
-END $$;
-
-DO $$
-DECLARE
-  dvalue Integer;
-BEGIN
-  SELECT delimiterkey INTO dvalue FROM delimiter WHERE delimitername='Slash';
-
-  IF NOT EXISTS (SELECT 1 FROM methoddelimiter WHERE delimiterkey = dvalue and parsermethodkey =6) THEN
-
-  INSERT INTO methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue,methoddelimiterstatus) VALUES 
-  (1,1,dvalue,6,1,'A');
-  END IF;
-END $$;
-
-DO $$
-DECLARE
-  dvalue Integer;
-BEGIN
-  SELECT delimiterkey INTO dvalue FROM delimiter WHERE delimitername='Colon';
-
-  IF NOT EXISTS (SELECT 1 FROM methoddelimiter WHERE delimiterkey = dvalue and parsermethodkey =6) THEN
-
-  INSERT INTO methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue,methoddelimiterstatus) VALUES 
-  (1,1,dvalue,6,1,'A');
-  END IF;
-END $$;
-
-DO $$
-DECLARE
-  dvalue Integer;
-BEGIN
-  SELECT delimiterkey INTO dvalue FROM delimiter WHERE delimitername='Comma';
-
-  IF NOT EXISTS (SELECT 1 FROM methoddelimiter WHERE delimiterkey = dvalue and parsermethodkey =6) THEN
-
-  INSERT INTO methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue,methoddelimiterstatus) VALUES 
-  (1,1,dvalue,6,1,'A');
-  END IF;
-END $$;
-
-DO $$
-DECLARE
-  dvalue Integer;
-BEGIN
-  SELECT delimiterkey INTO dvalue FROM delimiter WHERE delimitername='Space';
-
-  IF NOT EXISTS (SELECT 1 FROM methoddelimiter WHERE delimiterkey = dvalue and parsermethodkey =6) THEN
-
-  INSERT INTO methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue,methoddelimiterstatus) VALUES 
-  (1,1,dvalue,6,1,'A');
-  END IF;
-END $$;
-
-DO $$
-DECLARE
-  dvalue Integer;
-BEGIN
-  SELECT delimiterkey INTO dvalue FROM delimiter WHERE delimitername='None';
-
-  IF NOT EXISTS (SELECT 1 FROM methoddelimiter WHERE delimiterkey = dvalue and parsermethodkey =6) THEN
-
-  INSERT INTO methoddelimiter (status, usercode, delimiterkey, parsermethodkey,defaultvalue,methoddelimiterstatus) VALUES 
-  (1,1,dvalue,6,1,'A');
-  END IF;
-END $$;

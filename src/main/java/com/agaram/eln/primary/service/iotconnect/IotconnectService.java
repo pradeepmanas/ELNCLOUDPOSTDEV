@@ -173,7 +173,7 @@ public class IotconnectService {
 	                 
 	                 rctcpresultdetailsobj.setParserblockkey(technique.getParserfield().getParserblock().getParserblockkey());     
 	                 rctcpresultdetailsobj.setMethod(technique.getParserfield().getParserblock().getMethod());     
-	                 rctcpresultdetailsobj.setInstrument(technique.getParserfield().getParserblock().getMethod().getInstmaster());   
+	                // rctcpresultdetailsobj.setInstrument(technique.getParserfield().getParserblock().getMethod().getInstmaster());   
 	                 rctcpresultdetailsobj.setParserfieldkey(technique.getParserfield().getParserfieldkey());    
 	                 rctcpresultdetailsobj.setFieldname(technique.getFieldname());     
 	                 rctcpresultdetailsobj.setCreateddate(commonfunction.getCurrentUtcTime());
@@ -277,9 +277,9 @@ public List<RCTCPResultDetails> getiotresultdetails(RCTCPResultDetails resultdet
 		return IsRegulated;
 	}
 	
-	public List<Method> getMethods(InstrumentMaster instmast)
-	{
-		return methodRepo.findByInstmasterAndStatus(instmast,1);
-		
-	}
+//	public List<Method> getMethods(InstrumentMaster instmast)
+//	{
+//		return methodRepo.findByInstmasterAndStatus(instmast,1);
+//		
+//	}
 }

@@ -1934,3 +1934,64 @@ UPDATE delimiter SET delimiterstatus = 'A' WHERE delimiterkey = 10 AND delimiter
 
 update instrumenttype set status = 1 where instrumenttype.insttypename='RS232'  and status =-1;
 update instrumenttype set status = 1 where instrumenttype.insttypename='TCP/IP' and status =-1;
+
+ALTER TABLE IF Exists lsorderelnmethod ADD COLUMN IF NOT EXISTS nequipmentcode Integer;
+    
+DO
+$do$
+declare
+  multiusergroupcount integer :=0;
+begin
+SELECT count(*) into multiusergroupcount FROM
+information_schema.table_constraints WHERE constraint_name='fkkldigbgplb5ffv1f7p4uua2mp'
+AND table_name='lsorderelnmethod';
+ IF multiusergroupcount =0 THEN
+ 	ALTER TABLE ONLY lsorderelnmethod ADD CONSTRAINT fkkldigbgplb5ffv1f7p4uua2mp FOREIGN KEY (nequipmentcode) REFERENCES equipment(nequipmentcode);
+   END IF;
+END
+$do$; 
+
+ALTER TABLE IF Exists lsfileelnmethod ADD COLUMN IF NOT EXISTS nequipmentcode Integer;
+    
+DO
+$do$
+declare
+  multiusergroupcount integer :=0;
+begin
+SELECT count(*) into multiusergroupcount FROM
+information_schema.table_constraints WHERE constraint_name='fkathu1pdk00m8o6r2ah31p3xce'
+AND table_name='lsfileelnmethod';
+ IF multiusergroupcount =0 THEN
+ 	ALTER TABLE ONLY lsfileelnmethod ADD CONSTRAINT fkathu1pdk00m8o6r2ah31p3xce FOREIGN KEY (nequipmentcode) REFERENCES equipment(nequipmentcode);
+   END IF;
+END
+$do$; 
+
+DO $$
+BEGIN
+    IF EXISTS (
+        SELECT 1
+        FROM information_schema.columns 
+        WHERE table_name = 'lsfileelnmethod' 
+        AND column_name = 'instmasterkey'
+        AND is_nullable = 'NO'
+    ) THEN
+        ALTER TABLE public.lsfileelnmethod
+        ALTER COLUMN instmasterkey DROP NOT NULL;
+    END IF;
+END $$;
+
+DO $$
+BEGIN
+    IF EXISTS (
+        SELECT 1
+        FROM information_schema.columns 
+        WHERE table_name = 'lsorderelnmethod' 
+        AND column_name = 'instmasterkey'
+        AND is_nullable = 'NO'
+    ) THEN
+        ALTER TABLE public.lsorderelnmethod
+        ALTER COLUMN instmasterkey DROP NOT NULL;
+    END IF;
+END $$;
+

@@ -15,6 +15,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.agaram.eln.primary.model.equipment.Equipment;
 import com.agaram.eln.primary.model.instrumentsetup.InstrumentMaster;
 import com.agaram.eln.primary.model.methodsetup.Method;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
@@ -42,6 +43,10 @@ public class LSOrderElnMethod {
 	@ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "instmasterkey")
 	private InstrumentMaster instrument;
+	
+	@ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "nequipmentcode", nullable = false)
+	private Equipment equipment;
 	
 	@Column(name = "CreatedTimeStamp")
 	@Temporal(TemporalType.TIMESTAMP)
@@ -106,6 +111,13 @@ public class LSOrderElnMethod {
 	public void setCreatedby(LSuserMaster createdby) {
 		this.createdby = createdby;
 	}
-	
+
+	public Equipment getEquipment() {
+		return equipment;
+	}
+
+	public void setEquipment(Equipment equipment) {
+		this.equipment = equipment;
+	}
 	
 }

@@ -79,6 +79,7 @@ import com.agaram.eln.primary.model.cloudFileManip.CloudOrderAttachment;
 import com.agaram.eln.primary.model.cloudFileManip.CloudOrderCreation;
 import com.agaram.eln.primary.model.cloudFileManip.CloudOrderVersion;
 import com.agaram.eln.primary.model.cloudFileManip.CloudSheetCreation;
+import com.agaram.eln.primary.model.equipment.Equipment;
 import com.agaram.eln.primary.model.fileManipulation.Fileimages;
 import com.agaram.eln.primary.model.fileManipulation.Fileimagestemp;
 import com.agaram.eln.primary.model.fileManipulation.LSfileimages;
@@ -89,6 +90,7 @@ import com.agaram.eln.primary.model.general.OrderCreation;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.general.SearchCriteria;
 import com.agaram.eln.primary.model.general.SheetCreation;
+import com.agaram.eln.primary.model.instrumentDetails.LSOrderElnMethod;
 import com.agaram.eln.primary.model.instrumentDetails.LSOrdernotification;
 import com.agaram.eln.primary.model.instrumentDetails.LSSheetOrderStructure;
 import com.agaram.eln.primary.model.instrumentDetails.LSfields;
@@ -127,6 +129,7 @@ import com.agaram.eln.primary.model.protocols.Elnprotocolworkflow;
 import com.agaram.eln.primary.model.protocols.LSlogilabprotocoldetail;
 import com.agaram.eln.primary.model.reports.lsreportfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSfile;
+import com.agaram.eln.primary.model.sheetManipulation.LSfileelnmethod;
 import com.agaram.eln.primary.model.sheetManipulation.LSfilemethod;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplefile;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplefileversion;
@@ -156,9 +159,11 @@ import com.agaram.eln.primary.repository.cloudFileManip.CloudOrderCreationReposi
 import com.agaram.eln.primary.repository.cloudFileManip.CloudOrderVersionRepository;
 import com.agaram.eln.primary.repository.cloudFileManip.CloudSheetCreationRepository;
 import com.agaram.eln.primary.repository.dashboard.LsActiveWidgetsRepository;
+import com.agaram.eln.primary.repository.equipment.EquipmentRepository;
 import com.agaram.eln.primary.repository.fileManipulation.FileimagesRepository;
 import com.agaram.eln.primary.repository.fileManipulation.FileimagestempRepository;
 import com.agaram.eln.primary.repository.fileManipulation.LSfileimagesRepository;
+import com.agaram.eln.primary.repository.instrumentDetails.LSOrderElnMethodRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSSheetOrderStructureRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSfieldsRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSlogilablimsorderRepository;
@@ -200,6 +205,7 @@ import com.agaram.eln.primary.repository.protocol.ElnprotocolworkflowgroupmapRep
 import com.agaram.eln.primary.repository.protocol.LSlogilabprotocoldetailRepository;
 import com.agaram.eln.primary.repository.reports.ReportfileRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSfileRepository;
+import com.agaram.eln.primary.repository.sheetManipulation.LSfileelnmethodRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSfilemethodRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSfileparameterRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSparsedparametersRespository;
@@ -267,6 +273,9 @@ public class InstrumentService {
 //	private LsresulttagsRepository lsresulttagsRepository;
 	@Autowired
 	private LSworkflowRepository lsworkflowRepository;
+	@Autowired
+	private LSfileelnmethodRepository LSfileelnmethodRepository;
+	
 //	@Autowired
 //	private LSlimsorderRepository lslimsorderRepository;
 	@Autowired
@@ -362,6 +371,9 @@ public class InstrumentService {
 	private LsordersharetoRepository lsordersharetoRepository;
 
 	@Autowired
+	private EquipmentRepository EquipmentRepository;
+	
+	@Autowired
 	private LsordersharedbyRepository lsordersharedbyRepository;
 
 	@Autowired
@@ -409,6 +421,9 @@ public class InstrumentService {
 	@Autowired
 	private GridFsTemplate gridFsTemplate;
 
+	@Autowired
+	private LSOrderElnMethodRepository LSOrderElnMethodRepository;
+	
 //	@Autowired
 //	private UserService userService;
 
@@ -502,8 +517,7 @@ public class InstrumentService {
 
 	private static Map<String, Timer> timerMap = new HashMap<>();
 	private static Map<String, Boolean> timerStatusMap = new HashMap<>();
-	 private ConcurrentHashMap<String, LSlogilablimsorderdetail> orderDetailMap = new ConcurrentHashMap<>();
-//	public Map<String, Object> getInstrumentparameters(LSSiteMaster lssiteMaster) {
+	 private ConcurrentHashMap<String, LSlogilablimsorderdetail> orderDetailMap = new ConcurrentHashMap<>();//	public Map<String, Object> getInstrumentparameters(LSSiteMaster lssiteMaster) {
 //		Map<String, Object> obj = new HashMap<>();
 //		List<String> lsInst = new ArrayList<String>();
 //		lsInst.add("INST000");
@@ -582,99 +596,109 @@ public class InstrumentService {
 //		return obj;
 //	}
 
-	public Map<String, Object> getInstrumentparameters(LSSiteMaster lssiteMaster) {
-		Map<String, Object> obj = new HashMap<>();
-		List<String> lsInst = new ArrayList<String>();
-		lsInst.add("INST000");
-		lsInst.add("LPRO");
-		List<LsMethodFields> Methods = lsMethodFieldsRepository.findByinstrumentidNotIn(lsInst);
-		// List<SubParserField> SubParserField = new ArrayList<SubParserField>();
+	 public Map<String, Object> getInstrumentparameters(LSSiteMaster lssiteMaster) {
+			Map<String, Object> obj = new HashMap<>();
+			List<String> lsInst = new ArrayList<String>();
+			lsInst.add("INST000");
+			lsInst.add("LPRO");
+			List<LsMethodFields> Methods = lsMethodFieldsRepository.findByinstrumentidNotIn(lsInst);
+			// List<SubParserField> SubParserField = new ArrayList<SubParserField>();
 
-		if (lssiteMaster.getIsmultitenant() != 1) {
-			List<LSfields> Generalfields = lSfieldsRepository.findByisactive(1);
-			List<LsMappedInstruments> Instruments = lsMappedInstrumentsRepository.findAll();
-			List<InstrumentMaster> InstrMaster = lsInstMasterRepository.findByStatusAndSite(1, lssiteMaster);
-			List<LsMappedTemplate> MappedTemplate = LsMappedTemplateRepository.findAll();
-			List<LsUnmappedTemplate> UnmappedTemplate = LsUnmappedTemplateRepository.findAll();
+			if (lssiteMaster.getIsmultitenant() != 1) {
+				List<LSfields> Generalfields = lSfieldsRepository.findByisactive(1);
+				List<LsMappedInstruments> Instruments = lsMappedInstrumentsRepository.findAll();
+				List<InstrumentMaster> InstrMaster = lsInstMasterRepository.findByStatusAndSite(1, lssiteMaster);
+				
+				List<Equipment> Equipment = EquipmentRepository.findByNsitecodeAndNstatusOrderByNequipmentcodeDesc(1,lssiteMaster.getSitecode());
+				
+				List<LsMappedTemplate> MappedTemplate = LsMappedTemplateRepository.findAll();
+				List<LsUnmappedTemplate> UnmappedTemplate = LsUnmappedTemplateRepository.findAll();
 
-			List<Method> elnMethod = lsMethodRepository.findByStatusAndSite(1, lssiteMaster);
-			List<ParserBlock> ParserBlock = lsParserBlockRepository.findByStatusAndMethodIn(1, elnMethod);
-			List<ParserField> ParserField = lsParserRepository.findByStatusAndParserblockIn(1, ParserBlock);
-			List<SubParserField> SubParserField = lsSubParserRepository.findByStatusAndParserfieldIn(1, ParserField);
+				List<Method> elnMethod = lsMethodRepository.findByStatusAndSite(1, lssiteMaster);
+				List<ParserBlock> ParserBlock = lsParserBlockRepository.findByStatusAndMethodIn(1, elnMethod);
+				List<ParserField> ParserField = lsParserRepository.findByStatusAndParserblockIn(1, ParserBlock);
+				List<SubParserField> SubParserField = lsSubParserRepository.findByStatusAndParserfieldIn(1, ParserField);
 
-			// SubParserField = lsSubParserRepository.findByStatus(1);
-			obj.put("Generalfields", Generalfields);
+				obj.put("Generalfields", Generalfields);
 
-			List<ParserField> filteredList = ParserField.stream()
-					.filter(filterParser -> SubParserField.stream()
-							.anyMatch(filterSubParser -> filterParser.getParserfieldkey()
-									.equals(filterSubParser.getParserfield().getParserfieldkey())))
-					.collect(Collectors.toList());
+				List<ParserField> filteredList = ParserField.stream()
+						.filter(filterParser -> SubParserField.stream()
+								.anyMatch(filterSubParser -> filterParser.getParserfieldkey()
+										.equals(filterSubParser.getParserfield().getParserfieldkey())))
+						.collect(Collectors.toList());
 
-			ParserField.removeAll(filteredList);
+				ParserField.removeAll(filteredList);
 
-			obj.put("Instruments", Instruments);
-			obj.put("Instrmaster", InstrMaster);
-			obj.put("elninstrument", lselninstrumentmasterRepository
-					.findBylssitemasterAndStatusOrderByInstrumentcodeDesc(lssiteMaster, 1));
-			obj.put("Mappedtemplates", MappedTemplate);
-			obj.put("Unmappedtemplates", UnmappedTemplate);
-			obj.put("ELNMethods", elnMethod);
-			obj.put("ParserBlock", ParserBlock);
-			obj.put("ParserField", ParserField);
-			obj.put("SubParserField", SubParserField);
+				obj.put("Instruments", Instruments);
+				obj.put("Instrmaster", InstrMaster);
+				
+				obj.put("Equipment", Equipment);
+				
+				obj.put("elninstrument", lselninstrumentmasterRepository
+						.findBylssitemasterAndStatusOrderByInstrumentcodeDesc(lssiteMaster, 1));
+				obj.put("Mappedtemplates", MappedTemplate);
+				obj.put("Unmappedtemplates", UnmappedTemplate);
+				obj.put("ELNMethods", elnMethod);
+				obj.put("ParserBlock", ParserBlock);
+				obj.put("ParserField", ParserField);
+				obj.put("SubParserField", SubParserField);
 
-			Generalfields = null;
-			Instruments = null;
-			InstrMaster = null;
-			elnMethod = null;
-			ParserBlock = null;
-			ParserField = null;
-			// SubParserField = null;
+				Generalfields = null;
+				Instruments = null;
+				InstrMaster = null;
+				elnMethod = null;
+				ParserBlock = null;
+				ParserField = null;
+				// SubParserField = null;
 
-		} else {
-			List<LSfields> Generalfields = lSfieldsRepository.findByisactiveAndMethodname(1, "ID_GENERAL");
+			} else {
+				List<LSfields> Generalfields = lSfieldsRepository.findByisactiveAndMethodname(1, "ID_GENERAL");
 
-			List<InstrumentMaster> InstrMaster = lsInstMasterRepository.findByStatusAndSite(1, lssiteMaster);
-			List<Method> elnMethod = lsMethodRepository.findByStatusAndSite(1, lssiteMaster);
-			List<ParserBlock> ParserBlock = lsParserBlockRepository.findByStatusAndMethodIn(1, elnMethod);
-			List<ParserField> ParserField = lsParserRepository.findByStatusAndParserblockIn(1, ParserBlock);
+				List<InstrumentMaster> InstrMaster = lsInstMasterRepository.findByStatusAndSite(1, lssiteMaster);
+				
+				List<Equipment> Equipment = EquipmentRepository.findByNsitecodeAndNstatusOrderByNequipmentcodeDesc(1,lssiteMaster.getSitecode());
+				
+				List<Method> elnMethod = lsMethodRepository.findByStatusAndSiteAndEquipmentIsNotNull(1, lssiteMaster);
+				List<ParserBlock> ParserBlock = lsParserBlockRepository.findByStatusAndMethodIn(1, elnMethod);
+				List<ParserField> ParserField = lsParserRepository.findByStatusAndParserblockIn(1, ParserBlock);
 
-			List<SubParserField> SubParserField = lsSubParserRepository.findByStatusAndParserfieldIn(1, ParserField);
+				List<SubParserField> SubParserField = lsSubParserRepository.findByStatusAndParserfieldIn(1, ParserField);
 
-			obj.put("Generalfields", Generalfields);
+				obj.put("Generalfields", Generalfields);
 
-			List<ParserField> filteredList = ParserField.stream()
-					.filter(filterParser -> SubParserField.stream()
-							.anyMatch(filterSubParser -> filterParser.getParserfieldkey()
-									.equals(filterSubParser.getParserfield().getParserfieldkey())))
-					.collect(Collectors.toList());
+				List<ParserField> filteredList = ParserField.stream()
+						.filter(filterParser -> SubParserField.stream()
+								.anyMatch(filterSubParser -> filterParser.getParserfieldkey()
+										.equals(filterSubParser.getParserfield().getParserfieldkey())))
+						.collect(Collectors.toList());
 
-			ParserField.removeAll(filteredList);
+				ParserField.removeAll(filteredList);
 
-			obj.put("Instrmaster", InstrMaster);
-			obj.put("ELNMethods", elnMethod);
-			obj.put("ParserBlock", ParserBlock);
-			obj.put("ParserField", ParserField);
-			obj.put("SubParserField", SubParserField);
+				obj.put("Instrmaster", InstrMaster);
+				obj.put("Equipment", Equipment);
+				
+				obj.put("ELNMethods", elnMethod);
+				obj.put("ParserBlock", ParserBlock);
+				obj.put("ParserField", ParserField);
+				obj.put("SubParserField", SubParserField);
 
-			Generalfields = null;
-			InstrMaster = null;
-			elnMethod = null;
-			ParserBlock = null;
-			ParserField = null;
+				Generalfields = null;
+				InstrMaster = null;
+				elnMethod = null;
+				ParserBlock = null;
+				ParserField = null;
+			}
+			if (LSpreferencesRepository.findByTasksettings("WebParser") != null && LSpreferencesRepository
+					.findByTasksettings("WebParser").getValuesettings().equalsIgnoreCase("Active")) {
+				obj.put("Methods", parserService.getwebparsemethods());
+				obj.put("Instruments", parserService.getwebparserInstruments());
+			} else {
+				obj.put("Methods", Methods);
+			}
+			Methods = null;
+			lsInst = null;
+			return obj;
 		}
-		if (LSpreferencesRepository.findByTasksettings("WebParser") != null && LSpreferencesRepository
-				.findByTasksettings("WebParser").getValuesettings().equalsIgnoreCase("Active")) {
-			obj.put("Methods", parserService.getwebparsemethods());
-			obj.put("Instruments", parserService.getwebparserInstruments());
-		} else {
-			obj.put("Methods", Methods);
-		}
-		Methods = null;
-		lsInst = null;
-		return obj;
-	}
 
 //	public LSlogilablimsorderdetail InsertELNOrder(LSlogilablimsorderdetail objorder) {
 //
@@ -1386,6 +1410,26 @@ public class InstrumentService {
 		List<LSlogilablimsorder> lsorder = new ArrayList<LSlogilablimsorder>();
 		String Limsorder = objorder.getBatchcode().toString();
 
+		if (objorder.getLsfile() != null) {
+			List<LSfileelnmethod> filemethodlist = LSfileelnmethodRepository.findByFilecode(objorder.getLsfile().getFilecode());
+			if(filemethodlist!= null) {
+				
+				List<LSOrderElnMethod> lsorderelnmethodobj = new ArrayList<LSOrderElnMethod>();
+				for(int i =0 ; i<filemethodlist.size();i++) {	
+					LSOrderElnMethod ordermethod = new LSOrderElnMethod();
+					ordermethod.setBatchcode(objorder.getBatchcode());
+					ordermethod.setBatchid(Batchid);
+					ordermethod.setCreatedby(objorder.getLsuserMaster());
+					ordermethod.setCreatedtimestamp(commonfunction.getCurrentUtcTime());
+					ordermethod.setMethod(filemethodlist.get(i).getMethod());
+					ordermethod.setEquipment(filemethodlist.get(i).getEquipment());
+					
+					lsorderelnmethodobj.add(ordermethod);			
+				}
+				LSOrderElnMethodRepository.save(lsorderelnmethodobj);
+			}
+		}
+		
 		if (objorder.getLsfile() != null) {
 			objorder.getLsfile().setLsmethods(
 					LSfilemethodRepository.findByFilecodeOrderByFilemethodcode(objorder.getLsfile().getFilecode()));
@@ -7773,18 +7817,23 @@ public class InstrumentService {
 		try {
 
 			List<LSlogilablimsorderdetail> lsOrder = Arrays.asList(lstOrder);
-
+			List<Long> batcode = lsOrder.stream().map(LSlogilablimsorderdetail::getBatchcode)
+					.collect(Collectors.toList());
 			if (!lsOrder.isEmpty()) {
 
-				lsOrder = lsOrder.stream().peek(f -> {
-					f.setLockeduser(null);
-					f.setLockedusername(null);
-					f.setActiveuser(null);
-				}).collect(Collectors.toList());
-
-				lslogilablimsorderdetailRepository.save(lsOrder);
+//				lsOrder = lsOrder.stream().peek(f -> {
+//					f.setLockeduser(null);
+//					f.setLockedusername(null);
+//					f.setActiveuser(null);
+//				}).collect(Collectors.toList());
+//
+//				lslogilablimsorderdetailRepository.save(lsOrder);
+				
+				lslogilablimsorderdetailRepository.updateLockedUser(batcode);
 
 			}
+			
+
 
 			objResponse.setStatus(true);
 			objResponse.setInformation("Success");

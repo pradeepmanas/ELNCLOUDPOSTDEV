@@ -1489,44 +1489,44 @@ public String getFileData(final String fileName,String tenant,Integer methodKey)
 	 * @param instMasterKey [int] primary key of InstrumentMaster to be validated
 	 * @return boolean value of validated response.
 	 */
-   @Transactional
-   public ResponseEntity<Object> getMethodByInstrument(final Method method, final int instMasterKey){
-	   
-	   final InstrumentMaster instMaster = instMastRepo.findOne(instMasterKey);
-	   final Optional<Method> methodByInst = methodRepo.findByMethodnameAndInstmasterAndStatus(method.getMethodname(), 
-			   instMaster, 1);
-	   boolean instrumentBinded = false;
-	   if (methodByInst.isPresent()) {
-		   instrumentBinded = true;
-	   }
-	   return new ResponseEntity<>(instrumentBinded, HttpStatus.OK);
-   }
+//   @Transactional
+//   public ResponseEntity<Object> getMethodByInstrument(final Method method, final int instMasterKey){
+//	   
+//	   final InstrumentMaster instMaster = instMastRepo.findOne(instMasterKey);
+//	   final Optional<Method> methodByInst = methodRepo.findByMethodnameAndInstmasterAndStatus(method.getMethodname(), 
+//			   instMaster, 1);
+//	   boolean instrumentBinded = false;
+//	   if (methodByInst.isPresent()) {
+//		   instrumentBinded = true;
+//	   }
+//	   return new ResponseEntity<>(instrumentBinded, HttpStatus.OK);
+//   }
    
-   @Transactional
-   public ResponseEntity<Object> getMethodContainingByInstrument(final Method method, final int instMasterKey){
-	   
-	   final InstrumentMaster instMaster = instMastRepo.findOne(instMasterKey);
-	   final List<Method> methodByVersion = methodRepo.findByMethodnameContainingAndInstmasterAndStatus(method.getMethodname().split("@")[0].concat("@"), 
-			   instMaster, 1);
-	   String existingMethod = "";
-	   
-	   if(methodByVersion.size()>0) {
-		   final List<Integer> version = methodByVersion.stream().map((item) -> Integer.parseInt(item.getMethodname().substring(item.getMethodname().indexOf('@')+2))).collect(Collectors.toList());
-		   Integer max = version.stream().max(Integer::compare).get();
-		   existingMethod = method.getMethodname().split("@")[0].concat("@v").concat( String.valueOf(max+1));
-	   } else {
-		   final Optional<Method> methodByCopy = methodRepo.findByMethodnameAndInstmasterAndStatus(method.getMethodname(), instMaster, 1);
-		   if (methodByCopy.isPresent()) {
-			   existingMethod = method.getMethodname() + "@v2";
-		   } else {
-			   existingMethod = method.getMethodname().split("@")[0]; 
-		   }
-		   
-		   
-	   }	   
-		   
-	   return new ResponseEntity<>(existingMethod, HttpStatus.OK);
-   }
+//   @Transactional
+//   public ResponseEntity<Object> getMethodContainingByInstrument(final Method method, final int instMasterKey){
+//	   
+//	   final InstrumentMaster instMaster = instMastRepo.findOne(instMasterKey);
+//	   final List<Method> methodByVersion = methodRepo.findByMethodnameContainingAndInstmasterAndStatus(method.getMethodname().split("@")[0].concat("@"), 
+//			   instMaster, 1);
+//	   String existingMethod = "";
+//	   
+//	   if(methodByVersion.size()>0) {
+//		   final List<Integer> version = methodByVersion.stream().map((item) -> Integer.parseInt(item.getMethodname().substring(item.getMethodname().indexOf('@')+2))).collect(Collectors.toList());
+//		   Integer max = version.stream().max(Integer::compare).get();
+//		   existingMethod = method.getMethodname().split("@")[0].concat("@v").concat( String.valueOf(max+1));
+//	   } else {
+//		   final Optional<Method> methodByCopy = methodRepo.findByMethodnameAndInstmasterAndStatus(method.getMethodname(), instMaster, 1);
+//		   if (methodByCopy.isPresent()) {
+//			   existingMethod = method.getMethodname() + "@v2";
+//		   } else {
+//			   existingMethod = method.getMethodname().split("@")[0]; 
+//		   }
+//		   
+//		   
+//	   }	   
+//		   
+//	   return new ResponseEntity<>(existingMethod, HttpStatus.OK);
+//   }
 
 
    @Transactional

@@ -90,6 +90,7 @@ import com.agaram.eln.primary.repository.protocol.LSlogilabprotocoldetailReposit
 import com.agaram.eln.primary.repository.protocol.LSprotocolorderworkflowhistoryRepository;
 import com.agaram.eln.primary.repository.protocol.LSprotocolworkflowhistoryRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSfileRepository;
+import com.agaram.eln.primary.repository.sheetManipulation.LSfileelnmethodRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSfilemethodRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSfileparameterRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSfiletestRepository;
@@ -134,6 +135,8 @@ public class FileService {
 	private LSfilemethodRepository lSfilemethodRepository;
 	@Autowired
 	private LSfileparameterRepository lSfileparameterRepository;
+	@Autowired
+	private LSfileelnmethodRepository LSfileelnmethodRepository;
 	@Autowired
 	private LSfiletestRepository lSfiletestRepository;
 	@Autowired
@@ -290,6 +293,8 @@ public class FileService {
 			UpdateSheetversion(objfile, Content);
 
 			lSfilemethodRepository.deleteByfilecode(objfile.getFilecode());
+			LSfileelnmethodRepository.deleteByfilecode(objfile.getFilecode());
+
 			List<Integer> lstestparamcode = new ArrayList<Integer>();
 			for (LSfileparameter param : objfile.getLsparameter()) {
 				if (param.getFileparametercode() != null) {
@@ -328,6 +333,10 @@ public class FileService {
 			lSfilemethodRepository.save(objfile.getLsmethods());
 		}
 
+		if (objfile.getLselnmethod().size() > 0) {
+			LSfileelnmethodRepository.save(objfile.getLselnmethod());
+		}
+		
 		if (objfile.getLsparameter().size() > 0) {
 			lSfileparameterRepository.save(objfile.getLsparameter());
 		}
