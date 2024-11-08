@@ -107,5 +107,21 @@ public interface EquipmentRepository extends JpaRepository<Equipment, Integer>{
 
 	Optional<Equipment> findByNequipmentcodeAndNsitecodeAndNstatus(Integer nequipmentcode, Integer sitecode, int i);
 
+	List<Equipment> findByNsitecodeAndCmmsettingTrueOrderByNequipmentcodeDesc(Integer sitecode);
+
+	List<Equipment> findByNsitecodeAndCmmsettingTrueAndNstatusOrderByNequipmentcodeDesc(int i, Integer sitecode);
+
+	List<Equipment> findByCmmsettingTrueAndEquipmentcategoryAndNsitecodeAndNstatus(EquipmentCategory eqipmentcategory,
+			Integer sitecode, int i);
+
+	//List<Equipment> findByEquipmentcategoryAndStatusNotIn(EquipmentCategory equicat, int i);
+
+	List<Equipment> findByNsitecodeAndSequipmentnameAndEquipmentcategoryAndNstatus(Integer nsitecode,
+			String sequipmentcatname, EquipmentType equipmenttype, int i);
+
+	//List<Equipment> findByEquipmentcategoryAndNstatus(String sequipmentcatname, int i);
+
+	List<Equipment> findByEquipmentcategoryAndNstatus(EquipmentCategory equicat, int i);
+
 
 }

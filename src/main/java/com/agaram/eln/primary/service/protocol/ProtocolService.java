@@ -7523,12 +7523,16 @@ public class ProtocolService {
 			}
 			
 			lsfiles = LSProtocolMasterRepositoryObj
-					.findByCreatedbyInAndLstestInAndProtocolmastercodeGreaterThanAndRetirestatusAndViewoptionAndApprovedOrCreatedbyAndLstestInAndProtocolmastercodeGreaterThanAndRetirestatusAndViewoptionAndApprovedOrCreatedbyInAndLstestInAndProtocolmastercodeGreaterThanAndRetirestatusAndViewoptionAndApprovedOrderByProtocolmastercodeDesc(
-							lstteammap, lsfiletest, 1,0, 1, 1, objtest.getObjLoggeduser().getUsercode(), lsfiletest, 1, 0,2, 1,
+					.findByLssitemasterAndLstestInAndProtocolmastercodeGreaterThanAndRetirestatusAndViewoptionAndApprovedOrCreatedbyInAndLstestInAndProtocolmastercodeGreaterThanAndRetirestatusAndViewoptionAndApprovedOrCreatedbyAndLstestInAndProtocolmastercodeGreaterThanAndRetirestatusAndViewoptionAndApprovedOrCreatedbyInAndLstestInAndProtocolmastercodeGreaterThanAndRetirestatusAndViewoptionAndApprovedOrderByProtocolmastercodeDesc(
+							objtest.getSitecode(), lsfiletest, 1,0, 1, 1,
+							lstteammap, lsfiletest, 1,0, 1, 1,
+							objtest.getObjLoggeduser().getUsercode(), lsfiletest, 1, 0,2, 1,
 							lstteammap, lsfiletest, 1,0, 3, 1);
 			lsfiles.addAll(LSProtocolMasterRepositoryObj
-					.findByCreatedbyInAndLstestInAndProtocolmastercodeGreaterThanAndRetirestatusAndViewoptionAndApprovedAndVersionnoGreaterThanOrCreatedbyAndLstestInAndProtocolmastercodeGreaterThanAndRetirestatusAndViewoptionAndApprovedAndVersionnoGreaterThanOrCreatedbyInAndLstestInAndProtocolmastercodeGreaterThanAndRetirestatusAndViewoptionAndApprovedAndVersionnoGreaterThanOrderByProtocolmastercodeDesc(
-							lstteammap, lsfiletest, 1,0, 1, 0, 1, objtest.getObjLoggeduser().getUsercode(), lsfiletest, 1,0, 2, 0, 1,
+					.findByLssitemasterAndLstestInAndProtocolmastercodeGreaterThanAndRetirestatusAndViewoptionAndApprovedAndVersionnoGreaterThanOrCreatedbyInAndLstestInAndProtocolmastercodeGreaterThanAndRetirestatusAndViewoptionAndApprovedAndVersionnoGreaterThanOrCreatedbyAndLstestInAndProtocolmastercodeGreaterThanAndRetirestatusAndViewoptionAndApprovedAndVersionnoGreaterThanOrCreatedbyInAndLstestInAndProtocolmastercodeGreaterThanAndRetirestatusAndViewoptionAndApprovedAndVersionnoGreaterThanOrderByProtocolmastercodeDesc(
+							objtest.getSitecode(), lsfiletest, 1,0, 1, 0, 1,
+							lstteammap, lsfiletest, 1,0, 1, 0, 1,
+							objtest.getObjLoggeduser().getUsercode(), lsfiletest, 1,0, 2, 0, 1,
 							lstteammap, lsfiletest, 1,0, 3, 0, 1));
 		}
 

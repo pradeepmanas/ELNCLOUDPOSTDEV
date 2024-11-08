@@ -54,6 +54,8 @@ import com.agaram.eln.primary.repository.instrumentDetails.LSlogilablimsordergro
 import com.agaram.eln.primary.repository.instrumentDetails.LsMappedFieldsRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsMappedInstrumentsRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsbatchdetailsRepository;
+import com.agaram.eln.primary.repository.instrumentDetails.LselninstfieldmappingRepository;
+import com.agaram.eln.primary.repository.instrumentDetails.LselninstrumentmappingRepository;
 import com.agaram.eln.primary.repository.inventory.LSinstrumentRepository;
 import com.agaram.eln.primary.repository.inventory.LSinstrumentcategoryRepository;
 import com.agaram.eln.primary.repository.inventory.LSinstrumentsectionRepository;
@@ -124,6 +126,10 @@ public class RestService {
 	private LsMappedFieldsRepository lsMappedFieldsRepository;
 	@Autowired
 	private LSlogilablimsordergroupRepository lslogilablimsordergroupRepository;
+	@Autowired
+	private LselninstrumentmappingRepository lselninstrumentmappingRepository;
+	@Autowired
+	private LselninstfieldmappingRepository lselninstfieldmappingRepository;
 	
 	@Autowired
 	private Environment env;
@@ -1214,11 +1220,13 @@ public class RestService {
 		
 		try {
 			if(!instrumentLst.isEmpty()) {
+				lselninstrumentmappingRepository.deleteAll();
 				lsMappedInstrumentsRepository.deleteAll();
 				lsMappedInstrumentsRepository.save(instrumentLst);
 			}
 
 			if(!fieldsLst.isEmpty()) {
+				lselninstfieldmappingRepository.deleteAll();
 				lsMappedFieldsRepository.deleteAll();
 				lsMappedFieldsRepository.save(fieldsLst);
 			}

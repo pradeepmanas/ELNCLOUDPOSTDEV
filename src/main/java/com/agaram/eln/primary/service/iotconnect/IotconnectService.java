@@ -6,10 +6,13 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +21,10 @@ import org.springframework.web.multipart.MultipartFile;
 import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.config.TenantContext;
 import com.agaram.eln.primary.model.cfr.LSpreferences;
+import com.agaram.eln.primary.model.equipment.Equipment;
+import com.agaram.eln.primary.model.equipment.EquipmentCategory;
+import com.agaram.eln.primary.model.equipment.EquipmentType;
+import com.agaram.eln.primary.model.instrumentDetails.LSOrderElnMethod;
 import com.agaram.eln.primary.model.instrumentsetup.InstrumentCategory;
 import com.agaram.eln.primary.model.instrumentsetup.InstrumentMaster;
 import com.agaram.eln.primary.model.instrumentsetup.InstrumentType;
@@ -35,6 +42,10 @@ import com.agaram.eln.primary.model.iotconnect.RCTCPResultDetails;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.repository.cfr.LSpreferencesRepository;
+import com.agaram.eln.primary.repository.equipment.EquipmentCategoryRepository;
+import com.agaram.eln.primary.repository.equipment.EquipmentRepository;
+import com.agaram.eln.primary.repository.equipment.EquipmentTypeRepository;
+import com.agaram.eln.primary.repository.instrumentDetails.LSOrderElnMethodRepository;
 import com.agaram.eln.primary.repository.instrumentsetup.InstCategoryRepository;
 import com.agaram.eln.primary.repository.instrumentsetup.InstMasterRepository;
 import com.agaram.eln.primary.repository.iotconnect.RCTCPFileDetailsRepository;
@@ -87,6 +98,17 @@ public class IotconnectService {
 	@Autowired
 	private ELNResultDetailsRepository ELNResultDetailsRepository;
 	
+	@Autowired
+	private EquipmentTypeRepository equipmentTypeRepository;
+	
+	@Autowired
+	private EquipmentCategoryRepository equipmentCategoryRepository;
+	@Autowired
+	private EquipmentRepository equipmentRepository;
+	
+	@Autowired
+	private LSOrderElnMethodRepository LSOrderElnMethodRepository;
+	
 	public List<InstrumentCategory> getInstcategory()
 	{
 		return categoryRepo.findAll();
@@ -101,7 +123,7 @@ public class IotconnectService {
 	
 	@SuppressWarnings("unchecked")
 	@Transactional
-	public String ConvertRawDataToFile(String rawData,Integer methodkey,Integer instmastkey,Integer isMultitenant) throws IOException {
+	public String ConvertRawDataToFile(String rawData,Integer methodkey,Integer nequipmentcode,Integer isMultitenant) throws IOException {
 		
 		   System.out.println("entered service");
 		   String FileName = "Tempfile";
@@ -137,8 +159,8 @@ public class IotconnectService {
 			  objfile.setFileUUID(largefileUUID);
 		 	  objfile.setFilename(FileName);
 		 	  objfile.setMethodkey(methodkey);
-		 	  objfile.setInstrumentkey(instmastkey);
-		 	  
+		 	  //objfile.setInstrumentkey(instmastkey);
+		 	  objfile.setNequipmentcode(nequipmentcode);
 		 	  RCTCPFileDetailsRepository.save(objfile);
 		 	  largefileUUID="";
 		 	
@@ -174,6 +196,7 @@ public class IotconnectService {
 	                 rctcpresultdetailsobj.setParserblockkey(technique.getParserfield().getParserblock().getParserblockkey());     
 	                 rctcpresultdetailsobj.setMethod(technique.getParserfield().getParserblock().getMethod());     
 	                // rctcpresultdetailsobj.setInstrument(technique.getParserfield().getParserblock().getMethod().getInstmaster());   
+	                 rctcpresultdetailsobj.setEquipment(technique.getParserfield().getParserblock().getMethod().getEquipment());
 	                 rctcpresultdetailsobj.setParserfieldkey(technique.getParserfield().getParserfieldkey());    
 	                 rctcpresultdetailsobj.setFieldname(technique.getFieldname());     
 	                 rctcpresultdetailsobj.setCreateddate(commonfunction.getCurrentUtcTime());
@@ -266,20 +289,50 @@ public List<RCTCPResultDetails> getiotresultdetails(RCTCPResultDetails resultdet
 		
 		System.out.println(resultdetailsobj);
 		
-		List<RCTCPResultDetails> rctcpresultdetails  = RCTCPResultDetailsRepository.findByMethodAndInstrument(resultdetailsobj.getMethod(),resultdetailsobj.getInstrument());
+//		List<RCTCPResultDetails> rctcpresultdetails  = RCTCPResultDetailsRepository.findByMethodAndInstrument(resultdetailsobj.getMethod(),resultdetailsobj.getInstrument());
+		List<RCTCPResultDetails> rctcpresultdetails  = RCTCPResultDetailsRepository.findByMethodAndEquipment(resultdetailsobj.getMethod(),resultdetailsobj.getEquipment());
+
 		System.out.println(rctcpresultdetails);
 		return rctcpresultdetails;
 		//return null;
 	}
 
 	public LSpreferences getpreferencedata(Map<String, Object> mapObject) {
-		LSpreferences IsRegulated = LSpreferencesRepository.findByTasksettingsAndValuesettings("RegulatedIndustry","1");
+		LSpreferences IsRegulated = LSpreferencesRepository.findByTasksettings("RegulatedIndustry");
 		return IsRegulated;
 	}
 	
-//	public List<Method> getMethods(InstrumentMaster instmast)
-//	{
-//		return methodRepo.findByInstmasterAndStatus(instmast,1);
-//		
-//	}
+	public ResponseEntity<Object> getEquipmenttype(Integer nsiteInteger) {
+
+		List<EquipmentType> lstTypes =  new ArrayList<EquipmentType>();
+		lstTypes = equipmentTypeRepository.findByNequipmenttypecodeNotAndNstatusAndNsitecodeOrderByNequipmenttypecodeDesc(-1,1,nsiteInteger);
+
+		return new ResponseEntity<>(lstTypes, HttpStatus.OK);
+	}
+	
+	public List<EquipmentCategory> getEquipmentcat() {
+		return equipmentCategoryRepository.findAll();
+	}
+
+	public List<Equipment> getEquipment(EquipmentCategory equicat) {
+		
+		List<Equipment> lstEquipments = new ArrayList<Equipment>();
+
+		
+		//lstEquipments = equipmentRepository.findByEquipmentcategoryAndStatusNotIn(equicat,1);
+		
+		lstEquipments = equipmentRepository.findByEquipmentcategoryAndNstatus(equicat,1);
+		return lstEquipments;
+	}
+
+	public List<Method> getEquipmentmethod() {
+			return methodRepo.findAll();
+		}
+	
+public List<LSOrderElnMethod> getOrdersBasedOnmethod(Method Methodobj) {
+	
+	List<LSOrderElnMethod> orderelnmethod =LSOrderElnMethodRepository.findByMethodOrderByOrderelnmethodcodeDesc(Methodobj);
+	
+	return orderelnmethod;	
+}
 }

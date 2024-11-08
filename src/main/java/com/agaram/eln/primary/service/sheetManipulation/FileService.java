@@ -618,12 +618,16 @@ public class FileService {
 			}
 				lstteamuser.add(objtest.getObjLoggeduser());
 				lsfiles = lSfileRepository
-						.findByCreatebyInAndLstestInAndFilecodeGreaterThanAndRetirestatusAndViewoptionAndApprovedOrCreatebyAndLstestInAndFilecodeGreaterThanAndRetirestatusAndViewoptionAndApprovedOrCreatebyInAndLstestInAndFilecodeGreaterThanAndRetirestatusAndViewoptionAndApprovedOrderByFilecodeDesc(
-								lstteamuser, lsfiletest, 1,0, 1, 1, objtest.getObjLoggeduser(), lsfiletest, 1, 0,2, 1,
+						.findByLssitemasterAndLstestInAndFilecodeGreaterThanAndRetirestatusAndViewoptionAndApprovedOrCreatebyInAndLstestInAndFilecodeGreaterThanAndRetirestatusAndViewoptionAndApprovedOrCreatebyAndLstestInAndFilecodeGreaterThanAndRetirestatusAndViewoptionAndApprovedOrCreatebyInAndLstestInAndFilecodeGreaterThanAndRetirestatusAndViewoptionAndApprovedOrderByFilecodeDesc(
+								objtest.getLssitemaster(), lsfiletest, 1,0, 1, 1,
+								lstteamuser, lsfiletest, 1,0, 1, 1,
+								objtest.getObjLoggeduser(), lsfiletest, 1, 0,2, 1,
 								lstteamuser, lsfiletest, 1,0, 3, 1);
 				lsfiles.addAll(lSfileRepository
-						.findByCreatebyInAndLstestInAndFilecodeGreaterThanAndRetirestatusAndViewoptionAndApprovedAndVersionnoGreaterThanOrCreatebyAndLstestInAndFilecodeGreaterThanAndRetirestatusAndViewoptionAndApprovedAndVersionnoGreaterThanOrCreatebyInAndLstestInAndFilecodeGreaterThanAndRetirestatusAndViewoptionAndApprovedAndVersionnoGreaterThanOrderByFilecodeDesc(
-								lstteamuser, lsfiletest, 1,0, 1, 0, 1, objtest.getObjLoggeduser(), lsfiletest, 1,0, 2, 0, 1,
+						.findByLssitemasterAndLstestInAndFilecodeGreaterThanAndRetirestatusAndViewoptionAndApprovedAndVersionnoGreaterThanOrCreatebyInAndLstestInAndFilecodeGreaterThanAndRetirestatusAndViewoptionAndApprovedAndVersionnoGreaterThanOrCreatebyAndLstestInAndFilecodeGreaterThanAndRetirestatusAndViewoptionAndApprovedAndVersionnoGreaterThanOrCreatebyInAndLstestInAndFilecodeGreaterThanAndRetirestatusAndViewoptionAndApprovedAndVersionnoGreaterThanOrderByFilecodeDesc(
+								objtest.getLssitemaster(), lsfiletest, 1,0, 1, 0, 1,
+								lstteamuser, lsfiletest, 1,0, 1, 0, 1,
+								objtest.getObjLoggeduser(), lsfiletest, 1,0, 2, 0, 1,
 								lstteamuser, lsfiletest, 1,0, 3, 0, 1));
 //			} else {
 //				List<LSuserMaster> lstteamuser = new ArrayList<LSuserMaster>();

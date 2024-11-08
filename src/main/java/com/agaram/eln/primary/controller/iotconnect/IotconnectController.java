@@ -1,9 +1,12 @@
 package com.agaram.eln.primary.controller.iotconnect;
 
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
+
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +19,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.agaram.eln.primary.config.TenantContext;
 import com.agaram.eln.primary.model.cfr.LSpreferences;
+import com.agaram.eln.primary.model.equipment.Equipment;
+import com.agaram.eln.primary.model.equipment.EquipmentCategory;
+import com.agaram.eln.primary.model.instrumentDetails.LSOrderElnMethod;
 import com.agaram.eln.primary.model.instrumentsetup.InstrumentCategory;
 import com.agaram.eln.primary.model.instrumentsetup.InstrumentMaster;
 import com.agaram.eln.primary.model.iotconnect.RCTCPResultDetails;
@@ -56,6 +62,9 @@ public class IotconnectController {
 		final ObjectMapper mapper = new ObjectMapper();
 		final LSSiteMaster site = mapper.convertValue(mapObject.get("site"), LSSiteMaster.class);
 		final InstrumentMaster instobj = mapper.convertValue(mapObject.get("instrument"), InstrumentMaster.class);
+		
+		final Equipment equipobj = mapper.convertValue(mapObject.get("equipment"), Equipment.class);
+		
 		final Method methodobj = mapper.convertValue(mapObject.get("method"), Method.class);
 		final String rawData =  mapper.convertValue(mapObject.get("rawData"), String.class);
 		final LSuserMaster userobj = mapper.convertValue(mapObject.get("user"), LSuserMaster.class);
@@ -74,11 +83,12 @@ public class IotconnectController {
 		
 		final ResponseEntity<Object> parsedData ;
 		
-		iotconnectservice.ConvertRawDataToFile(rawData,methodobj.getMethodkey(),instobj.getInstmastkey(),isMultitenant);
+//		iotconnectservice.ConvertRawDataToFile(rawData,methodobj.getMethodkey(),instobj.getInstmastkey(),isMultitenant);
+		iotconnectservice.ConvertRawDataToFile(rawData,methodobj.getMethodkey(),equipobj.getNequipmentcode(),isMultitenant);
 		if(isMultitenant==0) {
 			parsedData = parserService.evaluateSQLParser(methodobj.getMethodkey(), site, rawData,isMultitenant,request);
 		}else {
-			parsedData = parserService.evaluateParser(methodobj.getMethodkey(), site, tenant,rawData,isMultitenant,request);
+			parsedData = parserService.evaluateParser(methodobj.getMethodkey(), site, rawData,tenant,isMultitenant,request);
 		}
 		System.out.println("parsedData:" +parsedData);
 
@@ -101,4 +111,33 @@ public class IotconnectController {
 		return iotconnectservice.getpreferencedata(mapObject);
 		
 	}
+	@RequestMapping(value = "/getEquipmenttype")
+	public ResponseEntity<Object> getEquipmenttype(@RequestBody Map<String, Object> inputMap) throws Exception {	
+		Integer nsiteInteger = (Integer) inputMap.get("sitecode");
+
+		return (ResponseEntity<Object>) iotconnectservice.getEquipmenttype(nsiteInteger);
+	}
+	@RequestMapping("/getEquipmentcat")
+	public List<EquipmentCategory> getEquipmentcat(@RequestBody EquipmentCategory equipmentcat){
+		return iotconnectservice.getEquipmentcat();
+	}
+	@RequestMapping("/getEquipment")
+	public List<Equipment> getEquipment(@RequestBody EquipmentCategory equicat){
+		return iotconnectservice.getEquipment(equicat);
+	}
+	@RequestMapping("/getEquipmentmethod")
+	public List<Method> getEquipmentmethod(@RequestBody Method equ){
+		return iotconnectservice.getEquipmentmethod();
+	}
+	
+	@RequestMapping(value = "/getOrdersBasedOnmethod")
+	public List<LSOrderElnMethod> getOrdersBasedOnmethod(@RequestBody Map<String, Object> inputMap) throws Exception {
+
+		final ObjectMapper mapper = new ObjectMapper();
+		final Method Methodobj = mapper.convertValue(inputMap.get("method"), Method.class);
+		return  iotconnectservice.getOrdersBasedOnmethod(Methodobj);
+
+	}
+	
+
 }

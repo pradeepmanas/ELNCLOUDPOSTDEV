@@ -469,4 +469,16 @@ public interface LSProtocolMasterRepository extends JpaRepository<LSprotocolmast
 			List<Integer> lstteamuser, List<LSprotocolmastertest> lsfiletest, int i, int j, int k, int l, int m,
 			Integer objLoggeduser, List<LSprotocolmastertest> lsfiletest2, int n, int o, int p, int q, int r,
 			List<Integer> lstteamuser2, List<LSprotocolmastertest> lsfiletest3, int s, int t, int u, int v, int w);
+	
+	List<LSprotocolmaster> findByLssitemasterAndLstestInAndProtocolmastercodeGreaterThanAndRetirestatusAndViewoptionAndApprovedOrCreatedbyInAndLstestInAndProtocolmastercodeGreaterThanAndRetirestatusAndViewoptionAndApprovedOrCreatedbyAndLstestInAndProtocolmastercodeGreaterThanAndRetirestatusAndViewoptionAndApprovedOrCreatedbyInAndLstestInAndProtocolmastercodeGreaterThanAndRetirestatusAndViewoptionAndApprovedOrderByProtocolmastercodeDesc(
+			Integer sitecode, List<LSprotocolmastertest> lsfiletest, int i, int j, int k, int l,
+			List<Integer> lstteammap, List<LSprotocolmastertest> lsfiletest2, int m, int n, int o, int p,
+			Integer usercode, List<LSprotocolmastertest> lsfiletest3, int q, int r, int s, int t,
+			List<Integer> lstteammap2, List<LSprotocolmastertest> lsfiletest4, int u, int v, int w, int x);
+
+	List<LSprotocolmaster> findByLssitemasterAndLstestInAndProtocolmastercodeGreaterThanAndRetirestatusAndViewoptionAndApprovedAndVersionnoGreaterThanOrCreatedbyInAndLstestInAndProtocolmastercodeGreaterThanAndRetirestatusAndViewoptionAndApprovedAndVersionnoGreaterThanOrCreatedbyAndLstestInAndProtocolmastercodeGreaterThanAndRetirestatusAndViewoptionAndApprovedAndVersionnoGreaterThanOrCreatedbyInAndLstestInAndProtocolmastercodeGreaterThanAndRetirestatusAndViewoptionAndApprovedAndVersionnoGreaterThanOrderByProtocolmastercodeDesc(
+			Integer sitecode, List<LSprotocolmastertest> lsfiletest, int i, int j, int k, int l, int m,
+			List<Integer> lstteammap, List<LSprotocolmastertest> lsfiletest2, int n, int o, int p, int q, int r,
+			Integer usercode, List<LSprotocolmastertest> lsfiletest3, int s, int t, int u, int v, int w,
+			List<Integer> lstteammap2, List<LSprotocolmastertest> lsfiletest4, int x, int y, int z, int a, int b);
 }

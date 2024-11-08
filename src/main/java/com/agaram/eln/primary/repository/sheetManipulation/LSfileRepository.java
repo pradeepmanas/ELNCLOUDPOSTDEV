@@ -456,5 +456,17 @@ public interface LSfileRepository extends JpaRepository<LSfile, Integer>{
 
 	public List<LSfile> findByFilecodeOrderByFilecodeDesc(Integer filecode);
 
+	public List<Sheettemplateget> findByLssitemasterAndLstestInAndFilecodeGreaterThanAndRetirestatusAndViewoptionAndApprovedOrCreatebyInAndLstestInAndFilecodeGreaterThanAndRetirestatusAndViewoptionAndApprovedOrCreatebyAndLstestInAndFilecodeGreaterThanAndRetirestatusAndViewoptionAndApprovedOrCreatebyInAndLstestInAndFilecodeGreaterThanAndRetirestatusAndViewoptionAndApprovedOrderByFilecodeDesc(
+			LSSiteMaster lssitemaster, List<LSfiletest> lsfiletest, int i, int j, int k, int l,
+			List<LSuserMaster> lstteamuser, List<LSfiletest> lsfiletest2, int m, int n, int o, int p,
+			LSuserMaster objLoggeduser, List<LSfiletest> lsfiletest3, int q, int r, int s, int t,
+			List<LSuserMaster> lstteamuser2, List<LSfiletest> lsfiletest4, int u, int v, int w, int x);
+
+	public List<Sheettemplateget> findByLssitemasterAndLstestInAndFilecodeGreaterThanAndRetirestatusAndViewoptionAndApprovedAndVersionnoGreaterThanOrCreatebyInAndLstestInAndFilecodeGreaterThanAndRetirestatusAndViewoptionAndApprovedAndVersionnoGreaterThanOrCreatebyAndLstestInAndFilecodeGreaterThanAndRetirestatusAndViewoptionAndApprovedAndVersionnoGreaterThanOrCreatebyInAndLstestInAndFilecodeGreaterThanAndRetirestatusAndViewoptionAndApprovedAndVersionnoGreaterThanOrderByFilecodeDesc(
+			LSSiteMaster lssitemaster, List<LSfiletest> lsfiletest, int i, int j, int k, int l, int m,
+			List<LSuserMaster> lstteamuser, List<LSfiletest> lsfiletest2, int n, int o, int p, int q, int r,
+			LSuserMaster objLoggeduser, List<LSfiletest> lsfiletest3, int s, int t, int u, int v, int w,
+			List<LSuserMaster> lstteamuser2, List<LSfiletest> lsfiletest4, int x, int y, int z, int a, int b);
+
 
 }

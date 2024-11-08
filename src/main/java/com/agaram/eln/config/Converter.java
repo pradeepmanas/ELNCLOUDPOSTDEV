@@ -231,7 +231,7 @@ public class Converter extends AbstractHttpMessageConverter<Object> {
 	                ,"/documenteditor/Import","/documenteditor/api/wordeditor/RestrictEditing","/Instrument/uploadfilessheetfolder"
 	                ,"/Instrument/uploadfilesprotocolfolder","/Barcode/Getbarcodefileoncode","/Barcode/GetbarcodefilecodeonOrderscreen"
 	                ,"/Barcode/handleBarcode","/iotconnect/getInstcategory","/iotconnect/getInstruments"
-
+	                
 		);
 		
 		Integer secondindex = StringUtils.ordinalIndexOf(requestUrl, "/", 3);

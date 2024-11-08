@@ -18,6 +18,7 @@ import javax.persistence.Transient;
 import org.hibernate.validator.constraints.Range;
 
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
+import com.agaram.eln.primary.model.equipment.Equipment;
 import com.agaram.eln.primary.model.instrumentsetup.InstrumentMaster;
 import com.agaram.eln.primary.model.methodsetup.Method;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
@@ -34,9 +35,6 @@ private static final long serialVersionUID = 1L;
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer resultid;
 	
-//	@Column(name = "methodkey")
-//	private Integer methodkey;	
-	
 	@Column(name = "parserfieldkey")
 	private Integer parserfieldkey;	
 	
@@ -52,11 +50,6 @@ private static final long serialVersionUID = 1L;
 	@Column(name = "results")
 	private String results;
 	
-//	@Column(name = "instmastkey")
-//	private Integer instmastkey;
-	
-	
-	
 	@Range(min=-1, max=1)
 	@Column(name = "status")
 	private int status=1;
@@ -64,6 +57,10 @@ private static final long serialVersionUID = 1L;
 	@ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "usercode", nullable = false)
 	private LSuserMaster createdby;
+	
+	@ManyToOne
+//    @JoinColumn(name = "nequipmentcode")
+	private Equipment equipment;
 	
 	@Column(name = "createddate")
 	private Date createddate;	
@@ -76,8 +73,8 @@ private static final long serialVersionUID = 1L;
     @JoinColumn(name = "methodkey", nullable = false)
 	private Method method;
 	
-	@ManyToOne(fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "instmasterkey", nullable = false)
+	@ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "instmasterkey")
 	private InstrumentMaster instrument;
 	
 	@Transient
@@ -199,5 +196,11 @@ private static final long serialVersionUID = 1L;
 		this.instrument = instrument;
 	}
 
-	
+	public Equipment getEquipment() {
+		return equipment;
+	}
+
+	public void setEquipment(Equipment equipment) {
+		this.equipment = equipment;
+	}
 }

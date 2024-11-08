@@ -558,21 +558,16 @@ public class InstMasterService {
     public ResponseEntity<Object> getAllEquipment(LSSiteMaster site) throws ParseException {
 		
     		List<Equipment> lstEquipment = equipmentRepository
-    				.findByNsitecodeOrderByNequipmentcodeDesc(site.getSitecode());
+    				.findByNsitecodeAndCmmsettingTrueOrderByNequipmentcodeDesc(site.getSitecode());
   
     		return new ResponseEntity<>(lstEquipment, HttpStatus.OK);
     }
-    
-//    public ResponseEntity<Object> getInstListByCategoryAndSite(final InstrumentCategory category, final LSSiteMaster site){
-//   		return new ResponseEntity<>(masterRepo.findBySiteAndInstcategoryAndStatus(site, category, 1),
-//   				HttpStatus.OK);
-//   	}
-    
+
 	public ResponseEntity<Object> getEquipmentCatBasedOnSite(EquipmentCategory eqipmentcategory, final LSSiteMaster site) {
 
 		List<Equipment> lstEquipments = new ArrayList<Equipment>();
 		
-		lstEquipments = equipmentRepository.findByEquipmentusedAndEquipmentcategoryAndNsitecodeAndNstatus(true,eqipmentcategory,site.getSitecode(), 1);
+		lstEquipments = equipmentRepository.findByCmmsettingTrueAndEquipmentcategoryAndNsitecodeAndNstatus(eqipmentcategory,site.getSitecode(), 1);
 				
 		return new ResponseEntity<>(lstEquipments, HttpStatus.OK);
 	}

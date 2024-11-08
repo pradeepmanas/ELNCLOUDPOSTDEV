@@ -15,6 +15,7 @@ import com.agaram.eln.primary.model.protocols.Elnprotocolworkflow;
 import com.agaram.eln.primary.model.protocols.LSprotocolmaster;
 import com.agaram.eln.primary.model.protocols.LSprotocolworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplemaster;
+import com.agaram.eln.primary.model.sheetManipulation.LStestmasterlocal;
 import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 
@@ -37,6 +38,7 @@ public class LogilabProtocolOrderssh implements Comparable<LogilabProtocolOrders
 
 	private String kw;
 	private Integer tc;
+	private String tn;
 	private Long dc;
 	private Integer cb;
 
@@ -79,7 +81,7 @@ public class LogilabProtocolOrderssh implements Comparable<LogilabProtocolOrders
 			Integer ordercancell, Integer viewoption, Integer orderstarted, LSuserMaster orderstartedby,
 			Date orderstartedon,Integer lockeduser,String lockedusername, Integer versionno,Elnprotocolworkflow elnprotocolworkflow,
 			LSOrdernotification lsordernotification,LsAutoregister lsautoregister,Boolean repeat,
-			Boolean sentforapprovel,String approvelaccept,Integer autoregistercount, LSuserMaster lsuserMaster) {
+			Boolean sentforapprovel,String approvelaccept,Integer autoregistercount, LSuserMaster lsuserMaster, LStestmasterlocal lstestmasterlocal) {
 
 		this.pc = protocolordercode;
 		this.tc = Testcode;
@@ -92,6 +94,7 @@ public class LogilabProtocolOrderssh implements Comparable<LogilabProtocolOrders
 		this.pmn = lsprotocolmaster != null ? lsprotocolmaster.getProtocolmastername() : "";
 		this.sn = lssamplemaster != null ? lssamplemaster.getSamplename() : "";
 		this.pjn = lsprojectmaster != null ? lsprojectmaster.getProjectname() : "";
+		this.tn = lstestmasterlocal != null ? lstestmasterlocal.getTestname() : "";
 		this.kw = keyword;
 		this.dc = directorycode;
 		this.lpjm = lsprojectmaster;
@@ -128,6 +131,14 @@ public class LogilabProtocolOrderssh implements Comparable<LogilabProtocolOrders
 	@Override
 	public int compareTo(LogilabProtocolOrderssh o) {
 		return this.getPc().compareTo(o.getPc());
+	}
+	
+	public String getTn() {
+		return tn;
+	}
+
+	public void setTn(String tn) {
+		this.tn = tn;
 	}
 
 	public Long getPc() {

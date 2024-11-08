@@ -17,7 +17,7 @@ public class RCTCPFileDetails {
 	public String filename;
 	public Integer methodkey;
 	public Integer instrumentkey;
-	
+	public Integer nequipmentcode;
 	
 	public Integer getFilecode() {
 		return filecode;
@@ -50,6 +50,10 @@ public class RCTCPFileDetails {
 	public void setInstrumentkey(Integer instrumentkey) {
 		this.instrumentkey = instrumentkey;
 	}
-	
-	
+	public Integer getNequipmentcode() {
+		return nequipmentcode;
+	}
+	public void setNequipmentcode(Integer nequipmentcode) {
+		this.nequipmentcode = nequipmentcode;
+	}
 }
