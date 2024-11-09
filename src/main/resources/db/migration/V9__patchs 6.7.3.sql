@@ -2030,3 +2030,33 @@ TABLESPACE pg_default;
 
 ALTER TABLE IF EXISTS public.rctcpfiledetails
     OWNER to postgres;
+
+ALTER TABLE IF Exists rctcpresultdetails ADD COLUMN IF NOT EXISTS equipment_nequipmentcode Integer;
+    
+DO
+$do$
+declare
+  multiusergroupcount integer :=0;
+begin
+SELECT count(*) into multiusergroupcount FROM
+information_schema.table_constraints WHERE constraint_name='fk9f8bj6t04wgt00a09foqbdcjo'
+AND table_name='rctcpresultdetails';
+ IF multiusergroupcount =0 THEN
+    ALTER TABLE ONLY rctcpresultdetails ADD CONSTRAINT fk9f8bj6t04wgt00a09foqbdcjo FOREIGN KEY (equipment_nequipmentcode) REFERENCES equipment(nequipmentcode);
+   END IF;
+END
+$do$; 
+    
+DO $$
+BEGIN
+    IF EXISTS (
+        SELECT 1
+        FROM information_schema.columns 
+        WHERE table_name = 'rctcpresultdetails' 
+        AND column_name = 'instmasterkey'
+        AND is_nullable = 'NO'
+    ) THEN
+        ALTER TABLE public.rctcpresultdetails
+        ALTER COLUMN instmasterkey DROP NOT NULL;
+    END IF;
+END $$;
