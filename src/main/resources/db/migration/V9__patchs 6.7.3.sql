@@ -1995,3 +1995,39 @@ BEGIN
     END IF;
 END $$;
 
+
+DO
+$do$
+DECLARE
+   _kind "char";
+BEGIN
+   SELECT relkind
+   FROM   pg_class
+   WHERE  relname = 'rctcpfiledetails_seq' 
+   INTO  _kind;
+
+   IF NOT FOUND THEN CREATE SEQUENCE rctcpfiledetails_seq;
+   ELSIF _kind = 'S' THEN  
+     
+   ELSE                  
+    
+   END IF;
+END
+$do$;
+
+CREATE TABLE IF NOT EXISTS public.rctcpfiledetails
+(
+    filecode integer NOT NULL,
+    fileuuid character varying(255) COLLATE pg_catalog."default",
+    filename character varying(255) COLLATE pg_catalog."default",
+    instrumentkey integer,
+    methodkey integer,
+    nequipmentcode integer,
+    CONSTRAINT rctcpfiledetails_pkey PRIMARY KEY (filecode)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.rctcpfiledetails
+    OWNER to postgres;
+    
