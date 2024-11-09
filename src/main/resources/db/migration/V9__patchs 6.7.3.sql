@@ -2030,4 +2030,3 @@ TABLESPACE pg_default;
 
 ALTER TABLE IF EXISTS public.rctcpfiledetails
     OWNER to postgres;
-    
