@@ -2208,7 +2208,6 @@ BEGIN
 END
 $do$;
 
-
 CREATE TABLE IF NOT EXISTS public.conversiontype
 (
     conversiontypekey integer NOT NULL DEFAULT nextval('conversiontype_conversiontypekey_seq'::regclass),
@@ -2308,32 +2307,6 @@ AND table_name='equipment';
    END IF;
 END
 $do$;
- 
-INSERT into stopbits(stopbitkey,stopbitname,status) VALUES(1,'-1',1) ON CONFLICT(stopbitkey)DO NOTHING;
-INSERT into stopbits(stopbitkey,stopbitname,status) VALUES(2,'0',1) ON CONFLICT(stopbitkey)DO NOTHING;
-INSERT into stopbits(stopbitkey,stopbitname,status) VALUES(3,'1',1) ON CONFLICT(stopbitkey)DO NOTHING;
-INSERT into stopbits(stopbitkey,stopbitname,status) VALUES(4,'1.5',1) ON CONFLICT(stopbitkey)DO NOTHING;
-INSERT into stopbits(stopbitkey,stopbitname,status) VALUES(5,'2',1) ON CONFLICT(stopbitkey)DO NOTHING;
-
-INSERT into parity(paritykey,parityname,status) VALUES(1,'NONE',1) ON CONFLICT(paritykey)DO NOTHING;
-INSERT into parity(paritykey,parityname,status) VALUES(2,'ODD',1) ON CONFLICT(paritykey)DO NOTHING;
-INSERT into parity(paritykey,parityname,status) VALUES(3,'EVEN',1) ON CONFLICT(paritykey)DO NOTHING;
-
-INSERT into handshake(handshakekey,handshakename,status) VALUES(1,'NONE',1) ON CONFLICT(handshakekey)DO NOTHING;
-INSERT into handshake(handshakekey,handshakename,status) VALUES(2,'Xon_Xoff',1) ON CONFLICT(handshakekey)DO NOTHING;
-INSERT into handshake(handshakekey,handshakename,status) VALUES(3,'RTS_CTS',1) ON CONFLICT(handshakekey)DO NOTHING;
-INSERT into handshake(handshakekey,handshakename,status) VALUES(4,'BOTH',1) ON CONFLICT(handshakekey)DO NOTHING;
-
-INSERT into resultsamplefrom(resultsamplekey,resultsamplename,status) VALUES(1,'IFACER',1) ON CONFLICT(resultsamplekey)DO NOTHING;
-INSERT into resultsamplefrom(resultsamplekey,resultsamplename,status) VALUES(2,'LimsTestOrder',1) ON CONFLICT(resultsamplekey)DO NOTHING;
-INSERT into resultsamplefrom(resultsamplekey,resultsamplename,status) VALUES(3,'DataFileName',1) ON CONFLICT(resultsamplekey)DO NOTHING;
-
-INSERT into instrumenttype(insttypekey,insttypename,status) VALUES(4,'TCP_SERVER',1) ON CONFLICT(insttypekey)DO NOTHING;
-INSERT into instrumenttype(insttypekey,insttypename,status) VALUES(5,'ICPMODBUS',1) ON CONFLICT(insttypekey)DO NOTHING;
-
-INSERT into conversiontype(conversiontypekey,conversiontypename,status) VALUES(1,'NONE',1) ON CONFLICT(conversiontypekey)DO NOTHING;
-INSERT into conversiontype(conversiontypekey,conversiontypename,status) VALUES(2,'Temperature_Celcius',1) ON CONFLICT(conversiontypekey)DO NOTHING;
-INSERT into conversiontype(conversiontypekey,conversiontypename,status) VALUES(3,'Temperature_Farenheit',1) ON CONFLICT(conversiontypekey)DO NOTHING;
 
 ALTER TABLE IF EXISTS equipment ADD COLUMN IF NOT EXISTS cmmsetting boolean;
 
