@@ -2084,7 +2084,7 @@ CREATE TABLE IF NOT EXISTS public.parity
 (
     paritykey integer NOT NULL DEFAULT nextval('parity_paritykey_seq'::regclass),
     parityname character varying(255) COLLATE pg_catalog."default",
-    status integer,
+    status integer NOT NULL,
     CONSTRAINT parity_pkey PRIMARY KEY (paritykey)
 )
 
@@ -2208,6 +2208,7 @@ BEGIN
 END
 $do$;
 
+
 CREATE TABLE IF NOT EXISTS public.conversiontype
 (
     conversiontypekey integer NOT NULL DEFAULT nextval('conversiontype_conversiontypekey_seq'::regclass),
@@ -2218,7 +2219,8 @@ CREATE TABLE IF NOT EXISTS public.conversiontype
 
 TABLESPACE pg_default;
 
-ALTER TABLE IF EXISTS public.conversiontype OWNER to postgres;
+ALTER TABLE IF EXISTS public.conversiontype
+    OWNER to postgres;
 
 DO
 $do$
@@ -2334,3 +2336,4 @@ INSERT into conversiontype(conversiontypekey,conversiontypename,status) VALUES(2
 INSERT into conversiontype(conversiontypekey,conversiontypename,status) VALUES(3,'Temperature_Farenheit',1) ON CONFLICT(conversiontypekey)DO NOTHING;
 
 ALTER TABLE IF EXISTS equipment ADD COLUMN IF NOT EXISTS cmmsetting boolean;
+
