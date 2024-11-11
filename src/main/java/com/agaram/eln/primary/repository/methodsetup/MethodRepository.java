@@ -117,4 +117,8 @@ public interface MethodRepository extends JpaRepository<Method, Integer>{
 	Optional<Method> findByMethodnameAndEquipmentAndStatus(String methodname, Equipment equipment, int i);
 
 	List<Method> findByStatusAndSiteAndEquipmentIsNotNull(int i, LSSiteMaster lssiteMaster);
+
+	List<Method> findByEquipmentAndStatus(Equipment equ, int i);
+
+
 }

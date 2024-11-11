@@ -154,7 +154,7 @@ public class EquipmentService {
 		List<EquipmentCategory> lstCategories = new ArrayList<EquipmentCategory>();
 		List<Equipment> lstEquipments = new ArrayList<Equipment>();
 		
-		lstTypes = equipmentTypeRepository.findByNequipmenttypecodeNotAndNstatusAndNsitecodeOrNequipmenttypecodeNotAndNstatusAndNdefaultstatus(-1,1,nsiteInteger,-1,1,4);
+		lstTypes = equipmentTypeRepository.findByNequipmenttypecodeNotAndNstatusAndNsitecodeOrderByNequipmenttypecodeDesc(-1,1,nsiteInteger);
 		if(!lstTypes.isEmpty()) {
 			lstCategories = equipmentCategoryRepository.findByNsitecodeAndNstatus(nsiteInteger, 1);
 			if(!lstCategories.isEmpty()) {
@@ -233,7 +233,7 @@ public class EquipmentService {
 		List<EquipmentType> lstTypes =  new ArrayList<EquipmentType>();
 		List<EquipmentCategory> lstCategories = new ArrayList<EquipmentCategory>();
 		
-		lstTypes = equipmentTypeRepository.findByNequipmenttypecodeNotAndNstatusAndNsitecodeOrNequipmenttypecodeNotAndNstatusAndNdefaultstatusOrderByNequipmenttypecodeDesc(-1,1,nsiteInteger,-1,1,4);
+		lstTypes = equipmentTypeRepository.findByNequipmenttypecodeNotAndNstatusAndNsitecodeOrderByNequipmenttypecodeDesc(-1,1,nsiteInteger);
 		if(!lstTypes.isEmpty()) {
 			lstCategories = equipmentCategoryRepository.findByNsitecodeAndNstatusOrderByNequipmentcatcodeDesc(nsiteInteger, 1);
 		}	
@@ -254,7 +254,7 @@ public class EquipmentService {
 		List<EquipmentCategory> lstCategories = new ArrayList<EquipmentCategory>();
 		List<Equipment> lstEquipments = new ArrayList<Equipment>();
 		
-		lstTypes = equipmentTypeRepository.findByNequipmenttypecodeNotAndNstatusAndNsitecodeOrNequipmenttypecodeNotAndNstatusAndNdefaultstatusOrderByNequipmenttypecodeDesc(-1,1,nsiteInteger,-1,1,4);
+		lstTypes = equipmentTypeRepository.findByNequipmenttypecodeNotAndNstatusAndNsitecodeOrderByNequipmenttypecodeDesc(-1,1,nsiteInteger);
 		if(!lstTypes.isEmpty()) {
 			lstCategories = equipmentCategoryRepository.findByEquipmenttypeAndNsitecodeAndNstatusOrderByNequipmentcatcodeDesc(lstTypes.get(0),nsiteInteger, 1);
 			if(!lstCategories.isEmpty()) {

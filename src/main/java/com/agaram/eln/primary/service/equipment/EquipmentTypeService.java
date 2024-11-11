@@ -20,7 +20,7 @@ public class EquipmentTypeService {
 	
 	public ResponseEntity<Object> getEquipmentype(EquipmentType objMaterialType) {
 		return new ResponseEntity<>(equipmentTypeRepository.
-				findByNequipmenttypecodeNotAndNstatusAndNsitecodeOrNequipmenttypecodeNotAndNstatusAndNdefaultstatusOrderByNequipmenttypecodeDesc(-1,1,objMaterialType.getNsitecode(),-1,1,4), HttpStatus.OK);
+				findByNequipmenttypecodeNotAndNstatusAndNsitecodeOrderByNequipmenttypecodeDesc(-1,1,objMaterialType.getNsitecode()), HttpStatus.OK);
 	}
 
 	public ResponseEntity<Object> createEquipmentType(EquipmentType objMaterialType) throws ParseException {

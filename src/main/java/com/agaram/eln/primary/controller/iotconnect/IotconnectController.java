@@ -21,6 +21,7 @@ import com.agaram.eln.primary.config.TenantContext;
 import com.agaram.eln.primary.model.cfr.LSpreferences;
 import com.agaram.eln.primary.model.equipment.Equipment;
 import com.agaram.eln.primary.model.equipment.EquipmentCategory;
+import com.agaram.eln.primary.model.equipment.EquipmentType;
 import com.agaram.eln.primary.model.instrumentDetails.LSOrderElnMethod;
 import com.agaram.eln.primary.model.instrumentsetup.InstrumentCategory;
 import com.agaram.eln.primary.model.instrumentsetup.InstrumentMaster;
@@ -70,7 +71,9 @@ public class IotconnectController {
 		final LSuserMaster userobj = mapper.convertValue(mapObject.get("user"), LSuserMaster.class);
 		final Integer isMultitenant = mapper.convertValue(mapObject.get("ismultitenant"), Integer.class);
 		//final Long batchcode = mapper.convertValue(mapObject.get("batchcode"),long.class);
-		
+		final String tenant =  mapper.convertValue(mapObject.get("tenant"), String.class);
+
+
 		Object batchcodeObject = mapObject.get("batchcode");
 		Long batchcode = null;
 		if (batchcodeObject instanceof Number) {
@@ -78,8 +81,6 @@ public class IotconnectController {
 		} else if (batchcodeObject instanceof String) {
 		    batchcode = Long.parseLong((String) batchcodeObject);
 		}
-		
-		final  String tenant = TenantContext.getCurrentTenant();
 		
 		final ResponseEntity<Object> parsedData ;
 		
@@ -118,16 +119,16 @@ public class IotconnectController {
 		return (ResponseEntity<Object>) iotconnectservice.getEquipmenttype(nsiteInteger);
 	}
 	@RequestMapping("/getEquipmentcat")
-	public List<EquipmentCategory> getEquipmentcat(@RequestBody EquipmentCategory equipmentcat){
-		return iotconnectservice.getEquipmentcat();
+	public List<EquipmentCategory> getEquipmentcat(@RequestBody EquipmentType equipmenttype){
+		return iotconnectservice.getEquipmentcat(equipmenttype);
 	}
 	@RequestMapping("/getEquipment")
 	public List<Equipment> getEquipment(@RequestBody EquipmentCategory equicat){
 		return iotconnectservice.getEquipment(equicat);
 	}
 	@RequestMapping("/getEquipmentmethod")
-	public List<Method> getEquipmentmethod(@RequestBody Method equ){
-		return iotconnectservice.getEquipmentmethod();
+	public List<Method> getEquipmentmethod(@RequestBody Equipment equ){
+		return iotconnectservice.getEquipmentmethod(equ);
 	}
 	
 	@RequestMapping(value = "/getOrdersBasedOnmethod")
@@ -138,6 +139,5 @@ public class IotconnectController {
 		return  iotconnectservice.getOrdersBasedOnmethod(Methodobj);
 
 	}
-	
 
 }

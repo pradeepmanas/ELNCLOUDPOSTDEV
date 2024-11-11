@@ -310,8 +310,8 @@ public List<RCTCPResultDetails> getiotresultdetails(RCTCPResultDetails resultdet
 		return new ResponseEntity<>(lstTypes, HttpStatus.OK);
 	}
 	
-	public List<EquipmentCategory> getEquipmentcat() {
-		return equipmentCategoryRepository.findAll();
+	public List<EquipmentCategory> getEquipmentcat(EquipmentType equipmenttype) {
+		return equipmentCategoryRepository.findByEquipmenttypeAndNsitecodeAndNstatus(equipmenttype,equipmenttype.getNsitecode(), 1);
 	}
 
 	public List<Equipment> getEquipment(EquipmentCategory equicat) {
@@ -325,14 +325,16 @@ public List<RCTCPResultDetails> getiotresultdetails(RCTCPResultDetails resultdet
 		return lstEquipments;
 	}
 
-	public List<Method> getEquipmentmethod() {
-			return methodRepo.findAll();
+	public List<Method> getEquipmentmethod(Equipment equ) {
+		return methodRepo.findByEquipmentAndStatus( equ, 1);
+
 		}
 	
-public List<LSOrderElnMethod> getOrdersBasedOnmethod(Method Methodobj) {
-	
-	List<LSOrderElnMethod> orderelnmethod =LSOrderElnMethodRepository.findByMethodOrderByOrderelnmethodcodeDesc(Methodobj);
-	
-	return orderelnmethod;	
-}
+	public List<LSOrderElnMethod> getOrdersBasedOnmethod(Method Methodobj) {
+		
+		List<LSOrderElnMethod> orderelnmethod =LSOrderElnMethodRepository.findByMethodOrderByOrderelnmethodcodeDesc(Methodobj);
+		
+		return orderelnmethod;	
+	}
+
 }

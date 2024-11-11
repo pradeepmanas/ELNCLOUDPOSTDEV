@@ -1744,7 +1744,7 @@ public class MaterialService {
 		objmap.put("lstSection", lstSec);
 		objmap.put("lstPeriods", lstPeriods);
 		
-		List<EquipmentType> lstEquipmentTypes = equipmentTypeRepository.findByNstatusAndNsitecodeOrNstatusAndNdefaultstatus(1,nsiteInteger,1, 4);
+		List<EquipmentType> lstEquipmentTypes = equipmentTypeRepository.findByNequipmenttypecodeNotAndNstatusAndNsitecodeOrderByNequipmenttypecodeDesc(-1,1,nsiteInteger);
 		List<EquipmentCategory> lstEquipmentCategories = equipmentCategoryRepository.findByNsitecodeAndNstatus(nsiteInteger, 1);
 		
 		objmap.put("lstEquipmentTypes", lstEquipmentTypes);

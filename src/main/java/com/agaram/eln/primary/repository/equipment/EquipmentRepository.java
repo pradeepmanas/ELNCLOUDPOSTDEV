@@ -109,7 +109,7 @@ public interface EquipmentRepository extends JpaRepository<Equipment, Integer>{
 
 	List<Equipment> findByNsitecodeAndCmmsettingTrueOrderByNequipmentcodeDesc(Integer sitecode);
 
-	List<Equipment> findByNsitecodeAndCmmsettingTrueAndNstatusOrderByNequipmentcodeDesc(int i, Integer sitecode);
+	List<Equipment> findByNsitecodeAndCmmsettingTrueAndNstatusOrderByNequipmentcodeDesc(Integer sitecode , int i);
 
 	List<Equipment> findByCmmsettingTrueAndEquipmentcategoryAndNsitecodeAndNstatus(EquipmentCategory eqipmentcategory,
 			Integer sitecode, int i);
@@ -122,6 +122,10 @@ public interface EquipmentRepository extends JpaRepository<Equipment, Integer>{
 	//List<Equipment> findByEquipmentcategoryAndNstatus(String sequipmentcatname, int i);
 
 	List<Equipment> findByEquipmentcategoryAndNstatus(EquipmentCategory equicat, int i);
+
+	List<Equipment> findByNsitecodeAndNstatus(Integer sitecode, int i);
+
+	
 
 
 }

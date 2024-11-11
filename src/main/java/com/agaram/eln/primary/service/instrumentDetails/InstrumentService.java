@@ -609,7 +609,7 @@ public class InstrumentService {
 				List<LsMappedInstruments> Instruments = lsMappedInstrumentsRepository.findAll();
 				List<InstrumentMaster> InstrMaster = lsInstMasterRepository.findByStatusAndSite(1, lssiteMaster);
 				
-				List<Equipment> Equipment = EquipmentRepository.findByNsitecodeAndCmmsettingTrueAndNstatusOrderByNequipmentcodeDesc(1,lssiteMaster.getSitecode());
+				List<Equipment> Equipment = EquipmentRepository.findByNsitecodeAndCmmsettingTrueAndNstatusOrderByNequipmentcodeDesc(lssiteMaster.getSitecode(),1);
 	
 				List<LsMappedTemplate> MappedTemplate = LsMappedTemplateRepository.findAll();
 				List<LsUnmappedTemplate> UnmappedTemplate = LsUnmappedTemplateRepository.findAll();
@@ -656,8 +656,7 @@ public class InstrumentService {
 
 				List<InstrumentMaster> InstrMaster = lsInstMasterRepository.findByStatusAndSite(1, lssiteMaster);
 				
-
-				List<Equipment> Equipment = EquipmentRepository.findByNsitecodeAndCmmsettingTrueAndNstatusOrderByNequipmentcodeDesc(1,lssiteMaster.getSitecode());
+				List<Equipment> Equipment = EquipmentRepository.findByNsitecodeAndCmmsettingTrueAndNstatusOrderByNequipmentcodeDesc(lssiteMaster.getSitecode(),1);
 
 				List<Method> elnMethod = lsMethodRepository.findByStatusAndSiteAndEquipmentIsNotNull(1, lssiteMaster);
 				List<ParserBlock> ParserBlock = lsParserBlockRepository.findByStatusAndMethodIn(1, elnMethod);
