@@ -227,9 +227,9 @@ BEGIN
     END IF;
 END $$;
 
-INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_EQUIPMENTTYPE', 'IDS_MDL_INVENTORY', 'administrator', '1', '0', 'NA', 'NA', 1,1,'IDS_SCN_EQUIPMENT'  WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_EQUIPMENTTYPE' and screenname='IDS_SCN_EQUIPMENT' and usergroupid_usergroupcode = 1); 
-INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_SCN_EQUIPMENTCATEGORY', 'IDS_MDL_INVENTORY', 'administrator', '1', '0', '0', '0', 1,1,'IDS_SCN_EQUIPMENT'  WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_SCN_EQUIPMENTCATEGORY' and screenname='IDS_SCN_EQUIPMENT' and usergroupid_usergroupcode = 1); 
-INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_EQUIPMENTMASTER', 'IDS_MDL_INVENTORY', 'administrator', '1', '0', '0', '0', 1,1,'IDS_SCN_EQUIPMENTMASTER'  WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_EQUIPMENTMASTER' and screenname='IDS_SCN_EQUIPMENTMASTER' and usergroupid_usergroupcode = 1); 
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_EQUIPMENTTYPE', 'IDS_MDL_INVENTORY', 'administrator', '1', '1', 'NA', 'NA', 1,1,'IDS_SCN_EQUIPMENT'  WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_EQUIPMENTTYPE' and screenname='IDS_SCN_EQUIPMENT' and usergroupid_usergroupcode = 1); 
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_SCN_EQUIPMENTCATEGORY', 'IDS_MDL_INVENTORY', 'administrator', '1', '1', '1', '1', 1,1,'IDS_SCN_EQUIPMENT'  WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_SCN_EQUIPMENTCATEGORY' and screenname='IDS_SCN_EQUIPMENT' and usergroupid_usergroupcode = 1); 
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_EQUIPMENTMASTER', 'IDS_MDL_INVENTORY', 'administrator', '1', '1', '1', '1', 1,1,'IDS_SCN_EQUIPMENTMASTER'  WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_EQUIPMENTMASTER' and screenname='IDS_SCN_EQUIPMENTMASTER' and usergroupid_usergroupcode = 1); 
 
 --update lsusergrouprightsmaster set screenname = 'IDS_SCN_INVENTORY' where screenname != 'IDS_SCN_EQUIPMENT' and screenname != 'IDS_SCN_EQUIPMENTMASTER' and modulename = 'IDS_MDL_INVENTORY';
 --update lsusergrouprights set screenname = 'IDS_SCN_INVENTORY' where screenname != 'IDS_SCN_EQUIPMENT' and screenname != 'IDS_SCN_EQUIPMENTMASTER' and modulename = 'IDS_MDL_INVENTORY';
@@ -1305,13 +1305,13 @@ DO $$
 BEGIN
     -- Attempt to insert the new record
     INSERT INTO lsusergrouprightsmaster(orderno, displaytopic, modulename, screenname, sallow, screate, sdelete, sedit, status, sequenceorder) 
-    VALUES (183, 'IDS_TSK_REPORTMAPPING', 'IDS_MDL_REPORTS', 'IDS_SCN_REPORTVIEWER', '0', '0', 'NA', 'NA', '0,0,0', 27) ON CONFLICT (orderno) DO NOTHING;
+    VALUES (183, 'IDS_TSK_REPORTMAPPING', 'IDS_MDL_REPORTS', 'IDS_SCN_REPORTMAPPER', '0', '0', 'NA', 'NA', '0,0,0', 27) ON CONFLICT (orderno) DO NOTHING;
 
    
 END $$;
 
-INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_REPORTMAPPING', 'IDS_MDL_REPORTS', 'administrator', '1', '1', '0', '0', 1,1,'IDS_SCN_REPORTVIEWER' 
-WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_REPORTMAPPING' and screenname='IDS_SCN_REPORTVIEWER' and usergroupid_usergroupcode = 1); 
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_REPORTMAPPING', 'IDS_MDL_REPORTS', 'administrator', '1', '1', 'NA', 'NA', 1,1,'IDS_SCN_REPORTMAPPER' 
+WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_REPORTMAPPING' and screenname='IDS_SCN_REPORTMAPPER' and usergroupid_usergroupcode = 1); 
 
 DO $$
 BEGIN
@@ -1563,10 +1563,16 @@ delete from LSusergrouprights where screenname = 'IDS_SCN_MATERIALTYPE';
 delete from LSusergrouprights where screenname = 'IDS_SCN_SAMPLEMASTER';
 delete from LSusergrouprightsmaster where screenname = 'IDS_SCN_MATERIALTYPE';
 delete from LSusergrouprightsmaster where screenname = 'IDS_SCN_SAMPLEMASTER';
+
 UPDATE lsusergrouprightsmaster SET screenname = 'IDS_SCN_EQUIPMENTMASTER' WHERE screenname = 'IDS_TSK_EQUIPMENTMASTER';
 UPDATE lsusergrouprights SET screenname = 'IDS_SCN_EQUIPMENTMASTER' WHERE screenname = 'IDS_TSK_EQUIPMENTMASTER';
 update LSusergrouprightsmaster set screenname = 'IDS_SCN_REPORTVIEVER' where screenname = 'IDS_SCN_REPORTVIEWER';
 update LSusergrouprights set screenname = 'IDS_SCN_REPORTVIEVER' where screenname = 'IDS_SCN_REPORTVIEWER';
+
+update lsusergrouprights  set screate = '1',sedit = '1', sdelete = '1' where displaytopic = 'IDS_TSK_EQUIPMENTMASTER' and usergroupid_usergroupcode = 1;
+update lsusergrouprights  set screate = '1' where displaytopic = 'IDS_TSK_EQUIPMENTTYPE' and usergroupid_usergroupcode = 1;;
+update lsusergrouprights  set sedit = 'NA', sdelete = 'NA' where displaytopic = 'IDS_TSK_REPORTMAPPING' and usergroupid_usergroupcode = 1;;
+update lsusergrouprights  set screate = '1',sedit = '1', sdelete = '1' where displaytopic = 'IDS_SCN_EQUIPMENTCATEGORY' and usergroupid_usergroupcode = 1;
 
 UPDATE lsusergrouprightsmaster SET sequenceorder = CASE
     WHEN screenname = 'IDS_SCN_DASHBOARD' THEN 1
@@ -1791,7 +1797,6 @@ TABLESPACE pg_default;
 ALTER TABLE IF EXISTS public.lsorderelnmethod
     OWNER to postgres;
     
-
 DO
 $do$
 DECLARE
@@ -1907,7 +1912,7 @@ SELECT count(*) into multiusergroupcount FROM
 information_schema.table_constraints WHERE constraint_name='fka9b6b740h2ntpqvyhohcyc9ry'
 AND table_name='method';
  IF multiusergroupcount =0 THEN
- 	ALTER TABLE ONLY method ADD CONSTRAINT fka9b6b740h2ntpqvyhohcyc9ry FOREIGN KEY (nequipmentcode) REFERENCES equipment(nequipmentcode);
+    ALTER TABLE ONLY method ADD CONSTRAINT fka9b6b740h2ntpqvyhohcyc9ry FOREIGN KEY (nequipmentcode) REFERENCES equipment(nequipmentcode);
    END IF;
 END
 $do$; 
@@ -1946,7 +1951,7 @@ SELECT count(*) into multiusergroupcount FROM
 information_schema.table_constraints WHERE constraint_name='fkkldigbgplb5ffv1f7p4uua2mp'
 AND table_name='lsorderelnmethod';
  IF multiusergroupcount =0 THEN
- 	ALTER TABLE ONLY lsorderelnmethod ADD CONSTRAINT fkkldigbgplb5ffv1f7p4uua2mp FOREIGN KEY (nequipmentcode) REFERENCES equipment(nequipmentcode);
+    ALTER TABLE ONLY lsorderelnmethod ADD CONSTRAINT fkkldigbgplb5ffv1f7p4uua2mp FOREIGN KEY (nequipmentcode) REFERENCES equipment(nequipmentcode);
    END IF;
 END
 $do$; 
@@ -1962,7 +1967,7 @@ SELECT count(*) into multiusergroupcount FROM
 information_schema.table_constraints WHERE constraint_name='fkathu1pdk00m8o6r2ah31p3xce'
 AND table_name='lsfileelnmethod';
  IF multiusergroupcount =0 THEN
- 	ALTER TABLE ONLY lsfileelnmethod ADD CONSTRAINT fkathu1pdk00m8o6r2ah31p3xce FOREIGN KEY (nequipmentcode) REFERENCES equipment(nequipmentcode);
+    ALTER TABLE ONLY lsfileelnmethod ADD CONSTRAINT fkathu1pdk00m8o6r2ah31p3xce FOREIGN KEY (nequipmentcode) REFERENCES equipment(nequipmentcode);
    END IF;
 END
 $do$; 
@@ -1995,3 +2000,97 @@ BEGIN
     END IF;
 END $$;
 
+ALTER TABLE IF Exists lslogilabprotocoldetail ADD COLUMN IF NOT EXISTS lstestmasterlocal_testcode integer;
+
+ALTER TABLE IF Exists lslogilabprotocoldetail DROP CONSTRAINT IF EXISTS fk701k777d2da33pkkl6lnasathis;
+
+ALTER TABLE lslogilabprotocoldetail ADD CONSTRAINT fk701k777d2da33pkkl6lnasathis FOREIGN KEY (lstestmasterlocal_testcode) 
+REFERENCES lstestmasterlocal (testcode);
+
+UPDATE lslogilabprotocoldetail SET lstestmasterlocal_testcode = testcode WHERE testcode IS not NULL;
+
+ DO
+$do$
+DECLARE
+   _kind "char";
+BEGIN
+   SELECT relkind
+   FROM   pg_class
+   WHERE  relname = 'communicationsetting_cmmsettingcode_seq' 
+   INTO  _kind;
+
+   IF NOT FOUND THEN CREATE SEQUENCE communicationsetting_cmmsettingcode_seq;
+   ELSIF _kind = 'S' THEN  
+     
+   ELSE                  
+    
+   END IF;
+END
+$do$;
+
+ALTER TABLE IF EXISTS equipment ADD COLUMN IF NOT EXISTS cmmsetting boolean;
+
+DO
+$do$
+DECLARE
+   _kind "char";
+BEGIN
+   SELECT relkind
+   FROM   pg_class
+   WHERE  relname = 'rctcpfiledetails_seq' 
+   INTO  _kind;
+
+   IF NOT FOUND THEN CREATE SEQUENCE rctcpfiledetails_seq;
+   ELSIF _kind = 'S' THEN  
+     
+   ELSE                  
+    
+   END IF;
+END
+$do$;
+
+CREATE TABLE IF NOT EXISTS public.rctcpfiledetails
+(
+    filecode integer NOT NULL,
+    fileuuid character varying(255) COLLATE pg_catalog."default",
+    filename character varying(255) COLLATE pg_catalog."default",
+    instrumentkey integer,
+    methodkey integer,
+    nequipmentcode integer,
+    CONSTRAINT rctcpfiledetails_pkey PRIMARY KEY (filecode)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.rctcpfiledetails
+    OWNER to postgres;
+    
+ALTER TABLE IF Exists rctcpresultdetails ADD COLUMN IF NOT EXISTS equipment_nequipmentcode Integer;
+    
+DO
+$do$
+declare
+  multiusergroupcount integer :=0;
+begin
+SELECT count(*) into multiusergroupcount FROM
+information_schema.table_constraints WHERE constraint_name='fk9f8bj6t04wgt00a09foqbdcjo'
+AND table_name='rctcpresultdetails';
+ IF multiusergroupcount =0 THEN
+    ALTER TABLE ONLY rctcpresultdetails ADD CONSTRAINT fk9f8bj6t04wgt00a09foqbdcjo FOREIGN KEY (equipment_nequipmentcode) REFERENCES equipment(nequipmentcode);
+   END IF;
+END
+$do$; 
+    
+DO $$
+BEGIN
+    IF EXISTS (
+        SELECT 1
+        FROM information_schema.columns 
+        WHERE table_name = 'rctcpresultdetails' 
+        AND column_name = 'instmasterkey'
+        AND is_nullable = 'NO'
+    ) THEN
+        ALTER TABLE public.rctcpresultdetails
+        ALTER COLUMN instmasterkey DROP NOT NULL;
+    END IF;
+END $$;
