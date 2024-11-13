@@ -2007,7 +2007,18 @@ ALTER TABLE IF Exists lslogilabprotocoldetail DROP CONSTRAINT IF EXISTS fk701k77
 ALTER TABLE lslogilabprotocoldetail ADD CONSTRAINT fk701k777d2da33pkkl6lnasathis FOREIGN KEY (lstestmasterlocal_testcode) 
 REFERENCES lstestmasterlocal (testcode);
 
-UPDATE lslogilabprotocoldetail SET lstestmasterlocal_testcode = testcode WHERE testcode IS not NULL;
+UPDATE lslogilabprotocoldetail
+SET lstestmasterlocal_testcode = (
+    SELECT testcode
+    FROM lstestmasterlocal
+    WHERE lstestmasterlocal.testcode = lslogilabprotocoldetail.testcode
+)
+WHERE testcode IS NOT NULL
+AND EXISTS (
+    SELECT 1
+    FROM lstestmasterlocal
+    WHERE lstestmasterlocal.testcode = lslogilabprotocoldetail.testcode
+);
 
  DO
 $do$
@@ -2354,3 +2365,279 @@ BEGIN
         ALTER COLUMN instmasterkey DROP NOT NULL;
     END IF;
 END $$;
+
+DO
+$do$
+DECLARE
+   _kind "char";
+BEGIN
+   SELECT relkind
+   FROM   pg_class
+   WHERE  relname = 'parity_paritykey_seq' 
+   INTO  _kind;
+
+   IF NOT FOUND THEN CREATE SEQUENCE parity_paritykey_seq;
+   ELSIF _kind = 'S' THEN  
+     
+   ELSE                  
+    
+   END IF;
+END
+$do$;
+
+CREATE TABLE IF NOT EXISTS public.parity
+(
+    paritykey integer NOT NULL DEFAULT nextval('parity_paritykey_seq'::regclass),
+    parityname character varying(255) COLLATE pg_catalog."default",
+    status integer NOT NULL,
+    CONSTRAINT parity_pkey PRIMARY KEY (paritykey)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.parity
+    OWNER to postgres;
+
+DO
+$do$
+DECLARE
+   _kind "char";
+BEGIN
+   SELECT relkind
+   FROM   pg_class
+   WHERE  relname = 'resultsamplefrom_resultsamplekey_seq' 
+   INTO  _kind;
+
+   IF NOT FOUND THEN CREATE SEQUENCE resultsamplefrom_resultsamplekey_seq;
+   ELSIF _kind = 'S' THEN  
+     
+   ELSE                  
+    
+   END IF;
+END
+$do$;
+
+CREATE TABLE IF NOT EXISTS public.resultsamplefrom
+(
+    resultsamplekey integer NOT NULL DEFAULT nextval('resultsamplefrom_resultsamplekey_seq'::regclass),
+    resultsamplename character varying(255) COLLATE pg_catalog."default",
+    status integer NOT NULL,
+    CONSTRAINT resultsamplefrom_pkey PRIMARY KEY (resultsamplekey)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.resultsamplefrom
+    OWNER to postgres;
+
+DO
+$do$
+DECLARE
+   _kind "char";
+BEGIN
+   SELECT relkind
+   FROM   pg_class
+   WHERE  relname = 'handshake_handshakekey_seq' 
+   INTO  _kind;
+
+   IF NOT FOUND THEN CREATE SEQUENCE handshake_handshakekey_seq;
+   ELSIF _kind = 'S' THEN  
+     
+   ELSE                  
+    
+   END IF;
+END
+$do$;
+
+CREATE TABLE IF NOT EXISTS public.handshake
+(
+    handshakekey integer NOT NULL DEFAULT nextval('handshake_handshakekey_seq'::regclass),
+    handshakename character varying(255) COLLATE pg_catalog."default",
+    status integer NOT NULL,
+    CONSTRAINT handshake_pkey PRIMARY KEY (handshakekey)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.handshake
+    OWNER to postgres;
+
+DO
+$do$
+DECLARE
+   _kind "char";
+BEGIN
+   SELECT relkind
+   FROM   pg_class
+   WHERE  relname = 'stopbits_stopbitkey_seq' 
+   INTO  _kind;
+
+   IF NOT FOUND THEN CREATE SEQUENCE stopbits_stopbitkey_seq;
+   ELSIF _kind = 'S' THEN  
+     
+   ELSE                  
+    
+   END IF;
+END
+$do$;
+    
+CREATE TABLE IF NOT EXISTS public.stopbits
+(
+    stopbitkey integer NOT NULL DEFAULT nextval('stopbits_stopbitkey_seq'::regclass),
+    status integer NOT NULL,
+    stopbitname character varying(255) COLLATE pg_catalog."default",
+    CONSTRAINT stopbits_pkey PRIMARY KEY (stopbitkey)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.stopbits
+    OWNER to postgres;
+
+DO
+$do$
+DECLARE
+   _kind "char";
+BEGIN
+   SELECT relkind
+   FROM   pg_class
+   WHERE  relname = 'conversiontype_conversiontypekey_seq' 
+   INTO  _kind;
+
+   IF NOT FOUND THEN CREATE SEQUENCE conversiontype_conversiontypekey_seq;
+   ELSIF _kind = 'S' THEN  
+     
+   ELSE                  
+    
+   END IF;
+END
+$do$;
+
+
+CREATE TABLE IF NOT EXISTS public.conversiontype
+(
+    conversiontypekey integer NOT NULL DEFAULT nextval('conversiontype_conversiontypekey_seq'::regclass),
+    conversiontypename character varying(255) COLLATE pg_catalog."default",
+    status integer NOT NULL,
+    CONSTRAINT conversiontype_pkey PRIMARY KEY (conversiontypekey)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.conversiontype
+    OWNER to postgres;
+
+DO
+$do$
+DECLARE
+   _kind "char";
+BEGIN
+   SELECT relkind
+   FROM   pg_class
+   WHERE  relname = 'communicationsetting_cmmsettingcode_seq' 
+   INTO  _kind;
+
+   IF NOT FOUND THEN CREATE SEQUENCE communicationsetting_cmmsettingcode_seq;
+   ELSIF _kind = 'S' THEN  
+     
+   ELSE                  
+    
+   END IF;
+END
+$do$;
+
+CREATE TABLE IF NOT EXISTS public.communicationsetting
+(
+    cmmsettingcode bigint NOT NULL DEFAULT nextval('communicationsetting_cmmsettingcode_seq'::regclass),
+    baudrate character varying(255) COLLATE pg_catalog."default",
+    channalno character varying(255) COLLATE pg_catalog."default",
+    comportno integer,
+    databits character varying(255) COLLATE pg_catalog."default",
+    ipaddress character varying(255) COLLATE pg_catalog."default",
+    maxcurrent character varying(255) COLLATE pg_catalog."default",
+    maxdatapoint character varying(255) COLLATE pg_catalog."default",
+    mincurrent character varying(255) COLLATE pg_catalog."default",
+    mindatapoint character varying(255) COLLATE pg_catalog."default",
+    nequipmentcode integer,
+    tcpportno integer,
+    tidlesecond integer,
+    conversiontype integer,
+    handshake integer,
+    cmmtype integer,
+    parity integer,
+    rsampleidf integer,
+    stopbit integer,
+    CONSTRAINT communicationsetting_pkey PRIMARY KEY (cmmsettingcode),
+    CONSTRAINT fkan3ncrik40dltk3tahhkf6xyd FOREIGN KEY (conversiontype)
+        REFERENCES public.conversiontype (conversiontypekey) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT fklt7oga656tydp353wsjdmf803 FOREIGN KEY (stopbit)
+        REFERENCES public.stopbits (stopbitkey) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT fkmycp1vklhof9v8uuodj6p82wt FOREIGN KEY (handshake)
+        REFERENCES public.handshake (handshakekey) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT fkn8c3kpfip02ejxekn6nerajyj FOREIGN KEY (cmmtype)
+        REFERENCES public.instrumenttype (insttypekey) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT fkofrf7vemj4xgut7cxdtg9dvnw FOREIGN KEY (parity)
+        REFERENCES public.parity (paritykey) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT fkrvmpsh14ba2mpfteq0nt401ww FOREIGN KEY (rsampleidf)
+        REFERENCES public.resultsamplefrom (resultsamplekey) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.communicationsetting
+    OWNER to postgres;
+ALTER TABLE IF Exists equipment ADD COLUMN IF NOT EXISTS fk_cmmsettingcode Integer;
+    
+DO
+$do$
+declare
+  multiusergroupcount integer :=0;
+begin
+SELECT count(*) into multiusergroupcount FROM
+information_schema.table_constraints WHERE constraint_name='fk2esxrtlkh4sju5fb40xhbltf9'
+AND table_name='equipment';
+ IF multiusergroupcount =0 THEN
+    ALTER TABLE ONLY equipment ADD CONSTRAINT fk2esxrtlkh4sju5fb40xhbltf9 FOREIGN KEY (fk_cmmsettingcode) REFERENCES communicationsetting(cmmsettingcode);
+   END IF;
+END
+$do$;
+ 
+INSERT into stopbits(stopbitkey,stopbitname,status) VALUES(1,'-1',1) ON CONFLICT(stopbitkey)DO NOTHING;
+INSERT into stopbits(stopbitkey,stopbitname,status) VALUES(2,'0',1) ON CONFLICT(stopbitkey)DO NOTHING;
+INSERT into stopbits(stopbitkey,stopbitname,status) VALUES(3,'1',1) ON CONFLICT(stopbitkey)DO NOTHING;
+INSERT into stopbits(stopbitkey,stopbitname,status) VALUES(4,'1.5',1) ON CONFLICT(stopbitkey)DO NOTHING;
+INSERT into stopbits(stopbitkey,stopbitname,status) VALUES(5,'2',1) ON CONFLICT(stopbitkey)DO NOTHING;
+
+INSERT into parity(paritykey,parityname,status) VALUES(1,'NONE',1) ON CONFLICT(paritykey)DO NOTHING;
+INSERT into parity(paritykey,parityname,status) VALUES(2,'ODD',1) ON CONFLICT(paritykey)DO NOTHING;
+INSERT into parity(paritykey,parityname,status) VALUES(3,'EVEN',1) ON CONFLICT(paritykey)DO NOTHING;
+
+INSERT into handshake(handshakekey,handshakename,status) VALUES(1,'NONE',1) ON CONFLICT(handshakekey)DO NOTHING;
+INSERT into handshake(handshakekey,handshakename,status) VALUES(2,'Xon_Xoff',1) ON CONFLICT(handshakekey)DO NOTHING;
+INSERT into handshake(handshakekey,handshakename,status) VALUES(3,'RTS_CTS',1) ON CONFLICT(handshakekey)DO NOTHING;
+INSERT into handshake(handshakekey,handshakename,status) VALUES(4,'BOTH',1) ON CONFLICT(handshakekey)DO NOTHING;
+
+INSERT into resultsamplefrom(resultsamplekey,resultsamplename,status) VALUES(1,'IFACER',1) ON CONFLICT(resultsamplekey)DO NOTHING;
+INSERT into resultsamplefrom(resultsamplekey,resultsamplename,status) VALUES(2,'LimsTestOrder',1) ON CONFLICT(resultsamplekey)DO NOTHING;
+INSERT into resultsamplefrom(resultsamplekey,resultsamplename,status) VALUES(3,'DataFileName',1) ON CONFLICT(resultsamplekey)DO NOTHING;
+
+INSERT into instrumenttype(insttypekey,insttypename,status) VALUES(4,'TCP_SERVER',1) ON CONFLICT(insttypekey)DO NOTHING;
+INSERT into instrumenttype(insttypekey,insttypename,status) VALUES(5,'ICPMODBUS',1) ON CONFLICT(insttypekey)DO NOTHING;
+
+INSERT into conversiontype(conversiontypekey,conversiontypename,status) VALUES(1,'NONE',1) ON CONFLICT(conversiontypekey)DO NOTHING;
+INSERT into conversiontype(conversiontypekey,conversiontypename,status) VALUES(2,'Temperature_Celcius',1) ON CONFLICT(conversiontypekey)DO NOTHING;
+INSERT into conversiontype(conversiontypekey,conversiontypename,status) VALUES(3,'Temperature_Farenheit',1) ON CONFLICT(conversiontypekey)DO NOTHING;
+
+ALTER TABLE IF EXISTS equipment ADD COLUMN IF NOT EXISTS cmmsetting boolean;
