@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import com.agaram.eln.primary.model.instrumentsetup.InstrumentCategory;
 import com.agaram.eln.primary.model.instrumentsetup.InstrumentMaster;
+import com.agaram.eln.primary.model.instrumentsetup.InstrumentType;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 
 /**
@@ -103,6 +104,9 @@ public interface InstMasterRepository extends JpaRepository<InstrumentMaster, In
 			String instrumentcode, LSSiteMaster site, int i);
 
 	List<InstrumentMaster> findByInstrumentnameAndSiteAndStatus(String instrumentname, LSSiteMaster site, int i);
+
+	List<InstrumentMaster> findByInstcategoryAndStatusAndInsttypeNotIn(InstrumentCategory instcat, int i,
+			InstrumentType insttype);
 
 
 }

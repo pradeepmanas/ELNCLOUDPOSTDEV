@@ -124,18 +124,18 @@ public class ParserSetupService {
 	public ResponseEntity<Object> getParserData(final int methodKey, final Boolean evaluateParser,
     final String rawDataContent,final String tenant,final int isMultitenant) throws Exception
 	{		
-		final Method method = (Method)methodService.findById(methodKey).getBody();
+		 final Method method = (Method)methodService.findById(methodKey).getBody();
 		
-		
+		 List<Method> method1 = methodRepo.findByMethodkey(methodKey);
 
-//		final String a ="";
+
 		String rawDataText = "";
 		if (rawDataContent == null || rawDataContent.isEmpty()) {
 			if(isMultitenant != 0) {
-				System.out.println("in evaluate parser  rawdatatext :"+rawDataText);
-				System.out.println("rawdataurl :"+method.getInstrawdataurl());
-				System.out.println("tenant :"+tenant);
-				System.out.println("methodKey :"+methodKey);
+//				System.out.println("in evaluate parser  rawdatatext :"+rawDataText);
+//				System.out.println("rawdataurl :"+method.getInstrawdataurl());
+//				System.out.println("tenant :"+tenant);
+//				System.out.println("methodKey :"+methodKey);
 			rawDataText = methodService.getFileData(method.getInstrawdataurl(),tenant,methodKey);  				
 			}
 			else

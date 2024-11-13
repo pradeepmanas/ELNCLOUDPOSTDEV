@@ -21,6 +21,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.agaram.eln.primary.commonfunction.commonfunction;
@@ -178,6 +179,17 @@ public class MaterialService {
 		}
 
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
+	}
+	
+	public ResponseEntity<Object> getMaterialonCategory(@RequestBody Map<String, Object> inputMap){
+		
+		final ObjectMapper objmapper = new ObjectMapper();
+		
+		MaterialCategory objCategory = objmapper.convertValue(inputMap.get("category"), MaterialCategory.class);
+				
+		List<Elnmaterial> lstMaterial = elnmaterialRepository.findByMaterialcategoryAndNsitecodeOrderByNmaterialcodeDesc(objCategory,objCategory.getNsitecode());
+		
+		return new ResponseEntity<>(lstMaterial, HttpStatus.OK);
 	}
 	
 	public ResponseEntity<Object> getMaterialDesign(Integer ntypecode) throws JsonParseException, JsonMappingException, IOException {
@@ -1013,7 +1025,7 @@ public class MaterialService {
 	
 	public ResponseEntity<Object> createElnMaterial(Elnmaterial obj) throws ParseException, JsonProcessingException {
 		
-		Elnmaterial objElnmaterial = elnmaterialRepository.findByNsitecodeAndSmaterialnameAndMaterialcategory(
+		Elnmaterial objElnmaterial = elnmaterialRepository.findByNsitecodeAndSmaterialnameIgnoreCaseAndMaterialcategory(
 				obj.getNsitecode(),obj.getSmaterialname(),obj.getMaterialcategory());
 		
 		obj.setResponse(new Response());
@@ -1732,7 +1744,7 @@ public class MaterialService {
 		objmap.put("lstSection", lstSec);
 		objmap.put("lstPeriods", lstPeriods);
 		
-		List<EquipmentType> lstEquipmentTypes = equipmentTypeRepository.findByNstatusAndNsitecodeOrderByNequipmenttypecodeDesc(1,nsiteInteger);
+		List<EquipmentType> lstEquipmentTypes = equipmentTypeRepository.findByNequipmenttypecodeNotAndNstatusAndNsitecodeOrderByNequipmenttypecodeDesc(-1,1,nsiteInteger);
 		List<EquipmentCategory> lstEquipmentCategories = equipmentCategoryRepository.findByNsitecodeAndNstatus(nsiteInteger, 1);
 		
 		objmap.put("lstEquipmentTypes", lstEquipmentTypes);

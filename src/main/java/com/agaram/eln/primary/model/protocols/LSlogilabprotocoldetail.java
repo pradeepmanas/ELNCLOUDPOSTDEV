@@ -308,8 +308,8 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	private LSuserMaster lsuserMaster;
 
 	private Integer testcode;
+	
 	@ManyToOne
-	@Transient
 	private LStestmasterlocal lstestmasterlocal;
 
 	public LStestmasterlocal getLstestmasterlocal() {

@@ -13,7 +13,9 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import com.agaram.eln.primary.fetchmodel.getorders.LogilabProtocolOrderssh;
 import com.agaram.eln.primary.fetchmodel.getorders.Logilabprotocolorders;
+import com.agaram.eln.primary.fetchmodel.getorders.ProtocolOrdersDashboard;
 import com.agaram.eln.primary.model.instrumentDetails.Lsprotocolorderstructure;
 import com.agaram.eln.primary.model.material.Elnmaterial;
 import com.agaram.eln.primary.model.protocols.Elnprotocolworkflow;
@@ -555,7 +557,7 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 
 
 
-	List<Logilabprotocolorders> findByOrderflagAndSitecodeAndCreatedtimestampBetweenAndAssignedtoIsNullAndLsprojectmasterAndOrdercancellIsNullOrOrderflagAndSitecodeAndCreatedtimestampBetweenAndAssignedtoIsNullAndLsprojectmasterAndRejectedIsNullOrRejectedAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterOrOrdercancellAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterOrderByProtocolordercodeDesc(
+	List<ProtocolOrdersDashboard> findByOrderflagAndSitecodeAndCreatedtimestampBetweenAndAssignedtoIsNullAndLsprojectmasterAndOrdercancellIsNullOrOrderflagAndSitecodeAndCreatedtimestampBetweenAndAssignedtoIsNullAndLsprojectmasterAndRejectedIsNullOrRejectedAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterOrOrdercancellAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterOrderByProtocolordercodeDesc(
 			String string, Integer sitecode, Date fromdate, Date todate, LSprojectmaster lstprojectforfilter,
 			String string2, Integer sitecode2, Date fromdate2, Date todate2, LSprojectmaster lstprojectforfilter2,
 			int i, Integer sitecode3, Date fromdate3, Date todate3, LSprojectmaster lstprojectforfilter3, int j,
@@ -569,7 +571,7 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 			Integer sitecode4, Date fromdate4, Date todate4, LSprojectmaster lstprojectforfilter4);
 
 
-	List<Logilabprotocolorders> findByOrderflagAndSitecodeAndCreatedtimestampBetweenAndAssignedtoIsNullAndLsprojectmasterAndOrdercancellIsNullAndTestcodeOrOrderflagAndSitecodeAndCreatedtimestampBetweenAndAssignedtoIsNullAndLsprojectmasterAndRejectedIsNullAndTestcodeOrRejectedAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterAndTestcodeOrOrdercancellAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterAndTestcodeOrderByProtocolordercodeDesc(
+	List<ProtocolOrdersDashboard> findByOrderflagAndSitecodeAndCreatedtimestampBetweenAndAssignedtoIsNullAndLsprojectmasterAndOrdercancellIsNullAndTestcodeOrOrderflagAndSitecodeAndCreatedtimestampBetweenAndAssignedtoIsNullAndLsprojectmasterAndRejectedIsNullAndTestcodeOrRejectedAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterAndTestcodeOrOrdercancellAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterAndTestcodeOrderByProtocolordercodeDesc(
 			String string, Integer sitecode, Date fromdate, Date todate, LSprojectmaster lstprojectforfilter,
 			Integer testcode, String string2, Integer sitecode2, Date fromdate2, Date todate2,
 			LSprojectmaster lstprojectforfilter2, Integer testcode2, int i, Integer sitecode3, Date fromdate3,
@@ -587,7 +589,7 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 
 
 
-	List<Logilabprotocolorders> findByOrderflagAndSitecodeAndCreatedtimestampBetweenAndAssignedtoIsNullAndLsprojectmasterAndRejectedIsNullOrderByProtocolordercodeDesc(
+	List<ProtocolOrdersDashboard> findByOrderflagAndSitecodeAndCreatedtimestampBetweenAndAssignedtoIsNullAndLsprojectmasterAndRejectedIsNullOrderByProtocolordercodeDesc(
 			String string, Integer sitecode, Date fromdate, Date todate, LSprojectmaster lstprojectforfilter,
 			Pageable pageable);
 
@@ -596,7 +598,7 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 			String string, Integer sitecode, Date fromdate, Date todate, LSprojectmaster lstprojectforfilter);
 
 
-	List<Logilabprotocolorders> findByOrderflagAndSitecodeAndCreatedtimestampBetweenAndAssignedtoIsNullAndLsprojectmasterAndRejectedIsNullAndTestcodeOrderByProtocolordercodeDesc(
+	List<ProtocolOrdersDashboard> findByOrderflagAndSitecodeAndCreatedtimestampBetweenAndAssignedtoIsNullAndLsprojectmasterAndRejectedIsNullAndTestcodeOrderByProtocolordercodeDesc(
 			String string, Integer sitecode, Date fromdate, Date todate, LSprojectmaster lstprojectforfilter,
 			Integer testcode, Pageable pageable);
 
@@ -628,7 +630,7 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 
 
 
-	List<Logilabprotocolorders> findByRejectedAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterOrderByProtocolordercodeDesc(
+	List<ProtocolOrdersDashboard> findByRejectedAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterOrderByProtocolordercodeDesc(
 			int i, Integer sitecode, Date fromdate, Date todate, LSprojectmaster lstprojectforfilter,
 			Pageable pageable);
 
@@ -637,7 +639,7 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 			Date todate, LSprojectmaster lstprojectforfilter);
 
 
-	List<Logilabprotocolorders> findByRejectedAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterAndTestcodeOrderByProtocolordercodeDesc(
+	List<ProtocolOrdersDashboard> findByRejectedAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterAndTestcodeOrderByProtocolordercodeDesc(
 			int i, Integer sitecode, Date fromdate, Date todate, LSprojectmaster lstprojectforfilter, Integer testcode,
 			Pageable pageable);
 
@@ -647,7 +649,7 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 
 
 
-	List<Logilabprotocolorders> findByOrdercancellAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterOrderByProtocolordercodeDesc(
+	List<ProtocolOrdersDashboard> findByOrdercancellAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterOrderByProtocolordercodeDesc(
 			int i, Integer sitecode, Date fromdate, Date todate, LSprojectmaster lstprojectforfilter,
 			Pageable pageable);
 
@@ -656,7 +658,7 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 			Date fromdate, Date todate, LSprojectmaster lstprojectforfilter);
 
 
-	List<Logilabprotocolorders> findByOrdercancellAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterAndTestcodeOrderByProtocolordercodeDesc(
+	List<ProtocolOrdersDashboard> findByOrdercancellAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterAndTestcodeOrderByProtocolordercodeDesc(
 			int i, Integer sitecode, Date fromdate, Date todate, LSprojectmaster lstprojectforfilter, Integer testcode,
 			Pageable pageable);
 
@@ -745,7 +747,7 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 			int j, Integer usercode, Date fromdate3, Date todate3, String string4, Integer sitecode4,
 			List<LSprojectmaster> lstproject2, int k, Date fromdate4, Date todate4);
 
-	List<Logilabprotocolorders> findByLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatedtimestampBetweenOrLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenOrLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
+	List<ProtocolOrdersDashboard> findByLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatedtimestampBetweenOrLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenOrLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
 			int i, Integer sitecode, Date fromdate, Date todate, int j, Integer usercode, Date fromdate2, Date todate2,
 			int k, Integer usercode2, Date fromdate3, Date todate3, Pageable pageable);
 
@@ -755,7 +757,7 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 			int k, Integer usercode2, Date fromdate3, Date todate3);
 
 
-	List<Logilabprotocolorders> findByLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndTestcodeOrLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndTestcodeOrLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndTestcodeOrderByProtocolordercodeDesc(
+	List<ProtocolOrdersDashboard> findByLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndTestcodeOrLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndTestcodeOrLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndTestcodeOrderByProtocolordercodeDesc(
 			int i, Integer sitecode, Date fromdate, Date todate, Integer testcode, int j, Integer usercode,
 			Date fromdate2, Date todate2, Integer testcode2, int k, Integer usercode2, Date fromdate3, Date todate3,
 			Integer testcode3, Pageable pageable);
@@ -767,7 +769,7 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 			Integer testcode3);
 
 
-	List<Logilabprotocolorders> findByLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndOrderflagAndRejectedIsNullOrLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndOrderflagAndRejectedIsNullOrLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndOrderflagAndRejectedIsNullOrderByProtocolordercodeDesc(
+	List<ProtocolOrdersDashboard> findByLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndOrderflagAndRejectedIsNullOrLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndOrderflagAndRejectedIsNullOrLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndOrderflagAndRejectedIsNullOrderByProtocolordercodeDesc(
 			int i, Integer sitecode, Date fromdate, Date todate, String string, int j, Integer usercode, Date fromdate2,
 			Date todate2, String string2, int k, Integer usercode2, Date fromdate3, Date todate3, String string3,
 			Pageable pageable);
@@ -778,7 +780,7 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 			Date todate2, String string2, int k, Integer usercode2, Date fromdate3, Date todate3, String string3);
 
 
-	List<Logilabprotocolorders> findByLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndOrderflagAndRejectedIsNullAndTestcodeOrLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndOrderflagAndRejectedIsNullAndTestcodeOrLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndOrderflagAndRejectedIsNullAndTestcodeOrderByProtocolordercodeDesc(
+	List<ProtocolOrdersDashboard> findByLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndOrderflagAndRejectedIsNullAndTestcodeOrLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndOrderflagAndRejectedIsNullAndTestcodeOrLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndOrderflagAndRejectedIsNullAndTestcodeOrderByProtocolordercodeDesc(
 			int i, Integer sitecode, Date fromdate, Date todate, String string, Integer testcode, int j,
 			Integer usercode, Date fromdate2, Date todate2, String string2, Integer testcode2, int k, Integer usercode2,
 			Date fromdate3, Date todate3, String string3, Integer testcode3, Pageable pageable);
@@ -790,7 +792,7 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 			Date fromdate3, Date todate3, String string3, Integer testcode3);
 
 
-	List<Logilabprotocolorders> findByLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndOrderflagAndOrdercancellIsNullOrLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndOrderflagAndOrdercancellIsNullOrLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndOrderflagAndOrdercancellIsNullOrderByProtocolordercodeDesc(
+	List<ProtocolOrdersDashboard> findByLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndOrderflagAndOrdercancellIsNullOrLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndOrderflagAndOrdercancellIsNullOrLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndOrderflagAndOrdercancellIsNullOrderByProtocolordercodeDesc(
 			int i, Integer sitecode, Date fromdate, Date todate, String string, int j, Integer usercode, Date fromdate2,
 			Date todate2, String string2, int k, Integer usercode2, Date fromdate3, Date todate3, String string3,
 			Pageable pageable);
@@ -801,7 +803,7 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 			Date todate2, String string2, int k, Integer usercode2, Date fromdate3, Date todate3, String string3);
 
 
-	List<Logilabprotocolorders> findByLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndOrderflagAndOrdercancellIsNullAndTestcodeOrLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndOrderflagAndOrdercancellIsNullAndTestcodeOrLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndOrderflagAndOrdercancellIsNullAndTestcodeOrderByProtocolordercodeDesc(
+	List<ProtocolOrdersDashboard> findByLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndOrderflagAndOrdercancellIsNullAndTestcodeOrLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndOrderflagAndOrdercancellIsNullAndTestcodeOrLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndOrderflagAndOrdercancellIsNullAndTestcodeOrderByProtocolordercodeDesc(
 			int i, Integer sitecode, Date fromdate, Date todate, String string, Integer testcode, int j,
 			Integer usercode, Date fromdate2, Date todate2, String string2, Integer testcode2, int k, Integer usercode2,
 			Date fromdate3, Date todate3, String string3, Integer testcode3, Pageable pageable);
@@ -814,7 +816,7 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 
 
 
-	List<Logilabprotocolorders> findByLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndOrdercancellOrLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndOrdercancellOrLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndOrdercancellOrderByProtocolordercodeDesc(
+	List<ProtocolOrdersDashboard> findByLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndOrdercancellOrLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndOrdercancellOrLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndOrdercancellOrderByProtocolordercodeDesc(
 			int i, Integer sitecode, Date fromdate, Date todate, int j, int k, Integer usercode, Date fromdate2,
 			Date todate2, int l, int m, Integer usercode2, Date fromdate3, Date todate3, int n, Pageable pageable);
 
@@ -824,7 +826,7 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 			Date todate2, int l, int m, Integer usercode2, Date fromdate3, Date todate3, int n);
 
 
-	List<Logilabprotocolorders> findByLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndOrdercancellAndTestcodeOrLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndOrdercancellAndTestcodeOrLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndOrdercancellAndTestcodeOrderByProtocolordercodeDesc(
+	List<ProtocolOrdersDashboard> findByLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndOrdercancellAndTestcodeOrLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndOrdercancellAndTestcodeOrLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndOrdercancellAndTestcodeOrderByProtocolordercodeDesc(
 			int i, Integer sitecode, Date fromdate, Date todate, int j, Integer testcode, int k, Integer usercode,
 			Date fromdate2, Date todate2, int l, Integer testcode2, int m, Integer usercode2, Date fromdate3,
 			Date todate3, int n, Integer testcode3, Pageable pageable);
@@ -836,7 +838,7 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 			Date todate3, int n, Integer testcode3);
 
 
-	List<Logilabprotocolorders> findByLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndRejectedOrLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndRejectedOrLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndRejectedOrderByProtocolordercodeDesc(
+	List<ProtocolOrdersDashboard> findByLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndRejectedOrLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndRejectedOrLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndRejectedOrderByProtocolordercodeDesc(
 			int i, Integer sitecode, Date fromdate, Date todate, int j, int k, Integer usercode, Date fromdate2,
 			Date todate2, int l, int m, Integer usercode2, Date fromdate3, Date todate3, int n, Pageable pageable);
 
@@ -846,7 +848,7 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 			Date todate2, int l, int m, Integer usercode2, Date fromdate3, Date todate3, int n);
 
 
-	List<Logilabprotocolorders> findByLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndRejectedAndTestcodeOrLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndRejectedAndTestcodeOrLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndRejectedAndTestcodeOrderByProtocolordercodeDesc(
+	List<ProtocolOrdersDashboard> findByLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndRejectedAndTestcodeOrLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndRejectedAndTestcodeOrLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndRejectedAndTestcodeOrderByProtocolordercodeDesc(
 			int i, Integer sitecode, Date fromdate, Date todate, int j, Integer testcode, int k, Integer usercode,
 			Date fromdate2, Date todate2, int l, Integer testcode2, int m, Integer usercode2, Date fromdate3,
 			Date todate3, int n, Integer testcode3, Pageable pageable);
@@ -865,7 +867,7 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 			List<LSprojectmaster> lstproject2, int k, Date fromdate4, Date todate4);
 
 
-	List<Logilabprotocolorders> findByOrderflagAndSitecodeAndCreatedtimestampBetweenAndAssignedtoIsNullAndLsprojectmasterAndOrdercancellIsNullAndRejectedIsNullOrderByProtocolordercodeDesc(
+	List<ProtocolOrdersDashboard> findByOrderflagAndSitecodeAndCreatedtimestampBetweenAndAssignedtoIsNullAndLsprojectmasterAndOrdercancellIsNullAndRejectedIsNullOrderByProtocolordercodeDesc(
 			String string, Integer sitecode, Date fromdate, Date todate, LSprojectmaster lstprojectforfilter,
 			Pageable pageable);
 
@@ -879,7 +881,7 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 			Integer testcode);
 
 
-	List<Logilabprotocolorders> findByOrderflagAndSitecodeAndCreatedtimestampBetweenAndAssignedtoIsNullAndLsprojectmasterAndOrdercancellIsNullAndTestcodeAndRejectedIsNullOrderByProtocolordercodeDesc(
+	List<ProtocolOrdersDashboard> findByOrderflagAndSitecodeAndCreatedtimestampBetweenAndAssignedtoIsNullAndLsprojectmasterAndOrdercancellIsNullAndTestcodeAndRejectedIsNullOrderByProtocolordercodeDesc(
 			String string, Integer sitecode, Date fromdate, Date todate, LSprojectmaster lstprojectforfilter,
 			Integer testcode, Pageable pageable);
 
@@ -933,17 +935,17 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 			Integer usercode4, Date fromdate6, Date todate6, String searchkeywords11, String searchkeywords12);
 
 
-	List<Logilabprotocolorders> findByLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatedtimestampBetweenOrLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatebyAndCreatedtimestampBetweenOrLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndCreatebyInOrderByProtocolordercodeDesc(
+	List<ProtocolOrdersDashboard> findByLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatedtimestampBetweenOrLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatebyAndCreatedtimestampBetweenOrLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndCreatebyInOrderByProtocolordercodeDesc(
 			int i, Integer sitecode, Date fromdate, Date todate, int j, Integer sitecode2, Integer usercode,
 			Date fromdate2, Date todate2, int k, Integer sitecode3, Date fromdate3, Date todate3,
 			List<Integer> userlist, Pageable pageable);
 
 
-	List<Logilabprotocolorders> findByLsprojectmasterInAndViewoptionAndSitecodeAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
+	List<ProtocolOrdersDashboard> findByLsprojectmasterInAndViewoptionAndSitecodeAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
 			List<LSprojectmaster> lstproject, int i, Integer sitecode, Date fromdate, Date todate, Pageable pageable);
 
 
-	List<Logilabprotocolorders> findByLsprojectmasterInAndCreatedtimestampBetweenAndSitecodeOrderByProtocolordercodeDesc(
+	List<ProtocolOrdersDashboard> findByLsprojectmasterInAndCreatedtimestampBetweenAndSitecodeOrderByProtocolordercodeDesc(
 			List<LSprojectmaster> lstproject, Date fromdate, Date todate, Integer sitecode, Pageable pageable);
 
 
@@ -961,17 +963,17 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 			Date todate, Integer sitecode);
 
 
-	List<Logilabprotocolorders> findByLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndTestcodeOrLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatebyAndCreatedtimestampBetweenAndTestcodeOrderByProtocolordercodeDesc(
+	List<ProtocolOrdersDashboard> findByLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndTestcodeOrLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatebyAndCreatedtimestampBetweenAndTestcodeOrderByProtocolordercodeDesc(
 			int i, Integer sitecode, Date fromdate, Date todate, Integer testcode, int j, Integer sitecode2,
 			Integer usercode, Date fromdate2, Date todate2, Integer testcode2, Pageable pageable);
 
 
-	List<Logilabprotocolorders> findByLsprojectmasterInAndCreatedtimestampBetweenAndSitecodeAndTestcodeOrderByProtocolordercodeDesc(
+	List<ProtocolOrdersDashboard> findByLsprojectmasterInAndCreatedtimestampBetweenAndSitecodeAndTestcodeOrderByProtocolordercodeDesc(
 			List<LSprojectmaster> lstproject, Date fromdate, Date todate, Integer sitecode, Integer testcode,
 			Pageable pageable);
 
 
-	List<Logilabprotocolorders> findByLsprojectmasterInAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndTestcodeOrderByProtocolordercodeDesc(
+	List<ProtocolOrdersDashboard> findByLsprojectmasterInAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndTestcodeOrderByProtocolordercodeDesc(
 			List<LSprojectmaster> lstproject, int i, Integer sitecode, Date fromdate, Date todate, Integer testcode,
 			Pageable pageable);
 
@@ -989,13 +991,13 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 			List<LSprojectmaster> lstproject, int i, Integer sitecode, Date fromdate, Date todate, Integer testcode);
 
 
-	List<Logilabprotocolorders> findByOrderflagAndSitecodeAndRejectedIsNullAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenOrOrderflagAndSitecodeAndRejectedIsNullAndLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenOrOrderflagAndSitecodeAndRejectedIsNullAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndCreatebyInOrderByProtocolordercodeDesc(
+	List<ProtocolOrdersDashboard> findByOrderflagAndSitecodeAndRejectedIsNullAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenOrOrderflagAndSitecodeAndRejectedIsNullAndLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenOrOrderflagAndSitecodeAndRejectedIsNullAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndCreatebyInOrderByProtocolordercodeDesc(
 			String string, Integer sitecode, int i, Date fromdate, Date todate, String string2, Integer sitecode2,
 			int j, Integer usercode, Date fromdate2, Date todate2, String string3, Integer sitecode3, int k,
 			Date fromdate3, Date todate3, List<Integer> userlist, Pageable pageable);
 
 
-	List<Logilabprotocolorders> findByOrderflagAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterInAndRejectedIsNullOrderByProtocolordercodeDesc(
+	List<ProtocolOrdersDashboard> findByOrderflagAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterInAndRejectedIsNullOrderByProtocolordercodeDesc(
 			String string, Integer sitecode, Date fromdate, Date todate, List<LSprojectmaster> lstproject,
 			Pageable pageable);
 
@@ -1010,18 +1012,18 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 			Integer sitecode, Date fromdate, Date todate, List<LSprojectmaster> lstproject);
 
 
-	List<Logilabprotocolorders> findByOrderflagAndSitecodeAndRejectedIsNullAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndTestcodeOrOrderflagAndSitecodeAndRejectedIsNullAndLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndTestcodeOrderByProtocolordercodeDesc(
+	List<ProtocolOrdersDashboard> findByOrderflagAndSitecodeAndRejectedIsNullAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndTestcodeOrOrderflagAndSitecodeAndRejectedIsNullAndLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndTestcodeOrderByProtocolordercodeDesc(
 			String string, Integer sitecode, int i, Date fromdate, Date todate, Integer testcode, String string2,
 			Integer sitecode2, int j, Integer usercode, Date fromdate2, Date todate2, Integer testcode2,
 			Pageable pageable);
 
 
-	List<Logilabprotocolorders> findByOrderflagAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterInAndRejectedIsNullAndTestcodeOrderByProtocolordercodeDesc(
+	List<ProtocolOrdersDashboard> findByOrderflagAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterInAndRejectedIsNullAndTestcodeOrderByProtocolordercodeDesc(
 			String string, Integer sitecode, Date fromdate, Date todate, List<LSprojectmaster> lstproject,
 			Integer testcode, Pageable pageable);
 
 
-	List<Logilabprotocolorders> findByOrderflagAndSitecodeAndRejectedIsNullAndLsprojectmasterInAndViewoptionAndCreatedtimestampBetweenAndTestcodeOrderByProtocolordercodeDesc(
+	List<ProtocolOrdersDashboard> findByOrderflagAndSitecodeAndRejectedIsNullAndLsprojectmasterInAndViewoptionAndCreatedtimestampBetweenAndTestcodeOrderByProtocolordercodeDesc(
 			String string, Integer sitecode, List<LSprojectmaster> lstproject, int i, Date fromdate, Date todate,
 			Integer testcode, Pageable pageable);
 
@@ -1041,13 +1043,13 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 			Integer testcode);
 
 
-	List<Logilabprotocolorders> findByOrderflagAndSitecodeAndOrdercancellIsNullAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndRejectedIsNullOrOrderflagAndSitecodeAndOrdercancellIsNullAndLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndRejectedIsNullOrOrderflagAndSitecodeAndOrdercancellIsNullAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndRejectedIsNullAndCreatebyInOrderByProtocolordercodeDesc(
+	List<ProtocolOrdersDashboard> findByOrderflagAndSitecodeAndOrdercancellIsNullAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndRejectedIsNullOrOrderflagAndSitecodeAndOrdercancellIsNullAndLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndRejectedIsNullOrOrderflagAndSitecodeAndOrdercancellIsNullAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndRejectedIsNullAndCreatebyInOrderByProtocolordercodeDesc(
 			String string, Integer sitecode, int i, Date fromdate, Date todate, String string2, Integer sitecode2,
 			int j, Integer usercode, Date fromdate2, Date todate2, String string3, Integer sitecode3, int k,
 			Date fromdate3, Date todate3, List<Integer> userlist, Pageable pageable);
 
 
-	List<Logilabprotocolorders> findByOrderflagAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterInAndOrdercancellIsNullAndRejectedIsNullOrderByProtocolordercodeDesc(
+	List<ProtocolOrdersDashboard> findByOrderflagAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterInAndOrdercancellIsNullAndRejectedIsNullOrderByProtocolordercodeDesc(
 			String string, Integer sitecode, Date fromdate, Date todate, List<LSprojectmaster> lstproject,
 			Pageable pageable);
 
@@ -1062,18 +1064,18 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 			String string, Integer sitecode, Date fromdate, Date todate, List<LSprojectmaster> lstproject);
 
 
-	List<Logilabprotocolorders> findByOrderflagAndSitecodeAndOrdercancellIsNullAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndTestcodeAndRejectedIsNullOrOrderflagAndSitecodeAndOrdercancellIsNullAndLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndTestcodeAndRejectedIsNullOrderByProtocolordercodeDesc(
+	List<ProtocolOrdersDashboard> findByOrderflagAndSitecodeAndOrdercancellIsNullAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndTestcodeAndRejectedIsNullOrOrderflagAndSitecodeAndOrdercancellIsNullAndLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndTestcodeAndRejectedIsNullOrderByProtocolordercodeDesc(
 			String string, Integer sitecode, int i, Date fromdate, Date todate, Integer testcode, String string2,
 			Integer sitecode2, int j, Date fromdate2, Integer usercode, Date todate2, Integer testcode2,
 			Pageable pageable);
 
 
-	List<Logilabprotocolorders> findByOrderflagAndSitecodeAndCreatedtimestampBetweenAndAssignedtoIsNullAndLsprojectmasterInAndOrdercancellIsNullAndTestcodeAndRejectedIsNullOrderByProtocolordercodeDesc(
+	List<ProtocolOrdersDashboard> findByOrderflagAndSitecodeAndCreatedtimestampBetweenAndAssignedtoIsNullAndLsprojectmasterInAndOrdercancellIsNullAndTestcodeAndRejectedIsNullOrderByProtocolordercodeDesc(
 			String string, Integer sitecode, Date fromdate, Date todate, List<LSprojectmaster> lstproject,
 			Integer testcode, Pageable pageable);
 
 
-	List<Logilabprotocolorders> findByOrderflagAndSitecodeAndOrdercancellIsNullAndLsprojectmasterInAndViewoptionAndCreatedtimestampBetweenAndTestcodeAndRejectedIsNullOrderByProtocolordercodeDesc(
+	List<ProtocolOrdersDashboard> findByOrderflagAndSitecodeAndOrdercancellIsNullAndLsprojectmasterInAndViewoptionAndCreatedtimestampBetweenAndTestcodeAndRejectedIsNullOrderByProtocolordercodeDesc(
 			String string, Integer sitecode, List<LSprojectmaster> lstproject, int i, Date fromdate, Date todate,
 			Integer testcode, Pageable pageable);
 
@@ -1093,13 +1095,13 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 			Integer testcode);
 
 
-	List<Logilabprotocolorders> findByRejectedAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenOrRejectedAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenOrRejectedAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndCreatebyInOrderByProtocolordercodeDesc(
+	List<ProtocolOrdersDashboard> findByRejectedAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenOrRejectedAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenOrRejectedAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndCreatebyInOrderByProtocolordercodeDesc(
 			int i, Integer sitecode, int j, Date fromdate, Date todate, int k, Integer sitecode2, int l,
 			Integer usercode, Date fromdate2, Date todate2, int m, Integer sitecode3, int n, Date fromdate3,
 			Date todate3, List<Integer> userlist, Pageable pageable);
 
 
-	List<Logilabprotocolorders> findByRejectedAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterInOrderByProtocolordercodeDesc(
+	List<ProtocolOrdersDashboard> findByRejectedAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterInOrderByProtocolordercodeDesc(
 			int i, Integer sitecode, Date fromdate, Date todate, List<LSprojectmaster> lstproject, Pageable pageable);
 
 
@@ -1109,17 +1111,17 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 			Date todate3, List<Integer> userlist);
 
 
-	List<Logilabprotocolorders> findByRejectedAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndTestcodeOrRejectedAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndTestcodeOrderByProtocolordercodeDesc(
+	List<ProtocolOrdersDashboard> findByRejectedAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndTestcodeOrRejectedAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndTestcodeOrderByProtocolordercodeDesc(
 			int i, Integer sitecode, int j, Date fromdate, Date todate, Integer testcode, int k, Integer sitecode2,
 			int l, Integer usercode, Date fromdate2, Date todate2, Integer testcode2, Pageable pageable);
 
 
-	List<Logilabprotocolorders> findByRejectedAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterInAndTestcodeOrderByProtocolordercodeDesc(
+	List<ProtocolOrdersDashboard> findByRejectedAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterInAndTestcodeOrderByProtocolordercodeDesc(
 			int i, Integer sitecode, Date fromdate, Date todate, List<LSprojectmaster> lstproject, Integer testcode,
 			Pageable pageable);
 
 
-	List<Logilabprotocolorders> findByRejectedAndSitecodeAndLsprojectmasterInAndViewoptionAndCreatedtimestampBetweenAndTestcodeOrderByProtocolordercodeDesc(
+	List<ProtocolOrdersDashboard> findByRejectedAndSitecodeAndLsprojectmasterInAndViewoptionAndCreatedtimestampBetweenAndTestcodeOrderByProtocolordercodeDesc(
 			int i, Integer sitecode, List<LSprojectmaster> lstproject, int j, Date fromdate, Date todate,
 			Integer testcode, Pageable pageable);
 
@@ -1133,13 +1135,13 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 			Integer sitecode, List<LSprojectmaster> lstproject, int j, Date fromdate, Date todate, Integer testcode);
 
 
-	List<Logilabprotocolorders> findByOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndCreatebyInOrderByProtocolordercodeDesc(
+	List<ProtocolOrdersDashboard> findByOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndCreatebyInOrderByProtocolordercodeDesc(
 			int i, Integer sitecode, int j, Date fromdate, Date todate, int k, Integer sitecode2, int l,
 			Integer usercode, Date fromdate2, Date todate2, int m, Integer sitecode3, int n, Date fromdate3,
 			Date todate3, List<Integer> userlist, Pageable pageable);
 
 
-	List<Logilabprotocolorders> findByOrdercancellAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterInOrderByProtocolordercodeDesc(
+	List<ProtocolOrdersDashboard> findByOrdercancellAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterInOrderByProtocolordercodeDesc(
 			int i, Integer sitecode, Date fromdate, Date todate, List<LSprojectmaster> lstproject, Pageable pageable);
 
 
@@ -1149,17 +1151,17 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 			Date todate3, List<Integer> userlist);
 
 
-	List<Logilabprotocolorders> findByOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndTestcodeOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndTestcodeOrderByProtocolordercodeDesc(
+	List<ProtocolOrdersDashboard> findByOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndTestcodeOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndTestcodeOrderByProtocolordercodeDesc(
 			int i, Integer sitecode, int j, Date fromdate, Date todate, Integer testcode, int k, Integer sitecode2,
 			int l, Integer usercode, Date fromdate2, Date todate2, Integer testcode2, Pageable pageable);
 
 
-	List<Logilabprotocolorders> findByOrdercancellAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterInAndTestcodeOrderByProtocolordercodeDesc(
+	List<ProtocolOrdersDashboard> findByOrdercancellAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterInAndTestcodeOrderByProtocolordercodeDesc(
 			int i, Integer sitecode, Date fromdate, Date todate, List<LSprojectmaster> lstproject, Integer testcode,
 			Pageable pageable);
 
 
-	List<Logilabprotocolorders> findByOrdercancellAndSitecodeAndLsprojectmasterInAndViewoptionAndCreatedtimestampBetweenAndTestcodeOrderByProtocolordercodeDesc(
+	List<ProtocolOrdersDashboard> findByOrdercancellAndSitecodeAndLsprojectmasterInAndViewoptionAndCreatedtimestampBetweenAndTestcodeOrderByProtocolordercodeDesc(
 			int i, Integer sitecode, List<LSprojectmaster> lstproject, int j, Date fromdate, Date todate,
 			Integer testcode, Pageable pageable);
 
@@ -1481,77 +1483,77 @@ List<Logilabprotocolorders> findByOrdercancellAndSitecodeAndLsprojectmasterIsNul
 	List<LSlogilabprotocoldetail> findByProtocolordercodeIn(List<Long> protocolordercodeauto);
 
 
-	List<Logilabprotocolorders>  findByOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndElnmaterialInAndViewoptionAndOrdercancellIsNull(
+	List<LogilabProtocolOrderssh>  findByOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndElnmaterialInAndViewoptionAndOrdercancellIsNull(
 			String orderflag, Integer protocoltype, Date fromdate, Date todate, List<Elnmaterial> currentChunk, int i);
 
 
-	List<Logilabprotocolorders>  findByOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndElnmaterialInAndViewoptionAndCreatebyAndOrdercancellIsNull(
+	List<LogilabProtocolOrderssh>  findByOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndElnmaterialInAndViewoptionAndCreatebyAndOrdercancellIsNull(
 			String orderflag, Integer protocoltype, Date fromdate, Date todate, List<Elnmaterial> currentChunk, int i,
 			Integer usercode);
 
 
-	List<Logilabprotocolorders>  findByOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndElnmaterialInAndViewoptionAndCreatebyInAndOrdercancellIsNullOrderByProtocolordercodeDesc(
+	List<LogilabProtocolOrderssh>  findByOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndElnmaterialInAndViewoptionAndCreatebyInAndOrdercancellIsNullOrderByProtocolordercodeDesc(
 			String orderflag, Integer protocoltype, Date fromdate, Date todate, List<Elnmaterial> currentChunk, int i,
 			List<Integer> userlist);
 
 
-	List<Logilabprotocolorders> findByOrderflagAndRejectedAndLsprojectmasterInAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndRejectedAndLsprojectmasterIsNullAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndElnmaterialInOrderByProtocolordercodeDesc(
+	List<LogilabProtocolOrderssh> findByOrderflagAndRejectedAndLsprojectmasterInAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndRejectedAndLsprojectmasterIsNullAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndElnmaterialInOrderByProtocolordercodeDesc(
 			String orderflag, int i, List<LSprojectmaster> lstproject, Integer protocoltype, Date fromdate, Date todate,
 			String orderflag2, int j, Integer protocoltype2, Date fromdate2, Date todate2,
 			List<Elnmaterial> currentChunk);
 
 
-	List<Logilabprotocolorders> findByOrderflagAndLsprojectmasterAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndElnmaterialInOrderByProtocolordercodeDesc(
+	List<LogilabProtocolOrderssh> findByOrderflagAndLsprojectmasterAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndElnmaterialInOrderByProtocolordercodeDesc(
 			String orderflag, LSprojectmaster lsprojectmaster, Integer protocoltype, Date fromdate, Date todate,
 			String orderflag2, Integer protocoltype2, Date fromdate2, Date todate2, List<Elnmaterial> currentChunk);
 
 
-	List<Logilabprotocolorders> findByOrderflagAndLsprojectmasterInAndTestcodeAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndTestcodeAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndElnmaterialInOrderByProtocolordercodeDesc(
+	List<LogilabProtocolOrderssh> findByOrderflagAndLsprojectmasterInAndTestcodeAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndTestcodeAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndElnmaterialInOrderByProtocolordercodeDesc(
 			String orderflag, List<LSprojectmaster> lstproject, Integer testcode, Integer protocoltype, Date fromdate,
 			Date todate, String orderflag2, Integer testcode2, Integer protocoltype2, Date fromdate2, Date todate2,
 			List<Elnmaterial> currentChunk);
 
 
-	List<Logilabprotocolorders> findByOrderflagAndLsprojectmasterAndTestcodeAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndTestcodeAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndElnmaterialInOrderByProtocolordercodeDesc(
+	List<LogilabProtocolOrderssh> findByOrderflagAndLsprojectmasterAndTestcodeAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndTestcodeAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndElnmaterialInOrderByProtocolordercodeDesc(
 			String orderflag, LSprojectmaster lsprojectmaster, Integer testcode, Integer protocoltype, Date fromdate,
 			Date todate, String orderflag2, Integer testcode2, Integer protocoltype2, Date fromdate2, Date todate2,
 			List<Elnmaterial> currentChunk);
 
 
-	List<Logilabprotocolorders> findByOrderflagAndRejectedAndLsprojectmasterInAndTestcodeAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndRejectedAndLsprojectmasterIsNullAndTestcodeAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndElnmaterialInOrderByProtocolordercodeDesc(
+	List<LogilabProtocolOrderssh> findByOrderflagAndRejectedAndLsprojectmasterInAndTestcodeAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndRejectedAndLsprojectmasterIsNullAndTestcodeAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndElnmaterialInOrderByProtocolordercodeDesc(
 			String orderflag, int i, List<LSprojectmaster> lstproject, Integer testcode, Integer protocoltype,
 			Date fromdate, Date todate, String orderflag2, int j, Integer testcode2, Integer protocoltype2,
 			Date fromdate2, Date todate2, List<Elnmaterial> currentChunk);
 
 
-	List<Logilabprotocolorders> findByOrderflagAndRejectedAndLsprojectmasterAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndRejectedAndLsprojectmasterIsNullAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndElnmaterialInOrderByProtocolordercodeDesc(
+	List<LogilabProtocolOrderssh> findByOrderflagAndRejectedAndLsprojectmasterAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndRejectedAndLsprojectmasterIsNullAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndElnmaterialInOrderByProtocolordercodeDesc(
 			String orderflag, int i, LSprojectmaster lsprojectmaster, Integer protocoltype, Date fromdate, Date todate,
 			String orderflag2, int j, Integer protocoltype2, Date fromdate2, Date todate2,
 			List<Elnmaterial> currentChunk);
 
 
-	List<Logilabprotocolorders> findByOrderflagAndRejectedAndLsprojectmasterAndTestcodeAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndRejectedAndLsprojectmasterIsNullAndTestcodeAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndElnmaterialInOrderByProtocolordercodeDesc(
+	List<LogilabProtocolOrderssh> findByOrderflagAndRejectedAndLsprojectmasterAndTestcodeAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndRejectedAndLsprojectmasterIsNullAndTestcodeAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndElnmaterialInOrderByProtocolordercodeDesc(
 			String orderflag, int i, LSprojectmaster lsprojectmaster, Integer testcode, Integer protocoltype,
 			Date fromdate, Date todate, String orderflag2, int j, Integer testcode2, Integer protocoltype2,
 			Date fromdate2, Date todate2, List<Elnmaterial> currentChunk);
 
 
 
-	List<Logilabprotocolorders> findByDirectorycodeAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedOrderByProtocolordercodeDesc(
+	List<LogilabProtocolOrderssh> findByDirectorycodeAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedOrderByProtocolordercodeDesc(
 			List<Long> directory_Code, int i, Date fromdate, Date todate, String orderflag, Integer protocoltype, int j,
 			List<Long> directory_Code2, int k, LSuserMaster lsuserMaster, Date fromdate2, Date todate2,
 			String orderflag2, Integer protocoltype2, int l, List<Long> directory_Code3, int m,
 			LSuserMaster lsuserMaster2, Date fromdate3, Date todate3, String orderflag3, Integer protocoltype3, int n);
 
 
-	List<Logilabprotocolorders> findByDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedOrDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedOrderByProtocolordercodeDesc(
+	List<LogilabProtocolOrderssh> findByDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedOrDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedOrderByProtocolordercodeDesc(
 			List<Long> directory_Code, int i, Date fromdate, Date todate, String orderflag, Integer protocoltype, int j,
 			List<Long> directory_Code2, int k, LSuserMaster lsuserMaster, Date fromdate2, Date todate2,
 			String orderflag2, Integer protocoltype2, int l, List<Long> directory_Code3, int m, Date fromdate3,
 			Date todate3, List<Integer> userlist, String orderflag3, Integer protocoltype3, int n);
 
 
-	List<Logilabprotocolorders> findByDirectorycodeAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndTestcodeOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndTestcodeOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndTestcodeOrderByProtocolordercodeDesc(
+	List<LogilabProtocolOrderssh> findByDirectorycodeAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndTestcodeOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndTestcodeOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndTestcodeOrderByProtocolordercodeDesc(
 			List<Long> directory_Code, int i, Date fromdate, Date todate, String orderflag, Integer protocoltype,
 			Integer testcode, List<Long> directory_Code2, int j, LSuserMaster lsuserMaster, Date fromdate2,
 			Date todate2, String orderflag2, Integer protocoltype2, Integer testcode2, List<Long> directory_Code3,
@@ -1559,7 +1561,7 @@ List<Logilabprotocolorders> findByOrdercancellAndSitecodeAndLsprojectmasterIsNul
 			Integer testcode3);
 
 
-	List<Logilabprotocolorders> findByDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndTestcodeOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndTestcodeOrDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndTestcodeOrderByProtocolordercodeDesc(
+	List<LogilabProtocolOrderssh> findByDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndTestcodeOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndTestcodeOrDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndTestcodeOrderByProtocolordercodeDesc(
 			List<Long> directory_Code, int i, Date fromdate, Date todate, String orderflag, Integer protocoltype,
 			Integer testcode, List<Long> directory_Code2, int j, LSuserMaster lsuserMaster, Date fromdate2,
 			Date todate2, String orderflag2, Integer protocoltype2, Integer testcode2, List<Long> directory_Code3,
@@ -1567,7 +1569,7 @@ List<Logilabprotocolorders> findByOrdercancellAndSitecodeAndLsprojectmasterIsNul
 			Integer testcode3);
 
 
-	List<Logilabprotocolorders> findByDirectorycodeAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedAndTestcodeOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedAndTestcodeOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedAndTestcodeOrderByProtocolordercodeDesc(
+	List<LogilabProtocolOrderssh> findByDirectorycodeAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedAndTestcodeOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedAndTestcodeOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedAndTestcodeOrderByProtocolordercodeDesc(
 			List<Long> directory_Code, int i, Date fromdate, Date todate, String orderflag, Integer protocoltype, int j,
 			Integer testcode, List<Long> directory_Code2, int k, LSuserMaster lsuserMaster, Date fromdate2,
 			Date todate2, String orderflag2, Integer protocoltype2, int l, Integer testcode2,
@@ -1575,27 +1577,27 @@ List<Logilabprotocolorders> findByOrdercancellAndSitecodeAndLsprojectmasterIsNul
 			String orderflag3, Integer protocoltype3, int n, Integer testcode3);
 
 
-	List<Logilabprotocolorders> findByDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedAndTestcodeOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedAndTestcodeOrDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedAndTestcodeOrderByProtocolordercodeDesc(
+	List<LogilabProtocolOrderssh> findByDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedAndTestcodeOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedAndTestcodeOrDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedAndTestcodeOrderByProtocolordercodeDesc(
 			List<Long> directory_Code, int i, Date fromdate, Date todate, String orderflag, Integer protocoltype, int j,
 			List<Long> directory_Code2, Integer testcode, int k, LSuserMaster lsuserMaster, Date fromdate2,
 			Date todate2, String orderflag2, Integer protocoltype2, int l, Integer testcode2,
 			List<Long> directory_Code3, int m, Date fromdate3, Date todate3, List<Integer> userlist, String orderflag3,
 			Integer protocoltype3, int n, Integer testcode3);
 
-	Collection<? extends Logilabprotocolorders> findByOrderflagAndLsprojectmasterInAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndOrdercancellIsNull(
+	Collection<? extends LogilabProtocolOrderssh> findByOrderflagAndLsprojectmasterInAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndOrdercancellIsNull(
 			String orderflag, List<LSprojectmaster> lstproject, Integer protocoltype, Date fromdate, Date todate);
 
 	List<LSlogilabprotocoldetail> findByRepeatAndAutoregistercountGreaterThan(boolean b, int i);
 
 
-	List<Logilabprotocolorders> findByDirectorycodeAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndAssignedtoIsNullAndOrdercancellIsNullOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndAssignedtoIsNullAndOrdercancellIsNullOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndAssignedtoIsNullAndOrdercancellIsNullOrderByProtocolordercodeDesc(
+	List<LogilabProtocolOrderssh> findByDirectorycodeAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndAssignedtoIsNullAndOrdercancellIsNullOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndAssignedtoIsNullAndOrdercancellIsNullOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndAssignedtoIsNullAndOrdercancellIsNullOrderByProtocolordercodeDesc(
 			List<Long> directory_Code, int i, Date fromdate, Date todate, String orderflag, Integer protocoltype,
 			List<Long> directory_Code2, int j, LSuserMaster lsuserMaster, Date fromdate2, Date todate2,
 			String orderflag2, Integer protocoltype2, List<Long> directory_Code3, int k, LSuserMaster lsuserMaster2,
 			Date fromdate3, Date todate3, String orderflag3, Integer protocoltype3);
 
 
-	List<Logilabprotocolorders> findByDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndAssignedtoIsNullAndOrdercancellIsNullOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndAssignedtoIsNullAndOrdercancellIsNullOrDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndAssignedtoIsNullAndOrdercancellIsNullOrderByProtocolordercodeDesc(
+	List<LogilabProtocolOrderssh> findByDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndAssignedtoIsNullAndOrdercancellIsNullOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndAssignedtoIsNullAndOrdercancellIsNullOrDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndAssignedtoIsNullAndOrdercancellIsNullOrderByProtocolordercodeDesc(
 			List<Long> directory_Code, int i, Date fromdate, Date todate, String orderflag, Integer protocoltype,
 			List<Long> directory_Code2, int j, LSuserMaster lsuserMaster, Date fromdate2, Date todate2,
 			String orderflag2, Integer protocoltype2, List<Long> directory_Code3, int k, Date fromdate3, Date todate3,
@@ -1920,6 +1922,21 @@ List<Logilabprotocolorders> findByOrdercancellAndSitecodeAndLsprojectmasterIsNul
 	        ")",
 	        nativeQuery = true)
 	public Long getcountSearchedRecords(Integer integer, String searchkeywords, int i, int j, int k, List<Integer> userlist, List<Lsprotocolorderstructure> lstdir);
+
+
+	List<ProtocolOrdersDashboard> findByOrderflagAndSitecodeAndOrdercancellIsNullAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndRejectedIsNullOrOrderflagAndSitecodeAndOrdercancellIsNullAndLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndRejectedIsNullOrOrderflagAndSitecodeAndOrdercancellIsNullAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndRejectedIsNullAndCreatebyInOrOrderflagAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterInAndOrdercancellIsNullAndRejectedIsNullOrderByProtocolordercodeDesc(
+			String string, Integer sitecode, int i, Date fromdate, Date todate, String string2, Integer sitecode2,
+			int j, Integer usercode, Date fromdate2, Date todate2, String string3, Integer sitecode3, int k,
+			Date fromdate3, Date todate3, List<Integer> userlist, String string4, Integer sitecode4, Date fromdate4,
+			Date todate4, List<LSprojectmaster> lstproject, Pageable pageable);
+
+
+	List<ProtocolOrdersDashboard> findByLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatedtimestampBetweenOrLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatebyAndCreatedtimestampBetweenOrLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndCreatebyInOrLsprojectmasterInAndViewoptionAndSitecodeAndCreatedtimestampBetweenOrLsprojectmasterInAndCreatedtimestampBetweenAndSitecodeOrderByProtocolordercodeDesc(
+			int i, Integer sitecode, Date fromdate, Date todate, int j, Integer sitecode2, Integer usercode,
+			Date fromdate2, Date todate2, int k, Integer sitecode3, Date fromdate3, Date todate3,
+			List<Integer> userlist, List<LSprojectmaster> lstproject, int l, Integer sitecode4, Date fromdate4,
+			Date todate4, List<LSprojectmaster> lstproject2, Date fromdate5, Date todate5, Integer sitecode5,
+			Pageable pageable);
 
 
 	}

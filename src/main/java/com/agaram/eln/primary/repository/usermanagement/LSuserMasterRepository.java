@@ -69,7 +69,7 @@ public interface LSuserMasterRepository extends JpaRepository<LSuserMaster, Inte
 	@Modifying
 	@Query("update LSuserMaster u set u.password = ?1,u.passwordstatus = ?2 where u.usercode = ?3")
 	void setpasswordandpasswordstatusByusercode(String password, Integer integer, Integer usercode);
-	
+
 	@Transactional
 	@Modifying
 	@Query("update LSuserMaster u set u.password = ?1,u.passwordstatus = ?2,u.forgetstatus = 0 where u.usercode = ?3")
@@ -207,7 +207,7 @@ public interface LSuserMasterRepository extends JpaRepository<LSuserMaster, Inte
 	public LSuserMaster findByUsercodeAndGetstart(Integer usercode, String string);
 
 	public List<LSuserMaster> findByUsercodeIn(List<Integer> usercode);
-
+	
 	public LSuserMaster findTop1ByEmailid(String emailid);
 
 	@Transactional
@@ -219,8 +219,9 @@ public interface LSuserMasterRepository extends JpaRepository<LSuserMaster, Inte
 			String emailid);
 
 	public LSuserMaster findTop1ByEmailidAndAutenticatefrom(String emailid, int i);
-	
+
 	public LSuserMaster findTop1ByEmailidIgnoreCase(String emailid);
 
 	public LSuserMaster findTop1ByEmailidIgnoreCaseAndAutenticatefrom(String emailid, int i);
+
 }

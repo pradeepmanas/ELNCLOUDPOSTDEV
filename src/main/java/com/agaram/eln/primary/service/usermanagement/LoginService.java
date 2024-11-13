@@ -400,7 +400,7 @@ public class LoginService {
 	public Map<String, Object> Login(LoggedUser objuser) {
 		Map<String, Object> obj = new HashMap<>();
 		LSuserMaster objExitinguser = new LSuserMaster();
-		String username = objuser.getsUsername();
+		String username = objuser.getsUsername();	
 		LSSiteMaster objsiteobj = lSSiteMasterRepository.findBysitecode(Integer.parseInt(objuser.getsSiteCode()));
 		List<LSMultisites> objformultisite = LSMultisitesRepositery.findByLssiteMaster(objsiteobj);
 		List<Integer> usercode = objformultisite.stream().map(LSMultisites::getUsercode).collect(Collectors.toList());
@@ -586,6 +586,7 @@ public class LoginService {
 				objExitinguser.getObjResponse().setStatus(false);
 
 				obj.put("user", objExitinguser);
+				
 				return obj;
 			}
 
@@ -611,6 +612,9 @@ public class LoginService {
 					activeUser.setLssitemaster(tempobj[0]);
 					activeUser.setLsusermaster(objUser);
 					objUser.setLastloggedon(commonfunction.getCurrentUtcTime());
+					activeUser.setUsergroupcode(objuser.getLsusergroup().getUsergroupcode());
+					activeUser.setUsergroupname(objuser.getLsusergroup().getUsergroupname());
+				
 				} catch (ParseException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -631,6 +635,252 @@ public class LoginService {
 		}
 		obj.put("user", objExitinguser);
 
+		LSpreferences IsRegulated = LSpreferencesRepository.findByTasksettings("RegulatedIndustry");
+		obj.put("IsRegulated", IsRegulated);
+		return obj;
+	}
+	
+	@SuppressWarnings("unused")
+	public Map<String, Object> LoginonIOT(LoggedUser objuser) {
+		Map<String, Object> obj = new HashMap<>();
+		LSuserMaster objExitinguser = new LSuserMaster();
+		String username = objuser.getsUsername();	
+		LSSiteMaster objsiteobj = lSSiteMasterRepository.findBysitecode(Integer.parseInt(objuser.getsSiteCode()));
+		List<LSMultisites> objformultisite = LSMultisitesRepositery.findByLssiteMaster(objsiteobj);
+		List<Integer> usercode = objformultisite.stream().map(LSMultisites::getUsercode).collect(Collectors.toList());
+		List<LSuserMaster> userobj = lSuserMasterRepository
+				.findByUsernameIgnoreCaseAndUsercodeInAndLoginfromAndUserretirestatusNot(username, usercode, "0", 1);
+		LSSiteMaster[] tempobj = { null };
+		LSSiteMaster[] multisitelogin = { null };
+		if (!userobj.isEmpty()) {
+			userobj.forEach(items -> {
+				items.getLsmultisites().forEach(values -> {
+
+					if (values.getLssiteMaster().getSitecode() == Integer.parseInt(objuser.getsSiteCode())) {
+						tempobj[0] = items.getLssitemaster();
+						multisitelogin[0] = values.getLssiteMaster();
+						items.setLssitemaster(values.getLssiteMaster());
+					}
+				});
+			});
+			objExitinguser = userobj.get(0);
+		}
+
+		// kumaresan for multisite purpose
+//		objExitinguser = lSuserMasterRepository.findByUsernameIgnoreCaseAndLssitemasterAndLoginfrom(username,
+//				objsiteobj, "0");
+		LSPasswordPolicy lockcount = objExitinguser != null
+				? LSPasswordPolicyRepository
+						.findTopByAndLssitemasterOrderByPolicycodeDesc(objExitinguser.getLssitemaster())
+				: null;
+
+		LSpreferences objPrefrence = LSpreferencesRepository.findByTasksettingsAndValuesettings("ConCurrentUser",
+				"Active");
+
+		if (objPrefrence != null) {
+
+			List<LSactiveUser> lstActUsrs = lsactiveUserRepository.findAll();
+			String dvalue = objPrefrence.getValueencrypted();
+
+			if (dvalue != null) {
+				String sConcurrentUsers = AESEncryption.decrypt(dvalue);
+				sConcurrentUsers = sConcurrentUsers.replaceAll("\\s", "");
+
+				int nConcurrentUsers = Integer.parseInt(sConcurrentUsers);
+				int actUsr = lstActUsrs.size();
+
+				if (actUsr >= nConcurrentUsers) {
+					objExitinguser.setObjResponse(new Response());
+					objExitinguser.getObjResponse().setInformation("IDS_LICENCERCHD");
+					objExitinguser.getObjResponse().setStatus(false);
+
+					obj.put("user", objExitinguser);
+					return obj;
+				}
+			} else {
+				objExitinguser.setObjResponse(new Response());
+				objExitinguser.getObjResponse().setInformation("IDS_SETCONCURRENTLICENCE");
+				objExitinguser.getObjResponse().setStatus(false);
+
+				obj.put("user", objExitinguser);
+				return obj;
+			}
+		}
+
+		if (objExitinguser != null) {
+
+			if (objuser.getLsusergroup() == null) {
+
+				objExitinguser.setLsusergroup(LSusergroupRepository.findOne(objuser.getMultiusergroupcode()));
+			} else {
+				objExitinguser.setLsusergroup(objuser.getLsusergroup());
+			}
+
+			objExitinguser.setObjResponse(new Response());
+			objExitinguser.setObjsilentaudit(new LScfttransaction());
+			objExitinguser.setIdletime(lockcount.getIdletime());
+			objExitinguser.setIdletimeshowcheck(lockcount.getIdletimeshowcheck());
+
+			if ((Integer.parseInt(objuser.getsSiteCode()) == objExitinguser.getLssitemaster().getSitecode())
+					|| objuser.getsUsername().equalsIgnoreCase("Administrator")) {
+				String Password = AESEncryption.decrypt(objExitinguser.getPassword());
+				System.out.println(" password: " + Password);
+
+				Date passwordexp = objExitinguser.getPasswordexpirydate();
+				if (Password.equals(objuser.getsPassword()) && objExitinguser.getUserstatus() != "Locked"
+						&& objExitinguser.getUserretirestatus() == 0) {
+
+					String encryptionStr = objExitinguser.getPassword() + "_" + objExitinguser.getUsername()
+							+ objExitinguser.getLssitemaster().getSitename();
+
+					String encryptPassword = AESEncryption.encrypt(encryptionStr);
+
+					obj.put("encryptedpassword", encryptPassword);
+
+					String status = objExitinguser.getUserstatus();
+					String groupstatus = objExitinguser.getLsusergrouptrans().getUsergroupstatus();
+					if (status.equals("Deactive")) {
+						objExitinguser.getObjResponse().setInformation("ID_NOTACTIVE");
+						objExitinguser.getObjResponse().setStatus(false);
+
+						obj.put("user", objExitinguser);
+						return obj;
+					} else if (groupstatus.trim().equals("Deactive")) {
+						objExitinguser.getObjResponse().setInformation("ID_GRPNOACT");
+						objExitinguser.getObjResponse().setStatus(false);
+
+						obj.put("user", objExitinguser);
+						return obj;
+					} else {
+
+						if (!username.trim().toLowerCase().equals("administrator")) {
+							Date date = new Date();
+
+							boolean comp1 = objExitinguser.getPasswordexpirydate().compareTo(date) > 0;
+							boolean comp2 = objExitinguser.getPasswordexpirydate().compareTo(date) < 0;
+							boolean comp3 = objExitinguser.getPasswordexpirydate().compareTo(date) == 0;
+							if (comp3 == true || (comp1 == false && comp2 == true)) {
+								objExitinguser.setPassword(null);
+								objExitinguser.setLssitemaster(tempobj[0]);
+								lSuserMasterRepository.save(objExitinguser);
+								objExitinguser.setLssitemaster(multisitelogin[0]);
+								objExitinguser.getObjResponse().setInformation("ID_EXPIRY");
+								objExitinguser.getObjResponse().setStatus(false);
+
+								obj.put("user", objExitinguser);
+								return obj;
+							} else {
+								objExitinguser.getObjResponse().setStatus(true);
+								objExitinguser.setLockcount(0);
+								objExitinguser.setLssitemaster(tempobj[0]);
+								lSuserMasterRepository.save(objExitinguser);
+								objExitinguser.setLssitemaster(multisitelogin[0]);
+							}
+						} else {
+							objExitinguser.getObjResponse().setStatus(true);
+							objExitinguser.setLockcount(0);
+							objExitinguser.setLssitemaster(tempobj[0]);
+							lSuserMasterRepository.save(objExitinguser);
+							objExitinguser.setLssitemaster(multisitelogin[0]);
+						}
+					}
+				} else if (objExitinguser.getUserretirestatus() != 0) {
+
+					objExitinguser.getObjResponse().setInformation("ID_RETIREDUSER");
+					objExitinguser.getObjResponse().setStatus(false);
+
+					obj.put("user", objExitinguser);
+					return obj;
+
+				}
+
+				else if (!Password.equals(objuser.getsPassword()) || objExitinguser.getLockcount() == 5
+						|| objExitinguser.getUserstatus() == "Locked") {
+					if (!username.trim().toLowerCase().equals("administrator")) {
+						Integer count = objExitinguser.getLockcount() == null ? 0 : objExitinguser.getLockcount();
+						count++;
+						if (count.equals(lockcount.getLockpolicy())) {
+							objExitinguser.setUserstatus("Locked");
+							objExitinguser.setLockcount(count++);
+							objExitinguser.getObjResponse().setInformation("ID_LOCKED");
+							objExitinguser.getObjResponse().setStatus(false);
+							objExitinguser.setLssitemaster(tempobj[0]);
+							lSuserMasterRepository.save(objExitinguser);
+							objExitinguser.setLssitemaster(multisitelogin[0]);
+						} else if (count < lockcount.getLockpolicy()) {
+							objExitinguser.setLockcount(count++);
+							objExitinguser.getObjResponse().setInformation("ID_INVALID");
+							objExitinguser.getObjResponse().setStatus(false);
+							objExitinguser.setLssitemaster(tempobj[0]);
+							lSuserMasterRepository.save(objExitinguser);
+							objExitinguser.setLssitemaster(multisitelogin[0]);
+						} else {
+							objExitinguser.getObjResponse().setInformation("ID_LOCKED");
+							objExitinguser.getObjResponse().setStatus(false);
+
+						}
+					} else {
+						objExitinguser.getObjResponse().setInformation("ID_INVALID");
+						objExitinguser.getObjResponse().setStatus(false);
+
+					}
+				}
+			} else {
+				objExitinguser.getObjResponse().setInformation("ID_SITEVALID");
+				objExitinguser.getObjResponse().setStatus(false);
+
+				obj.put("user", objExitinguser);
+				
+				return obj;
+			}
+
+			obj.put("multiusergroupcode", objuser.getMultiusergroupcode());
+		} else {
+			LSSiteMaster objsite = lSSiteMasterRepository.findBysitecode(Integer.parseInt(objuser.getsSiteCode()));
+			objExitinguser = lSuserMasterRepository.findByusernameAndLssitemaster("Administrator", objsite);
+			objExitinguser.setObjResponse(new Response());
+			objExitinguser.getObjResponse().setInformation("ID_NOTEXIST");
+			objExitinguser.getObjResponse().setStatus(false);
+
+		}
+		if (objExitinguser.getObjResponse().getStatus() == true) {
+			LSuserMaster objUser = lsuserMasterRepository.findByusercode(objExitinguser.getUsercode());
+			if (objUser != null) {
+				LSactiveUser activeUser = new LSactiveUser();
+				objExitinguser.setLssitemaster(objExitinguser.getLssitemaster());
+				try {
+					activeUser.setTimestamp(commonfunction.getCurrentUtcTime());
+					activeUser.setClientname(null);
+					activeUser.setLastactivetime(commonfunction.getCurrentUtcTime());
+//					activeUser.setLssitemaster(objExitinguser.getLssitemaster());
+					activeUser.setLssitemaster(tempobj[0]);
+					activeUser.setLsusermaster(objUser);
+					objUser.setLastloggedon(commonfunction.getCurrentUtcTime());
+					activeUser.setUsergroupcode(objuser.getLsusergroup().getUsergroupcode());
+					activeUser.setUsergroupname(objuser.getLsusergroup().getUsergroupname());
+				
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				objUser.setLssitemaster(tempobj[0]);
+				lsuserMasterRepository.save(objUser);
+				lsactiveUserRepository.save(activeUser);
+				activeUser.setLssitemaster(multisitelogin[0]);
+				objUser.setLssitemaster(multisitelogin[0]);
+				obj.put("activeUserId", activeUser);
+			}
+		}
+		try {
+			obj.put("Logintime", commonfunction.getCurrentUtcTime());
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		obj.put("user", objExitinguser);
+
+		LSpreferences IsRegulated = LSpreferencesRepository.findByTasksettings("RegulatedIndustry");
+		obj.put("IsRegulated", IsRegulated);
 		return obj;
 	}
 
@@ -747,7 +997,7 @@ public class LoginService {
 		LSPasswordPolicy passHistorycount = null ;
 		if(objExitinguser != null) {
 			passHistorycount = LSPasswordPolicyRepository
-				.findByLssitemaster(objExitinguser.getLssitemaster());
+				.findFirst1ByLssitemaster(objsiteobj);
 		}
 		listofpwd = LSPasswordHistoryDetailsRepository
 				.findTop5ByAndLsusermasterInOrderByPasswordcodeDesc(objExitinguser);

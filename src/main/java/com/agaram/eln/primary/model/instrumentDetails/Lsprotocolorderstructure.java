@@ -53,9 +53,11 @@ public class Lsprotocolorderstructure {
 	
 	private Boolean projectfolder;
 	
-	public Boolean isProjectfolder() {
+
+	public Boolean getProjectfolder() {
 		return projectfolder;
 	}
+
 
 	public void setProjectfolder(Boolean projectfolder) {
 		this.projectfolder = projectfolder;

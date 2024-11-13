@@ -3,18 +3,22 @@ package com.agaram.eln.primary.model.equipment;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.hibernate.annotations.Type;
 
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
+import com.agaram.eln.primary.model.communicationsetting.CommunicationSetting;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 
@@ -44,7 +48,29 @@ public class Equipment implements Serializable{
 	private String sequipmentmake;
 	private String sequipmentmodel;
 	private String sequipmentlotno;
+	private String sequipmentelectrodeno;
+	private Boolean cmmsetting;
 	
+	@OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "fk_cmmsettingcode")
+    private CommunicationSetting communicationsetting;
+	
+	public CommunicationSetting getCommunicationsetting() {
+		return communicationsetting;
+	}
+
+	public void setCommunicationsetting(CommunicationSetting communicationsetting) {
+		this.communicationsetting = communicationsetting;
+	}
+
+	public Boolean getCmmsetting() {
+		return cmmsetting;
+	}
+
+	public void setCmmsetting(Boolean cmmsetting) {
+		this.cmmsetting = cmmsetting;
+	}
+
 	private Integer ntransactionstatus;
 	
 	private Integer nstatus;
@@ -359,5 +385,13 @@ public class Equipment implements Serializable{
 
 	public static long getSerialversionuid() {
 		return serialVersionUID;
+	}
+
+	public String getSequipmentelectrodeno() {
+		return sequipmentelectrodeno;
+	}
+
+	public void setSequipmentelectrodeno(String sequipmentelectrodeno) {
+		this.sequipmentelectrodeno = sequipmentelectrodeno;
 	}
 }

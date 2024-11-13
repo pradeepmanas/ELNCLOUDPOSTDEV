@@ -469,7 +469,7 @@ public interface LSProtocolMasterRepository extends JpaRepository<LSprotocolmast
 			List<Integer> lstteamuser, List<LSprotocolmastertest> lsfiletest, int i, int j, int k, int l, int m,
 			Integer objLoggeduser, List<LSprotocolmastertest> lsfiletest2, int n, int o, int p, int q, int r,
 			List<Integer> lstteamuser2, List<LSprotocolmastertest> lsfiletest3, int s, int t, int u, int v, int w);
-
+	
 	List<LSprotocolmaster> findByLssitemasterAndLstestInAndProtocolmastercodeGreaterThanAndRetirestatusAndViewoptionAndApprovedOrCreatedbyInAndLstestInAndProtocolmastercodeGreaterThanAndRetirestatusAndViewoptionAndApprovedOrCreatedbyAndLstestInAndProtocolmastercodeGreaterThanAndRetirestatusAndViewoptionAndApprovedOrCreatedbyInAndLstestInAndProtocolmastercodeGreaterThanAndRetirestatusAndViewoptionAndApprovedOrderByProtocolmastercodeDesc(
 			Integer sitecode, List<LSprotocolmastertest> lsfiletest, int i, int j, int k, int l,
 			List<Integer> lstteammap, List<LSprotocolmastertest> lsfiletest2, int m, int n, int o, int p,

@@ -3,6 +3,7 @@ package com.agaram.eln.primary.controller.syncwordconverter;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -90,4 +91,23 @@ public class DocumenteditorController {
 	public Reporttemplate SaveAs(@RequestBody Reporttemplate data) throws Exception {
 		return documenteditorService.SaveAs(data);
 	}
+	
+	@CrossOrigin(origins = "*", allowedHeaders = "*")
+	@PostMapping("/api/wordeditor/Getfilesforedit")
+	public Map<String, Object>  Getfilesforedit(@RequestBody SaveParameter file) throws Exception {
+		return documenteditorService.Getfilesforedit(file);
+	}
+	
+	@CrossOrigin(origins = "*", allowedHeaders = "*")
+	@PostMapping("/api/wordeditor/saveFile")
+	public Map<String, Object>  saveFile(@RequestBody SaveParameter file) throws Exception {
+		return documenteditorService.saveFile(file);
+	}
+	
+//	@CrossOrigin(origins = "*", allowedHeaders = "*")
+//	@PostMapping("/api/wordeditor/Getfile")
+//	public ResponseEntity<InputStreamResource> Getfile(@RequestBody SaveParameter file) throws Exception {
+//		return documenteditorService.Getfile(file);
+//	}
+	
 }

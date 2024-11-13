@@ -63,8 +63,8 @@ public interface LSfileRepository extends JpaRepository<LSfile, Integer>{
 	
 	@Transactional
 	@Modifying
-	@Query("update LSfile set lssheetworkflow= :workflow, approved= :approved, rejected= :rejected  where filecode in (:filecode)")
-	public void updateFileWorkflow(@Param("workflow")  LSsheetworkflow lssheetworkflow, @Param("approved")  Integer approved, @Param("rejected")  Integer rejected, @Param("filecode")  Integer filecode);
+	@Query("update LSfile set lssheetworkflow= :workflow, approved= :approved, rejected= :rejected , modifieddate = :modifieddate  where filecode in (:filecode)")
+	public void updateFileWorkflow(@Param("workflow")  LSsheetworkflow lssheetworkflow, @Param("approved")  Integer approved, @Param("rejected")  Integer rejected, @Param("filecode")  Integer filecode,@Param("modifieddate") Date modifieddate);
 	
 	public long countByLssheetworkflowAndApproved( LSsheetworkflow lssheetworkflow, Integer Approved);
 	

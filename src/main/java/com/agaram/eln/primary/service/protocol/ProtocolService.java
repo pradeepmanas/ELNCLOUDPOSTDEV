@@ -5484,6 +5484,83 @@ public class ProtocolService {
 		}
 		return mapObj;
 	}
+	/*
+	 * public Map<String, Object> addProtocolOrderStep(Map<String, Object> argObj) {
+	 * 
+	 * Map<String, Object> mapObj = new HashMap<String, Object>(); LScfttransaction
+	 * LScfttransactionobj = new LScfttransaction();
+	 * if(argObj.containsKey("objsilentaudit")) { LScfttransactionobj = new
+	 * ObjectMapper().convertValue(argObj.get("objsilentaudit"), new
+	 * TypeReference<LScfttransaction>() { }); } ObjectMapper objMapper= new
+	 * ObjectMapper(); LoggedUser objUser = new LoggedUser(); // silent audit
+	 * if(LScfttransactionobj!=null ) {
+	 * LScfttransactionobj.setTableName("LSprotocolmaster");
+	 * if(argObj.containsKey("username")) { String username=
+	 * objMapper.convertValue(argObj.get("username"), String.class); LSSiteMaster
+	 * objsite =
+	 * LSSiteMasterRepository.findBysitecode(LScfttransactionobj.getLssitemaster());
+	 * LSuserMaster objuser=
+	 * LSuserMasterRepositoryObj.findByusernameAndLssitemaster(username, objsite);
+	 * LScfttransactionobj.setLsuserMaster(objuser.getUsercode());
+	 * LScfttransactionobj.setLssitemaster(objuser.getLssitemaster().getSitecode());
+	 * LScfttransactionobj.setUsername(username); }
+	 * lscfttransactionRepository.save(LScfttransactionobj); } // manual audit
+	 * if(argObj.containsKey("objuser")) {
+	 * objUser=objMapper.convertValue(argObj.get("objuser"), LoggedUser.class);
+	 * if(argObj.containsKey("objmanualaudit")) { LScfttransaction
+	 * objmanualaudit=new LScfttransaction(); objmanualaudit =
+	 * objMapper.convertValue(argObj.get("objmanualaudit"), LScfttransaction.class);
+	 * 
+	 * objmanualaudit.setComments(objUser.getComments());
+	 * lscfttransactionRepository.save(objmanualaudit); } }
+	 * 
+	 * if(argObj.containsKey("newProtocolstepObj")) { LSlogilabprotocolsteps
+	 * LSprotocolstepObj = new
+	 * ObjectMapper().convertValue(argObj.get("newProtocolstepObj"), new
+	 * TypeReference<LSlogilabprotocolsteps>() {});
+	 * 
+	 * CloudLSlogilabprotocolstepsInfo CloudLSprotocolstepInfoObj = new
+	 * CloudLSlogilabprotocolstepsInfo(); if(LSprotocolstepObj.getIsmultitenant() ==
+	 * 1) { // if(LSprotocolstepObj.getNewStep() == 1) {
+	 * CloudLSprotocolstepInfoObj.setId(LSprotocolstepObj.getProtocolorderstepcode()
+	 * ); CloudLSprotocolstepInfoObj.setLsprotocolstepInfo(LSprotocolstepObj.
+	 * getLsprotocolstepInfo());
+	 * CloudLSlogilabprotocolstepsInfoRepository.save(CloudLSprotocolstepInfoObj);
+	 * // }else { // CloudLSlogilabprotocolstepsInfo updateLSprotocolstepInfo =
+	 * CloudLSlogilabprotocolstepsInfoRepository. //
+	 * findById(LSprotocolstepObj.getProtocolorderstepcode()); //
+	 * updateLSprotocolstepInfo.setLsprotocolstepInfo(LSprotocolstepObj.
+	 * getLsprotocolstepInfo()); //
+	 * CloudLSlogilabprotocolstepsInfoRepository.save(updateLSprotocolstepInfo); //
+	 * } } else { Query query = new
+	 * Query(Criteria.where("id").is(LSprotocolstepObj.getProtocolorderstepcode()));
+	 * Update update=new Update();
+	 * update.set("content",LSprotocolstepObj.getLsprotocolstepInfo());
+	 * mongoTemplate.upsert(query, update, LSlogilabprotocolstepsInfo.class); }
+	 * 
+	 * List<LSlogilabprotocolsteps> tempLSprotocolstepLst =
+	 * LSlogilabprotocolstepsRepository.findByprotocolorderstepcode(
+	 * LSprotocolstepObj.getProtocolorderstepcode()); List<LSlogilabprotocolsteps>
+	 * LSprotocolstepLst = new ArrayList<LSlogilabprotocolsteps>();
+	 * for(LSlogilabprotocolsteps LSprotocolstepObj1: tempLSprotocolstepLst) {
+	 * if(LSprotocolstepObj.getIsmultitenant() == 1) { //
+	 * if(LSprotocolstepObj.getNewStep() == 1) {
+	 * LSprotocolstepObj1.setLsprotocolstepInfo(CloudLSprotocolstepInfoObj.
+	 * getLsprotocolstepInfo()); // }else { // CloudLSlogilabprotocolstepsInfo
+	 * newLSprotocolstepInfo =
+	 * CloudLSlogilabprotocolstepsInfoRepository.findById(LSprotocolstepObj.
+	 * getProtocolstepcode()); // if(newLSprotocolstepInfo != null) { //
+	 * LSprotocolstepObj1.setLsprotocolstepInfo(newLSprotocolstepInfo.
+	 * getLsprotocolstepInfo()); // } // } } else { LSlogilabprotocolstepsInfo
+	 * newLSprotocolstepInfo =
+	 * mongoTemplate.findById(LSprotocolstepObj1.getProtocolorderstepcode(),
+	 * LSlogilabprotocolstepsInfo.class); if(newLSprotocolstepInfo != null) {
+	 * LSprotocolstepObj1.setLsprotocolstepInfo(newLSprotocolstepInfo.getContent());
+	 * } } LSprotocolstepLst.add(LSprotocolstepObj1); }
+	 * mapObj.put("protocolstepLst", LSprotocolstepLst); }
+	 * 
+	 * return mapObj; }
+	 */
 
 	@SuppressWarnings("unused")
 	public Map<String, Object> GetProtocolorderVerionLst(Map<String, Object> argObj) {
@@ -6211,6 +6288,42 @@ public class ProtocolService {
 					version.setFileuid(fileUUID);
 					version.setFileuri(fileURI);
 				} else {
+//					Lsprotocoltemplatedata lsprotocoldata = mongoTemplate
+//					.findById(protocolMaster.getProtocolmastercode(), Lsprotocoltemplatedata.class);
+//			
+//					Lsprotocoltemplateversiondata lsprotocolversion = new Lsprotocoltemplateversiondata();
+//					lsprotocolversion.setId(version.getProtocolversioncode());
+//					lsprotocolversion.setContent(lsprotocoldata.getContent());
+//					lsprotocolversion.setVersionno(version.getVersionno());
+//					mongoTemplate.insert(lsprotocolversion);
+//			
+//					List<LSprotocolversion> lstLSprotocolversions = lsprotocolversionRepository.findByprotocolmastercode(
+//							protocolMaster.getProtocolmastercode());
+//					int i=0;
+//					while(lstLSprotocolversions.size()>i) {
+//						Lsprotocoltemplateversiondata lsprotocolversiondata = mongoTemplate
+//								.findById(lstLSprotocolversions.get(i).getProtocolversioncode(), Lsprotocoltemplateversiondata.class);
+//						if(lsprotocolversiondata != null) {
+//							String vcontent = lsprotocolversiondata.getContent();
+//							GridFSDBFile file1 = gridFsTemplate.findOne(new Query(
+//									Criteria.where("filename").is("protocol_" + protocolMaster.getProtocolmastercode() 
+//										+ "version_" + lstLSprotocolversions.get(i).getVersionno())));
+//							if (file1 != null) {
+//								gridFsTemplate.delete(new Query(
+//										Criteria.where("filename").is("protocol_" + protocolMaster.getProtocolmastercode() 
+//											+ "version_" + lstLSprotocolversions.get(i).getVersionno())));
+//							}
+//							gridFsTemplate.store(new ByteArrayInputStream(vcontent.getBytes(StandardCharsets.UTF_8)),
+//									"protocol_" + protocolMaster.getProtocolmastercode() + "version_" + lstLSprotocolversions.get(i).getVersionno(), 
+//										StandardCharsets.UTF_16);
+//							
+//							Query query = new Query(Criteria.where("id").is(lstLSprotocolversions.get(i).getProtocolversioncode()));
+//							mongoTemplate.remove(query, Lsprotocoltemplateversiondata.class);
+//		
+//						}
+//						i++;
+//					}
+
 					String Content = "";
 
 					GridFSDBFile largefile = gridFsTemplate.findOne(new Query(
@@ -6221,6 +6334,12 @@ public class ProtocolService {
 								new InputStreamReader(largefile.getInputStream(), StandardCharsets.UTF_8)).lines()
 								.collect(Collectors.joining("\n"));
 					}
+//					else if(lsprotocoldata != null && largefile == null) {
+//						byte[] bytes = lsprotocoldata.getContent().getBytes(StandardCharsets.UTF_16);
+//						Content = new String(bytes, StandardCharsets.UTF_16);
+//						Query query = new Query(Criteria.where("id").is(protocolMaster.getProtocolmastercode()));
+//						mongoTemplate.remove(query, Lsprotocoltemplatedata.class);
+//					} 
 
 					GridFSDBFile largefile1 = gridFsTemplate.findOne(new Query(Criteria.where("filename").is("protocol_"
 							+ protocolMaster.getProtocolmastercode() + "version_" + version.getVersionno())));
@@ -6290,6 +6409,12 @@ public class ProtocolService {
 					protocolMaster.setIsmultitenant(ismultitenant);
 					commonservice.updateProtocolContent(protocolDataJson, protocolMaster);
 				} else {
+//					Query query = new Query(Criteria.where("id").is(protocolMaster.getProtocolmastercode()));
+//					Update update = new Update();
+//					update.set("content", protocolDataJson);
+//
+//					mongoTemplate.upsert(query, update, Lsprotocoltemplatedata.class);
+
 					byte[] bytes = protocolDataJson.getBytes(StandardCharsets.UTF_16);
 					String Content = new String(bytes, StandardCharsets.UTF_16);
 
@@ -6301,6 +6426,7 @@ public class ProtocolService {
 					}
 					gridFsTemplate.store(new ByteArrayInputStream(Content.getBytes(StandardCharsets.UTF_8)),
 							"protocol_" + protocolMaster.getProtocolmastercode(), StandardCharsets.UTF_16);
+
 				}
 				response.setInformation("IDS_MSG_PROTOCOLSAVE");
 				response.setStatus(true);

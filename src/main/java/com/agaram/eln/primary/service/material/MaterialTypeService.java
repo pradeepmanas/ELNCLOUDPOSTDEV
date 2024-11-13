@@ -56,6 +56,11 @@ public class MaterialTypeService {
 				findByNmaterialtypecodeNotAndNstatusAndNsitecodeOrNmaterialtypecodeNotAndNstatusAndNdefaultstatusOrderByNmaterialtypecodeDesc(-1,1,objMaterialType.getNsitecode(),-1,1,4);
 		return new ResponseEntity<>(lstmaterialtype, HttpStatus.OK);
 	}
+	
+	public ResponseEntity<Object> getMaterialTypeonId(MaterialType objMaterialType) {
+		MaterialType lsmaterialtype = materialTypeRepository.findOne(objMaterialType.getNmaterialtypecode());
+		return new ResponseEntity<>(lsmaterialtype, HttpStatus.OK);
+	}
 
 	public ResponseEntity<Object> getMaterialTypeField(MaterialType objMaterialType) {
 		MaterialConfig objConfig = materialConfigRepository.findByNformcodeAndNmaterialtypecodeAndNstatus(40, objMaterialType.getNmaterialtypecode(), 1);

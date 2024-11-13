@@ -4,7 +4,6 @@ import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
@@ -21,16 +20,21 @@ import javax.imageio.ImageReader;
 import javax.imageio.ImageWriter;
 import javax.imageio.spi.IIORegistry;
 
+import org.apache.commons.io.IOUtils;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.gridfs.GridFsTemplate;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -684,4 +688,58 @@ public class DocumenteditorService {
 //		}
 		return templateobject;
 	}
+	
+	public Map<String, Object> Getfilesforedit(SaveParameter file) throws Exception {
+		Map<String, Object> map = new HashMap<String, Object>();
+		String tenant = TenantContext.getCurrentTenant();
+		String containerName = tenant + "sheetfolderfiles";
+		String documentName = file.getFileName();
+		byte[] documentBytes = objCloudFileManipulationservice.retrieveCloudReportFile(containerName, documentName);
+		MockMultipartFile mockMultipartFile = new MockMultipartFile("tempFileName", documentBytes);
+		Map<String, String> mapObj = importFile(mockMultipartFile);
+		map.put("templatecontent", mapObj);
+		return map;
+	}
+
+	public Map<String, Object> saveFile(SaveParameter file) throws Exception {
+		Map<String, Object> objMap = new HashMap<String, Object>();
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		String tenant = TenantContext.getCurrentTenant();
+		String containerName = tenant + "sheetfolderfiles";
+		WordDocument document = WordProcessorHelper.save(file.getContent());
+		document.save(outputStream, com.syncfusion.docio.FormatType.Docx);
+		objMap = objCloudFileManipulationservice.storecloudReportfile(outputStream.toByteArray(), containerName,
+				file.getFileName());
+		objMap.put("status", true);
+		return objMap;
+	}
+	
+//	public ResponseEntity<InputStreamResource> Getfile(SaveParameter file) throws Exception {
+//		HttpHeaders header = new HttpHeaders();
+//		String tenant = TenantContext.getCurrentTenant();
+//		header.set("Content-Disposition", "attachment; filename=" + file.getFileName());
+//			InputStream fileStream = objCloudFileManipulationservice.retrieveCloudFile(file.getFileName(),
+//					tenant + "sheetfolderfiles");
+//			InputStreamResource resource = null;
+//			byte[] content = IOUtils.toByteArray(fileStream);
+//			int size = content.length;
+//			InputStream is = null;
+//			try {
+//				is = new ByteArrayInputStream(content);
+//				resource = new InputStreamResource(is);
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//			} finally {
+//				try {
+//					if (is != null)
+//						is.close();
+//				} catch (Exception ex) {
+//
+//				}
+//			}
+//
+//			header.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+//			header.setContentLength(size);
+//			return new ResponseEntity<>(resource, header, HttpStatus.OK);
+//	}
 }

@@ -95,6 +95,11 @@ public class LSlogilablimsorderdetail {
 		this.duedate = duedate;
 	}
 	
+	@OneToMany
+	@JoinColumn(name="batchcode")
+	private List<LSOrderElnMethod> lsorderelnmethod;
+	
+	
 	@Transient
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date cautiondate;
@@ -1168,6 +1173,14 @@ public class LSlogilablimsorderdetail {
 
 		public void setAccouttype(Integer accouttype) {
 			this.accouttype = accouttype;
+		}
+
+		public List<LSOrderElnMethod> getLsorderelnmethod() {
+			return lsorderelnmethod;
+		}
+
+		public void setLsorderelnmethod(List<LSOrderElnMethod> lsorderelnmethod) {
+			this.lsorderelnmethod = lsorderelnmethod;
 		}
 
 
