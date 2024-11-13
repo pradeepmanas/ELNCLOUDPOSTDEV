@@ -233,6 +233,7 @@ public class EmailService {
         return email;
 		
 	}
+	
 	public Email sendEmailelnLiteCopy(Email email) throws MessagingException {
 		String from = env.getProperty("spring.mail.username");
 		String copy = env.getProperty("spring.mail.mailcopy");

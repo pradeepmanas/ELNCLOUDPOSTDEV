@@ -30,7 +30,6 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.hibernate.validator.constraints.Range;
 
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
-import com.agaram.eln.primary.model.equipment.Equipment;
 import com.agaram.eln.primary.model.instrumentsetup.InstrumentMaster;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
@@ -44,7 +43,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
  */
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
 @XmlRootElement  (name = "method")
-@XmlType(propOrder = { "methodkey", "methodname", "instmaster","equipment", "instrawdataurl",
+@XmlType(propOrder = { "methodkey", "methodname", "instmaster", "instrawdataurl",
 		"samplesplit", "parser", "site", "status", "createdby", "createddate","username","transactiondate","filename","displayvalue",
 		"screenname","objsilentaudit","objmanualaudit","info","converterstatus"})
 @Entity
@@ -64,13 +63,9 @@ public class Method implements Serializable, Diffable<Method>{
 	@Column(name = "methodname")
 	private String methodname;	
 
-//	@ManyToOne(fetch = FetchType.EAGER, optional = false)
-//    @JoinColumn(name = "instmasterkey", nullable = false)
-//	private InstrumentMaster instmaster;	
-	
-	@ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "nequipmentcode")
-	private Equipment equipment;
+	@ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "instmasterkey", nullable = false)
+	private InstrumentMaster instmaster;	
 	
 	@Column(name = "instrawdataurl")
 	private String instrawdataurl;	
@@ -152,14 +147,10 @@ public class Method implements Serializable, Diffable<Method>{
 		this.methodname = methodname;
 	}
 
-//	@XmlElement	(nillable=true)
-//	public InstrumentMaster getInstmaster() {
-//		return instmaster;
-//	}
-//
-//	public void setInstmaster(InstrumentMaster instmaster) {
-//		this.instmaster = instmaster;
-//	}
+	@XmlElement	(nillable=true)
+	public InstrumentMaster getInstmaster() {
+		return instmaster;
+	}
 
 	@Transient
 	private String username;
@@ -168,6 +159,10 @@ public class Method implements Serializable, Diffable<Method>{
 	@Temporal(TemporalType.TIMESTAMP)
 	Date transactiondate;
 	
+	public void setInstmaster(InstrumentMaster instmaster) {
+		this.instmaster = instmaster;
+	}
+
 	@XmlElement	
 	public String getInstrawdataurl() {
 		return instrawdataurl;
@@ -361,14 +356,6 @@ public class Method implements Serializable, Diffable<Method>{
 		this.methodstatus = methodstatus;
 	}
 
-	public Equipment getEquipment() {
-		return equipment;
-	}
-
-	public void setEquipment(Equipment equipment) {
-		this.equipment = equipment;
-	}
-
 	/**
 	 * To find difference between two entity objects by implementing Diffable interface  
 	 */
@@ -378,10 +365,7 @@ public class Method implements Serializable, Diffable<Method>{
 		
 	     return new DiffBuilder(this, obj, ToStringStyle.SHORT_PREFIX_STYLE)
 	       .append("methodname", this.methodname, obj.methodname) 
-	     //  .append("instmaster", getInstCode(this.instmaster), getInstCode(obj.instmaster))	    
-	       
-	       .append("equipment", this.getEquipment(), obj.getEquipment())
-	       
+	       .append("instmaster", getInstCode(this.instmaster), getInstCode(obj.instmaster))	     
 	       .append("instrawdataurl", this.instrawdataurl, obj.instrawdataurl)
 	       .append("samplesplit", this.samplesplit, obj.samplesplit)
 	       .append("parser", this.parser, obj.parser)
@@ -425,8 +409,7 @@ public class Method implements Serializable, Diffable<Method>{
 	{
 		this.methodkey = method.methodkey;
 		this.methodname = method.methodname;
-		//this.instmaster = method.instmaster;
-		
+		this.instmaster = method.instmaster;
 		this.instrawdataurl = method.instrawdataurl;
 		this.samplesplit = method.samplesplit;
 		this.parser = method.parser;
@@ -448,7 +431,7 @@ public class Method implements Serializable, Diffable<Method>{
 		this.methodversion=method.methodversion;
 		this.info=method.info;
 		this.converterstatus=method.converterstatus;
-		this.equipment = method.equipment;
+
 
 	}
 	

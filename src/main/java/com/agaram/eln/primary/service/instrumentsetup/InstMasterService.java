@@ -1,9 +1,6 @@
 package com.agaram.eln.primary.service.instrumentsetup;
 
-import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -17,8 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.agaram.eln.primary.model.equipment.Equipment;
-import com.agaram.eln.primary.model.equipment.EquipmentCategory;
 import com.agaram.eln.primary.model.instrumentsetup.FileSettings;
 import com.agaram.eln.primary.model.instrumentsetup.InstMethod;
 import com.agaram.eln.primary.model.instrumentsetup.InstrumentCategory;
@@ -30,8 +25,6 @@ import com.agaram.eln.primary.model.instrumentsetup.TcpSettings;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.repository.cfr.LScfttransactionRepository;
-import com.agaram.eln.primary.repository.equipment.EquipmentCategoryRepository;
-import com.agaram.eln.primary.repository.equipment.EquipmentRepository;
 import com.agaram.eln.primary.repository.instrumentsetup.InstCategoryRepository;
 import com.agaram.eln.primary.repository.instrumentsetup.InstMasterRepository;
 import com.agaram.eln.primary.repository.instrumentsetup.InstMethodRepository;
@@ -77,11 +70,6 @@ public class InstMasterService {
 	@Autowired
 	InstRightsRepository rightsRepo;
 	
-	@Autowired
-	EquipmentCategoryRepository equipmentCategoryRepository;
-	
-	@Autowired
-	EquipmentRepository equipmentRepository;
 //	@Autowired
 //	ReadWriteXML readWriteXML;
 	
@@ -550,25 +538,5 @@ public class InstMasterService {
    		return createdUser;
    	}
 
-    public ResponseEntity<Object> getInstListBySite(final LSSiteMaster site){
-   		return new ResponseEntity<>(masterRepo.findByStatusAndSite(1,site),
-   				HttpStatus.OK);
-   	}
    	
-    public ResponseEntity<Object> getAllEquipment(LSSiteMaster site) throws ParseException {
-		
-    		List<Equipment> lstEquipment = equipmentRepository
-    				.findByNsitecodeAndCmmsettingTrueOrderByNequipmentcodeDesc(site.getSitecode());
-  
-    		return new ResponseEntity<>(lstEquipment, HttpStatus.OK);
-    }
-
-	public ResponseEntity<Object> getEquipmentCatBasedOnSite(EquipmentCategory eqipmentcategory, final LSSiteMaster site) {
-
-		List<Equipment> lstEquipments = new ArrayList<Equipment>();
-		
-		lstEquipments = equipmentRepository.findByCmmsettingTrueAndEquipmentcategoryAndNsitecodeAndNstatus(eqipmentcategory,site.getSitecode(), 1);
-				
-		return new ResponseEntity<>(lstEquipments, HttpStatus.OK);
-	}
 }

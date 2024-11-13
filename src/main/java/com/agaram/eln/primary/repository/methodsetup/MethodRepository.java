@@ -7,7 +7,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.agaram.eln.primary.model.equipment.Equipment;
 import com.agaram.eln.primary.model.instrumentsetup.InstrumentMaster;
 import com.agaram.eln.primary.model.methodsetup.Method;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
@@ -79,9 +78,9 @@ public interface MethodRepository extends JpaRepository<Method, Integer>{
 	 * @param status  [int] 1 - Active or -1- Inactive
 	 * @return Method entity matching specified inputs.
 	 */
-	//Optional<Method> findByMethodnameAndInstmasterAndStatus(final String methodName, final InstrumentMaster instMaster, final int status);
+	Optional<Method> findByMethodnameAndInstmasterAndStatus(final String methodName, final InstrumentMaster instMaster, final int status);
 
-	//List<Method> findByMethodnameContainingAndInstmasterAndStatus(final String methodName, final InstrumentMaster instMaster, final int status);
+	List<Method> findByMethodnameContainingAndInstmasterAndStatus(final String methodName, final InstrumentMaster instMaster, final int status);
 
 //	Optional<Method> findBySiteMethodnameAndInstmasterAndStatus(final Site site, final String methodName, final InstrumentMaster instMaster, final int status);
 
@@ -98,27 +97,12 @@ public interface MethodRepository extends JpaRepository<Method, Integer>{
 
 	Optional<Method> findByMethodkeyAndStatusAndSite(int methodKey, int i, LSSiteMaster site);
 
-//	Optional<Method> findByMethodnameAndInstmasterAndStatusAndSite(String methodname, InstrumentMaster instMaster,
-//			int i, LSSiteMaster site);
+	Optional<Method> findByMethodnameAndInstmasterAndStatusAndSite(String methodname, InstrumentMaster instMaster,
+			int i, LSSiteMaster site);
 
 	List<Method> findBySite(LSSiteMaster site, Sort sort);
 
 	List<Method> findByStatusAndSite(int i, LSSiteMaster lssiteMaster);
 
 	List<Method> findByInstrawdataurl(String fileName);
-
-//	List<Method> findByInstmasterAndStatus(InstrumentMaster instmast, int i);
-
-	Optional<Method> findByMethodnameAndEquipmentAndStatusAndSite(String methodname, Equipment equipment, int i,
-			LSSiteMaster site);
-
-	List<Method> findByMethodnameContainingAndEquipmentAndStatus(String concat, Equipment equipment, int i);
-
-	Optional<Method> findByMethodnameAndEquipmentAndStatus(String methodname, Equipment equipment, int i);
-
-	List<Method> findByStatusAndSiteAndEquipmentIsNotNull(int i, LSSiteMaster lssiteMaster);
-
-	List<Method> findByEquipmentAndStatus(Equipment equ, int i);
-
-
 }

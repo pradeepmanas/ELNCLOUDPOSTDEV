@@ -122,10 +122,7 @@ public class LoginController {
 	public Map<String, Object> Login(@RequestBody LoggedUser objuser) throws Exception {
 		return loginService.Login(objuser);
 	}
-	@PostMapping("/LoginonIOT")
-	public Map<String, Object> LoginonIOT(@RequestBody LoggedUser objuser) throws Exception {
-		return loginService.LoginonIOT(objuser);
-	}
+
 //	@PostMapping("/ActiveUserEntry")
 //	public LSactiveUser activeUserEntry(@RequestBody LSactiveUser objsite) throws Exception {
 //		return loginService.activeUserEntry(objsite);
@@ -328,7 +325,6 @@ public class LoginController {
 
 	@PostMapping("/CheckUserPassword")
 	public Map<String, Object> CheckUserPassword(@RequestBody LoggedUser objuser) throws Exception {
-		System.out.println(objuser);
 		return loginService.CheckUserPassword(objuser);
 	}
 	

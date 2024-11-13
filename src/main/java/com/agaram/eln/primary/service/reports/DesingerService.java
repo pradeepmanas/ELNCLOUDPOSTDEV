@@ -282,10 +282,10 @@ public class DesingerService {
 		Response objResponse = new Response();
 		ReportDesignerStructure lstdir = null;
 		if (objdir.getDirectorycode() != null) {
-			lstdir = reportDesignerStructureRepository.findByDirectorycodeAndParentdircodeAndDirectorynameIgnoreCaseNot(
+			lstdir = reportDesignerStructureRepository.findByDirectorycodeAndParentdircodeAndDirectorynameNot(
 					objdir.getDirectorycode(), objdir.getParentdircode(), objdir.getDirectoryname());
 		} else {
-			lstdir = reportDesignerStructureRepository.findByParentdircodeAndDirectorynameIgnoreCase(objdir.getParentdircode(),
+			lstdir = reportDesignerStructureRepository.findByParentdircodeAndDirectoryname(objdir.getParentdircode(),
 					objdir.getDirectoryname());
 		}
 		if (lstdir != null) {

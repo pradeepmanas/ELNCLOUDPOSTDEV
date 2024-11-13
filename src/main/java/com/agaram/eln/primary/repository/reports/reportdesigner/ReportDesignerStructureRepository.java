@@ -30,7 +30,4 @@ public interface ReportDesignerStructureRepository extends JpaRepository<ReportD
 	@Modifying
 	@Query("update ReportDesignerStructure o set o.directorycode = ?1 where o.directorycode = ?2")
 	void updateparentdirectory(Long dircodetomove, Long directorycode);
-	ReportDesignerStructure findByDirectorycodeAndParentdircodeAndDirectorynameIgnoreCaseNot(Long directorycode,
-			Long parentdircode, String directoryname);
-	ReportDesignerStructure findByParentdircodeAndDirectorynameIgnoreCase(Long parentdircode, String directoryname);
 }

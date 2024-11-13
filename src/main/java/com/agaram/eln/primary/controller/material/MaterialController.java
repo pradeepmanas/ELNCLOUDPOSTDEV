@@ -34,12 +34,6 @@ public class MaterialController {
 		return (ResponseEntity<Object>) objMaterialService.getMaterialType(nsiteInteger);
 	}
 	
-	@RequestMapping(value = "/getMaterialonCategory", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Object> getMaterialonCategory(@RequestBody Map<String, Object> inputMap) throws Exception {
-
-		return (ResponseEntity<Object>) objMaterialService.getMaterialonCategory(inputMap);
-	}
-	
 	@RequestMapping(value = "/getMaterialDesign", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> getMaterialDesign(@RequestBody Map<String, Object> inputMap) throws Exception {
 

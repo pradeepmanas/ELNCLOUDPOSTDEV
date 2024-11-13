@@ -74,35 +74,28 @@ public class MethodDelimiterService {
 	
 		final List<MethodDelimiter> delimiterList = methodDelimiterRepo.findByStatusAndLssitemasterOrLssitemasterIsNull(1,mobj,new Sort(Sort.Direction.DESC, "methoddelimiterkey"));
 	
-		  Set<String> uniqueKeys = new HashSet<>();
-		  
-	        Map<String, Set<String>> parserMethodDelimiterNames = new HashMap<>();
-
-	        List<MethodDelimiter> filteredDelimiterRecords = delimiterList.stream()
-	                .filter(record -> {
-	                    String key;
-	                        key = record.getDelimiter().getDelimiterkey() + "_" + record.getParsermethod().getParsermethodkey();
-
-	                    if (!uniqueKeys.contains(key)) {
-	                        uniqueKeys.add(key);
-	                        return true;
-	                    }
-
-	                    return false;
-	                })
-	                .filter(record -> {
-	                    String parserMethodKey = record.getParsermethod().getParsermethodkey().toString();
-	                    String delimiterName = record.getDelimiter().getDelimitername().toLowerCase(); 
-	                    Set<String> delimiterNamesForMethod = parserMethodDelimiterNames.computeIfAbsent(parserMethodKey, k -> new HashSet<>());
-
-	                    if (!delimiterNamesForMethod.contains(delimiterName)) {
-	                        delimiterNamesForMethod.add(delimiterName); 
-	                        return true;
-	                    }
-	                    return false;
-	                })
-	                .collect(Collectors.toList());
+        Set<String> uniqueKeys = new HashSet<>();
         
+        System.out.println("unfiltered records: " +delimiterList.size() );
+
+        List<MethodDelimiter> filteredDelimiterRecords = delimiterList.stream()
+                .filter(record -> {
+                    String key;
+                    if (record.getLssitemaster() == null) {
+                        key = record.getDelimiter().getDelimiterkey() + "_" + record.getParsermethod().getParsermethodkey() + "_null";
+                    } else {
+                        key = record.getDelimiter().getDelimiterkey() + "_" + record.getParsermethod().getParsermethodkey() + "_" + record.getLssitemaster().getSitecode();
+                    }
+
+                    if (!uniqueKeys.contains(key)) {
+                        uniqueKeys.add(key);
+                        return true;
+                    }
+
+                    return false;
+                })
+                .collect(Collectors.toList());
+
         System.out.println(filteredDelimiterRecords);
 		return new ResponseEntity<>(filteredDelimiterRecords, HttpStatus.OK);
 	}
@@ -112,30 +105,23 @@ public class MethodDelimiterService {
 		final List<MethodDelimiter> delimiterList = methodDelimiterRepo.findByLssitemasterOrLssitemasterIsNull(mobj,new Sort(Sort.Direction.DESC, "methoddelimiterkey"));
 		
         Set<String> uniqueKeys = new HashSet<>();
- 
-        Map<String, Set<String>> parserMethodDelimiterNames = new HashMap<>();
+        
+        System.out.println("unfiltered records: " +delimiterList.size() );
 
         List<MethodDelimiter> filteredDelimiterRecords = delimiterList.stream()
                 .filter(record -> {
                     String key;
-                        key = record.getDelimiter().getDelimiterkey() + "_" + record.getParsermethod().getParsermethodkey();
+                    if (record.getLssitemaster() == null) {
+                        key = record.getDelimiter().getDelimiterkey() + "_" + record.getParsermethod().getParsermethodkey() + "_null";
+                    } else {
+                        key = record.getDelimiter().getDelimiterkey() + "_" + record.getParsermethod().getParsermethodkey() + "_" + record.getLssitemaster().getSitecode();
+                    }
 
                     if (!uniqueKeys.contains(key)) {
                         uniqueKeys.add(key);
                         return true;
                     }
 
-                    return false;
-                })
-                .filter(record -> {
-                    String parserMethodKey = record.getParsermethod().getParsermethodkey().toString();
-                    String delimiterName = record.getDelimiter().getDelimitername().toLowerCase(); 
-                    Set<String> delimiterNamesForMethod = parserMethodDelimiterNames.computeIfAbsent(parserMethodKey, k -> new HashSet<>());
-
-                    if (!delimiterNamesForMethod.contains(delimiterName)) {
-                        delimiterNamesForMethod.add(delimiterName); 
-                        return true;
-                    }
                     return false;
                 })
                 .collect(Collectors.toList());

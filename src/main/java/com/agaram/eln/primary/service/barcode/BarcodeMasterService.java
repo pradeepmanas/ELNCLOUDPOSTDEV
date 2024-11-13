@@ -80,80 +80,76 @@ public class BarcodeMasterService {
 
 	@Autowired
 	private LsfilemapBarcodeRepository lsfilemapBarcodeRepository;
-	
+
 	public ResponseEntity<Object> InsertBarcode(MultipartHttpServletRequest request)
-	        throws JsonMappingException, JsonProcessingException, ParseException {
-	    Map<String, Object> returnMap = new HashMap<>();
-	    final ObjectMapper mapper = new ObjectMapper();
-	    Response response = new Response();
-	    try {
-	        
-	        final BarcodeMaster barcode = mapper.readValue(request.getParameter("barcode"), BarcodeMaster.class);
-	        barcode.setBarcodename(barcode.getBarcodename() != null ? barcode.getBarcodename().trim() : null);
-	        
-	        List<BarcodeMaster> Existbarcode = new ArrayList<>();
-	        if (barcode.getBarcodeno() == null) {
-	            Existbarcode = barcodemasterrepository.findByBarcodenameAndLssitemaster(
-	                barcode.getBarcodename(), barcode.getLssitemaster());
-	        } else {
-	            Existbarcode = barcodemasterrepository.findByBarcodenameAndLssitemasterAndBarcodenoNot(
-	                barcode.getBarcodename(), barcode.getLssitemaster(), barcode.getBarcodeno());
-	        }
+			throws JsonMappingException, JsonProcessingException, ParseException {
+		Map<String, Object> returnMap = new HashMap<>();
+		final ObjectMapper mapper = new ObjectMapper();
+		Response response = new Response();
+		try {
+			final BarcodeMaster barcode = mapper.readValue(request.getParameter("barcode"), BarcodeMaster.class);
+			List<BarcodeMaster> Existbarcode = new ArrayList<>();
+			if (barcode.getBarcodeno() == null) {
+				Existbarcode = barcodemasterrepository.findByBarcodenameAndLssitemaster(barcode.getBarcodename(),
+						barcode.getLssitemaster());
+			} else {
+				Existbarcode = barcodemasterrepository.findByBarcodenameAndLssitemasterAndBarcodenoNot(
+						barcode.getBarcodename(), barcode.getLssitemaster(), barcode.getBarcodeno());
+			}
+			if (Existbarcode.isEmpty()) {
+				Integer isMultitenant = Integer.parseInt(request.getParameter("isMultitenant"));
+				String filename = request.getParameter("filename");
+				List<MultipartFile> file = request.getFiles("file");
+				String UUId = "";
+				Date currentdate = commonfunction.getCurrentUtcTime();
+				barcode.setCreatedon(currentdate);
+				if (barcode.getBarcodeno() != null) {
+					BarcodeMaster barcodeobj = barcodemasterrepository.findByBarcodeno(barcode.getBarcodeno());
+					if (!barcodeobj.getBarcodefilename().equals(filename) && !file.isEmpty()
+							&& !file.get(0).isEmpty()) {
+						UUId = processFileUpload(file.get(0), barcodeobj.getBarcodefileid(), isMultitenant);
+					}
+					barcodeobj.setBarcodename(barcode.getBarcodename());
+					barcodeobj.setBarcodefilename(filename);
+					barcodeobj.setBarcodefileid(barcodeobj.getBarcodefileid());
+					barcodemasterrepository.save(barcodeobj);
 
-	        if (Existbarcode.isEmpty()) {
-	            Integer isMultitenant = Integer.parseInt(request.getParameter("isMultitenant"));
-	            String filename = request.getParameter("filename");
-	            List<MultipartFile> file = request.getFiles("file");
-	            String UUId = "";
-	            Date currentdate = commonfunction.getCurrentUtcTime();
-	            barcode.setCreatedon(currentdate);
-	            
-	            if (barcode.getBarcodeno() != null) {
-	                BarcodeMaster barcodeobj = barcodemasterrepository.findByBarcodeno(barcode.getBarcodeno());
-	                if (!barcodeobj.getBarcodefilename().equals(filename) && !file.isEmpty() && !file.get(0).isEmpty()) {
-	                    UUId = processFileUpload(file.get(0), barcodeobj.getBarcodefileid(), isMultitenant);
-	                }
-	                barcodeobj.setBarcodename(barcode.getBarcodename());
-	                barcodeobj.setBarcodefilename(filename);
-	                barcodeobj.setBarcodefileid(barcodeobj.getBarcodefileid());
-	                barcodemasterrepository.save(barcodeobj);
-	                
-	                response.setStatus(true);
-	                barcodeobj.setResponse(response);
-	                returnMap.put("Barcode", barcodeobj);
+					response.setStatus(true);
+					barcodeobj.setResponse(response);
+					returnMap.put("Barcode", barcodeobj);
 
-	            } else {
-	                if (!file.isEmpty() && !file.get(0).isEmpty()) {
-	                    UUId = processFileUpload(file.get(0), UUID.randomUUID().toString(), isMultitenant);
-	                    barcode.setBarcodefilename(filename);
-	                    barcode.setBarcodefileid(UUId);
-	                }
-	                barcodemasterrepository.save(barcode);
-	                response.setStatus(true);
-	                barcode.setResponse(response);
-	                returnMap.put("Barcode", barcode);
-	            }
+				} else {
+					if (!file.isEmpty() && !file.get(0).isEmpty()) {
+						UUId = processFileUpload(file.get(0), UUID.randomUUID().toString(), isMultitenant);
+						barcode.setBarcodefilename(filename);
+						barcode.setBarcodefileid(UUId);
+					}
+					barcodemasterrepository.save(barcode);
+					response.setStatus(true);
+					barcode.setResponse(response);
+					returnMap.put("Barcode", barcode);
+				}
 
-	        } else {
-	            response.setStatus(false);
-	            response.setInformation("Name Already Exists");
-	            barcode.setResponse(response);
-	            returnMap.put("Barcode", barcode);
-	        }
+			} else {
+				response.setStatus(false);
+				response.setInformation("Name Already Exist");
+				barcode.setResponse(response);
+				returnMap.put("Barcode", barcode);
+			}
 
-	    } catch (JsonParseException | JsonMappingException e) {
-	        e.printStackTrace();
-	        response.setStatus(false);
-	        response.setInformation("Error parsing JSON");
-	        returnMap.put("Error", "JSON parsing error: " + e.getMessage());
-	    } catch (IOException e) {
-	        e.printStackTrace();
-	        response.setStatus(false);
-	        response.setInformation("IO Exception");
-	        returnMap.put("Error", "IO error: " + e.getMessage());
-	    }
+		} catch (JsonParseException | JsonMappingException e) {
+			e.printStackTrace();
+			response.setStatus(false);
+			response.setInformation("Error parsing JSON");
+			returnMap.put("Error", "JSON parsing error: " + e.getMessage());
+		} catch (IOException e) {
+			e.printStackTrace();
+			response.setStatus(false);
+			response.setInformation("IO Exception");
+			returnMap.put("Error", "IO error: " + e.getMessage());
+		}
 
-	    return new ResponseEntity<>(returnMap, HttpStatus.OK);
+		return new ResponseEntity<>(returnMap, HttpStatus.OK);
 	}
 
 	private String processFileUpload(MultipartFile file, String existingUUID, Integer isMultitenant)

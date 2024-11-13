@@ -59,8 +59,7 @@ public class Converter extends AbstractHttpMessageConverter<Object> {
 		String contenttype = inputMessage.getHeaders().get("Content-Type").get(0);
 		String encoding = inputMessage.getHeaders().get("accept-encoding") != null
 				? inputMessage.getHeaders().get("accept-encoding").get(0)
-				: inputMessage.getHeaders().get("accept") != null ?
-						inputMessage.getHeaders().get("accept").get(0):"";
+				: inputMessage.getHeaders().get("accept").get(0);
 //		String contendencoding = inputMessage.getHeaders().get("content-encoding");
 
 		String contendencoding = "";
@@ -229,9 +228,10 @@ public class Converter extends AbstractHttpMessageConverter<Object> {
 				    "/DashBoardDemo/Getdashboardordercount",
 	                "/DashBoardDemo/Getdashboardorders","/documenteditor/api/wordeditor/Import","/smartdevice/Getdata"
 	                ,"/documenteditor/Import","/documenteditor/api/wordeditor/RestrictEditing","/Instrument/uploadfilessheetfolder"
-	                ,"/Instrument/uploadfilesprotocolfolder","/Barcode/Getbarcodefileoncode","/Barcode/GetbarcodefilecodeonOrderscreen"
-	                ,"/Barcode/handleBarcode","/iotconnect/getInstcategory","/iotconnect/getInstruments"
-	                
+	                ,"/Instrument/uploadfilesprotocolfolder"
+	          
+//				"/protocol/Uploadprotocolimageondrag"
+,"/Barcode/Getbarcodefileoncode","/Barcode/GetbarcodefilecodeonOrderscreen","/Barcode/handleBarcode"
 		);
 		
 		Integer secondindex = StringUtils.ordinalIndexOf(requestUrl, "/", 3);

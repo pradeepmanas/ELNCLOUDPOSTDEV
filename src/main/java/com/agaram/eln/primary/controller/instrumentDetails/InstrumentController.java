@@ -29,10 +29,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.agaram.eln.primary.fetchmodel.getorders.LogilabOrderDetails;
-import com.agaram.eln.primary.fetchmodel.getorders.LogilabOrdermastersh;
 import com.agaram.eln.primary.fetchmodel.getorders.Logilabordermaster;
 import com.agaram.eln.primary.fetchmodel.getorders.Logilaborders;
-import com.agaram.eln.primary.fetchmodel.getorders.Logilaborderssh;
 import com.agaram.eln.primary.model.cfr.LSactivity;
 //import com.agaram.eln.primary.model.cfr.LSaudittrailconfiguration;
 import com.agaram.eln.primary.model.fileManipulation.Fileimages;
@@ -995,7 +993,7 @@ public class InstrumentController {
 	}
 	
 	@PostMapping("/getLockedOrders")
-	private List<LogilabOrdermastersh> GetLockedOrders(@RequestBody LSlogilablimsorderdetail objorder) {
+	private List<LSlogilablimsorderdetail> GetLockedOrders(@RequestBody LSlogilablimsorderdetail objorder) {
 		return instrumentService.GetLockedOrders(objorder);
 	}
 	
@@ -1215,7 +1213,7 @@ public class InstrumentController {
 	}
 	
 	@RequestMapping("/Getordersonassignedandmyorders")
-	public List<Logilaborderssh> Getordersonassignedandmyorders(@RequestBody Map<String, Object>  objorder)throws Exception
+	public List<Logilaborders> Getordersonassignedandmyorders(@RequestBody Map<String, Object>  objorder)throws Exception
 	{
 		return instrumentService.Getordersonassignedandmyorders(objorder);
 	}
@@ -1339,7 +1337,7 @@ public class InstrumentController {
 	}
 	
 	@RequestMapping("/Getcancelledordes")
-	public List<Logilaborderssh> Getcancelledordes(@RequestBody LSlogilablimsorderdetail objdir)throws Exception
+	public List<Logilaborders> Getcancelledordes(@RequestBody LSlogilablimsorderdetail objdir)throws Exception
 	{
 		return instrumentService.Getcancelledordes(objdir);
 	}

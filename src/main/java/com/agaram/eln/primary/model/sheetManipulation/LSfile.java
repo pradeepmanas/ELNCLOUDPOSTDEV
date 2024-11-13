@@ -63,10 +63,6 @@ public class LSfile {
 	
 	@OneToMany
 	@JoinColumn(name="filecode")
-	private List<LSfileelnmethod> lselnmethod;
-	
-	@OneToMany
-	@JoinColumn(name="filecode")
 	private List<LSfileparameter> lsparameter;
 	
 	@OneToMany
@@ -437,13 +433,6 @@ public class LSfile {
 	public void setIsfinalstep(Integer isfinalstep) {
 		this.isfinalstep = isfinalstep;
 	}
-	public List<LSfileelnmethod> getLselnmethod() {
-		return lselnmethod;
-	}
-	public void setLselnmethod(List<LSfileelnmethod> lselnmethod) {
-		this.lselnmethod = lselnmethod;
-	}
-	
 	
 	
 	

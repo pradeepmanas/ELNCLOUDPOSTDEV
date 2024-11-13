@@ -17,12 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.agaram.eln.primary.commonfunction.commonfunction;
-import com.agaram.eln.primary.model.communicationsetting.CommunicationSetting;
-import com.agaram.eln.primary.model.communicationsetting.ConversionType;
-import com.agaram.eln.primary.model.communicationsetting.HandShake;
-import com.agaram.eln.primary.model.communicationsetting.Parity;
-import com.agaram.eln.primary.model.communicationsetting.ResultSampleFrom;
-import com.agaram.eln.primary.model.communicationsetting.StopBits;
 import com.agaram.eln.primary.model.equipment.ElnresultEquipment;
 import com.agaram.eln.primary.model.equipment.Equipment;
 import com.agaram.eln.primary.model.equipment.EquipmentCategory;
@@ -30,24 +24,16 @@ import com.agaram.eln.primary.model.equipment.EquipmentHistory;
 import com.agaram.eln.primary.model.equipment.EquipmentType;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
-import com.agaram.eln.primary.model.instrumentsetup.InstrumentType;
 import com.agaram.eln.primary.model.masters.Lslogbooks;
 import com.agaram.eln.primary.model.material.Period;
 import com.agaram.eln.primary.model.protocols.LSlogilabprotocoldetail;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
-import com.agaram.eln.primary.repository.communicationsetting.CommunicationRepository;
-import com.agaram.eln.primary.repository.communicationsetting.ConversionTypeRepository;
-import com.agaram.eln.primary.repository.communicationsetting.HandShakeRepository;
-import com.agaram.eln.primary.repository.communicationsetting.ParityRepository;
-import com.agaram.eln.primary.repository.communicationsetting.ResultSampleFromRepository;
-import com.agaram.eln.primary.repository.communicationsetting.StopBistsRepository;
 import com.agaram.eln.primary.repository.equipment.ElnresultEquipmentRepository;
 import com.agaram.eln.primary.repository.equipment.EquipmentCategoryRepository;
 import com.agaram.eln.primary.repository.equipment.EquipmentHistoryRepository;
 import com.agaram.eln.primary.repository.equipment.EquipmentRepository;
 import com.agaram.eln.primary.repository.equipment.EquipmentTypeRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSlogilablimsorderdetailRepository;
-import com.agaram.eln.primary.repository.instrumentsetup.InstTypeRepository;
 import com.agaram.eln.primary.repository.masters.LslogbooksRepository;
 import com.agaram.eln.primary.repository.material.PeriodRepository;
 import com.agaram.eln.primary.repository.protocol.LSlogilabprotocoldetailRepository;
@@ -60,20 +46,6 @@ public class EquipmentService {
 
 	@Autowired
 	EquipmentRepository equipmentRepository;
-	@Autowired
-	CommunicationRepository communicationRepository;
-	@Autowired
-	InstTypeRepository insttypeRepository;
-	@Autowired
-	ParityRepository parityRepository;
-	@Autowired
-	StopBistsRepository stopBistsRepository;
-	@Autowired
-	ResultSampleFromRepository resultSampleFromRepository;
-	@Autowired
-	ConversionTypeRepository conversionTypeRepository;
-	@Autowired
-	HandShakeRepository handShakeRepository; 
 	@Autowired
 	EquipmentCategoryRepository equipmentCategoryRepository;
 	@Autowired
@@ -104,21 +76,7 @@ public class EquipmentService {
 		List<Equipment> lstEquipment = equipmentRepository
 				.findByNsitecodeAndCreateddateBetweenOrderByNequipmentcodeDesc(nsiteInteger,fromDate,toDate);
 		
-		List<InstrumentType> lstCmmType = insttypeRepository.findAll();
-		List<Parity> lstParity = parityRepository.findAll();
-		List<ResultSampleFrom> lstRSIDFrom = resultSampleFromRepository.findAll();
-		List<HandShake> lstHandShake = handShakeRepository.findAll();
-		List<StopBits> lstStopBits= stopBistsRepository.findAll();
-		List<ConversionType> lstConversionType= conversionTypeRepository.findAll();
-		
-		
-		objmap.put("lstCmmType", lstCmmType);
-		objmap.put("lstParity", lstParity);
-		objmap.put("lstRSIDFrom", lstRSIDFrom);
-		objmap.put("lstHandShake", lstHandShake);
-		objmap.put("lstStopBits", lstStopBits);
-		objmap.put("lstConversionType", lstConversionType);
-		objmap.put("lstEquipment", lstEquipment);		
+		objmap.put("lstEquipment", lstEquipment);
 		objmap.put("objsilentaudit", inputMap.get("objsilentaudit"));
 		
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
@@ -205,21 +163,6 @@ public class EquipmentService {
 					equipmentRepository.findByEquipmenttypeAndEquipmentcategoryAndNsitecodeAndCreateddateBetweenOrderByNequipmentcodeDesc(
 							objType,objCategory,nsiteInteger,fromDate,toDate);
 		}		
-		
-		List<InstrumentType> lstCmmType = insttypeRepository.findAll();
-		List<Parity> lstParity = parityRepository.findAll();
-		List<ResultSampleFrom> lstRSIDFrom = resultSampleFromRepository.findAll();
-		List<HandShake> lstHandShake = handShakeRepository.findAll();
-		List<StopBits> lstStopBits= stopBistsRepository.findAll();
-		List<ConversionType> lstConversionType= conversionTypeRepository.findAll();
-		
-		
-		objmap.put("lstCmmType", lstCmmType);
-		objmap.put("lstParity", lstParity);
-		objmap.put("lstRSIDFrom", lstRSIDFrom);
-		objmap.put("lstHandShake", lstHandShake);
-		objmap.put("lstStopBits", lstStopBits);
-		objmap.put("lstConversionType", lstConversionType);
 		
 		objmap.put("lstEquipment", lstEquipment);
 		objmap.put("objsilentaudit", inputMap.get("objsilentaudit"));
@@ -390,18 +333,6 @@ public class EquipmentService {
 			obj.setSequipmentid(stridformat);
 			
 			equipmentRepository.save(obj);
-			if(obj.getCmmsetting().equals(true)) {
-				
-				
-				communicationRepository.save(obj.getCommunicationsetting());
-			}
-//			else {
-//				obj.setCommunicationsetting(null);
-//				obj.setCmmsetting(null);
-//				equipmentRepository.save(obj);
-//				
-//				communicationRepository.delete(obj.getCommunicationsetting());
-//			}
 			
 			obj.getResponse().setInformation("IDS_SAVE_SUCCEED");
 			obj.getResponse().setStatus(true);
@@ -449,24 +380,7 @@ public class EquipmentService {
 			obj.setManintanancevalue(obj.getManintanancevalue());
 			obj.setMaintananceperiod(obj.getMaintananceperiod());
 			
-			if(Boolean.FALSE.equals(obj.getCmmsetting()) && objMaterial.getCommunicationsetting() != null ) {
-				
-				CommunicationSetting cmsTemp = objMaterial.getCommunicationsetting();
-				
-				obj.setCommunicationsetting(null);
-				obj.setCmmsetting(null);
-				equipmentRepository.save(obj);
-				
-				/**
-				 * Find by cmmsetting if its present it delete
-				 */
-				communicationRepository.findByCmmsettingcode(cmsTemp.getCmmsettingcode()).ifPresent(communicationRepository::delete);
-				
-			}else {
-				equipmentRepository.save(obj);
-				
-				communicationRepository.save(obj.getCommunicationsetting());
-			}
+			equipmentRepository.save(obj);
 			
 			obj.getResponse().setInformation("IDS_SAVE_SUCCEED");
 			obj.getResponse().setStatus(true);

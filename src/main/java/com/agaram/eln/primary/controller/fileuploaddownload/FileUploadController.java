@@ -136,7 +136,7 @@ public class FileUploadController {
 				
 		newobj.setCreatedby(method.get(0).getCreatedby());
 		newobj.setCreateddate(method.get(0).getCreateddate());
-		//newobj.setInstmaster(method.get(0).getInstmaster());
+		newobj.setInstmaster(method.get(0).getInstmaster());
 		newobj.setMethodkey(method.get(0).getMethodkey());
         newobj.setMethodname(method.get(0).getMethodname());
 		newobj.setInstrawdataurl(instrawdataurl);

@@ -16,8 +16,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import com.agaram.eln.primary.model.equipment.Equipment;
-import com.agaram.eln.primary.model.equipment.EquipmentCategory;
 import com.agaram.eln.primary.model.instrumentsetup.InstrumentCategory;
 import com.agaram.eln.primary.model.instrumentsetup.InstrumentMaster;
 import com.agaram.eln.primary.model.methodsetup.Delimiter;
@@ -34,8 +32,6 @@ import com.agaram.eln.primary.model.methodsetup.SubParserField;
 import com.agaram.eln.primary.model.methodsetup.SubParserTechnique;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
-import com.agaram.eln.primary.repository.equipment.EquipmentCategoryRepository;
-import com.agaram.eln.primary.repository.equipment.EquipmentRepository;
 import com.agaram.eln.primary.repository.instrumentsetup.InstCategoryRepository;
 import com.agaram.eln.primary.repository.instrumentsetup.InstMasterRepository;
 import com.agaram.eln.primary.repository.methodsetup.DelimiterRepository;
@@ -72,9 +68,6 @@ public class MethodImportService {
 	InstMasterRepository instMasterRepo;
 	
 	@Autowired
-	EquipmentCategoryRepository equipCategoryRepo;
-	
-	@Autowired
 	MethodRepository methodRepo;
 	
 	@Autowired
@@ -109,9 +102,6 @@ public class MethodImportService {
 	
 	@Autowired
 	MethodVersionRepository methversionRepo;
-	
-	@Autowired
-	EquipmentRepository equipmentRepo;
 //	@Autowired
 //	ReadWriteXML readWriteXML;
 	
@@ -152,9 +142,7 @@ public class MethodImportService {
 			
 			String methodJson = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(item.get("Method"));
 			final Method expMethod = mapper.readValue(methodJson, Method.class);
-	
-			/*
-			//for equipment change
+			
 //			Instrument Category
 			String instCategoryJson = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(expMethod.getInstmaster().getInstcategory());
 			final InstrumentCategory expInstCategory = mapper.readValue(instCategoryJson, InstrumentCategory.class);
@@ -172,9 +160,7 @@ public class MethodImportService {
 			} else {
 				instCategoryList.add(instCategoryExist.get());
 			}
-			
-			
-			     
+
 //			Instrument Master
 			String instMasterJson = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(expMethod.getInstmaster());
 			final InstrumentMaster expInstMaster = mapper.readValue(instMasterJson, InstrumentMaster.class);
@@ -197,50 +183,7 @@ public class MethodImportService {
 	    		instMasterList.add(instMasterRepo.save(impInstMaster));
 	    	} else {
 	    		instMasterList.add(instMasterExist.get());
-	    	}	
-*/
-			
-			// Equipment Category
-			String equipCategoryJson = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(expMethod.getEquipment().getEquipmentcategory());
-			final EquipmentCategory expEquipCategory = mapper.readValue(equipCategoryJson, EquipmentCategory.class);
-			EquipmentCategory impEquipCategory = new EquipmentCategory();
-			impEquipCategory = expEquipCategory;
-			final List<EquipmentCategory> equipCategoryList = new ArrayList<>(1);
-		
-			final List<EquipmentCategory> equipCategoryExist = equipCategoryRepo.findBySequipmentcatnameIgnoreCaseAndNsitecodeAndNstatus(expEquipCategory.getSequipmentcatname(),site.getSitecode(),1);
-            Date date = new Date();		
-            if(equipCategoryExist.isEmpty()) {
-            	impEquipCategory.setNequipmentcatcode(0);
-            	impEquipCategory.setCreateby(createdUser);
-            	impEquipCategory.setCreatedate(date);
-            	equipCategoryList.add(equipCategoryRepo.save(impEquipCategory));
-			
-			} else {
-				equipCategoryList.add(equipCategoryExist.get(0));
-			}
-            
-       		//EquipmentMaster
-            String EquipmentJson = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(expMethod.getEquipment());
-			final Equipment expEquipMaster = mapper.readValue(EquipmentJson, Equipment.class);
-			Equipment impEquipMaster = new Equipment();
-			impEquipMaster = expEquipMaster;
-			
-			impEquipMaster.setNequipmentcode(userdefinedinstdetails.getInstmastkey());
-			impEquipMaster.setSequipmentname(userdefinedinstdetails.getInstrumentname());
-			
-			final List<Equipment> EquipmentList = new ArrayList<>(1);
-
-			final Optional<Equipment> equipMasterExist = equipmentRepo.findByNequipmentcodeAndNsitecodeAndNstatus(impEquipMaster.getNequipmentcode(), site.getSitecode(), 1);
-	    	if(!equipMasterExist.isPresent()) {
-	    		impEquipMaster.setNequipmentcode(0);
-	    		impEquipMaster.setNsitecode(site.getSitecode());;
-	    		impEquipMaster.setEquipmentcategory(equipCategoryList.get(0));
-	    		impEquipMaster.setCreateby(createdUser);
-	    		impEquipMaster.setCreateddate(date);
-	    		EquipmentList.add(equipmentRepo.save(impEquipMaster));
-	    	} else {
-	    		EquipmentList.add(equipMasterExist.get());
-	    	}	
+	    	}			
 			
 //	    	Method
 			final Method impMethod = new Method(expMethod);
@@ -255,7 +198,7 @@ public class MethodImportService {
 			impMethod.setInstrawdataurl(userdefinedmethod.getInstrawdataurl());
 			
 		//	final Optional<Method> methodExist = methodRepo.findByMethodnameAndInstmasterAndStatus(expMethod.getMethodname(), instMasterList.get(0), 1);
-			final Optional<Method> methodExist = methodRepo.findByMethodnameAndEquipmentAndStatus(impMethod.getMethodname(), EquipmentList.get(0), 1);
+			final Optional<Method> methodExist = methodRepo.findByMethodnameAndInstmasterAndStatus(impMethod.getMethodname(), instMasterList.get(0), 1);
 			if(!methodExist.isPresent()) {
 				
 				//method version
@@ -275,7 +218,7 @@ public class MethodImportService {
 				
 				
 				impMethod.setMethodkey(0);
-				impMethod.setEquipment(EquipmentList.get(0));
+				impMethod.setInstmaster(instMasterList.get(0));
 				impMethod.setSite(site);
 				impMethod.setCreatedby(createdUser);
 				impMethod.setCreateddate(date);

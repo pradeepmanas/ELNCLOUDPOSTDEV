@@ -249,24 +249,15 @@ public class MethodController {
 	 *                  validated
 	 * @return boolean value of validated response.
 	 */
-//	@PostMapping(value = "/getMethodByInstrument")
-//	public ResponseEntity<Object> getMethodByInstrument(@Valid @RequestBody Map<String, Object> mapObject)
-//			throws Exception {
-//		final ObjectMapper mapper = new ObjectMapper();
-//		final Method method = mapper.convertValue(mapObject.get("method"), Method.class);
-//		final int instMasterKey = (Integer) mapObject.get("instMasterKey");
-//
-////		return methodService.getMethodByInstrument(method, instMasterKey);
-//		return methodService.getMethodContainingByInstrument(method, instMasterKey);
-//	}
-
-	@PostMapping(value = "/getMethodByEquipment")
-	public ResponseEntity<Object> getMethodByEquipment(@Valid @RequestBody Map<String, Object> mapObject)
+	@PostMapping(value = "/getMethodByInstrument")
+	public ResponseEntity<Object> getMethodByInstrument(@Valid @RequestBody Map<String, Object> mapObject)
 			throws Exception {
 		final ObjectMapper mapper = new ObjectMapper();
 		final Method method = mapper.convertValue(mapObject.get("method"), Method.class);
-		final int nequipmentcode = (Integer) mapObject.get("nequipmentcode");
+		final int instMasterKey = (Integer) mapObject.get("instMasterKey");
 
-		return methodService.getMethodContainingByEquipment(method, nequipmentcode);
+//		return methodService.getMethodByInstrument(method, instMasterKey);
+		return methodService.getMethodContainingByInstrument(method, instMasterKey);
 	}
+
 }

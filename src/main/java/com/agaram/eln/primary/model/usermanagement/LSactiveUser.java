@@ -34,10 +34,6 @@ public class LSactiveUser {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date lastactivetime;
 	
-	private Integer usergroupcode;
-	private String usergroupname;
-
-	
 	@Column(name = "removeinititated", columnDefinition = "boolean default 'false'")
 	private boolean removeinititated;
 	
@@ -123,22 +119,6 @@ public class LSactiveUser {
 
 	public void setUsername(String username) {
 		this.username = username;
-	}
-
-	public Integer getUsergroupcode() {
-		return usergroupcode;
-	}
-
-	public void setUsergroupcode(Integer usergroupcode) {
-		this.usergroupcode = usergroupcode;
-	}
-
-	public String getUsergroupname() {
-		return usergroupname;
-	}
-
-	public void setUsergroupname(String usergroupname) {
-		this.usergroupname = usergroupname;
 	}	
 	
 }

@@ -3,7 +3,6 @@ package com.agaram.eln.primary.repository.equipment;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -102,30 +101,5 @@ public interface EquipmentRepository extends JpaRepository<Equipment, Integer>{
 
 	List<Equipment> findBySequipmentnameStartingWithIgnoreCaseAndNsitecodeOrderByNequipmentcodeDesc(String searchString,
 			Integer nsiteInteger);
-
-	List<Equipment> findByNsitecodeOrderByNequipmentcodeDesc(Integer nsiteInteger);
-
-	Optional<Equipment> findByNequipmentcodeAndNsitecodeAndNstatus(Integer nequipmentcode, Integer sitecode, int i);
-
-	List<Equipment> findByNsitecodeAndCmmsettingTrueOrderByNequipmentcodeDesc(Integer sitecode);
-
-	List<Equipment> findByNsitecodeAndCmmsettingTrueAndNstatusOrderByNequipmentcodeDesc(Integer sitecode , int i);
-
-	List<Equipment> findByCmmsettingTrueAndEquipmentcategoryAndNsitecodeAndNstatus(EquipmentCategory eqipmentcategory,
-			Integer sitecode, int i);
-
-	//List<Equipment> findByEquipmentcategoryAndStatusNotIn(EquipmentCategory equicat, int i);
-
-	List<Equipment> findByNsitecodeAndSequipmentnameAndEquipmentcategoryAndNstatus(Integer nsitecode,
-			String sequipmentcatname, EquipmentType equipmenttype, int i);
-
-	//List<Equipment> findByEquipmentcategoryAndNstatus(String sequipmentcatname, int i);
-
-	List<Equipment> findByEquipmentcategoryAndNstatus(EquipmentCategory equicat, int i);
-
-	List<Equipment> findByNsitecodeAndNstatus(Integer sitecode, int i);
-
-	
-
 
 }

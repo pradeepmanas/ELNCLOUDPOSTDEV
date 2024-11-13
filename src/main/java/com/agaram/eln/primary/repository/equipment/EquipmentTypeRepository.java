@@ -9,10 +9,10 @@ import com.agaram.eln.primary.model.equipment.EquipmentType;
 public interface EquipmentTypeRepository extends JpaRepository<EquipmentType, Integer>{
 //	public List<EquipmentType>  findByNequipmenttypecodeNotAndNstatusAndNsitecodeOrNequipmenttypecodeNotAndNstatusAndNdefaultstatusOrderByNequipmenttypecodeDesc(
 //			int i, int j, Integer nsitecode, int k, int l, int m);
-	
-//	public List<EquipmentType>  findByNequipmenttypecodeNotAndNstatusAndNsitecodeOrderByNequipmenttypecodeDesc(
-//			int i, int j, Integer nsitecode);
 
+	public List<EquipmentType>  findByNequipmenttypecodeNotAndNstatusAndNsitecodeOrderByNequipmenttypecodeDesc(
+			int i, int j, Integer nsitecode);
+	
 	public EquipmentType findByNequipmenttypecodeAndNstatus(Integer Nequipmenttypecode, int i);
 
 	public List<EquipmentType> findBySequipmenttypenameIgnoreCaseAndNsitecodeOrderByNequipmenttypecode(
@@ -26,13 +26,5 @@ public interface EquipmentTypeRepository extends JpaRepository<EquipmentType, In
 
 	public List<EquipmentType> findByNequipmenttypecode(Integer ntypecode);
 
-//	public List<EquipmentType> findByNstatusAndNsitecodeOrNstatusAndNdefaultstatus(int i, Integer nsiteInteger, int j,
-//			int k);
-
-	public List<EquipmentType> findByNequipmenttypecodeNotAndNstatusAndNsitecodeOrderByNequipmenttypecodeDesc(int i,
-			int j, Integer nsiteInteger);
-
-//	public List<EquipmentType> findByNequipmenttypecodeNotAndNstatusAndNsitecodeOrderByNequipmenttypecodeDesc(int i,
-//			int j, EquipmentType nsiteInteger);
-
+	public List<EquipmentType> findByNstatusAndNsitecodeOrderByNequipmenttypecodeDesc(int i, Integer nsiteInteger);
 }
