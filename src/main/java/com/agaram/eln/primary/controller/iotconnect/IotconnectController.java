@@ -101,10 +101,21 @@ public class IotconnectController {
 
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/getiotresultdetails")
-	public  List<RCTCPResultDetails> getiotresultdetails(final HttpServletRequest request, @RequestBody RCTCPResultDetails rctcpResultDetails) throws Exception {
+	public  List<RCTCPResultDetails> getiotresultdetails(final HttpServletRequest request, @RequestBody Map<String, Object> mapObject) throws Exception {
 
-		return iotconnectservice.getiotresultdetails(rctcpResultDetails);
+		//final ObjectMapper mapper = new ObjectMapper();
+		
+        List<Integer> methodKeys = (List<Integer>) (mapObject.get("methodkeyList"));
+
+	    List<Integer> instkeys = (List<Integer>)(mapObject.get("instList"));
+		
+	    if (methodKeys == null || instkeys == null) {
+	        throw new IllegalArgumentException("Required parameters are missing");
+	    }
+	    
+		return iotconnectservice.getiotresultdetails(methodKeys , instkeys);
 	}
 	
 	@RequestMapping("/getpreferencedata")
@@ -139,5 +150,5 @@ public class IotconnectController {
 		return  iotconnectservice.getOrdersBasedOnmethod(Methodobj);
 
 	}
-
+	
 }

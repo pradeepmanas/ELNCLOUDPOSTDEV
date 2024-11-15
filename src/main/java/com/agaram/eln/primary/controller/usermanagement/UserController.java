@@ -46,6 +46,7 @@ import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.model.usermanagement.LSusergroup;
 import com.agaram.eln.primary.model.usermanagement.LSusergroupedcolumns;
 import com.agaram.eln.primary.model.usermanagement.LSusergrouprights;
+import com.agaram.eln.primary.model.usermanagement.LSusershowhidecolumns;
 import com.agaram.eln.primary.model.usermanagement.LSusersteam;
 import com.agaram.eln.primary.model.usermanagement.LoggedUser;
 import com.agaram.eln.primary.model.usermanagement.Lsusersettings;
@@ -668,6 +669,7 @@ public class UserController {
 	{
 	  return userService.GetSiteWiseUserGrouplist(objclass);
 	}
+	
 	@PostMapping("/getUsersinglOnCode")
 	public Map<String, Object> getUsersinglOnCode(@RequestBody LSuserMaster objuser)throws Exception
 	{
@@ -684,9 +686,22 @@ public class UserController {
 	public Map<String, Object> GetTemplateStatus(@RequestBody Map<String, Object> obj) {
 		return userService.GetTemplateStatus(obj);
 	}
+	
 	@PostMapping("/updateProfileDetails")
 	public Map<String, Object> updateProfileDetails(@RequestBody Map<String, Object> obj) {
 		return userService.updateProfileDetails(obj);
+	}
+	
+	@PostMapping("/setShowHideolumn")
+	public LSusershowhidecolumns setShowHideolumn(@RequestBody LSusershowhidecolumns objgroupped)throws Exception
+	{
+		return userService.setShowHideolumn(objgroupped);
+	}
+	
+	@PostMapping("/getShowHideolumn")
+	public LSusershowhidecolumns getShowHideolumn(@RequestBody LSusershowhidecolumns objgroupped)throws Exception
+	{
+		return userService.getShowHideolumn(objgroupped);
 	}
 }
 

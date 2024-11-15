@@ -2596,8 +2596,8 @@ CREATE TABLE IF NOT EXISTS public.communicationsetting
 
 TABLESPACE pg_default;
 
-ALTER TABLE IF EXISTS public.communicationsetting
-    OWNER to postgres;
+ALTER TABLE IF EXISTS public.communicationsetting OWNER to postgres;
+
 ALTER TABLE IF Exists equipment ADD COLUMN IF NOT EXISTS fk_cmmsettingcode Integer;
     
 DO
@@ -2641,3 +2641,32 @@ INSERT into conversiontype(conversiontypekey,conversiontypename,status) VALUES(2
 INSERT into conversiontype(conversiontypekey,conversiontypename,status) VALUES(3,'Temperature_Farenheit',1) ON CONFLICT(conversiontypekey)DO NOTHING;
 
 ALTER TABLE IF EXISTS equipment ADD COLUMN IF NOT EXISTS cmmsetting boolean;
+
+DO
+$do$
+BEGIN
+   -- Try to create the sequence and catch the exception if it already exists
+   BEGIN
+      CREATE SEQUENCE LSusershowhidecolumns_usergroupedcolcode_seq;
+   EXCEPTION
+      WHEN duplicate_table THEN
+         -- Sequence already exists, so we do nothing
+         RAISE NOTICE 'Sequence LSusershowhidecolumns_usergroupedcolcode_seq already exists.';
+   END;
+END
+$do$;
+
+CREATE TABLE IF NOT EXISTS public.LSusershowhidecolumns
+(
+    usergroupedcolcode integer NOT NULL DEFAULT nextval('LSusershowhidecolumns_usergroupedcolcode_seq'::regclass),
+    gridcolumns text COLLATE pg_catalog."default",
+    gridname character varying(100) COLLATE pg_catalog."default",
+    sitecode integer,
+    usercode integer,
+    CONSTRAINT LSusershowhidecolumns_pkey PRIMARY KEY (usergroupedcolcode)
+)
+WITH (OIDS = FALSE) TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.LSusershowhidecolumns OWNER to postgres;
+
+update instrumenttype set insttypename='TCP_CLIENT' where instrumenttype.insttypename='TCP\IP';

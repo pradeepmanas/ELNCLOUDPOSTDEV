@@ -2,6 +2,8 @@ package com.agaram.eln.primary.repository.iotconnect;
 
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import org.springframework.stereotype.Repository;
@@ -16,5 +18,8 @@ public interface RCTCPResultDetailsRepository extends JpaRepository<RCTCPResultD
 
 	List<RCTCPResultDetails> findByMethodAndEquipment(Method method, Equipment equipment);
 
+	@Transactional
+	List<RCTCPResultDetails> findByMethodMethodkeyInAndEquipmentNequipmentcodeIn(List<Integer> methodkeys,
+			List<Integer> instkeys);
 
 }

@@ -9182,23 +9182,25 @@ public class InstrumentService {
 
 		int chunkSize = Integer.parseInt(env.getProperty("lssamplecount"));
 		int totalSamples = nmaterialcode.size();
-		List<Long> immutableNegativeValues = Arrays.asList(-3L, -22L);
-		List<Lsprotocolorderstructure> lstdir;
-		if (objorder.getLstuserMaster() == null) {
-			lstdir = lsprotocolorderStructurerepository
-					.findBySitemasterAndViewoptionAndDirectorycodeNotInOrCreatedbyAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(
-							objorder.getLsuserMaster().getLssitemaster(), 1, immutableNegativeValues,
-							objorder.getLsuserMaster(), 2, objorder.getLsuserMaster(), 3);
-		} else {
-			lstdir = lsprotocolorderStructurerepository
-					.findBySitemasterAndViewoptionAndDirectorycodeNotInOrCreatedbyAndViewoptionOrSitemasterAndViewoptionAndCreatedbyInOrderByDirectorycode(
-							objorder.getLsuserMaster().getLssitemaster(), 1, immutableNegativeValues,
-							objorder.getLsuserMaster(), 2, objorder.getLsuserMaster().getLssitemaster(), 3,
-							objorder.getLstuserMaster());
-		}
-		lstdir.addAll(lsprotocolorderStructurerepository.findByDirectorycodeIn(immutableNegativeValues));
-		List<Long> Directory_Code = lstdir.stream().map(Lsprotocolorderstructure::getDirectorycode)
-				.collect(Collectors.toList());
+//		List<Long> immutableNegativeValues = Arrays.asList(-3L, -22L);
+//		List<Lsprotocolorderstructure> lstdir;
+//		if (objorder.getLstuserMaster() == null) {
+//			lstdir = lsprotocolorderStructurerepository
+//					.findBySitemasterAndViewoptionAndDirectorycodeNotInOrCreatedbyAndViewoptionOrCreatedbyAndViewoptionOrderByDirectorycode(
+//							objorder.getLsuserMaster().getLssitemaster(), 1, immutableNegativeValues,
+//							objorder.getLsuserMaster(), 2, objorder.getLsuserMaster(), 3);
+//		} else {
+//			lstdir = lsprotocolorderStructurerepository
+//					.findBySitemasterAndViewoptionAndDirectorycodeNotInOrCreatedbyAndViewoptionOrSitemasterAndViewoptionAndCreatedbyInOrderByDirectorycode(
+//							objorder.getLsuserMaster().getLssitemaster(), 1, immutableNegativeValues,
+//							objorder.getLsuserMaster(), 2, objorder.getLsuserMaster().getLssitemaster(), 3,
+//							objorder.getLstuserMaster());
+//		}
+//		lstdir.addAll(lsprotocolorderStructurerepository.findByDirectorycodeIn(immutableNegativeValues));
+//		List<Long> Directory_Code = lstdir.stream().map(Lsprotocolorderstructure::getDirectorycode)
+//				.collect(Collectors.toList());
+//		List<LSlogilabprotocoldetail> kumu=LSlogilabprotocoldetailRepository.getallrecords();
+		List<Long> Directory_Code=objorder.getLstdirectorycode()!= null ? objorder.getLstdirectorycode() : new ArrayList<Long>();
 		if (objorder.getTestcode() == null && objorder.getLsprojectmaster() == null && objorder.getRejected() == null) {
 			lstorder.addAll(LSlogilabprotocoldetailRepository
 					.findByOrderflagAndLsprojectmasterInAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndOrdercancellIsNull(

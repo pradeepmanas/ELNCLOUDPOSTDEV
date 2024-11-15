@@ -1696,7 +1696,6 @@ List<Logilabprotocolorders> findByOrdercancellAndSitecodeAndLsprojectmasterIsNul
 	        "INNER JOIN lsprotocolmaster l ON o.lsprotocolmaster_protocolmastercode = l.protocolmastercode " +
 	        "INNER JOIN lstestmasterlocal m ON m.testcode = o.testcode " +
 	        "WHERE (" +
-	        // First condition for project-based search
 	        "  o.lsprojectmaster_projectcode IN (" +
 	        "    SELECT lsprojectmaster_projectcode " +
 	        "    FROM LSlogilablimsorderdetail " +
@@ -1715,7 +1714,6 @@ List<Logilabprotocolorders> findByOrdercancellAndSitecodeAndLsprojectmasterIsNul
 	        "    OR LOWER(l.protocolmastername) LIKE LOWER(?2)" +
 	        "  )" +
 	        ")" +
-	        // Second condition for null project and assigned to null
 	        " OR (" +
 	        "  o.lsprojectmaster_projectcode IS NULL " +
 	        "  AND o.assignedto_usercode IS NULL " +
@@ -1729,7 +1727,6 @@ List<Logilabprotocolorders> findByOrdercancellAndSitecodeAndLsprojectmasterIsNul
 	        "  AND o.viewoption = ?4 " +
 	        "  AND o.ordercancell IS NULL" +
 	        ")" +
-	        // Third condition for null project, assigned to null, created by user
 	        " OR (" +
 	        "  o.lsprojectmaster_projectcode IS NULL " +
 	        "  AND o.assignedto_usercode IS NULL " +
@@ -1744,7 +1741,6 @@ List<Logilabprotocolorders> findByOrdercancellAndSitecodeAndLsprojectmasterIsNul
 	        "  AND o.createby = ?1 " +
 	        "  AND o.ordercancell IS NULL" +
 	        ")" +
-	        // Fourth condition for null project, assigned to null, created by list of users
 	        " OR (" +
 	        "  o.lsprojectmaster_projectcode IS NULL " +
 	        "  AND o.assignedto_usercode IS NULL " +
@@ -1759,7 +1755,6 @@ List<Logilabprotocolorders> findByOrdercancellAndSitecodeAndLsprojectmasterIsNul
 	        "  AND o.createby IN (?6) " +
 	        "  AND o.ordercancell IS NULL" +
 	        ")" +
-	        // Fifth condition for directory-based filtering
 	        " OR (" +
 	        "  o.directorycode IN (?7) " +
 	        "  AND o.viewoption = ?3 " +
@@ -1773,7 +1768,6 @@ List<Logilabprotocolorders> findByOrdercancellAndSitecodeAndLsprojectmasterIsNul
 	        "    OR LOWER(l.protocolmastername) LIKE LOWER(?2)" +
 	        "  )" +
 	        ")" +
-	        // Sixth condition for directory-based filtering with usercode
 	        " OR (" +
 	        "  o.directorycode IN (?7) " +
 	        "  AND o.viewoption = ?4 " +
@@ -1788,7 +1782,6 @@ List<Logilabprotocolorders> findByOrdercancellAndSitecodeAndLsprojectmasterIsNul
 	        "    OR LOWER(l.protocolmastername) LIKE LOWER(?2)" +
 	        "  )" +
 	        ")" +
-	        // Seventh condition for directory-based filtering with list of created users
 	        " OR (" +
 	        "  o.directorycode IN (?7) " +
 	        "  AND o.viewoption = ?5 " +
@@ -1813,7 +1806,6 @@ List<Logilabprotocolorders> findByOrdercancellAndSitecodeAndLsprojectmasterIsNul
 	        "INNER JOIN lsprotocolmaster l ON o.lsprotocolmaster_protocolmastercode = l.protocolmastercode " +
 	        "INNER JOIN lstestmasterlocal m ON m.testcode = o.testcode " +
 	        "WHERE (" +
-	        // First condition for project-based search
 	        "  o.lsprojectmaster_projectcode IN (" +
 	        "    SELECT lsprojectmaster_projectcode " +
 	        "    FROM LSlogilablimsorderdetail " +
@@ -1832,7 +1824,6 @@ List<Logilabprotocolorders> findByOrdercancellAndSitecodeAndLsprojectmasterIsNul
 	        "    OR LOWER(l.protocolmastername) LIKE LOWER(?2)" +
 	        "  )" +
 	        ")" +
-	        // Second condition for null project and assigned to null
 	        " OR (" +
 	        "  o.lsprojectmaster_projectcode IS NULL " +
 	        "  AND o.assignedto_usercode IS NULL " +
@@ -1846,7 +1837,6 @@ List<Logilabprotocolorders> findByOrdercancellAndSitecodeAndLsprojectmasterIsNul
 	        "  AND o.viewoption = ?4 " +
 	        "  AND o.ordercancell IS NULL" +
 	        ")" +
-	        // Third condition for null project, assigned to null, created by user
 	        " OR (" +
 	        "  o.lsprojectmaster_projectcode IS NULL " +
 	        "  AND o.assignedto_usercode IS NULL " +
@@ -1861,7 +1851,6 @@ List<Logilabprotocolorders> findByOrdercancellAndSitecodeAndLsprojectmasterIsNul
 	        "  AND o.createby = ?1 " +
 	        "  AND o.ordercancell IS NULL" +
 	        ")" +
-	        // Fourth condition for null project, assigned to null, created by list of users
 	        " OR (" +
 	        "  o.lsprojectmaster_projectcode IS NULL " +
 	        "  AND o.assignedto_usercode IS NULL " +
@@ -1876,7 +1865,6 @@ List<Logilabprotocolorders> findByOrdercancellAndSitecodeAndLsprojectmasterIsNul
 	        "  AND o.createby IN (?6) " +
 	        "  AND o.ordercancell IS NULL" +
 	        ")" +
-	        // Fifth condition for directory-based filtering
 	        " OR (" +
 	        "  o.directorycode IN (?7) " +
 	        "  AND o.viewoption = ?3 " +
@@ -1890,7 +1878,6 @@ List<Logilabprotocolorders> findByOrdercancellAndSitecodeAndLsprojectmasterIsNul
 	        "    OR LOWER(l.protocolmastername) LIKE LOWER(?2)" +
 	        "  )" +
 	        ")" +
-	        // Sixth condition for directory-based filtering with usercode
 	        " OR (" +
 	        "  o.directorycode IN (?7) " +
 	        "  AND o.viewoption = ?4 " +
@@ -1905,7 +1892,6 @@ List<Logilabprotocolorders> findByOrdercancellAndSitecodeAndLsprojectmasterIsNul
 	        "    OR LOWER(l.protocolmastername) LIKE LOWER(?2)" +
 	        "  )" +
 	        ")" +
-	        // Seventh condition for directory-based filtering with list of created users
 	        " OR (" +
 	        "  o.directorycode IN (?7) " +
 	        "  AND o.viewoption = ?5 " +

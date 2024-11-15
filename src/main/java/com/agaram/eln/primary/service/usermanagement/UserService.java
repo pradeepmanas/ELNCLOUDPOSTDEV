@@ -45,6 +45,7 @@ import com.agaram.eln.primary.model.usermanagement.LSusergroup;
 import com.agaram.eln.primary.model.usermanagement.LSusergroupedcolumns;
 import com.agaram.eln.primary.model.usermanagement.LSusergrouprights;
 import com.agaram.eln.primary.model.usermanagement.LSusergrouprightsmaster;
+import com.agaram.eln.primary.model.usermanagement.LSusershowhidecolumns;
 import com.agaram.eln.primary.model.usermanagement.LSusersteam;
 import com.agaram.eln.primary.model.usermanagement.LSuserteammapping;
 import com.agaram.eln.primary.model.usermanagement.LoggedUser;
@@ -72,6 +73,7 @@ import com.agaram.eln.primary.repository.usermanagement.LSusergroupRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSusergroupedcolumnsRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSusergrouprightsRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSusergrouprightsmasterRepository;
+import com.agaram.eln.primary.repository.usermanagement.LSusershowhidecolumnsRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSusersteamRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserteammappingRepository;
 import com.agaram.eln.primary.repository.usermanagement.LsusersettingsRepository;
@@ -147,6 +149,9 @@ public class UserService {
 
 	@Autowired
 	LSusergroupedcolumnsRepository lsusergroupedcolumnsRepository;
+	
+	@Autowired
+	LSusershowhidecolumnsRepository lsusershowhidecolumnsRepository;
 
 	@Autowired
 	UnitRepository unitRepository;
@@ -2179,4 +2184,16 @@ public class UserService {
 		return obj;
 	}
 
+	public LSusershowhidecolumns setShowHideolumn(LSusershowhidecolumns objgroupped) {
+		LSusershowhidecolumns objexist = getShowHideolumn(objgroupped);
+		if (objexist != null) {
+			objgroupped.setUsergroupedcolcode(objexist.getUsergroupedcolcode());
+		}
+		return lsusershowhidecolumnsRepository.save(objgroupped);
+	}
+
+	public LSusershowhidecolumns getShowHideolumn(LSusershowhidecolumns objgroupped) {
+		return lsusershowhidecolumnsRepository.findFirstByUsercodeAndSitecodeAndGridname
+				(objgroupped.getUsercode(),objgroupped.getSitecode(), objgroupped.getGridname());
+	}
 }

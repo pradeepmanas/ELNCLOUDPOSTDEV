@@ -285,18 +285,16 @@ public class IotconnectService {
 	         }
 	     }
 	}
-public List<RCTCPResultDetails> getiotresultdetails(RCTCPResultDetails resultdetailsobj) {
-		
-		System.out.println(resultdetailsobj);
-		
-//		List<RCTCPResultDetails> rctcpresultdetails  = RCTCPResultDetailsRepository.findByMethodAndInstrument(resultdetailsobj.getMethod(),resultdetailsobj.getInstrument());
-		List<RCTCPResultDetails> rctcpresultdetails  = RCTCPResultDetailsRepository.findByMethodAndEquipment(resultdetailsobj.getMethod(),resultdetailsobj.getEquipment());
 
-		System.out.println(rctcpresultdetails);
-		return rctcpresultdetails;
-		//return null;
+	public List<RCTCPResultDetails> getiotresultdetails(List<Integer> methodkeys , List<Integer> instkeys) {
+		
+		List<RCTCPResultDetails> results = RCTCPResultDetailsRepository.findByMethodMethodkeyInAndEquipmentNequipmentcodeIn(methodkeys,instkeys);
+		return results;
+
+		//List<RCTCPResultDetails> rctcpresultdetails  = RCTCPResultDetailsRepository.findByMethodAndEquipment(methodkeys , instkeys);
+	
+		
 	}
-
 	public LSpreferences getpreferencedata(Map<String, Object> mapObject) {
 		LSpreferences IsRegulated = LSpreferencesRepository.findByTasksettings("RegulatedIndustry");
 		return IsRegulated;
