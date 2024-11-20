@@ -5,7 +5,12 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.ParseException;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -286,15 +291,23 @@ public class IotconnectService {
 	     }
 	}
 
-	public List<RCTCPResultDetails> getiotresultdetails(List<Integer> methodkeys , List<Integer> instkeys) {
+	public List<RCTCPResultDetails> getiotresultdetails(List<Integer> methodkeys , List<Integer> instkeys ,RCTCPResultDetails resultobj) {
 		
-		List<RCTCPResultDetails> results = RCTCPResultDetailsRepository.findByMethodMethodkeyInAndEquipmentNequipmentcodeIn(methodkeys,instkeys);
-		return results;
-
-		//List<RCTCPResultDetails> rctcpresultdetails  = RCTCPResultDetailsRepository.findByMethodAndEquipment(methodkeys , instkeys);
+		String fromDateString = resultobj.getFromdate().toString();
+		String toDateString = resultobj.getTodate().toString();
+		        
+	    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE MMM dd HH:mm:ss zzz yyyy");
+		        
+		ZonedDateTime fromDate = ZonedDateTime.parse(fromDateString, formatter);
+		ZonedDateTime toDate = ZonedDateTime.parse(toDateString, formatter);
 	
-		
+		Date startOfDayFrom = Date.from(fromDate.toLocalDate().atStartOfDay(ZoneId.systemDefault()).toInstant());
+	    Date endOfDayTo = Date.from(toDate.toLocalDate().atTime(23, 59, 59).atZone(ZoneId.systemDefault()).toInstant());
+	
+	    List<RCTCPResultDetails> results = RCTCPResultDetailsRepository.findByMethodMethodkeyInAndEquipmentNequipmentcodeInAndCreateddateBetween(methodkeys,instkeys,startOfDayFrom,endOfDayTo);
+		return results;
 	}
+	
 	public LSpreferences getpreferencedata(Map<String, Object> mapObject) {
 		LSpreferences IsRegulated = LSpreferencesRepository.findByTasksettings("RegulatedIndustry");
 		return IsRegulated;

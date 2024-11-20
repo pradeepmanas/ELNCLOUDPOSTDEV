@@ -30,7 +30,7 @@ public interface LSusergrouprightsRepository  extends JpaRepository<LSusergroupr
 	public List<LSusergrouprights> findByUsergroupid(Integer usergroupcode);
 	@Transactional
 	@Modifying
-	@Query("update com.agaram.eln.primary.model.usermanagement.LSusergrouprights o set o.sallow ='0' where o.displaytopic='IDS_TSK_ADDREPO' or o.displaytopic='IDS_TSK_EDITREPO' or o.displaytopic='IDS_SCN_INVENTORY' or o.displaytopic='IDS_SCN_UNITMASTER'")
+	@Query("update com.agaram.eln.primary.model.usermanagement.LSusergrouprights o set o.sallow ='1' where o.displaytopic='IDS_SCN_UNITMASTER' or o.displaytopic='IDS_SCN_SECTIONMASTER' or o.displaytopic='IDS_SCN_STORAGELOCATION' or o.displaytopic='IDS_SCN_MATERIALCATEGORY' or o.displaytopic='IDS_SCN_MATERIAL' or o.displaytopic='IDS_SCN_MATERIALINVENTORY' or o.displaytopic='IDS_SCN_MATERIALTYPE'")
 	public void setplanrightsonUsergroupid();
 	@Transactional
 	@Modifying

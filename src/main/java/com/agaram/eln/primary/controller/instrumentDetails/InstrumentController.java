@@ -1409,4 +1409,15 @@ public class InstrumentController {
 	public List<LSlogilablimsorderdetail> GetOrdersbyuseronDetailview(@RequestBody LSlogilablimsorderdetail objorder)throws Exception{
 		return instrumentService.GetOrdersbyuseronDetailview(objorder);
 	}
+	
+	@RequestMapping("/Getorderbyflaganduseronstart")
+	public ResponseEntity<Map<String, Object>> Getorderbyflaganduseronstart(@RequestBody LSlogilablimsorderdetail objorder)throws Exception
+	{
+		try {
+			Map<String, Object> returnMap = instrumentService.Getorderbyflaganduseronstart(objorder);
+			return new ResponseEntity<>(returnMap,HttpStatus.OK);
+		}catch (Exception e) {
+			return new ResponseEntity<>(null,HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
 }

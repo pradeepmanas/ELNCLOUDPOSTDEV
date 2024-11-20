@@ -1,5 +1,6 @@
 package com.agaram.eln.primary.repository.iotconnect;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -21,5 +22,9 @@ public interface RCTCPResultDetailsRepository extends JpaRepository<RCTCPResultD
 	@Transactional
 	List<RCTCPResultDetails> findByMethodMethodkeyInAndEquipmentNequipmentcodeIn(List<Integer> methodkeys,
 			List<Integer> instkeys);
+	
+	@Transactional
+	List<RCTCPResultDetails> findByMethodMethodkeyInAndEquipmentNequipmentcodeInAndCreateddateBetween(
+			List<Integer> methodkeys, List<Integer> instkeys, Date fromdate, Date todate);
 
 }

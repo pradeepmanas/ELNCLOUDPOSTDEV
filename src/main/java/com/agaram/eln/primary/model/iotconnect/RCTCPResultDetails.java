@@ -78,6 +78,12 @@ private static final long serialVersionUID = 1L;
 	private InstrumentMaster instrument;
 	
 	@Transient
+	private Date fromdate;
+
+	@Transient
+	private Date todate;
+	
+	@Transient
 	LScfttransaction objsilentaudit;
 	
 	@OneToMany
@@ -203,4 +209,21 @@ private static final long serialVersionUID = 1L;
 	public void setEquipment(Equipment equipment) {
 		this.equipment = equipment;
 	}
+
+	public Date getFromdate() {
+		return fromdate;
+	}
+
+	public void setFromdate(Date fromdate) {
+		this.fromdate = fromdate;
+	}
+
+	public Date getTodate() {
+		return todate;
+	}
+
+	public void setTodate(Date todate) {
+		this.todate = todate;
+	}
+	
 }

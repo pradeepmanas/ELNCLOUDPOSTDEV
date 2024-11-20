@@ -72,19 +72,18 @@ public class IotconnectController {
 		final Integer isMultitenant = mapper.convertValue(mapObject.get("ismultitenant"), Integer.class);
 		//final Long batchcode = mapper.convertValue(mapObject.get("batchcode"),long.class);
 		final String tenant =  mapper.convertValue(mapObject.get("tenant"), String.class);
+		final LSOrderElnMethod orderelnmethod = mapper.convertValue(mapObject.get("batchcode"), LSOrderElnMethod.class);
 
-
-		Object batchcodeObject = mapObject.get("batchcode");
-		Long batchcode = null;
-		if (batchcodeObject instanceof Number) {
-		    batchcode = ((Number) batchcodeObject).longValue();
-		} else if (batchcodeObject instanceof String) {
-		    batchcode = Long.parseLong((String) batchcodeObject);
-		}
+//		Object batchcodeObject = mapObject.get("batchcode");
+//		Long batchcode = null;
+//		if (batchcodeObject instanceof Number) {
+//		    batchcode = ((Number) batchcodeObject).longValue();
+//		} else if (batchcodeObject instanceof String) {
+//		    batchcode = Long.parseLong((String) batchcodeObject);
+//		}
 		
 		final ResponseEntity<Object> parsedData ;
 		
-//		iotconnectservice.ConvertRawDataToFile(rawData,methodobj.getMethodkey(),instobj.getInstmastkey(),isMultitenant);
 		iotconnectservice.ConvertRawDataToFile(rawData,methodobj.getMethodkey(),equipobj.getNequipmentcode(),isMultitenant);
 		if(isMultitenant==0) {
 			parsedData = parserService.evaluateSQLParser(methodobj.getMethodkey(), site, rawData,isMultitenant,request);
@@ -93,29 +92,29 @@ public class IotconnectController {
 		}
 		System.out.println("parsedData:" +parsedData);
 
-		if(batchcode == null) {
-		iotconnectservice.InsertRCTCPResultDetails(parsedData.getBody());
+		if(orderelnmethod.getBatchcode() == null || orderelnmethod.getBatchcode() == 0) {
+			iotconnectservice.InsertRCTCPResultDetails(parsedData.getBody());
 		}else {
-		iotconnectservice.InsertIntoOrders(parsedData.getBody(),batchcode);
+			iotconnectservice.InsertIntoOrders(parsedData.getBody(),orderelnmethod.getBatchcode());
 		}
-
 	}
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/getiotresultdetails")
 	public  List<RCTCPResultDetails> getiotresultdetails(final HttpServletRequest request, @RequestBody Map<String, Object> mapObject) throws Exception {
 
-		//final ObjectMapper mapper = new ObjectMapper();
+		final ObjectMapper mapper = new ObjectMapper();
 		
         List<Integer> methodKeys = (List<Integer>) (mapObject.get("methodkeyList"));
-
 	    List<Integer> instkeys = (List<Integer>)(mapObject.get("instList"));
-		
+	    
+		final RCTCPResultDetails resultobj = mapper.convertValue(mapObject.get("rctcpresultdetails"), RCTCPResultDetails.class);
+
 	    if (methodKeys == null || instkeys == null) {
 	        throw new IllegalArgumentException("Required parameters are missing");
 	    }
 	    
-		return iotconnectservice.getiotresultdetails(methodKeys , instkeys);
+		return iotconnectservice.getiotresultdetails(methodKeys , instkeys ,resultobj);
 	}
 	
 	@RequestMapping("/getpreferencedata")

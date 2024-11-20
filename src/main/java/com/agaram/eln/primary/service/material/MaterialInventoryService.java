@@ -3714,7 +3714,7 @@ public class MaterialInventoryService {
 		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
 
 		List<Elnmaterial> material = elnMaterialRepository.findByNmaterialcodeIn(lstMaterial);
-		List<ElnmaterialInventory> inventoryItems = elnmaterialInventoryReppository.findByMaterialInAndNtransactionstatusAndNstatusOrderByNmaterialinventorycodeDesc(material,28,1);
+		List<ElnmaterialInventory> inventoryItems = elnmaterialInventoryReppository.findByMaterialInOrderByNmaterialinventorycodeDesc(material);
 		
 		objmap.put("lstELNmaterial", lstMaterial);
 		objmap.put("lstELNInventory", inventoryItems);

@@ -403,7 +403,18 @@ public class LSlogilablimsorderdetail {
 	@Transient
 	private Integer rejected;
 	
+	@Transient
+	private String filefor;
 	
+	
+	public String getFilefor() {
+		return filefor;
+	}
+
+	public void setFilefor(String filefor) {
+		this.filefor = filefor;
+	}
+
 	@Transient
 	private List<Long> lstdirectorycode;
 
