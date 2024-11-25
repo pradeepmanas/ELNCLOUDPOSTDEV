@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import com.agaram.eln.primary.model.equipment.Equipment;
 import com.agaram.eln.primary.model.equipment.EquipmentCategory;
+import com.agaram.eln.primary.model.equipment.EquipmentType;
 import com.agaram.eln.primary.model.instrumentsetup.InstrumentCategory;
 import com.agaram.eln.primary.model.instrumentsetup.InstrumentMaster;
 import com.agaram.eln.primary.model.methodsetup.Delimiter;
@@ -36,6 +37,7 @@ import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.repository.equipment.EquipmentCategoryRepository;
 import com.agaram.eln.primary.repository.equipment.EquipmentRepository;
+import com.agaram.eln.primary.repository.equipment.EquipmentTypeRepository;
 import com.agaram.eln.primary.repository.instrumentsetup.InstCategoryRepository;
 import com.agaram.eln.primary.repository.instrumentsetup.InstMasterRepository;
 import com.agaram.eln.primary.repository.methodsetup.DelimiterRepository;
@@ -73,6 +75,9 @@ public class MethodImportService {
 	
 	@Autowired
 	EquipmentCategoryRepository equipCategoryRepo;
+	
+	@Autowired
+	EquipmentTypeRepository EquipmentTypeRepository;
 	
 	@Autowired
 	MethodRepository methodRepo;
@@ -199,6 +204,28 @@ public class MethodImportService {
 	    		instMasterList.add(instMasterExist.get());
 	    	}	
 */
+			//Equipment Type
+			
+			String equipTypeJson = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(expMethod.getEquipment().getEquipmenttype());
+			final EquipmentType expEquipType = mapper.readValue(equipTypeJson, EquipmentType.class);
+			EquipmentType impEquipType = new EquipmentType();
+			impEquipType = expEquipType;
+			final List<EquipmentType> equipTypeList = new ArrayList<>(1);
+		
+			final List<EquipmentType> equipTypeExist = EquipmentTypeRepository.findBysequipmenttypenameIgnoreCaseAndNsitecodeAndNstatus(expMethod.getEquipment().getEquipmenttype().getSequipmenttypename(),site.getSitecode(),1);
+            Date date = new Date();		
+            if(equipTypeExist.isEmpty()) {
+            	impEquipType.setSequipmenttypename(expMethod.getEquipment().getEquipmenttype().getSequipmenttypename());
+            	impEquipType.setCreateby(createdUser);
+            	impEquipType.setCreatedate(date);
+            	impEquipType.setNsitecode(site.getSitecode());
+            	
+            	equipTypeList.add(EquipmentTypeRepository.save(impEquipType));
+			
+			} else {
+				equipTypeList.add(equipTypeExist.get(0));
+			}
+			
 			
 			// Equipment Category
 			String equipCategoryJson = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(expMethod.getEquipment().getEquipmentcategory());
@@ -208,11 +235,12 @@ public class MethodImportService {
 			final List<EquipmentCategory> equipCategoryList = new ArrayList<>(1);
 		
 			final List<EquipmentCategory> equipCategoryExist = equipCategoryRepo.findBySequipmentcatnameIgnoreCaseAndNsitecodeAndNstatus(expEquipCategory.getSequipmentcatname(),site.getSitecode(),1);
-            Date date = new Date();		
+           // Date date = new Date();		
             if(equipCategoryExist.isEmpty()) {
             	impEquipCategory.setNequipmentcatcode(0);
             	impEquipCategory.setCreateby(createdUser);
             	impEquipCategory.setCreatedate(date);
+            	impEquipCategory.setEquipmenttype(equipTypeList.get(0));
             	equipCategoryList.add(equipCategoryRepo.save(impEquipCategory));
 			
 			} else {

@@ -18,15 +18,19 @@ import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.instrumentDetails.LsOrderattachments;
 import com.agaram.eln.primary.model.samplestoragelocation.SelectedInventoryMapped;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Table(name="elnmaterialinventory")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ElnmaterialInventory {
 	
 	@Id
 	@Column(name = "nmaterialinventorycode")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer nmaterialinventorycode;
+	
+	private String inventoryname;
 	
 	@ManyToOne
 	private MaterialType materialtype;
@@ -352,5 +356,13 @@ public class ElnmaterialInventory {
 	}
 	public void setSelectedinventorymapped(List<SelectedInventoryMapped> selectedinventorymapped) {
 		this.selectedinventorymapped = selectedinventorymapped;
+	}
+
+	public String getInventoryname() {
+		return inventoryname;
+	}
+
+	public void setInventoryname(String inventoryname) {
+		this.inventoryname = inventoryname;
 	}
 }

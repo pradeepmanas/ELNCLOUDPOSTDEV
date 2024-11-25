@@ -21,9 +21,11 @@ import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.instrumentDetails.LsOrderattachments;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Table(name = "elnmaterial")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Elnmaterial implements Serializable{
 	
 	private static final long serialVersionUID = 1L;

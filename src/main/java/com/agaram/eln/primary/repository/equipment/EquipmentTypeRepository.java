@@ -32,7 +32,8 @@ public interface EquipmentTypeRepository extends JpaRepository<EquipmentType, In
 	public List<EquipmentType> findByNequipmenttypecodeNotAndNstatusAndNsitecodeOrderByNequipmenttypecodeDesc(int i,
 			int j, Integer nsiteInteger);
 
-//	public List<EquipmentType> findByNequipmenttypecodeNotAndNstatusAndNsitecodeOrderByNequipmenttypecodeDesc(int i,
-//			int j, EquipmentType nsiteInteger);
+	public List<EquipmentType> findBysequipmenttypenameIgnoreCaseAndNsitecodeAndNstatus(String sequipmenttypename,
+			Integer sitecode, int i);
+
 
 }

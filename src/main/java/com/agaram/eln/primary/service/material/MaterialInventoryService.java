@@ -21,7 +21,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -82,6 +84,7 @@ import com.agaram.eln.primary.service.cloudFileManip.CloudFileManipulationservic
 import com.agaram.eln.primary.service.fileManipulation.FileManipulationservice;
 import com.agaram.eln.primary.service.samplestoragelocation.SampleStorageLocationService;
 import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -3074,94 +3077,152 @@ public class MaterialInventoryService {
 		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
 		String sformattype = "{yyyy}/{99999}";
 		ObjectMapper objmapper = new ObjectMapper();
+		
+		
+        List<ElnmaterialInventory> objInventory = objmapper.convertValue(inputMap.get("selectedInventory"), new TypeReference<List<ElnmaterialInventory>>() {});
+        final LScfttransaction cft = objmapper.convertValue(inputMap.get("objsilentaudit"), LScfttransaction.class);
+        List<SelectedInventoryMapped> objStorageLocation = objmapper.convertValue(inputMap.get("selectedStorageLocation"), new TypeReference<List<SelectedInventoryMapped>>() {});
 
-		ElnmaterialInventory objInventory = objmapper.convertValue(inputMap.get("selectedInventory"), ElnmaterialInventory.class);
-		final LScfttransaction cft = objmapper.convertValue(inputMap.get("objsilentaudit"), LScfttransaction.class);
+        
+        objInventory.forEach(objInv -> {
+            try {
+                boolean isExpiry = objInv.getMaterial().getExpirytype() == 1;
+                Integer ntransStatus = objInv.getMaterial().getQuarantine() != null && objInv.getMaterial().getQuarantine() ? 37 :
+                                       objInv.getMaterial().getOpenexpiry() != null && objInv.getMaterial().getOpenexpiry() ? 22 : 28;
 
-		MaterialType objMaterialType = objInventory.getMaterialtype();
-		Elnmaterial objMaterial = objInventory.getMaterial();
+                objInv.setCreateddate(commonfunction.getCurrentUtcTime());
+                objInv.setIsexpiry(isExpiry);
+                objInv.setNtransactionstatus(ntransStatus);
+                objInv.setInventoryname(objInv.getInventoryname());
+                objInv.setCreatedby(objInv.getCreatedby());
+            } catch (ParseException e) {
+                e.printStackTrace();  
+            }
+        });
 
-		Map<String, Object> selectedStorage = (Map<String, Object>) inputMap.get("selectedStorageLocation");
-		SelectedInventoryMapped objStorageLocation = objmapper.convertValue(selectedStorage, SelectedInventoryMapped.class);
+        
+        elnmaterialInventoryReppository.save(objInventory);
 
-		boolean isReusable = objMaterial.getReusable() == null ? false : objMaterial.getReusable();
-		boolean isExpiry = objMaterial.getExpirytype() == 1;
-		Integer ntransStatus = objMaterial.getQuarantine() != null && objMaterial.getQuarantine() ? 37 :  objMaterial.getOpenexpiry() != null && objMaterial.getOpenexpiry() ? 22 : 28;
+        
+        objInventory.forEach(objInv -> {
+            try {
+                String stridformat = returnSubstring(objInv.getMaterialtype().getSmaterialtypename()) + "/" +
+                                     returnSubstring(objInv.getMaterial().getSmaterialname()) + "/" +
+                                     getfnFormat(objInv.getNmaterialinventorycode(), sformattype);
+                objInv.setSinventoryid(stridformat);
+            } catch (Exception e) {
+                e.printStackTrace();  
+            }
+        });
 
-		List<Integer> lstIntegerInventory = new ArrayList<Integer>();
+        
+        elnmaterialInventoryReppository.save(objInventory);
 
-		if (isReusable) {
-			String reusableStrCount = objInventory.getSreceivedquantity().toString();
-			Integer reusableCount = Integer.parseInt(reusableStrCount);
+        
+        List<SelectedInventoryMapped> newStorageEntry = new ArrayList<>();
+        IntStream.range(0, objStorageLocation.size()).forEach(i -> {
+            SelectedInventoryMapped storage = objStorageLocation.get(i);
+            SampleStorageLocation objLocation = new SampleStorageLocation();
+            ElnmaterialInventory invcode = objInventory.get(i);
+            objLocation.setSamplestoragelocationkey(storage.getSamplestoragelocationkey().getSamplestoragelocationkey());
+            storage.setId(storage.getId());
+            storage.setStoragepath(storage.getStoragepath());
+            storage.setSamplestoragelocationkey(objLocation);
+            storage.setNmaterialinventorycode(invcode.getNmaterialinventorycode());
+            newStorageEntry.add(storage);
+        });
 
-			List<ElnmaterialInventory> objInventoriesLst = new ArrayList<ElnmaterialInventory>();
+        
+        selectedInventoryMappedRepository.save(newStorageEntry);
+        
 
-			for (int i = 0; i < reusableCount; i++) {
-				ElnmaterialInventory tempInventory = new ElnmaterialInventory();
-
-				tempInventory.setCreatedby(objInventory.getCreatedby());
-				tempInventory.setExpirydate(objInventory.getExpirydate());
-				tempInventory.setIsexpiry(isExpiry);
-				tempInventory.setJsondata(objInventory.getJsondata());
-				tempInventory.setManufacdate(objInventory.getManufacdate());
-				tempInventory.setManufacturer(objInventory.getManufacturer());
-				tempInventory.setMaterial(objInventory.getMaterial());
-				tempInventory.setMaterialcategory(objInventory.getMaterialcategory());
-				tempInventory.setMaterialgrade(objInventory.getMaterialgrade());
-				tempInventory.setMaterialtype(objInventory.getMaterialtype());
-				tempInventory.setUnit(objInventory.getUnit());
-				tempInventory.setSection(objInventory.getSection());
-				tempInventory.setNsitecode(objInventory.getNsitecode());
-				tempInventory.setNstatus(1);
-				tempInventory.setReceiveddate(objInventory.getReceiveddate());
-				tempInventory.setRemarks(objInventory.getRemarks());
-				tempInventory.setSavailablequantity("1");
-				tempInventory.setSreceivedquantity("1");
-				tempInventory.setNqtynotification(0.0);
-				tempInventory.setNtransactionstatus(ntransStatus);
-				tempInventory.setCreateddate(commonfunction.getCurrentUtcTime());
-
-				objInventoriesLst.add(tempInventory);
-				lstIntegerInventory.add(tempInventory.getNmaterialinventorycode());
-			}
-
-			if (!objInventoriesLst.isEmpty()) {
-				elnmaterialInventoryReppository.save(objInventoriesLst);
-
-				objInventoriesLst.stream().peek(f -> {
-					try {
-						String stridformat = returnSubstring(objMaterialType.getSmaterialtypename()) + "/"
-								+ returnSubstring(objMaterial.getSmaterialname()) + "/"
-								+ getfnFormat(f.getNmaterialinventorycode(), sformattype);
-
-						f.setSinventoryid(stridformat);
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}).collect(Collectors.toList());
-
-				elnmaterialInventoryReppository.save(objInventoriesLst);
-
-				setStorageInventoryStorageOnNode(objStorageLocation, objInventory, lstIntegerInventory);
-			}
-		} else {
-
-			objInventory.setCreateddate(commonfunction.getCurrentUtcTime());
-			objInventory.setIsexpiry(isExpiry);
-			objInventory.setNtransactionstatus(ntransStatus);
-
-			elnmaterialInventoryReppository.save(objInventory);
-
-			String stridformat = returnSubstring(objMaterialType.getSmaterialtypename()) + "/"
-					+ returnSubstring(objMaterial.getSmaterialname()) + "/"
-					+ getfnFormat(objInventory.getNmaterialinventorycode(), sformattype);
-	
-			objInventory.setSinventoryid(stridformat);
-
-			elnmaterialInventoryReppository.save(objInventory);
-
-			setStorageInventoryStorageOnNode(objStorageLocation, objInventory, lstIntegerInventory);
-		}
+//		ElnmaterialInventory objInventory = objmapper.convertValue(inputMap.get("selectedInventory"), ElnmaterialInventory.class);
+//		final LScfttransaction cft = objmapper.convertValue(inputMap.get("objsilentaudit"), LScfttransaction.class);
+//
+//		MaterialType objMaterialType = objInventory.getMaterialtype();
+//		Elnmaterial objMaterial = objInventory.getMaterial();
+//
+//		Map<String, Object> selectedStorage = (Map<String, Object>) inputMap.get("selectedStorageLocation");
+//		SelectedInventoryMapped objStorageLocation = objmapper.convertValue(selectedStorage, SelectedInventoryMapped.class);
+//
+//		boolean isReusable = objMaterial.getReusable() == null ? false : objMaterial.getReusable();
+//		boolean isExpiry = objMaterial.getExpirytype() == 1;
+//		Integer ntransStatus = objMaterial.getQuarantine() != null && objMaterial.getQuarantine() ? 37 :  objMaterial.getOpenexpiry() != null && objMaterial.getOpenexpiry() ? 22 : 28;
+//
+//		List<Integer> lstIntegerInventory = new ArrayList<Integer>();
+//
+//		if (isReusable) {
+//			String reusableStrCount = objInventory.getSreceivedquantity().toString();
+//			Integer reusableCount = Integer.parseInt(reusableStrCount);
+//
+//			List<ElnmaterialInventory> objInventoriesLst = new ArrayList<ElnmaterialInventory>();
+//
+//			for (int i = 0; i < reusableCount; i++) {
+//				ElnmaterialInventory tempInventory = new ElnmaterialInventory();
+//
+//				tempInventory.setCreatedby(objInventory.getCreatedby());
+//				tempInventory.setExpirydate(objInventory.getExpirydate());
+//				tempInventory.setIsexpiry(isExpiry);
+//				tempInventory.setJsondata(objInventory.getJsondata());
+//				tempInventory.setManufacdate(objInventory.getManufacdate());
+//				tempInventory.setManufacturer(objInventory.getManufacturer());
+//				tempInventory.setMaterial(objInventory.getMaterial());
+//				tempInventory.setMaterialcategory(objInventory.getMaterialcategory());
+//				tempInventory.setMaterialgrade(objInventory.getMaterialgrade());
+//				tempInventory.setMaterialtype(objInventory.getMaterialtype());
+//				tempInventory.setUnit(objInventory.getUnit());
+//				tempInventory.setSection(objInventory.getSection());
+//				tempInventory.setNsitecode(objInventory.getNsitecode());
+//				tempInventory.setNstatus(1);
+//				tempInventory.setReceiveddate(objInventory.getReceiveddate());
+//				tempInventory.setRemarks(objInventory.getRemarks());
+//				tempInventory.setSavailablequantity("1");
+//				tempInventory.setSreceivedquantity("1");
+//				tempInventory.setNqtynotification(0.0);
+//				tempInventory.setNtransactionstatus(ntransStatus);
+//				tempInventory.setCreateddate(commonfunction.getCurrentUtcTime());
+//
+//				objInventoriesLst.add(tempInventory);
+//				lstIntegerInventory.add(tempInventory.getNmaterialinventorycode());
+//			}
+//
+//			if (!objInventoriesLst.isEmpty()) {
+//				elnmaterialInventoryReppository.save(objInventoriesLst);
+//
+//				objInventoriesLst.stream().peek(f -> {
+//					try {
+//						String stridformat = returnSubstring(objMaterialType.getSmaterialtypename()) + "/"
+//								+ returnSubstring(objMaterial.getSmaterialname()) + "/"
+//								+ getfnFormat(f.getNmaterialinventorycode(), sformattype);
+//
+//						f.setSinventoryid(stridformat);
+//					} catch (Exception e) {
+//						e.printStackTrace();
+//					}
+//				}).collect(Collectors.toList());
+//
+//				elnmaterialInventoryReppository.save(objInventoriesLst);
+//
+//				setStorageInventoryStorageOnNode(objStorageLocation, objInventory, lstIntegerInventory);
+//			}
+//		} else {
+//
+//			objInventory.setCreateddate(commonfunction.getCurrentUtcTime());
+//			objInventory.setIsexpiry(isExpiry);
+//			objInventory.setNtransactionstatus(ntransStatus);
+//
+//			elnmaterialInventoryReppository.save(objInventory);
+//
+//			String stridformat = returnSubstring(objMaterialType.getSmaterialtypename()) + "/"
+//					+ returnSubstring(objMaterial.getSmaterialname()) + "/"
+//					+ getfnFormat(objInventory.getNmaterialinventorycode(), sformattype);
+//	
+//			objInventory.setSinventoryid(stridformat);
+//
+//			elnmaterialInventoryReppository.save(objInventory);
+//
+//			setStorageInventoryStorageOnNode(objStorageLocation, objInventory, lstIntegerInventory);
+//		}
 
 		objmap.put("objsilentaudit", cft);
 		objmap.put("ElnmaterialInventory", objInventory);
