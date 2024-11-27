@@ -3270,13 +3270,14 @@ public class MaterialInventoryService {
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 		simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 		Integer nsiteInteger = (Integer) inputMap.get("nsitecode");
-		Date fromDate = simpleDateFormat.parse((String) inputMap.get("fromdate"));
-		Date toDate = simpleDateFormat.parse((String) inputMap.get("todate"));
+		//MaterialCategory objmat = (MaterialCategory) inputMap.get("materialcategory");
+//		Date fromDate = simpleDateFormat.parse((String) inputMap.get("fromdate"));
+//		Date toDate = simpleDateFormat.parse((String) inputMap.get("todate"));
 
-		List<ElnmaterialInventory> lstElnInventories = elnmaterialInventoryReppository
-				.findByNsitecodeAndCreateddateBetweenOrderByNmaterialinventorycodeDesc(nsiteInteger, fromDate, toDate);
+//		List<ElnmaterialInventory> lstElnInventories = elnmaterialInventoryReppository
+//				.findByNsitecodeAndCreateddateBetweenOrderByNmaterialinventorycodeDesc(nsiteInteger, fromDate, toDate);
 		
-//		List<ElnmaterialInventory> lstElnInventories = elnmaterialInventoryReppository.findAll();
+		List<ElnmaterialInventory> lstElnInventories = elnmaterialInventoryReppository.findByNsitecodeOrderByNmaterialinventorycodeDesc(nsiteInteger);
 
 		objmap.put("lstMaterialInventory", lstElnInventories);
 

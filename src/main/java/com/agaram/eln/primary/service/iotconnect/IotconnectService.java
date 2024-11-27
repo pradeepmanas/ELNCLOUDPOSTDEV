@@ -1,6 +1,7 @@
 package com.agaram.eln.primary.service.iotconnect;
 
 import java.io.File;
+
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -11,10 +12,14 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
+import org.bson.BsonBinarySubType;
+import org.bson.types.Binary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,13 +31,18 @@ import org.springframework.web.multipart.MultipartFile;
 import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.config.TenantContext;
 import com.agaram.eln.primary.model.cfr.LSpreferences;
+import com.agaram.eln.primary.model.cloudFileManip.CloudOrderAttachment;
 import com.agaram.eln.primary.model.equipment.Equipment;
 import com.agaram.eln.primary.model.equipment.EquipmentCategory;
 import com.agaram.eln.primary.model.equipment.EquipmentType;
+import com.agaram.eln.primary.model.fileManipulation.OrderAttachment;
 import com.agaram.eln.primary.model.instrumentDetails.LSOrderElnMethod;
+import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 import com.agaram.eln.primary.model.instrumentsetup.InstrumentCategory;
 import com.agaram.eln.primary.model.instrumentsetup.InstrumentMaster;
 import com.agaram.eln.primary.model.instrumentsetup.InstrumentType;
+import com.agaram.eln.primary.model.methodsetup.Delimiter;
+import com.agaram.eln.primary.model.methodsetup.ELNFileAttachments;
 import com.agaram.eln.primary.model.methodsetup.ELNResultDetails;
 import com.agaram.eln.primary.model.methodsetup.LSResultFieldValues;
 import com.agaram.eln.primary.model.methodsetup.Method;
@@ -47,15 +57,19 @@ import com.agaram.eln.primary.model.iotconnect.RCTCPResultDetails;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.repository.cfr.LSpreferencesRepository;
+import com.agaram.eln.primary.repository.cloudFileManip.CloudOrderAttachmentRepository;
 import com.agaram.eln.primary.repository.equipment.EquipmentCategoryRepository;
 import com.agaram.eln.primary.repository.equipment.EquipmentRepository;
 import com.agaram.eln.primary.repository.equipment.EquipmentTypeRepository;
+import com.agaram.eln.primary.repository.fileManipulation.OrderAttachmentRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSOrderElnMethodRepository;
+import com.agaram.eln.primary.repository.instrumentDetails.LSlogilablimsorderdetailRepository;
 import com.agaram.eln.primary.repository.instrumentsetup.InstCategoryRepository;
 import com.agaram.eln.primary.repository.instrumentsetup.InstMasterRepository;
 import com.agaram.eln.primary.repository.iotconnect.RCTCPFileDetailsRepository;
 import com.agaram.eln.primary.repository.iotconnect.RCTCPResultDetailsRepository;
 import com.agaram.eln.primary.repository.iotconnect.RCTCPResultFieldValuesRepository;
+import com.agaram.eln.primary.repository.methodsetup.ELNFileAttachmentsRepository;
 import com.agaram.eln.primary.repository.methodsetup.ELNResultDetailsRepository;
 import com.agaram.eln.primary.repository.methodsetup.LSResultFieldValuesRepository;
 import com.agaram.eln.primary.repository.methodsetup.MethodRepository;
@@ -80,11 +94,23 @@ public class IotconnectService {
 	private LSpreferencesRepository LSpreferencesRepository;
 	
 	@Autowired
+	private CloudOrderAttachmentRepository cloudOrderAttachmentRepository;
+	
+	@Autowired
+	CloudFileManipulationservice CloudFileManipulationservice;
+	
+	@Autowired
 	private FileStorageService fileStorageService;
 	
 	@Autowired
 	private FileManipulationservice filemanipulationservice;
 
+	@Autowired
+	private OrderAttachmentRepository orderAttachmentRepository;
+	
+	@Autowired
+	private LSlogilablimsorderdetailRepository LSlogilablimsorderdetailRepository;
+	
 	@Autowired
 	private RCTCPResultDetailsRepository RCTCPResultDetailsRepository;
 	
@@ -114,6 +140,9 @@ public class IotconnectService {
 	@Autowired
 	private LSOrderElnMethodRepository LSOrderElnMethodRepository;
 	
+	@Autowired
+	private ELNFileAttachmentsRepository ELNFileAttachmentsRepository;
+	
 	public List<InstrumentCategory> getInstcategory()
 	{
 		return categoryRepo.findAll();
@@ -128,10 +157,11 @@ public class IotconnectService {
 	
 	@SuppressWarnings("unchecked")
 	@Transactional
-	public String ConvertRawDataToFile(String rawData,Integer methodkey,Integer nequipmentcode,Integer isMultitenant) throws IOException {
+	public void ConvertRawDataToFile(String rawData,Integer methodkey,Integer nequipmentcode,
+			Integer isMultitenant,LSOrderElnMethod orderelnmethod,LSuserMaster userobj,LSSiteMaster site) throws IOException, ParseException {
 		
 		   System.out.println("entered service");
-		   String FileName = "Tempfile";
+		   String FileName = "IOTFile";
 		   final File tempFile = File.createTempFile(FileName, "csv");
 		   String largefileUUID = null;
 		   
@@ -157,34 +187,62 @@ public class IotconnectService {
 	        if(isMultitenant==0) {
 	        	largefileUUID = filemanipulationservice.storeLargeattachment(FileName,multipartFile);
 			
+	        	  objfile.setFileUUID(largefileUUID);
+			 	  objfile.setFilename(FileName);
+			 	  objfile.setMethodkey(methodkey);
+			 	  objfile.setNequipmentcode(nequipmentcode);
+			 	  RCTCPFileDetailsRepository.save(objfile);
+			 	  
+			 	 OrderAttachment objattachment = new OrderAttachment();
+				 objattachment.setId(largefileUUID);
+				 objattachment.setFile(new Binary(BsonBinarySubType.BINARY, multipartFile.getBytes()));
+				 objattachment = orderAttachmentRepository.insert(objattachment);
+			 	  
 	        }else {
 	        	largefileUUID = cloudFileManipulationservice.storecloudfilesreturnUUID(multipartFile, "iotconnectfile");
+	        	CloudOrderAttachment objattachment = new CloudOrderAttachment();
+	    		objattachment.setFile(new Binary(BsonBinarySubType.BINARY, multipartFile.getBytes()));
+	    		objattachment.setFileid(largefileUUID);
+	    		objattachment = cloudOrderAttachmentRepository.save(objattachment);
+
 	        }
 	        
-			  objfile.setFileUUID(largefileUUID);
-		 	  objfile.setFilename(FileName);
-		 	  objfile.setMethodkey(methodkey);
-		 	  //objfile.setInstrumentkey(instmastkey);
-		 	  objfile.setNequipmentcode(nequipmentcode);
-		 	  RCTCPFileDetailsRepository.save(objfile);
-		 	  largefileUUID="";
-		 	
-		return rawData;
-		
+				 
+		 	 List<ELNFileAttachments> attchlist = new ArrayList<>();
+		 	 
+		 	 if(orderelnmethod.getBatchcode() != null || orderelnmethod.getBatchcode() != 0) {
+		 		ELNFileAttachments fileattchobj = new ELNFileAttachments();
+			 		fileattchobj.setBatchcode(orderelnmethod.getBatchcode());
+			 		fileattchobj.setCreateby(userobj);
+			 		fileattchobj.setCreatedate(commonfunction.getCurrentUtcTime());
+			 		fileattchobj.setFilename(FileName);
+			 		fileattchobj.setFileid(largefileUUID);
+			 		fileattchobj.setMethodkey(methodkey);
+			 		fileattchobj.setFileextension(".txt");
+			 		
+			 		attchlist.add(ELNFileAttachmentsRepository.save(fileattchobj));
+		 	 }
+		 	 largefileUUID="";
+		 	 LSlogilablimsorderdetail order = LSlogilablimsorderdetailRepository.findByBatchcodeOrderByBatchcodeDesc(orderelnmethod.getBatchcode());
+		 	 order.setELNFileAttachments(attchlist);
+		 	 LSlogilablimsorderdetailRepository.save(order);
+		 	 
+		 	 tempFile.delete();
+		//return rawData;
 	}
 	
 	@SuppressWarnings("unchecked")
 	@Transactional
-	public void InsertRCTCPResultDetails(Object parsedData) throws IOException, ParseException {
+	public void InsertRCTCPResultDetails(Object parsedData ,  LSuserMaster userobj,LSSiteMaster siteobj) throws IOException, ParseException {
 		
 		System.out.println(parsedData); 
 		Map<String, List<List<MethodFieldTechnique>>> textBlocks = (Map<String, List<List<MethodFieldTechnique>>>) parsedData; // Your map initialization
 
-		LSuserMaster userobj = new LSuserMaster();
-       	userobj.setUsercode(1);
-       	
-       	LSSiteMaster siteobj =new LSSiteMaster();
-       	siteobj.setSitecode(1);
+//		LSuserMaster userobj = new LSuserMaster();
+//       	userobj.setUsercode(1);
+//       	
+//       	LSSiteMaster siteobj =new LSSiteMaster();
+//       	siteobj.setSitecode(1);
        	
 	     for (Map.Entry<String, List<List<MethodFieldTechnique>>> entry : textBlocks.entrySet()) {
 	         String key = entry.getKey();
@@ -347,5 +405,15 @@ public class IotconnectService {
 		
 		return orderelnmethod;	
 	}
-
+	
+	
+	public Map<String, Object> checkforIOTAttchment(Long batchcode) {
+		Map<String, Object> map = new HashMap<>();
+		//final Optional<ELNFileAttachments> attachmentdetails = ELNFileAttachmentsRepository.findByBatchcode(batchcode);
+		List<ELNFileAttachments> attachmentdetails = ELNFileAttachmentsRepository.findByBatchcode(batchcode);
+		   if(!attachmentdetails.isEmpty()) {
+			   map.put("attachmentdetails", attachmentdetails);
+		   }
+		return map;	
+	}
 }

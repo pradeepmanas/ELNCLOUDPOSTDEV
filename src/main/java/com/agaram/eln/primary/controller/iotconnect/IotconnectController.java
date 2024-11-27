@@ -62,7 +62,6 @@ public class IotconnectController {
 
 		final ObjectMapper mapper = new ObjectMapper();
 		final LSSiteMaster site = mapper.convertValue(mapObject.get("site"), LSSiteMaster.class);
-		final InstrumentMaster instobj = mapper.convertValue(mapObject.get("instrument"), InstrumentMaster.class);
 		
 		final Equipment equipobj = mapper.convertValue(mapObject.get("equipment"), Equipment.class);
 		
@@ -70,21 +69,13 @@ public class IotconnectController {
 		final String rawData =  mapper.convertValue(mapObject.get("rawData"), String.class);
 		final LSuserMaster userobj = mapper.convertValue(mapObject.get("user"), LSuserMaster.class);
 		final Integer isMultitenant = mapper.convertValue(mapObject.get("ismultitenant"), Integer.class);
-		//final Long batchcode = mapper.convertValue(mapObject.get("batchcode"),long.class);
 		final String tenant =  mapper.convertValue(mapObject.get("tenant"), String.class);
 		final LSOrderElnMethod orderelnmethod = mapper.convertValue(mapObject.get("batchcode"), LSOrderElnMethod.class);
 
-//		Object batchcodeObject = mapObject.get("batchcode");
-//		Long batchcode = null;
-//		if (batchcodeObject instanceof Number) {
-//		    batchcode = ((Number) batchcodeObject).longValue();
-//		} else if (batchcodeObject instanceof String) {
-//		    batchcode = Long.parseLong((String) batchcodeObject);
-//		}
-		
 		final ResponseEntity<Object> parsedData ;
 		
-		iotconnectservice.ConvertRawDataToFile(rawData,methodobj.getMethodkey(),equipobj.getNequipmentcode(),isMultitenant);
+		iotconnectservice.ConvertRawDataToFile(rawData,methodobj.getMethodkey(),equipobj.getNequipmentcode(),isMultitenant,orderelnmethod,userobj,site);
+		
 		if(isMultitenant==0) {
 			parsedData = parserService.evaluateSQLParser(methodobj.getMethodkey(), site, rawData,isMultitenant,request);
 		}else {
@@ -93,7 +84,7 @@ public class IotconnectController {
 		System.out.println("parsedData:" +parsedData);
 
 		if(orderelnmethod.getBatchcode() == null || orderelnmethod.getBatchcode() == 0) {
-			iotconnectservice.InsertRCTCPResultDetails(parsedData.getBody());
+			iotconnectservice.InsertRCTCPResultDetails(parsedData.getBody(),userobj,site);
 		}else {
 			iotconnectservice.InsertIntoOrders(parsedData.getBody(),orderelnmethod.getBatchcode());
 		}
@@ -149,5 +140,12 @@ public class IotconnectController {
 		return  iotconnectservice.getOrdersBasedOnmethod(Methodobj);
 
 	}
-	
+	@RequestMapping(value = "/checkforIOTAttchment")
+	public Map<String, Object> checkforIOTAttchment(@RequestBody Map<String, Object> inputMap) throws Exception {
+		final ObjectMapper mapper = new ObjectMapper();
+		Integer batchcode = (Integer) inputMap.get("batchcode");
+		Long longbatchcode = Long.valueOf(batchcode);
+		return  iotconnectservice.checkforIOTAttchment(longbatchcode);
+
+	}
 }

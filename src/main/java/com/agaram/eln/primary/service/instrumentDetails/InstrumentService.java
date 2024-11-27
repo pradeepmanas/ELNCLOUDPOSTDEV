@@ -614,7 +614,7 @@ public class InstrumentService {
 				List<LsMappedTemplate> MappedTemplate = LsMappedTemplateRepository.findAll();
 				List<LsUnmappedTemplate> UnmappedTemplate = LsUnmappedTemplateRepository.findAll();
 
-				List<Method> elnMethod = lsMethodRepository.findByStatusAndSite(1, lssiteMaster);
+				List<Method> elnMethod = lsMethodRepository.findByStatusAndSiteAndEquipmentIsNotNull(1, lssiteMaster);
 				List<ParserBlock> ParserBlock = lsParserBlockRepository.findByStatusAndMethodIn(1, elnMethod);
 				List<ParserField> ParserField = lsParserRepository.findByStatusAndParserblockIn(1, ParserBlock);
 				List<SubParserField> SubParserField = lsSubParserRepository.findByStatusAndParserfieldIn(1, ParserField);

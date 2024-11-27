@@ -1,6 +1,7 @@
 package com.agaram.eln.primary.repository.methodsetup;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.transaction.Transactional;
 
@@ -15,4 +16,8 @@ public interface ELNFileAttachmentsRepository extends JpaRepository<ELNFileAttac
 	public ELNFileAttachments findFirst1ByfileidOrderByAttachmentcodeDesc(String fileid) ;
 	
 	public List<ELNFileAttachments> findByBatchcodeOrderByAttachmentcodeDesc(Long batchcode);
+
+	public List<ELNFileAttachments> findByBatchcode(Long batchcode);
+
+	
 }
