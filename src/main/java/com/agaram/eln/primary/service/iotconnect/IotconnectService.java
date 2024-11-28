@@ -157,7 +157,7 @@ public class IotconnectService {
 	
 	@SuppressWarnings("unchecked")
 	@Transactional
-	public void ConvertRawDataToFile(String rawData,Integer methodkey,Integer nequipmentcode,
+	public List<RCTCPFileDetails> ConvertRawDataToFile(String rawData,Integer methodkey,Integer nequipmentcode,
 			Integer isMultitenant,LSOrderElnMethod orderelnmethod,LSuserMaster userobj,LSSiteMaster site) throws IOException, ParseException {
 		
 		   System.out.println("entered service");
@@ -183,16 +183,9 @@ public class IotconnectService {
 	        FileInputStream inputStream = new FileInputStream(filePath);
 	        MultipartFile multipartFile = new MockMultipartFile("file",tempFile.getName(),"text/plain", inputStream );                    
 	        
-	        RCTCPFileDetails objfile = new RCTCPFileDetails();
 	        if(isMultitenant==0) {
 	        	largefileUUID = filemanipulationservice.storeLargeattachment(FileName,multipartFile);
 			
-	        	  objfile.setFileUUID(largefileUUID);
-			 	  objfile.setFilename(FileName);
-			 	  objfile.setMethodkey(methodkey);
-			 	  objfile.setNequipmentcode(nequipmentcode);
-			 	  RCTCPFileDetailsRepository.save(objfile);
-			 	  
 			 	 OrderAttachment objattachment = new OrderAttachment();
 				 objattachment.setId(largefileUUID);
 				 objattachment.setFile(new Binary(BsonBinarySubType.BINARY, multipartFile.getBytes()));
@@ -207,7 +200,14 @@ public class IotconnectService {
 
 	        }
 	        
-				 
+	        List<RCTCPFileDetails> filelist = new ArrayList<>();
+	        RCTCPFileDetails objfile = new RCTCPFileDetails();
+	          objfile.setFileUUID(largefileUUID);
+		 	  objfile.setFilename(FileName);
+		 	  objfile.setMethodkey(methodkey);
+		 	  objfile.setNequipmentcode(nequipmentcode);
+		 	filelist.add(RCTCPFileDetailsRepository.save(objfile)) ;
+		 	  
 		 	 List<ELNFileAttachments> attchlist = new ArrayList<>();
 		 	 
 		 	 if(orderelnmethod.getBatchcode() != null || orderelnmethod.getBatchcode() != 0) {
@@ -223,27 +223,18 @@ public class IotconnectService {
 			 		attchlist.add(ELNFileAttachmentsRepository.save(fileattchobj));
 		 	 }
 		 	 largefileUUID="";
-		 	 LSlogilablimsorderdetail order = LSlogilablimsorderdetailRepository.findByBatchcodeOrderByBatchcodeDesc(orderelnmethod.getBatchcode());
-		 	 order.setELNFileAttachments(attchlist);
-		 	 LSlogilablimsorderdetailRepository.save(order);
-		 	 
+
 		 	 tempFile.delete();
-		//return rawData;
+		return filelist;
 	}
 	
 	@SuppressWarnings("unchecked")
 	@Transactional
-	public void InsertRCTCPResultDetails(Object parsedData ,  LSuserMaster userobj,LSSiteMaster siteobj) throws IOException, ParseException {
+	public void InsertRCTCPResultDetails(Object parsedData ,  LSuserMaster userobj,LSSiteMaster siteobj,List<RCTCPFileDetails> rcfiledetails) throws IOException, ParseException {
 		
 		System.out.println(parsedData); 
 		Map<String, List<List<MethodFieldTechnique>>> textBlocks = (Map<String, List<List<MethodFieldTechnique>>>) parsedData; // Your map initialization
 
-//		LSuserMaster userobj = new LSuserMaster();
-//       	userobj.setUsercode(1);
-//       	
-//       	LSSiteMaster siteobj =new LSSiteMaster();
-//       	siteobj.setSitecode(1);
-       	
 	     for (Map.Entry<String, List<List<MethodFieldTechnique>>> entry : textBlocks.entrySet()) {
 	         String key = entry.getKey();
 	         List<List<MethodFieldTechnique>> value = entry.getValue();
@@ -258,13 +249,13 @@ public class IotconnectService {
 	                 
 	                 rctcpresultdetailsobj.setParserblockkey(technique.getParserfield().getParserblock().getParserblockkey());     
 	                 rctcpresultdetailsobj.setMethod(technique.getParserfield().getParserblock().getMethod());     
-	                // rctcpresultdetailsobj.setInstrument(technique.getParserfield().getParserblock().getMethod().getInstmaster());   
 	                 rctcpresultdetailsobj.setEquipment(technique.getParserfield().getParserblock().getMethod().getEquipment());
 	                 rctcpresultdetailsobj.setParserfieldkey(technique.getParserfield().getParserfieldkey());    
 	                 rctcpresultdetailsobj.setFieldname(technique.getFieldname());     
 	                 rctcpresultdetailsobj.setCreateddate(commonfunction.getCurrentUtcTime());
 	                 rctcpresultdetailsobj.setCreatedby(userobj);
 	                 rctcpresultdetailsobj.setSite(siteobj);
+	                 rctcpresultdetailsobj.setRcfiledetails(rcfiledetails.get(0));
 	                 	
 	                 if(technique.getParseddata().size() == 1) {
 	                	 rctcpresultdetailsobj.setResults(technique.getParseddata().get(0));
@@ -362,7 +353,8 @@ public class IotconnectService {
 		Date startOfDayFrom = Date.from(fromDate.toLocalDate().atStartOfDay(ZoneId.systemDefault()).toInstant());
 	    Date endOfDayTo = Date.from(toDate.toLocalDate().atTime(23, 59, 59).atZone(ZoneId.systemDefault()).toInstant());
 	
-	    List<RCTCPResultDetails> results = RCTCPResultDetailsRepository.findByMethodMethodkeyInAndEquipmentNequipmentcodeInAndCreateddateBetween(methodkeys,instkeys,startOfDayFrom,endOfDayTo);
+	    Integer valueloaded = 1;
+	    List<RCTCPResultDetails> results = RCTCPResultDetailsRepository.findByMethodMethodkeyInAndEquipmentNequipmentcodeInAndCreateddateBetweenAndValueloadedNot(methodkeys,instkeys,startOfDayFrom,endOfDayTo,valueloaded);
 		return results;
 	}
 	
@@ -416,6 +408,5 @@ public class IotconnectService {
 		   }
 		return map;	
 	}
+
 }
-
-

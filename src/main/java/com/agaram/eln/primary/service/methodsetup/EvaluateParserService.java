@@ -2,12 +2,14 @@ package com.agaram.eln.primary.service.methodsetup;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -17,8 +19,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.agaram.eln.primary.commonfunction.commonfunction;
+import com.agaram.eln.primary.model.iotconnect.RCTCPFileDetails;
+import com.agaram.eln.primary.model.iotconnect.RCTCPResultDetails;
 import com.agaram.eln.primary.model.methodsetup.CommonFunction;
 import com.agaram.eln.primary.model.methodsetup.CustomField;
+import com.agaram.eln.primary.model.methodsetup.ELNFileAttachments;
 import com.agaram.eln.primary.model.methodsetup.ELNResultDetails;
 import com.agaram.eln.primary.model.methodsetup.GeneralField;
 import com.agaram.eln.primary.model.methodsetup.Method;
@@ -31,6 +37,9 @@ import com.agaram.eln.primary.model.methodsetup.SubParserField;
 import com.agaram.eln.primary.model.methodsetup.SubParserTechnique;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.repository.cfr.LScfttransactionRepository;
+import com.agaram.eln.primary.repository.iotconnect.RCTCPFileDetailsRepository;
+import com.agaram.eln.primary.repository.iotconnect.RCTCPResultDetailsRepository;
+import com.agaram.eln.primary.repository.methodsetup.ELNFileAttachmentsRepository;
 import com.agaram.eln.primary.repository.methodsetup.ELNResultDetailsRepository;
 import com.agaram.eln.primary.repository.methodsetup.LSResultFieldValuesRepository;
 import com.agaram.eln.primary.repository.methodsetup.MethodRepository;
@@ -53,6 +62,15 @@ public class EvaluateParserService {
 	
 	@Autowired
 	ParserSetupService parserSetupService;
+	
+	@Autowired
+	ELNFileAttachmentsRepository ELNFileAttachmentsRepository;
+	
+	@Autowired
+	RCTCPResultDetailsRepository RCTCPResultDetailsRepository;
+	
+	@Autowired
+	RCTCPFileDetailsRepository RCTCPFileDetailsRepository;
 	
 	@Autowired
 	MethodService methodService;
@@ -612,317 +630,80 @@ public class EvaluateParserService {
 		return parsedFieldList;
 		
 	}
-//	
-	
-	//changed in csv issue
-//	private List<MethodFieldTechnique> getFieldData(final List<MethodFieldTechnique> blockFieldList,
-//			final String blockData,
-//			final List<ParserIgnoreChars> ignoreList) {
-//	final CommonFunction commonFunction = new CommonFunction();		
-//	
-//	final List<MethodFieldTechnique> parsedFieldList = new ArrayList<MethodFieldTechnique>();
-//	for(MethodFieldTechnique methodFieldTech: blockFieldList) {
+
+//	public List<ELNResultDetails> insertELNResultDetails(ELNResultDetails[] lsresults) {
+//		List<ELNResultDetails> lselnresults = Arrays.asList(lsresults);
 //		
-//		final MethodFieldTechnique techData = new MethodFieldTechnique(methodFieldTech);
-//	
-//		List<List<String>> dataBlock = commonFunction.getMvfData(methodFieldTech.getParsertechniques(), blockData, 
-//			methodFieldTech.getParserfield().getMethoddelimiter().getDelimiter().getActualdelimiter(), ignoreList);
-//		
-//		if (!methodFieldTech.getSubparsertechniques().isEmpty()) {
-//			for(final SubParserTechnique subParserTechnique : methodFieldTech.getSubparsertechniques())
-//			{
-//				 if(subParserTechnique.getMethoddelimiter().getParsermethod().getParsermethodname().equalsIgnoreCase("merge")){
-////                     dataBlock = commonFunction.mergeFields(dataBlock, 0, 0, 0, 0, subParserTechnique, 0);
-//					 dataBlock = commonFunction.mergeFields(dataBlock, subParserTechnique);
-//                 }
-//                 else if (subParserTechnique.getMethoddelimiter().getParsermethod().getParsermethodname().equalsIgnoreCase("split")){
-////                	 dataBlock =  commonFunction.splitField(dataBlock, 0, 0, 0, 0, subParserTechnique, 0);
-//                	 dataBlock =  commonFunction.splitField(dataBlock, subParserTechnique);	                	 
-//                 }
-//                 else if (subParserTechnique.getMethoddelimiter().getParsermethod().getParsermethodname().equalsIgnoreCase("shift")) 
-//                 {
-//                	 dataBlock =  commonFunction.shiftFieldParserFunction(dataBlock, 0, 0, 0, subParserTechnique.getInputfields(), "","",0, true);
-//                 }
-//			}
-//		
+//		for (int i = 0 ; i<lselnresults.size();i++)
+//		{
+//		resultfieldvaluesrepo.save(lselnresults.get(i).getLsresultfieldvalues());
 //		}
 //		
-//		else {
-////       	 dataBlock =  commonFunction.splitField(dataBlock, 0, 0, 0, 0, subParserTechnique, 0);
-//			for(final SubParserField subParserField : methodFieldTech.getSubparserfields())
-//			{
-//       	     dataBlock =  commonFunction.datablockspilt(dataBlock, subParserField);	  
-//			}
-//        }
-//		
-//		final List<String> fieldData = new ArrayList<String>();
-//		
-//		if(methodFieldTech.getFieldtype().equalsIgnoreCase("SubParserField")) {
-//			
-//				for(final SubParserField subParserField :methodFieldTech.getSubparserfields())
-//				{
-//					if (subParserField.getFieldid().equals(methodFieldTech.getFieldid()))
-//	                {               
-//	                    if (subParserField.getSubparserfieldtype().equalsIgnoreCase("col")) {
-//	                    	for(final List<String> rowData : dataBlock) {
-//	                    		                    		
-//	                    		if (rowData.size() <= Integer.parseInt(subParserField.getSubparserfieldposition())){
-//	                    			fieldData.add("");
-//	                    		}
-//	                    		
-//	                    		else {
-//	                    			if(methodFieldTech.getSubparsertechniques().isEmpty()) {
-//	                    			rowData.remove(0);
-//	                    			
-//	                    			fieldData.add(rowData.get(Integer.parseInt(subParserField.getSubparserfieldposition())));
-//	                    		}
-//	                    			else
-//	                    			{
-//	                    				
-//	                    				fieldData.add(rowData.get(Integer.parseInt(subParserField.getSubparserfieldposition())));
-//	                    			
-//	                    			
-//	                    			}
-//	                    		}
-//	                    		techData.setParseddata(fieldData);
-//	                    	}
-//	                      }
-//	                    else if (subParserField.getSubparserfieldtype().equalsIgnoreCase("cell")) {
-//	                    	
-//	                    	if(methodFieldTech.getSubparsertechniques().isEmpty()) {
-//	                    		String cellData ="";
-//	                        	for(final List<String> rowData : dataBlock) {
+//		elnResultRepo.save(lselnresults);
+//		return lselnresults;
 //
-//	                        	rowData.remove(0);
-//	                    	    cellData = dataBlock.get(Integer.parseInt(subParserField.getSubparserfieldposition().split(",")[1]))
-//	                    			.get(Integer.parseInt(subParserField.getSubparserfieldposition().split(",")[0]));
-//	                        	}
-//	                    		fieldData.add(cellData);        
-//
-//	                    	}
-//	                    	else {
-//
-//	                         	final String cellData = dataBlock.get(Integer.parseInt(subParserField.getSubparserfieldposition().split(",")[1]))
-//	                        			.get(Integer.parseInt(subParserField.getSubparserfieldposition().split(",")[0]));
-//	                        	fieldData.add(cellData);    
-//	                    	}
-//	                    }
-//	                }
-//				}				
-//				techData.setParseddata(fieldData);
-//			}
-//	//	}
-//		else
-//		{				
-//			for (List<String> dataList : dataBlock) {
-//				for (String data : dataList) {
-//					fieldData.add(data);
-//				}
-//			}
-//			techData.setParseddata(fieldData);
-//		}
-//		parsedFieldList.add(techData);
 //	}
-//	return parsedFieldList;
-//}
 
-
-	//commented by sri for performance slow
-//	private List<MethodFieldTechnique> getFieldData(final List<MethodFieldTechnique> blockFieldList,
-//			final String blockData,
-//			final List<ParserIgnoreChars> ignoreList) {
-//	final CommonFunction commonFunction = new CommonFunction();		
-//	
-//	final List<MethodFieldTechnique> parsedFieldList = new ArrayList<MethodFieldTechnique>();
-//	for(MethodFieldTechnique methodFieldTech: blockFieldList) {
-//		
-//		final MethodFieldTechnique techData = new MethodFieldTechnique(methodFieldTech);
-//	
-//		List<List<String>> dataBlock = commonFunction.getMvfData(methodFieldTech.getParsertechniques(), blockData, 
-//			methodFieldTech.getParserfield().getMethoddelimiter().getDelimiter().getActualdelimiter(), ignoreList);
-//		
-////		for(final SubParserField subParserfields :methodFieldTech.getSubparserfields())
-////		{						
-//
-////		if(dataBlock.isEmpty()) {
-////			return parsedFieldList;
-////		}
-////		else {
-//		if (!methodFieldTech.getSubparsertechniques().isEmpty()) {
-//		//	if(subParserfields.getName().equals(methodFieldTech.getFieldname()))
-//			{
-//			for(final SubParserTechnique subParserTechnique : methodFieldTech.getSubparsertechniques())
-//			{
-//				 if(subParserTechnique.getMethoddelimiter().getParsermethod().getParsermethodname().equalsIgnoreCase("merge")){
-////                     dataBlock = commonFunction.mergeFields(dataBlock, 0, 0, 0, 0, subParserTechnique, 0);
-//					 dataBlock = commonFunction.mergeFields(dataBlock, subParserTechnique);
-//                 }
-//                 else if (subParserTechnique.getMethoddelimiter().getParsermethod().getParsermethodname().equalsIgnoreCase("split")){
-////                	 dataBlock =  commonFunction.splitField(dataBlock, 0, 0, 0, 0, subParserTechnique, 0);
-//                	 dataBlock =  commonFunction.splitField(dataBlock, subParserTechnique);	                	 
-//                 }
-//                 else if (subParserTechnique.getMethoddelimiter().getParsermethod().getParsermethodname().equalsIgnoreCase("shift")) 
-//                 {
-//                	 dataBlock =  commonFunction.shiftFieldParserFunction(dataBlock, 0, 0, 0, subParserTechnique.getInputfields(), "","",0, true);
-//                 }
-//			}
-//		  }
-//		
-//	 }	
-////		else {
-////			for(final SubParserField subParserField : methodFieldTech.getSubparserfields())
-////			{
-////       	     dataBlock =  commonFunction.datablockspilt(dataBlock, subParserField);	  
-////			}
-////        }
-//	
-//		final List<String> fieldData = new ArrayList<String>();
-//		
-//		if(methodFieldTech.getFieldtype().equalsIgnoreCase("SubParserField")) {
-//			
-//			if(methodFieldTech.getParserfield().getMethoddelimiter().getDelimiter().getDelimitername().equals("None"))
-//			{
-//				for(final SubParserField subParserField :methodFieldTech.getSubparserfields())
-//				{
-//					if (subParserField.getFieldid().equals(methodFieldTech.getFieldid()))
-//	                {               
-//	                    if (subParserField.getSubparserfieldtype().equalsIgnoreCase("col")) {
-//	                    	for(final List<String> rowData : dataBlock) {
-//	                    		                    		
-//	                    		if (rowData.size() <= Integer.parseInt(subParserField.getSubparserfieldposition())){
-//	                    			fieldData.add("");
-//	                    		}
-//	                    		
-//	                    		else {
-//	                    		//	if(methodFieldTech.getSubparsertechniques().isEmpty()) {
-//	                    		//	rowData.remove(0);
-//	                    			
-//	                    			fieldData.add(rowData.get(Integer.parseInt(subParserField.getSubparserfieldposition())));
-//	                    	//	}
-////	                    			else
-////	                    			{
-////	                    				
-////	                    				fieldData.add(rowData.get(Integer.parseInt(subParserField.getSubparserfieldposition())));
-////	                    			
-////	                    			
-////	                    			}
-//	                    		}
-//	                    		techData.setParseddata(fieldData);
-//	                    	}
-//	                      }
-//	                    else if (subParserField.getSubparserfieldtype().equalsIgnoreCase("cell")) {
-//	                    	
-//	                    //	if(methodFieldTech.getSubparsertechniques().isEmpty()) {
-////	                    		String cellData ="";
-////	                        	for(final List<String> rowData : dataBlock) {
-////
-////	                        	rowData.remove(0);
-////	                    	    cellData = dataBlock.get(Integer.parseInt(subParserField.getSubparserfieldposition().split(",")[1]))
-////	                    			.get(Integer.parseInt(subParserField.getSubparserfieldposition().split(",")[0]));
-////	                        	}
-////	                    		fieldData.add(cellData);        
-//
-//	                   // 	}
-//	               //     	else {
-//
-//	                         	final String cellData = dataBlock.get(Integer.parseInt(subParserField.getSubparserfieldposition().split(",")[1]))
-//	                        			.get(Integer.parseInt(subParserField.getSubparserfieldposition().split(",")[0]));
-//	                        	fieldData.add(cellData);    
-//	                 //   	}
-//	                    }
-//	                }
-//				}				
-//				techData.setParseddata(fieldData);
-//			}
-//			else {
-//			for(final SubParserField subParserField :methodFieldTech.getSubparserfields())
-//			{
-//				if (subParserField.getFieldid().equals(methodFieldTech.getFieldid()))
-//                 {               
-//                    if (subParserField.getSubparserfieldtype().equalsIgnoreCase("col")) {
-//                    	for(final List<String> rowData : dataBlock) {
-//                    		                    		
-//                    		if (rowData.size() <= Integer.parseInt(subParserField.getSubparserfieldposition())){
-//              			fieldData.add("");
-//                    		}
-//                    		
-//                    		else {
-//                    		//	if(methodFieldTech.getSubparsertechniques().isEmpty()) {
-//                    			rowData.remove(0);
-//                    			
-//                    			fieldData.add(rowData.get(Integer.parseInt(subParserField.getSubparserfieldposition())));
-//                    
-//                    	//	}
-////                    			else
-////                    			{
-////                    				
-////                    				fieldData.add(rowData.get(Integer.parseInt(subParserField.getSubparserfieldposition())));
-////                    			
-////                    			
-////                    			}
-//                    		}
-//                    		techData.setParseddata(fieldData);
-//                    		
-//                    	}
-//                      }
-//                    else if (subParserField.getSubparserfieldtype().equalsIgnoreCase("cell")) {
-//                    	
-//  //                  	if(methodFieldTech.getSubparsertechniques().isEmpty()) {
-//                    		String cellData ="";
-//                        	for(final List<String> rowData : dataBlock) {
-//
-//                        	rowData.remove(0);
-//                    	    cellData = dataBlock.get(Integer.parseInt(subParserField.getSubparserfieldposition().split(",")[1]))
-//                    			.get(Integer.parseInt(subParserField.getSubparserfieldposition().split(",")[0]));
-//                        	}
-//                    		fieldData.add(cellData);        
-//
-////                    	}
-////                    	else {
-////
-////                         	final String cellData = dataBlock.get(Integer.parseInt(subParserField.getSubparserfieldposition().split(",")[1]))
-////                        			.get(Integer.parseInt(subParserField.getSubparserfieldposition().split(",")[0]));
-////                        	fieldData.add(cellData);    
-////                    	}
-//                    }
-//                }
-//			}				
-//			techData.setParseddata(fieldData);
-//		  }
-//		}
-//		else
-//		{				
-//			for (List<String> dataList : dataBlock) {
-//				for (String data : dataList) {
-//					String Temp=data.replace("\t"," ");
-//					fieldData.add(Temp);
-//				}
-//			}
-//			techData.setParseddata(fieldData);
-//		}
-//		parsedFieldList.add(techData);
-//	  }
-//	//}
-//	return parsedFieldList;
-//}
-
-
-	
-
-	public List<ELNResultDetails> insertELNResultDetails(ELNResultDetails[] lsresults) {
-		List<ELNResultDetails> lselnresults = Arrays.asList(lsresults);
+	public Map<String, Object> insertELNResultDetails(List<ELNResultDetails> resultdetails , List<Integer> selectedProductsList) throws ParseException {
+		Map<String, Object> mapOrders = new HashMap<String, Object>();
 		
-		for (int i = 0 ; i<lselnresults.size();i++)
+		for (int i = 0 ; i<resultdetails.size();i++)
 		{
-		resultfieldvaluesrepo.save(lselnresults.get(i).getLsresultfieldvalues());
+		resultfieldvaluesrepo.save(resultdetails.get(i).getLsresultfieldvalues());
 		}
 		
-		elnResultRepo.save(lselnresults);
-		return lselnresults;
-
+		elnResultRepo.save(resultdetails);
+		
+		 if (!selectedProductsList.isEmpty()) {
+			 mapOrders = onImportfornonreg(resultdetails , selectedProductsList);
+		 }
+		return mapOrders;
 	}
-
-
-
 	
+	public Map<String, Object> onImportfornonreg(List<ELNResultDetails> resultdetails , List<Integer> selectedProductsList) throws ParseException {
+		Map<String, Object> maps = new HashMap<String, Object>();
+		
+		 ELNFileAttachments fileattchobj = new ELNFileAttachments();
+	     List<RCTCPResultDetails> rctcpresultlist = new ArrayList<>();
+		
+			 rctcpresultlist = RCTCPResultDetailsRepository.findByResultidIn(selectedProductsList);
+			 System.out.println(rctcpresultlist);
+			 for (RCTCPResultDetails index: rctcpresultlist) {
+				 index.setValueloaded(1);
+			 }
+			 RCTCPResultDetailsRepository.save(rctcpresultlist);
+			 
+			 List<Integer> fileCodes = rctcpresultlist.stream()
+			            .map(RCTCPResultDetails::getRcfiledetails) // Access rcfiledetails
+			            .filter(rcfiledetails -> rcfiledetails != null) // Ensure it's not null
+			            .map(RCTCPFileDetails::getFilecode) // Access filecode
+			            .filter(filecode -> filecode != null) // Filter out null filecodes
+			            .collect(Collectors.toList()); // Collect into a list
+
+			 System.out.println(fileCodes);
+			 
+			 List<RCTCPFileDetails> fileobj = RCTCPFileDetailsRepository.findByFilecodeIn(fileCodes);
+			 
+			 System.out.println(fileobj);
+			 
+			 List<String> uniqueFileUUIDs = fileobj.stream()
+			            .map(RCTCPFileDetails::getFileUUID) // Access the FileUUID field
+			            .filter(fileUUID -> fileUUID != null) // Ensure FileUUID is not null
+			            .distinct() // Remove duplicates
+			            .collect(Collectors.toList());
+			 
+		 		fileattchobj.setBatchcode(resultdetails.get(0).getBatchcode());
+		 		fileattchobj.setCreateby(resultdetails.get(0).getCreatedby());
+		 		fileattchobj.setCreatedate(commonfunction.getCurrentUtcTime());
+		 		fileattchobj.setFilename("IOTFile");
+		 		fileattchobj.setFileid(uniqueFileUUIDs.get(0));
+		 		fileattchobj.setMethodkey(resultdetails.get(0).getMethodkey());
+		 		fileattchobj.setFileextension(".txt");
+		 		
+		 		ELNFileAttachmentsRepository.save(fileattchobj);
+		
+		 maps.put("attchmentdetails", fileattchobj);
+		 maps.put("rcresults", rctcpresultlist);
+		return maps;
+	}
 }

@@ -303,7 +303,7 @@ public class BarcodeMasterService {
 									String storageCondition = valueElement.getAsJsonObject().get("value").getAsString();
 									data = data.replace("$storagecondition$", storageCondition);
 								}
-							} else if (datatype == 1 && "Project id".equalsIgnoreCase(fieldName)) {
+							} else if (datatype == 0 && "Project id".equalsIgnoreCase(fieldName)) {
 								String projectId = field.get("value").getAsString();
 								data = data.replace("$projectid$", projectId);
 							}

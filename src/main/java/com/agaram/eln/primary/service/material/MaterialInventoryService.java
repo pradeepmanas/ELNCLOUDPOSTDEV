@@ -40,6 +40,7 @@ import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.instrumentDetails.LsOrderattachments;
 import com.agaram.eln.primary.model.material.Elnmaterial;
 import com.agaram.eln.primary.model.material.ElnmaterialInventory;
+import com.agaram.eln.primary.model.material.ElnresultUsedMaterial;
 import com.agaram.eln.primary.model.material.Manufacturer;
 import com.agaram.eln.primary.model.material.MappedTemplateFieldPropsMaterial;
 import com.agaram.eln.primary.model.material.Material;
@@ -62,6 +63,7 @@ import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.repository.instrumentDetails.LsOrderattachmentsRepository;
 import com.agaram.eln.primary.repository.material.ElnmaterialInventoryRepository;
 import com.agaram.eln.primary.repository.material.ElnmaterialRepository;
+import com.agaram.eln.primary.repository.material.ElnresultUsedMaterialRepository;
 import com.agaram.eln.primary.repository.material.ManufacturerRepository;
 import com.agaram.eln.primary.repository.material.MappedTemplateFieldPropsMaterialRepository;
 import com.agaram.eln.primary.repository.material.MaterialCategoryRepository;
@@ -140,6 +142,9 @@ public class MaterialInventoryService {
 	SectionRepository sectionRepository;
 	@Autowired
 	ElnmaterialInventoryRepository elnmaterialInventoryReppository;
+	
+	@Autowired
+	ElnresultUsedMaterialRepository ElnresultUsedMaterialRepository;
 
 	@SuppressWarnings("unchecked")
 	public ResponseEntity<Object> getMaterialInventory(Integer nsiteInteger) throws Exception {
@@ -3270,7 +3275,10 @@ public class MaterialInventoryService {
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 		simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 		Integer nsiteInteger = (Integer) inputMap.get("nsitecode");
-		//MaterialCategory objmat = (MaterialCategory) inputMap.get("materialcategory");
+		MaterialCategory objmat = (MaterialCategory) inputMap.get("materialcategory");
+		MaterialType objmattype = (MaterialType) inputMap.get("materialtype");
+		
+		
 //		Date fromDate = simpleDateFormat.parse((String) inputMap.get("fromdate"));
 //		Date toDate = simpleDateFormat.parse((String) inputMap.get("todate"));
 
@@ -3305,62 +3313,69 @@ public class MaterialInventoryService {
 		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
 		ObjectMapper objmapper = new ObjectMapper();
 
-		long longFromValue = Long.parseLong(inputMap.get("fromdate").toString());
-		long longToValue = Long.parseLong(inputMap.get("todate").toString());
+//		long longFromValue = Long.parseLong(inputMap.get("fromdate").toString());
+//		long longToValue = Long.parseLong(inputMap.get("todate").toString());
 
 		Integer nsiteInteger = (Integer) inputMap.get("nsitecode");
-		Integer samplestoragelocationkey = (Integer) inputMap.get("samplestoragelocationkey");
-		Date fromDate = new Date(longFromValue);
-		Date toDate = new Date(longToValue);
+//		Integer samplestoragelocationkey = (Integer) inputMap.get("samplestoragelocationkey");
+//		Date fromDate = new Date(longFromValue);
+//		Date toDate = new Date(longToValue);
 
 		MaterialType objMaterialType = objmapper.convertValue(inputMap.get("materialtype"), MaterialType.class);
 		MaterialCategory objMaterialCategory = objmapper.convertValue(inputMap.get("materialcategory"),MaterialCategory.class);
-		Elnmaterial objElnmaterial = objmapper.convertValue(inputMap.get("elnmaterial"), Elnmaterial.class);
+        List<Elnmaterial> objlstElnmaterial = objmapper.convertValue(inputMap.get("material"), new TypeReference<List<Elnmaterial>>() {});
 
 		List<ElnmaterialInventory> lstElnInventories = new ArrayList<ElnmaterialInventory>();
-
-		if ((objMaterialType == null || objMaterialType.getNmaterialtypecode() == null || objMaterialType.getNmaterialtypecode() == -1)
-				&& (objMaterialCategory == null || objMaterialCategory.getNmaterialcatcode() == null || objMaterialCategory.getNmaterialcatcode() == -1)
-					&& (objElnmaterial == null || objElnmaterial.getNmaterialcode() == null || objElnmaterial.getNmaterialcode() == -1)) {
-			
-			if(samplestoragelocationkey == 0) {
-				lstElnInventories = elnmaterialInventoryReppository
-						.findByNsitecodeAndCreateddateBetweenOrderByNmaterialinventorycodeDesc(nsiteInteger, fromDate, toDate);
-			}else {
-				return new ResponseEntity<>(getStorageLocationByKey(inputMap), HttpStatus.OK);
-			}			
-
-		} else if ((objMaterialType != null && objMaterialType.getNmaterialtypecode() != -1)
-				&& (objMaterialCategory == null || objMaterialCategory.getNmaterialcatcode() == null || objMaterialCategory.getNmaterialcatcode() == -1)
-				&& (objElnmaterial == null || objElnmaterial.getNmaterialcode() == null || objElnmaterial.getNmaterialcode() == -1)) {
-			
-			if(samplestoragelocationkey == 0) {
-				lstElnInventories = elnmaterialInventoryReppository
-						.findByMaterialtypeAndNsitecodeAndCreateddateBetweenOrderByNmaterialinventorycodeDesc(objMaterialType, nsiteInteger, fromDate, toDate);
-			}else {
-				return new ResponseEntity<>(getStorageLocationByKey(inputMap), HttpStatus.OK);
-			}
-
-		} else if ((objMaterialType != null && objMaterialType.getNmaterialtypecode() != -1) && (objMaterialCategory != null && objMaterialCategory.getNmaterialcatcode() != -1)
-				&& (objElnmaterial == null || objElnmaterial.getNmaterialcode() == null || objElnmaterial.getNmaterialcode() == -1)) {
-
-			if(samplestoragelocationkey == 0) {
-				lstElnInventories = elnmaterialInventoryReppository
-						.findByMaterialtypeAndMaterialcategoryAndNsitecodeAndCreateddateBetweenOrderByNmaterialinventorycodeDesc(
-								objMaterialType, objMaterialCategory, nsiteInteger, fromDate, toDate);
-			}else {
-				return new ResponseEntity<>(getStorageLocationByKey(inputMap), HttpStatus.OK);
-			}
-		} else {
 		
-			if(samplestoragelocationkey == 0) {
-				lstElnInventories = elnmaterialInventoryReppository
-						.findByMaterialtypeAndMaterialcategoryAndMaterialAndNsitecodeAndCreateddateBetweenOrderByNmaterialinventorycodeDesc(
-								objMaterialType, objMaterialCategory, objElnmaterial, nsiteInteger, fromDate, toDate);
-			}else {
-				return new ResponseEntity<>(getStorageLocationByKey(inputMap), HttpStatus.OK);
-			}
+		if(!objlstElnmaterial.isEmpty()) {
+			lstElnInventories = elnmaterialInventoryReppository
+					.findByNsitecodeAndMaterialInAndMaterialtypeAndMaterialcategoryOrderByNmaterialinventorycodeDesc(nsiteInteger,objlstElnmaterial,objMaterialType,objMaterialCategory);
+		}else {
+			lstElnInventories= elnmaterialInventoryReppository.findByNsitecodeOrderByNmaterialinventorycodeDesc(nsiteInteger);
 		}
+
+//		if ((objMaterialType == null || objMaterialType.getNmaterialtypecode() == null || objMaterialType.getNmaterialtypecode() == -1)
+//				&& (objMaterialCategory == null || objMaterialCategory.getNmaterialcatcode() == null || objMaterialCategory.getNmaterialcatcode() == -1)
+//					&& (objElnmaterial == null || objElnmaterial.getNmaterialcode() == null || objElnmaterial.getNmaterialcode() == -1)) {
+//			
+//			if(samplestoragelocationkey == 0) {
+//				lstElnInventories = elnmaterialInventoryReppository
+//						.findByNsitecodeAndCreateddateBetweenOrderByNmaterialinventorycodeDesc(nsiteInteger, fromDate, toDate);
+//			}else {
+//				return new ResponseEntity<>(getStorageLocationByKey(inputMap), HttpStatus.OK);
+//			}			
+//
+//		} else if ((objMaterialType != null && objMaterialType.getNmaterialtypecode() != -1)
+//				&& (objMaterialCategory == null || objMaterialCategory.getNmaterialcatcode() == null || objMaterialCategory.getNmaterialcatcode() == -1)
+//				&& (objElnmaterial == null || objElnmaterial.getNmaterialcode() == null || objElnmaterial.getNmaterialcode() == -1)) {
+//			
+//			if(samplestoragelocationkey == 0) {
+//				lstElnInventories = elnmaterialInventoryReppository
+//						.findByMaterialtypeAndNsitecodeAndCreateddateBetweenOrderByNmaterialinventorycodeDesc(objMaterialType, nsiteInteger, fromDate, toDate);
+//			}else {
+//				return new ResponseEntity<>(getStorageLocationByKey(inputMap), HttpStatus.OK);
+//			}
+//
+//		} else if ((objMaterialType != null && objMaterialType.getNmaterialtypecode() != -1) && (objMaterialCategory != null && objMaterialCategory.getNmaterialcatcode() != -1)
+//				&& (objElnmaterial == null || objElnmaterial.getNmaterialcode() == null || objElnmaterial.getNmaterialcode() == -1)) {
+//
+//			if(samplestoragelocationkey == 0) {
+//				lstElnInventories = elnmaterialInventoryReppository
+//						.findByMaterialtypeAndMaterialcategoryAndNsitecodeAndCreateddateBetweenOrderByNmaterialinventorycodeDesc(
+//								objMaterialType, objMaterialCategory, nsiteInteger, fromDate, toDate);
+//			}else {
+//				return new ResponseEntity<>(getStorageLocationByKey(inputMap), HttpStatus.OK);
+//			}
+//		} else {
+//		
+//			if(samplestoragelocationkey == 0) {
+//				lstElnInventories = elnmaterialInventoryReppository
+//						.findByMaterialtypeAndMaterialcategoryAndMaterialAndNsitecodeAndCreateddateBetweenOrderByNmaterialinventorycodeDesc(
+//								objMaterialType, objMaterialCategory, objElnmaterial, nsiteInteger, fromDate, toDate);
+//			}else {
+//				return new ResponseEntity<>(getStorageLocationByKey(inputMap), HttpStatus.OK);
+//			}
+//		}
 
 		objmap.put("lstMaterialInventory", lstElnInventories);
 
@@ -3782,5 +3797,23 @@ public class MaterialInventoryService {
 		objmap.put("lstELNInventory", inventoryItems);
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
 	}
+
+	public ResponseEntity<Object> getInventorytransactionhistory(ElnresultUsedMaterial resultusedmaterial) {
+		Date fromdate =resultusedmaterial.getFromdate();
+		Date todate = resultusedmaterial.getTodate();
+		List <ElnresultUsedMaterial> Elnresult=new ArrayList<>();
+		if(resultusedmaterial.getInventorycode() != null) {
+			if(resultusedmaterial.getTransactionscreen() != -1) {
+				Elnresult=ElnresultUsedMaterialRepository.findByNinventorycodeInAndCreateddateBetweenAndTransactionscreenOrderByNresultusedmaterialcodeDesc(resultusedmaterial.getInventorycode(),fromdate,todate,resultusedmaterial.getTransactionscreen());
+
+			}else {
+				Elnresult=ElnresultUsedMaterialRepository.findByNinventorycodeInAndCreateddateBetweenOrderByNresultusedmaterialcodeDesc(resultusedmaterial.getInventorycode(),fromdate,todate);
+
+			}
+}
+		return new ResponseEntity<>(Elnresult, HttpStatus.OK);
+	}
+	
+
 
 }

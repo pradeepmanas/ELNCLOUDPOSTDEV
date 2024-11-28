@@ -1,6 +1,7 @@
 package com.agaram.eln.primary.model.material;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -77,6 +78,40 @@ public class ElnresultUsedMaterial {
 	
 	@Transient
 	private String qtyleft;
+	
+	@Transient
+	private List<Integer> inventorycode;
+	
+	@Transient
+	private Date fromdate;
+
+	@Transient
+	private Date todate;
+
+
+	public Date getFromdate() {
+		return fromdate;
+	}
+
+	public void setFromdate(Date fromdate) {
+		this.fromdate = fromdate;
+	}
+
+	public Date getTodate() {
+		return todate;
+	}
+
+	public void setTodate(Date todate) {
+		this.todate = todate;
+	}
+
+	public List<Integer> getInventorycode() {
+		return inventorycode;
+	}
+
+	public void setInventorycode(List<Integer> inventorycode) {
+		this.inventorycode = inventorycode;
+	}
 
 	public Integer getIsreturn() {
 		return isreturn;

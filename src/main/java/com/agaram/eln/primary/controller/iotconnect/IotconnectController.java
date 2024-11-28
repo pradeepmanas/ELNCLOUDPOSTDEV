@@ -25,6 +25,7 @@ import com.agaram.eln.primary.model.equipment.EquipmentType;
 import com.agaram.eln.primary.model.instrumentDetails.LSOrderElnMethod;
 import com.agaram.eln.primary.model.instrumentsetup.InstrumentCategory;
 import com.agaram.eln.primary.model.instrumentsetup.InstrumentMaster;
+import com.agaram.eln.primary.model.iotconnect.RCTCPFileDetails;
 import com.agaram.eln.primary.model.iotconnect.RCTCPResultDetails;
 import com.agaram.eln.primary.model.methodsetup.Method;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
@@ -74,7 +75,7 @@ public class IotconnectController {
 
 		final ResponseEntity<Object> parsedData ;
 		
-		iotconnectservice.ConvertRawDataToFile(rawData,methodobj.getMethodkey(),equipobj.getNequipmentcode(),isMultitenant,orderelnmethod,userobj,site);
+		List<RCTCPFileDetails> filelist = iotconnectservice.ConvertRawDataToFile(rawData,methodobj.getMethodkey(),equipobj.getNequipmentcode(),isMultitenant,orderelnmethod,userobj,site);
 		
 		if(isMultitenant==0) {
 			parsedData = parserService.evaluateSQLParser(methodobj.getMethodkey(), site, rawData,isMultitenant,request);
@@ -84,7 +85,7 @@ public class IotconnectController {
 		System.out.println("parsedData:" +parsedData);
 
 		if(orderelnmethod.getBatchcode() == null || orderelnmethod.getBatchcode() == 0) {
-			iotconnectservice.InsertRCTCPResultDetails(parsedData.getBody(),userobj,site);
+			iotconnectservice.InsertRCTCPResultDetails(parsedData.getBody(),userobj,site,filelist);
 		}else {
 			iotconnectservice.InsertIntoOrders(parsedData.getBody(),orderelnmethod.getBatchcode());
 		}
@@ -146,6 +147,6 @@ public class IotconnectController {
 		Integer batchcode = (Integer) inputMap.get("batchcode");
 		Long longbatchcode = Long.valueOf(batchcode);
 		return  iotconnectservice.checkforIOTAttchment(longbatchcode);
-
 	}
+
 }

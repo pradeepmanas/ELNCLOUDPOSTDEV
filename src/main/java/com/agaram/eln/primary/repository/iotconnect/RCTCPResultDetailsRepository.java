@@ -23,8 +23,17 @@ public interface RCTCPResultDetailsRepository extends JpaRepository<RCTCPResultD
 	List<RCTCPResultDetails> findByMethodMethodkeyInAndEquipmentNequipmentcodeIn(List<Integer> methodkeys,
 			List<Integer> instkeys);
 	
+//	@Transactional
+//	List<RCTCPResultDetails> findByMethodMethodkeyInAndEquipmentNequipmentcodeInAndCreateddateBetween(
+//			List<Integer> methodkeys, List<Integer> instkeys, Date fromdate, Date todate);
+
 	@Transactional
-	List<RCTCPResultDetails> findByMethodMethodkeyInAndEquipmentNequipmentcodeInAndCreateddateBetween(
-			List<Integer> methodkeys, List<Integer> instkeys, Date fromdate, Date todate);
+	List<RCTCPResultDetails> findByResultidIn(List<Integer> selectedProductsList);
+
+	List<RCTCPResultDetails> findByMethodMethodkeyInAndEquipmentNequipmentcodeInAndCreateddateBetweenAndValueloadedNot(
+			List<Integer> methodkeys, List<Integer> instkeys, Date startOfDayFrom, Date endOfDayTo,
+			Integer valueloaded);
+	
+	
 
 }

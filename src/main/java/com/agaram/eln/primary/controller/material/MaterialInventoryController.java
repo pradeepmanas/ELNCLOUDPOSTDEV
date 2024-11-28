@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.agaram.eln.primary.model.material.Elnmaterial;
 import com.agaram.eln.primary.model.material.ElnmaterialInventory;
+import com.agaram.eln.primary.model.material.ElnresultUsedMaterial;
 import com.agaram.eln.primary.model.material.MaterialInventory;
 import com.agaram.eln.primary.service.material.MaterialInventoryService;
 import com.agaram.eln.primary.service.material.MaterialService;
@@ -274,5 +275,11 @@ public class MaterialInventoryController {
 	@RequestMapping(value = "/getElnMaterialInventoryByMaterial", method = RequestMethod.POST)
 	public ResponseEntity<Object> getElnMaterialInventoryByMaterial(@RequestBody List<Integer> lstMaterial) throws Exception {
 		return materialInventoryService.getElnMaterialInventoryByMaterial(lstMaterial);
+	}
+	
+	@RequestMapping(value = "/getInventorytransactionhistory", method = RequestMethod.POST)
+	public ResponseEntity<Object> getInventorytransactionhistory(@RequestBody ElnresultUsedMaterial resultusedmaterial) {
+		return materialInventoryService.getInventorytransactionhistory(resultusedmaterial);
+		
 	}
 }

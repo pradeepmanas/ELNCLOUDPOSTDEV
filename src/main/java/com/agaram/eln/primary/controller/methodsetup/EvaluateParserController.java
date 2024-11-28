@@ -1,6 +1,7 @@
 package com.agaram.eln.primary.controller.methodsetup;
 
 import java.util.List;
+import com.fasterxml.jackson.core.type.TypeReference;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.agaram.eln.primary.model.iotconnect.RCTCPFileDetails;
+import com.agaram.eln.primary.model.iotconnect.RCTCPResultDetails;
 import com.agaram.eln.primary.model.methodsetup.ELNResultDetails;
 import com.agaram.eln.primary.model.methodsetup.Method;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
@@ -185,10 +188,21 @@ public class EvaluateParserController {
 		 return parserService.getMethodFieldList(methodKey, site, null,tenant,isMultitenant);
 	}
 	
+//	@PostMapping("/insertELNResultDetails")
+//	public List<ELNResultDetails> insertELNResultDetails(@RequestBody ELNResultDetails[] lsresultDetails)throws Exception
+//	{
+//		return parserService.insertELNResultDetails(lsresultDetails);
+//	}
+
 	@PostMapping("/insertELNResultDetails")
-	public List<ELNResultDetails> insertELNResultDetails(@RequestBody ELNResultDetails[] lsresultDetails)throws Exception
+	public Map<String, Object> insertELNResultDetails(@RequestBody Map<String, Object> mapObject)throws Exception
 	{
-		return parserService.insertELNResultDetails(lsresultDetails);
+		 final ObjectMapper mapper = new ObjectMapper();		
+		 
+		  List<ELNResultDetails> resultdetails = mapper.convertValue(mapObject.get("elnResultDetails"), new TypeReference<List<ELNResultDetails>>() {});
+		  List<Integer> selectedProductsList = (List<Integer>) mapObject.get("SelectedProductsArray");
+		 
+		return parserService.insertELNResultDetails(resultdetails,selectedProductsList);
 	}
 
 }

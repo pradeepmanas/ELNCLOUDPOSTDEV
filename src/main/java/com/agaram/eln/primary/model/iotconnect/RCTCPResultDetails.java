@@ -50,6 +50,9 @@ private static final long serialVersionUID = 1L;
 	@Column(name = "results")
 	private String results;
 	
+	@Column(name = "valueloaded")
+	private Integer valueloaded  = 0;
+	
 	@Range(min=-1, max=1)
 	@Column(name = "status")
 	private int status=1;
@@ -76,6 +79,10 @@ private static final long serialVersionUID = 1L;
 	@ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "instmasterkey")
 	private InstrumentMaster instrument;
+	
+	@ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "filecode")
+	private RCTCPFileDetails rcfiledetails;
 	
 	@Transient
 	private Date fromdate;
@@ -225,5 +232,23 @@ private static final long serialVersionUID = 1L;
 	public void setTodate(Date todate) {
 		this.todate = todate;
 	}
+
+	public Integer getValueloaded() {
+		return valueloaded;
+	}
+
+	public void setValueloaded(Integer valueloaded) {
+		this.valueloaded = valueloaded;
+	}
+
+	public RCTCPFileDetails getRcfiledetails() {
+		return rcfiledetails;
+	}
+
+	public void setRcfiledetails(RCTCPFileDetails rcfiledetails) {
+		this.rcfiledetails = rcfiledetails;
+	}
+
+	
 	
 }
