@@ -17,3 +17,8 @@ AND table_name='rctcpresultdetails';
    END IF;
 END
 $do$; 
+
+ALTER TABLE IF Exists lsprojectmaster ADD Column IF NOT EXISTS duedate character varying(255) 
+COLLATE pg_catalog."default";
+ALTER TABLE IF Exists lsprojectmaster ADD Column IF NOT EXISTS startdate TIMESTAMP
+ALTER TABLE IF Exists lsprojectmaster ADD Column IF NOT EXISTS enddate TIMESTAMP

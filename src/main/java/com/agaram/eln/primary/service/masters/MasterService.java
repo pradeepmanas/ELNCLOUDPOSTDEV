@@ -413,8 +413,8 @@ public class MasterService {
 //		objProjectArchieve.setLstlslogilablimsorderdetail(
 //				lslogilablimsorderdetailRepository.findByLsprojectmasterOrderByBatchcodeDesc(lsprojectmaster));
 
-		objProjectArchieve.setLstlslogilabprotocoldetail(
-				lslogilabprotocoldetailRepository.findByLsprojectmasterOrderByProtocolordercodeDesc(lsprojectmaster));
+//		objProjectArchieve.setLstlslogilabprotocoldetail(
+//				lslogilabprotocoldetailRepository.findByLsprojectmasterOrderByProtocolordercodeDesc(lsprojectmaster));
 
 		return objProjectArchieve;
 	}

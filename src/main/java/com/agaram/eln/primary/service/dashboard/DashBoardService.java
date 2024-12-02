@@ -4013,8 +4013,28 @@ public class DashBoardService {
 		return activeWidgets;
 	}
 	
+	public List<LSprojectmaster> Getprojectsonuser(LSuserMaster objuser) {
+		List<LSprojectmaster> lstprojectmaster = new ArrayList<LSprojectmaster>();
+		if (objuser.getUsercode() != null) {
+			
+			List<LSuserteammapping> lstteammap = lsuserteammappingRepository
+					.findByLsuserMasterAndTeamcodeNotNull(objuser);
+			List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(lstteammap,
+					objuser.getLssitemaster());
+			 lstprojectmaster = lsprojectmasterRepository.findByLsusersteamInAndStatus(lstteam, 1);
+
+			
+		} 
+		return lstprojectmaster;
+	}
+	
 	public List<LogilabOrdermastersh> Getorderonproject(LSprojectmaster objproject)throws Exception
 	{
 		return lslogilablimsorderdetailRepository.findByLsprojectmasterOrderByBatchcodeDesc(objproject);
+	}
+	
+	public List<LogilabProtocolOrderssh> Getprotocolorderonproject(LSprojectmaster objproject)throws Exception
+	{
+		return LSlogilabprotocoldetailRepository.findByLsprojectmasterOrderByProtocolordercodeDesc(objproject);
 	}
 }

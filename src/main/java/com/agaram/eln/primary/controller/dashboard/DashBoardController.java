@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.agaram.eln.primary.fetchmodel.getmasters.Repositorymaster;
 import com.agaram.eln.primary.fetchmodel.getorders.LogilabOrdermastersh;
+import com.agaram.eln.primary.fetchmodel.getorders.LogilabProtocolOrderssh;
 import com.agaram.eln.primary.fetchmodel.getorders.Logilabordermaster;
 import com.agaram.eln.primary.model.cfr.LSactivity;
 import com.agaram.eln.primary.model.dashboard.LsActiveWidgets;
@@ -167,5 +168,16 @@ public class DashBoardController {
 	public List<LogilabOrdermastersh> Getorderonproject(@RequestBody LSprojectmaster objproject)throws Exception
 	{
 		return dashBoardService.Getorderonproject(objproject);
+	}
+	
+	@PostMapping("/Getprotocolorderonproject")
+	public List<LogilabProtocolOrderssh> Getprotocolorderonproject(@RequestBody LSprojectmaster objproject)throws Exception
+	{
+		return dashBoardService.Getprotocolorderonproject(objproject);
+	}
+	
+	@PostMapping("/Getprojectsonuser")
+	public List<LSprojectmaster> Getprojectsonuser(@RequestBody LSuserMaster objuser)throws Exception {
+		return dashBoardService.Getprojectsonuser(objuser);
 	}
 }

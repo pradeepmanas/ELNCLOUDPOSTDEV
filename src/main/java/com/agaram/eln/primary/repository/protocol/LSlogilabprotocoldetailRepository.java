@@ -113,7 +113,7 @@ public interface LSlogilabprotocoldetailRepository extends JpaRepository<LSlogil
 	
 	public Integer deleteByLsprojectmaster(LSprojectmaster lsproject);
 	
-	public List<LSlogilabprotocoldetail> findByLsprojectmasterOrderByProtocolordercodeDesc(LSprojectmaster lsproject);
+	public List<LogilabProtocolOrderssh> findByLsprojectmasterOrderByProtocolordercodeDesc(LSprojectmaster lsproject);
 
 
 	List<LSlogilabprotocoldetail> findTop10ByProtocoltypeAndOrderflagAndLSprotocolworkflowAndCreatedtimestampBetweenOrderByCreatedtimestampDesc(
@@ -1923,6 +1923,9 @@ List<Logilabprotocolorders> findByOrdercancellAndSitecodeAndLsprojectmasterIsNul
 			List<Integer> userlist, List<LSprojectmaster> lstproject, int l, Integer sitecode4, Date fromdate4,
 			Date todate4, List<LSprojectmaster> lstproject2, Date fromdate5, Date todate5, Integer sitecode5,
 			Pageable pageable);
+	
+	
+//	List<LogilabProtocolOrderssh> findByLsprojectmasterOrderByProtocolordercodeDesc(LSprojectmaster lsprojectmaster);
 
 
 	}

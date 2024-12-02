@@ -165,7 +165,11 @@ BEGIN
         FROM lslogilablimsorderdetail;
 
         -- Determine the starting value for the sequence
-        _start_value := GREATEST(_max_notificationcode, _max_batchcode) + 1;
+        IF GREATEST(_max_notificationcode, _max_batchcode) + 1 = 1 THEN
+            _start_value := 1000000;
+        ELSE
+            _start_value := GREATEST(_max_notificationcode, _max_batchcode) + 1;
+        END IF;
 
         -- Create the sequence starting from the max notificationcode value
         EXECUTE format('CREATE SEQUENCE orderDetailProtocol START WITH %s', _start_value);
