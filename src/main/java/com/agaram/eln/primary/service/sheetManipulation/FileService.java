@@ -726,10 +726,10 @@ public class FileService {
 		Lsrepositories lsrepositories = new Lsrepositories();
 		lsrepositories.setSitecode(objuser.getLssitemaster().getSitecode());
 		mapOrders.put("inventories", inventoryservice.Getallrepositories(lsrepositories));
-		mapOrders.put("sheets", GetApprovedSheets(0, objuser));
+//		mapOrders.put("sheets", GetApprovedSheets(0, objuser));
 		mapReq4Material.put("sitecode", objuser.getLssitemaster().getSitecode());
 		mapOrders.put("limsInventory", transactionService.getMaterialLst4DashBoard(mapReq4Material));
-		mapOrders.put("material", transactionService.getMaterials(objuser));
+//		mapOrders.put("material", transactionService.getMaterials(objuser));
 		lsrepositories = null;
 		return mapOrders;
 	}
@@ -2304,6 +2304,11 @@ public class FileService {
 		objLSfile.setTagsheet(1);
 		lSfileRepository.save(objLSfile);
 	}
-
+	public Map<String, Object> GetMastersforordercreatesub(LSuserMaster objuser) {
+		Map<String, Object> mapOrders = new HashMap<String, Object>();
+		mapOrders.put("sheets", GetApprovedSheets(0, objuser));
+		mapOrders.put("material", transactionService.getMaterials(objuser));
+		return mapOrders;
+	}
 	
 }

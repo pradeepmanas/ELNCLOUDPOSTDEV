@@ -446,7 +446,7 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 
 	public Long countByLsprojectmasterIn(List<LSprojectmaster> lstproject);
 
-	public List<LSlogilablimsorderdetail> findByLsprojectmasterOrderByBatchcodeDesc(LSprojectmaster lsproject);
+	public List<LogilabOrdermastersh> findByLsprojectmasterOrderByBatchcodeDesc(LSprojectmaster lsproject);
 
 	public Integer deleteByLsprojectmaster(LSprojectmaster lsproject);
 
@@ -2977,5 +2977,6 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 	int updateLockedUser(List<Long> batcode);
 
 
+//	public List<LogilabOrdermastersh> findByLsprojectmasterOrderByBatchcodeDesc(LSprojectmaster lstproject);
 
 }

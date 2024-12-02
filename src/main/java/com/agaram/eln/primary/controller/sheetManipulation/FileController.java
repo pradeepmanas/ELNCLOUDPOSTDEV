@@ -359,5 +359,8 @@ public class FileController {
 		return fileService.onGetResultTagFromTemplate(objOrder);
 	}
 	
-	
+	@PostMapping("/GetMastersforordercreatesub")
+	public Map<String, Object> GetMastersforordercreatesub(@RequestBody LSuserMaster objuser) {
+		return fileService.GetMastersforordercreatesub(objuser);
+	}
 }

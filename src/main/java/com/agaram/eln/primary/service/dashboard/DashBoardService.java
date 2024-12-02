@@ -21,6 +21,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.fetchmodel.getmasters.Repositorymaster;
@@ -4010,5 +4011,10 @@ public class DashBoardService {
 		activeWidgets.setActivedatatimestamp(commonfunction.getCurrentUtcTime());
 		lsActiveWidgetsRepository.save(activeWidgets);
 		return activeWidgets;
+	}
+	
+	public List<LogilabOrdermastersh> Getorderonproject(LSprojectmaster objproject)throws Exception
+	{
+		return lslogilablimsorderdetailRepository.findByLsprojectmasterOrderByBatchcodeDesc(objproject);
 	}
 }

@@ -39,7 +39,11 @@ public class LSprojectmaster {
 
 	@Column(columnDefinition = "varchar(20)")
 	private String projectstatus;
-
+	private String duedate;
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date startdate;
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date enddate;
 	public Date getCreatedon() {
 		return createdon;
 	}
@@ -217,6 +221,30 @@ public class LSprojectmaster {
 
 	public void setModifiedby(LSuserMaster modifiedby) {
 		this.modifiedby = modifiedby;
+	}
+
+	public String getDuedate() {
+		return duedate;
+	}
+
+	public void setDuedate(String duedate) {
+		this.duedate = duedate;
+	}
+
+	public Date getStartdate() {
+		return startdate;
+	}
+
+	public void setStartdate(Date startdate) {
+		this.startdate = startdate;
+	}
+
+	public Date getEnddate() {
+		return enddate;
+	}
+
+	public void setEnddate(Date enddate) {
+		this.enddate = enddate;
 	}
 
 }

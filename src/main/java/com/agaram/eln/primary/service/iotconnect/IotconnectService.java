@@ -316,23 +316,25 @@ public class IotconnectService {
 	                 elnresultdetails.setCreatedby(userobj);
 	                 elnresultdetails.setSite(siteobj);
 	                 	
-	                 if(technique.getParseddata().size() == 1) {
-	                	 elnresultdetails.setResults(technique.getParseddata().get(0));
-	                 }else {
-	                	 elnresultdetails.setResults(technique.getParseddata().get(0));
-	                	 List<String> fieldresults = technique.getParseddata();
-	                	 
-	                	 List<LSResultFieldValues> resultfieldvaluearray = new ArrayList<>();
-	                	 for(int i=0;i<fieldresults.size();i++) {
-	                		 LSResultFieldValues LSResultFieldValuesobj = new LSResultFieldValues();
-
-	                		 LSResultFieldValuesobj.setFieldname(technique.getFieldname());
-	                		 LSResultFieldValuesobj.setFieldvalue(technique.getParseddata().get(i));
-		                	 resultfieldvaluearray.add(LSResultFieldValuesobj);
-	                	 }
-	                	 LSResultFieldValuesRepository.save(resultfieldvaluearray);
-	                	 elnresultdetails.setLsresultfieldvalues(resultfieldvaluearray); 
-	          
+	                 if(!technique.getParseddata().isEmpty()) {
+		                 if(technique.getParseddata().size() == 1) {
+		                	 elnresultdetails.setResults(technique.getParseddata().get(0));
+		                 }else {
+		                	 elnresultdetails.setResults(technique.getParseddata().get(0));
+		                	 List<String> fieldresults = technique.getParseddata();
+		                	 
+		                	 List<LSResultFieldValues> resultfieldvaluearray = new ArrayList<>();
+		                	 for(int i=0;i<fieldresults.size();i++) {
+		                		 LSResultFieldValues LSResultFieldValuesobj = new LSResultFieldValues();
+	
+		                		 LSResultFieldValuesobj.setFieldname(technique.getFieldname());
+		                		 LSResultFieldValuesobj.setFieldvalue(technique.getParseddata().get(i));
+			                	 resultfieldvaluearray.add(LSResultFieldValuesobj);
+		                	 }
+		                	 LSResultFieldValuesRepository.save(resultfieldvaluearray);
+		                	 elnresultdetails.setLsresultfieldvalues(resultfieldvaluearray); 
+		          
+		                 }
 	                 }
 	                 ELNResultDetailsRepository.save(elnresultdetails);
 	             }
