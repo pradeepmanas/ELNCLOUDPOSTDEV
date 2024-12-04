@@ -4037,4 +4037,32 @@ public class DashBoardService {
 	{
 		return LSlogilabprotocoldetailRepository.findByLsprojectmasterOrderByProtocolordercodeDesc(objproject);
 	}
+	
+	public List<LSprojectmaster> GetInitprojectsonuser(LSuserMaster objuser) {
+		List<LSprojectmaster> lstprojectmaster = new ArrayList<LSprojectmaster>();
+		if (objuser.getUsercode() != null) {
+			
+			List<LSuserteammapping> lstteammap = lsuserteammappingRepository
+					.findByLsuserMasterAndTeamcodeNotNull(objuser);
+			List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(lstteammap,
+					objuser.getLssitemaster());
+//			 lstprojectmaster = lsprojectmasterRepository.findByLsusersteamInAndStatus(lstteam, 1);
+
+			
+		} 
+		return lstprojectmaster;
+	}
+	
+	public Map<String, Object> Getprojectscountonuser(LSuserMaster objuser) {
+		Map<String, Object> rtnobject = new HashMap<>();
+		if (objuser.getUsercode() != null) {
+			
+			List<LSuserteammapping> lstteammap = lsuserteammappingRepository
+					.findByLsuserMasterAndTeamcodeNotNull(objuser);
+			List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(lstteammap,
+					objuser.getLssitemaster());
+			rtnobject.put("count", lsprojectmasterRepository.countByLsusersteamInAndStatus(lstteam, 1));
+		} 
+		return rtnobject;
+	}
 }

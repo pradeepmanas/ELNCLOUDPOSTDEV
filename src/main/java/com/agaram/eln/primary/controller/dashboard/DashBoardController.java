@@ -180,4 +180,14 @@ public class DashBoardController {
 	public List<LSprojectmaster> Getprojectsonuser(@RequestBody LSuserMaster objuser)throws Exception {
 		return dashBoardService.Getprojectsonuser(objuser);
 	}
+	
+	@PostMapping("/GetInitprojectsonuser")
+	public List<LSprojectmaster> GetInitprojectsonuser(@RequestBody LSuserMaster objuser)throws Exception {
+		return dashBoardService.GetInitprojectsonuser(objuser);
+	}
+	
+	@PostMapping("/Getprojectscountonuser")
+	public Map<String, Object> Getprojectscountonuser(@RequestBody LSuserMaster objuser) {
+		return dashBoardService.Getprojectscountonuser(objuser);
+	}
 }
