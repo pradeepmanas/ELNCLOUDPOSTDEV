@@ -210,7 +210,7 @@ public class IotconnectService {
 		 	  
 		 	 List<ELNFileAttachments> attchlist = new ArrayList<>();
 		 	 
-		 	 if(orderelnmethod.getBatchcode() != null || orderelnmethod.getBatchcode() != 0) {
+		 	 if(orderelnmethod.getBatchcode() != 0) {
 		 		ELNFileAttachments fileattchobj = new ELNFileAttachments();
 			 		fileattchobj.setBatchcode(orderelnmethod.getBatchcode());
 			 		fileattchobj.setCreateby(userobj);

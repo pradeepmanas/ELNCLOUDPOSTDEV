@@ -11,6 +11,8 @@ import org.springframework.data.jpa.repository.Query;
 
 import com.agaram.eln.primary.fetchmodel.getorders.LogilabOrderDetails;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
+import com.agaram.eln.primary.model.material.Elnmaterial;
+import com.agaram.eln.primary.model.sheetManipulation.LSfile;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
@@ -179,5 +181,17 @@ public interface LogilablimsorderdetailsRepository extends JpaRepository<LSlogil
 	        Integer approvalStatus,
 	        String completedOrderFlag);
 
+	List<LogilabOrderDetails> findByFiletypeAndLsfileInAndApprovelstatusNotOrFiletypeAndLsfileInAndApprovelstatusIsNullAndOrdercancellIsNullOrderByBatchcodeDesc(
+			int filetype, List<LSfile> lSfiles, int i, int filetype2, List<LSfile> lSfiles2);
 
+	List<LogilabOrderDetails> findByLsprojectmasterInAndFiletypeAndLsfileInAndApprovelstatusNotAndOrdercancellIsNullOrLsprojectmasterInAndFiletypeAndAssignedtoIsNullAndLsfileInAndApprovelstatusIsNullAndOrdercancellIsNullOrderByBatchcodeDesc(
+			List<LSprojectmaster> projects, int filetype, List<LSfile> lSfiles, int i, List<LSprojectmaster> projects2,
+			int filetype2, List<LSfile> lSfiles2);
+
+	List<LogilabOrderDetails> findByLsprojectmasterIsNullAndLssamplemasterIsNullAndFiletypeAndAssignedtoIsNullAndLsfileInOrderByBatchcodeDesc(
+			int filetype, List<LSfile> lSfiles);
+
+	List<LogilabOrderDetails> findByLsprojectmasterIsNullAndElnmaterialInAndFiletypeAndAssignedtoIsNullAndViewoptionAndLsfileInOrderByBatchcodeDesc(
+			List<Elnmaterial> materials, int filetype, int i, List<LSfile> lSfiles);
+	
 }

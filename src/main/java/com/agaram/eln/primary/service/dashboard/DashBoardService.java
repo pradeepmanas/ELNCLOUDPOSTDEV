@@ -29,6 +29,7 @@ import com.agaram.eln.primary.fetchmodel.getorders.LogilabOrdermastersh;
 import com.agaram.eln.primary.fetchmodel.getorders.LogilabProtocolOrderssh;
 import com.agaram.eln.primary.fetchmodel.getorders.Logilabordermaster;
 import com.agaram.eln.primary.fetchmodel.getorders.Logilaborders;
+import com.agaram.eln.primary.fetchmodel.getorders.Logilaborderssh;
 import com.agaram.eln.primary.fetchmodel.getorders.Logilabprotocolorders;
 import com.agaram.eln.primary.fetchmodel.getorders.ProtocolOrdersDashboard;
 import com.agaram.eln.primary.fetchmodel.gettemplate.Protocoltemplateget;
@@ -41,6 +42,7 @@ import com.agaram.eln.primary.model.instrumentDetails.LSprotocolfolderfiles;
 import com.agaram.eln.primary.model.instrumentDetails.LSsheetfolderfiles;
 import com.agaram.eln.primary.model.instrumentDetails.Lsprotocolorderstructure;
 import com.agaram.eln.primary.model.masters.Lslogbooks;
+import com.agaram.eln.primary.model.material.Elnmaterial;
 import com.agaram.eln.primary.model.material.ElnmaterialInventory;
 import com.agaram.eln.primary.model.protocols.Elnprotocolworkflow;
 import com.agaram.eln.primary.model.protocols.LSlogilabprotocoldetail;
@@ -86,6 +88,12 @@ import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSusersteamRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserteammappingRepository;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.ZoneId;
+import java.util.Date;
+import java.util.List;
+import java.util.ArrayList;
 @EnableScheduling
 @Service
 public class DashBoardService {
@@ -4038,21 +4046,6 @@ public class DashBoardService {
 		return LSlogilabprotocoldetailRepository.findByLsprojectmasterOrderByProtocolordercodeDesc(objproject);
 	}
 	
-	public List<LSprojectmaster> GetInitprojectsonuser(LSuserMaster objuser) {
-		List<LSprojectmaster> lstprojectmaster = new ArrayList<LSprojectmaster>();
-		if (objuser.getUsercode() != null) {
-			
-			List<LSuserteammapping> lstteammap = lsuserteammappingRepository
-					.findByLsuserMasterAndTeamcodeNotNull(objuser);
-			List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(lstteammap,
-					objuser.getLssitemaster());
-//			 lstprojectmaster = lsprojectmasterRepository.findByLsusersteamInAndStatus(lstteam, 1);
-
-			
-		} 
-		return lstprojectmaster;
-	}
-	
 	public Map<String, Object> Getprojectscountonuser(LSuserMaster objuser) {
 		Map<String, Object> rtnobject = new HashMap<>();
 		if (objuser.getUsercode() != null) {
@@ -4064,5 +4057,70 @@ public class DashBoardService {
 			rtnobject.put("count", lsprojectmasterRepository.countByLsusersteamInAndStatus(lstteam, 1));
 		} 
 		return rtnobject;
+	}
+	public List<LSprojectmaster> GetInitprojectsonuser(LSuserMaster objuser) throws ParseException {
+		List<LSprojectmaster> lstprojectmaster = new ArrayList<LSprojectmaster>();
+		if (objuser.getUsercode() != null) {
+			Date currentdate = commonfunction.getCurrentUtcTime();
+
+			List<LSuserteammapping> lstteammap = lsuserteammappingRepository
+					.findByLsuserMasterAndTeamcodeNotNull(objuser);
+			List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(lstteammap,
+					objuser.getLssitemaster());
+		 lstprojectmaster = lsprojectmasterRepository.findByLsusersteamInAndStatusAndStartdateGreaterThan(lstteam, 1,currentdate);
+
+			
+		} 
+		return lstprojectmaster;
+	}
+	public List<LSprojectmaster> Getinprogressprojectsonuser(LSuserMaster objuser) throws ParseException {
+	    List<LSprojectmaster> lstprojectmaster = new ArrayList<LSprojectmaster>();
+	    if (objuser.getUsercode() != null) {
+	        Date currentdate = commonfunction.getCurrentUtcTime();
+	        
+	        List<LSuserteammapping> lstteammap = lsuserteammappingRepository
+	                .findByLsuserMasterAndTeamcodeNotNull(objuser);
+	        
+	        List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(lstteammap,
+	                objuser.getLssitemaster());
+	        
+	        lstprojectmaster = lsprojectmasterRepository.findByLsusersteamInAndStatusAndStartdateBeforeAndEnddateAfter(
+	                lstteam, 1, currentdate, currentdate);
+	    }
+	    return lstprojectmaster;
+	}
+	public List<LSprojectmaster> Getcomprojectsonuser(LSuserMaster objuser) throws ParseException {
+		List<LSprojectmaster> lstprojectmaster = new ArrayList<LSprojectmaster>();
+		if (objuser.getUsercode() != null) {
+			Date currentdate = commonfunction.getCurrentUtcTime();
+			List<LSuserteammapping> lstteammap = lsuserteammappingRepository
+					.findByLsuserMasterAndTeamcodeNotNull(objuser);
+			List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(lstteammap,
+					objuser.getLssitemaster());
+		 lstprojectmaster = lsprojectmasterRepository.findByLsusersteamInAndStatusAndEnddateLessThan(lstteam, 1, currentdate);
+
+			
+		} 
+		return lstprojectmaster;
+	}
+	public List<LSprojectmaster> GetOverdueprojectsonuser(LSuserMaster objuser) throws ParseException {
+	    List<LSprojectmaster> lstprojectmaster = new ArrayList<LSprojectmaster>();
+	    List<LSprojectmaster> lstrtnprojectmaster = new ArrayList<LSprojectmaster>();
+	    List<LSlogilablimsorderdetail> lstorder = new ArrayList<LSlogilablimsorderdetail>();  
+	    if (objuser.getUsercode() != null) {
+	        Date currentdate = commonfunction.getCurrentUtcTime();
+	        
+	        List<LSuserteammapping> lstteammap = lsuserteammappingRepository.findByLsuserMasterAndTeamcodeNotNull(objuser);
+	        List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(lstteammap, objuser.getLssitemaster());
+	        
+	        lstprojectmaster = lsprojectmasterRepository.findByLsusersteamInAndStatusAndEnddateLessThan(lstteam, 1, currentdate);
+	        lstorder = lslogilablimsorderdetailRepository.findByOrderflagAndLsprojectmasterIn("R", lstprojectmaster);
+	        if(lstorder != null)
+	        {
+	        	lstrtnprojectmaster = lstorder.stream().map(LSlogilablimsorderdetail::getLsprojectmaster).collect(Collectors.toList());
+	        }
+	    }
+	    
+	    return lstrtnprojectmaster;
 	}
 }

@@ -21,3 +21,49 @@ $do$;
 ALTER TABLE IF Exists lsprojectmaster ADD Column IF NOT EXISTS duedate character varying(255);
 ALTER TABLE IF Exists lsprojectmaster ADD Column IF NOT EXISTS startdate timestamp without time zone;
 ALTER TABLE IF Exists lsprojectmaster ADD Column IF NOT EXISTS enddate timestamp without time zone;
+
+DELETE FROM datatype WHERE datatypekey = 2 AND EXISTS ( SELECT 1 FROM datatype WHERE datatypekey = 2);
+
+DO
+$do$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 
+        FROM datatype 
+        WHERE datatypekey = 1 AND datatypename = 'string'
+    ) THEN
+        UPDATE datatype 
+        SET datatypename = 'string' 
+        WHERE datatypekey = 1;
+    END IF;
+END
+$do$;
+
+DO
+$do$
+BEGIN
+    -- Check if datatypekey = 3 exists
+    IF EXISTS (
+        SELECT 1 
+        FROM datatype 
+        WHERE datatypekey = 3
+    ) THEN
+        -- Check if datatypename is NOT 'Number'
+        IF EXISTS (
+            SELECT 1 
+            FROM datatype 
+            WHERE datatypekey = 3 AND datatypename <> 'Number'
+        ) THEN
+            -- Update datatypename to 'Number'
+            UPDATE datatype 
+            SET datatypename = 'Number' 
+            WHERE datatypekey = 3;
+        END IF;
+    ELSE
+        -- Insert a new record with datatypekey = 3 and datatypename = 'Number'
+        INSERT INTO datatype (datatypekey, datatypename)
+        VALUES (3, 'Number');
+    END IF;
+END
+$do$;
+

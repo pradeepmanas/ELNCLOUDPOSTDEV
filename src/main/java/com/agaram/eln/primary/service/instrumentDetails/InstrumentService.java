@@ -31,6 +31,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import javax.mail.internet.MimeMessage;
 import javax.persistence.EntityManager;
@@ -5080,204 +5081,107 @@ public class InstrumentService {
 
 	}
 
-//	public Map<String, Object> Getordersbylinkedfiles(Map<String, Object> mapObj) {
-//
-//		Map<String, Object> map = new HashMap<String, Object>();
-//		ObjectMapper object = new ObjectMapper();
-//		int filetype = object.convertValue(mapObj.get("filetype"), Integer.class);
-//		LSuserMaster lsusMaster = object.convertValue(mapObj.get("lsuserMaster"), LSuserMaster.class);
-//		
-//		@SuppressWarnings("unchecked")
-//		List<LSfile> lSfiles = (List<LSfile>) object.convertValue(mapObj.get("lstLSfiles"), LSuserMaster.class);
-//		
-//		List<LSlogilablimsorderdetail> lstallorders = new ArrayList<LSlogilablimsorderdetail>();
-//
-//		for( int ind=0; ind <= lSfiles.size() ; ind++ ) {
-//			
-//			List<LSlogilablimsorderdetail> lstorder = new ArrayList<LSlogilablimsorderdetail>();
-//			
-//			if (lsusMaster.getUsername().trim().toLowerCase().equals("administrator")) {
-//				lstorder = lslogilablimsorderdetailRepository
-//						.findByFiletypeAndLsfileOrderByBatchcodeDesc(filetype, lSfiles.get(ind));
-//			} else {
-//				List<LSuserteammapping> lstteammap = lsuserteammappingRepository
-//						.findBylsuserMaster(lsusMaster);
-//				List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(lstteammap,
-//						lsusMaster.getLssitemaster());
-//				List<LSprojectmaster> lstproject = lsprojectmasterRepository.findByLsusersteamIn(lstteam);
-//	
-//				List<Integer> lstsampleint = lssamplemasterrepository.getDistinctByLssitemasterSitecodeAndStatus(
-//						lsusMaster.getLssitemaster().getSitecode(), 1);
-//				List<LSsamplemaster> lstsample = new ArrayList<>();
-//				LSsamplemaster sample = null;
-//				if (lstsampleint.size() > 0) {
-//					for (Integer item : lstsampleint) {
-//						sample = new LSsamplemaster();
-//						sample.setSamplecode(item);
-//						lstsample.add(sample);
-//						sample = null; // Set sample to null after adding it to the list
-//					}
-//				}
-//	
-//				lstorder = lslogilablimsorderdetailRepository
-//						.findByLsprojectmasterInAndFiletypeAndAssignedtoIsNullAndLsfile(lstproject, filetype,
-//								lSfiles.get(ind));
-//	
-//				int chunkSize = Integer.parseInt(env.getProperty("lssamplecount"));
-//				int totalSamples = lstsample.size();
-//				List<LSlogilablimsorderdetail> lstorderlimsobj = IntStream
-//						.range(0, (totalSamples + chunkSize - 1) / chunkSize).parallel().mapToObj(i -> {
-//							int startIndex = i * chunkSize;
-//							int endIndex = Math.min(startIndex + chunkSize, totalSamples);
-//							List<LSsamplemaster> currentChunk = lstsample.subList(startIndex, endIndex);
-//							List<LSlogilablimsorderdetail> orderChunk = new ArrayList<>();
-//							orderChunk.addAll(lslogilablimsorderdetailRepository
-//									.findByLsprojectmasterIsNullAndLssamplemasterIsNullAndFiletypeAndAssignedtoIsNullAndLsfile(
-//											filetype, lSfiles.get(ind)));
-//							orderChunk.addAll(lslogilablimsorderdetailRepository
-//									.findByLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndAssignedtoIsNullAndViewoptionAndLsfile(
-//											currentChunk, filetype, 1, lSfiles.get(ind)));
-//							orderChunk.addAll(lslogilablimsorderdetailRepository
-//									.findByLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndAssignedtoIsNullAndViewoptionAndLsfile(
-//											currentChunk, filetype, 2, lSfiles.get(ind)));
-//							orderChunk.addAll(lslogilablimsorderdetailRepository
-//									.findByLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndAssignedtoIsNullAndViewoptionAndLsfile(
-//											currentChunk, filetype, 3, lSfiles.get(ind)));
-//							return orderChunk;
-//						}).flatMap(List::stream).collect(Collectors.toList());
-//				System.out.print(lstorderlimsobj);
-//				lstorderlimsobj.addAll(lstorder);
-////				lstorderlimsobj.forEach(objorderDetail -> objorderDetail.setLstworkflow(objorder.getLstworkflow()));
-////				return lstorderlimsobj;
-//				lstallorders.addAll(lstorderlimsobj);
-//			}
-//			lstallorders.addAll(lstorder);
-//		}
-//		mapObj.put("orders", lstallorders);
-//		return mapObj;
-//
-//	}
-
 	public Map<String, Object> GetOrdersByLinkedFiles(Map<String, Object> mapObj) {
-//	    Map<String, Object> map = new HashMap<>();
-		ObjectMapper objectMapper = new ObjectMapper();
-		int filetype = objectMapper.convertValue(mapObj.get("filetype"), Integer.class);
-		LSuserMaster lsusMaster = objectMapper.convertValue(mapObj.get("lsuserMaster"), LSuserMaster.class);
-		List<LSfile> lSfiles = objectMapper.convertValue(mapObj.get("lstLSfiles"), new TypeReference<List<LSfile>>() {
-		});
+	    ObjectMapper objectMapper = new ObjectMapper();
 
-		List<LSlogilablimsorderdetail> lstallorders = new ArrayList<>();
+	    int filetype = objectMapper.convertValue(mapObj.get("filetype"), Integer.class);
+	    LSuserMaster lsusMaster = objectMapper.convertValue(mapObj.get("lsuserMaster"), LSuserMaster.class);
+	    List<LSfile> lSfiles = objectMapper.convertValue(mapObj.get("lstLSfiles"), new TypeReference<List<LSfile>>() {});
 
-		for (LSfile lSfile : lSfiles) {
-			List<LSlogilablimsorderdetail> lstorder = new ArrayList<>();
+	    List<LogilabOrderDetails> lstallorders;
 
-			if ("administrator".equalsIgnoreCase(lsusMaster.getUsername().trim())) {
-				lstorder = lslogilablimsorderdetailRepository
-						.findByFiletypeAndLsfileAndApprovelstatusNotAndOrdercancellIsNullOrFiletypeAndLsfileAndApprovelstatusIsNullAndOrdercancellIsNullOrderByBatchcodeDesc(
-								filetype, lSfile, 3, filetype, lSfile);
-			} else {
-				List<LSuserteammapping> lstteammap = lsuserteammappingRepository.findBylsuserMaster(lsusMaster);
-				List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(lstteammap,
-						lsusMaster.getLssitemaster());
-				List<LSprojectmaster> lstproject = lsprojectmasterRepository.findByLsusersteamIn(lstteam);
+	    if ("administrator".equalsIgnoreCase(lsusMaster.getUsername().trim())) {
+	        lstallorders = logilablimsorderdetailsRepository
+	            .findByFiletypeAndLsfileInAndApprovelstatusNotOrFiletypeAndLsfileInAndApprovelstatusIsNullAndOrdercancellIsNullOrderByBatchcodeDesc(
+	                filetype, lSfiles, 3, filetype, lSfiles
+	            );
+	    } else {
+	        List<LSuserteammapping> teamMappings = lsuserteammappingRepository.findBylsuserMaster(lsusMaster);
+	        List<LSusersteam> teams = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(
+	            teamMappings, lsusMaster.getLssitemaster());
+	        List<LSprojectmaster> projects = lsprojectmasterRepository.findByLsusersteamIn(teams);
+	        List<Elnmaterial> materials = elnmaterialRepository.findByNsitecode(lsusMaster.getLssitemaster().getSitecode());
 
-				List<Integer> lstsampleint = lssamplemasterrepository
-						.getDistinctByLssitemasterSitecodeAndStatus(lsusMaster.getLssitemaster().getSitecode(), 1);
-				List<Elnmaterial> nmaterialcode = elnmaterialRepository
-						.findByNsitecode(lsusMaster.getLssitemaster().getSitecode());
-				List<LSsamplemaster> lstsample = new ArrayList<>();
-				LSsamplemaster sample = null;
-				if (lstsampleint.size() > 0) {
-					for (Integer item : lstsampleint) {
-						sample = new LSsamplemaster();
-						sample.setSamplecode(item);
-						lstsample.add(sample);
-						sample = null; // Set sample to null after adding it to the list
-					}
-				}
+	        lstallorders = Stream.concat(
+	            logilablimsorderdetailsRepository
+	                .findByLsprojectmasterInAndFiletypeAndLsfileInAndApprovelstatusNotAndOrdercancellIsNullOrLsprojectmasterInAndFiletypeAndAssignedtoIsNullAndLsfileInAndApprovelstatusIsNullAndOrdercancellIsNullOrderByBatchcodeDesc(
+	                    projects, filetype, lSfiles, 3, projects, filetype, lSfiles
+	                ).stream(),
 
-				lstorder = lslogilablimsorderdetailRepository
-						.findByLsprojectmasterInAndFiletypeAndLsfileAndApprovelstatusNotAndOrdercancellIsNullOrLsprojectmasterInAndFiletypeAndAssignedtoIsNullAndLsfileAndApprovelstatusIsNullAndOrdercancellIsNullOrderByBatchcodeDesc(
-								lstproject, filetype, lSfile, 3, lstproject, filetype, lSfile);
+	            Stream.concat(
+	                logilablimsorderdetailsRepository
+	                    .findByLsprojectmasterIsNullAndLssamplemasterIsNullAndFiletypeAndAssignedtoIsNullAndLsfileInOrderByBatchcodeDesc(
+	                        filetype, lSfiles
+	                    ).stream(),
+	                materials.isEmpty() ? Stream.empty() : Stream.concat(
+	                    logilablimsorderdetailsRepository
+	                        .findByLsprojectmasterIsNullAndElnmaterialInAndFiletypeAndAssignedtoIsNullAndViewoptionAndLsfileInOrderByBatchcodeDesc(
+	                            materials, filetype, 1, lSfiles
+	                        ).stream(),
+	                    Stream.concat(
+	                        logilablimsorderdetailsRepository
+	                            .findByLsprojectmasterIsNullAndElnmaterialInAndFiletypeAndAssignedtoIsNullAndViewoptionAndLsfileInOrderByBatchcodeDesc(
+	                                materials, filetype, 2, lSfiles
+	                            ).stream(),
+	                        logilablimsorderdetailsRepository
+	                            .findByLsprojectmasterIsNullAndElnmaterialInAndFiletypeAndAssignedtoIsNullAndViewoptionAndLsfileInOrderByBatchcodeDesc(
+	                                materials, filetype, 3, lSfiles
+	                            ).stream()
+	                    )
+	                )
+	            )
+	        ).collect(Collectors.toList());
+	    }
 
-				int chunkSize = Integer.parseInt(env.getProperty("lssamplecount"));
-				int totalSamples = nmaterialcode.size();
-
-				List<LSlogilablimsorderdetail> lstorderlimsobj = IntStream
-						.range(0, (totalSamples + chunkSize - 1) / chunkSize).parallel().mapToObj(i -> {
-							int startIndex = i * chunkSize;
-							int endIndex = Math.min(startIndex + chunkSize, totalSamples);
-							List<Elnmaterial> currentChunk = nmaterialcode.subList(startIndex, endIndex);
-//							List<LSsamplemaster> currentChunk = lstsample.subList(startIndex, endIndex);
-
-							List<LSlogilablimsorderdetail> orderChunk = new ArrayList<>();
-							orderChunk.addAll(lslogilablimsorderdetailRepository
-									.findByLsprojectmasterIsNullAndLssamplemasterIsNullAndFiletypeAndAssignedtoIsNullAndLsfileOrderByBatchcodeDesc(
-											filetype, lSfile));
-							for (int viewOption = 1; viewOption <= 3; viewOption++) {
-								orderChunk.addAll(lslogilablimsorderdetailRepository
-										.findByLsprojectmasterIsNullAndElnmaterialInAndFiletypeAndAssignedtoIsNullAndViewoptionAndLsfileOrderByBatchcodeDesc(
-												currentChunk, filetype, viewOption, lSfile));
-							}
-							return orderChunk;
-						}).flatMap(List::stream).collect(Collectors.toList());
-
-				lstorderlimsobj.addAll(lstorder);
-				lstallorders.addAll(lstorderlimsobj);
-			}
-			lstallorders.addAll(lstorder);
-		}
-
-		List<LSlogilablimsorderdetail> uniqueOrders = lstallorders.stream().distinct().collect(Collectors.toList());
-//		Collections.reverse(uniqueOrders);
-		mapObj.put("orders", uniqueOrders);
-
-		return mapObj;
+	    mapObj.put("orders", lstallorders);
+	    return mapObj;
 	}
 
-	public LSlogilablimsorderdetail GetorderForLINKsheet(LSlogilablimsorderdetail objorder) throws IOException {
 
-		LSlogilablimsorderdetail objupdatedorder = lslogilablimsorderdetailRepository.findOne(objorder.getBatchcode());
-		List<LSlogilablimsorder> lsLogilaborders = lslogilablimsorderRepository
-				.findBybatchid(objupdatedorder.getBatchid());
-		List<String> lsorderno = new ArrayList<String>();
-		objupdatedorder.setResponse(new Response());
 
-		if (lsLogilaborders != null && lsLogilaborders.size() > 0) {
-			int i = 0;
-			while (lsLogilaborders.size() > i) {
-				lsorderno.add(lsLogilaborders.get(i).getOrderid().toString());
-				i++;
-			}
-		}
-		objupdatedorder.setLsLSlogilablimsorder(lsLogilaborders);
+	public LogilabOrderDetails GetorderForLINKsheet(LSlogilablimsorderdetail objorder) throws IOException {
 
-		if (objupdatedorder.getLsprojectmaster() != null && objorder.getLstworkflow() != null) {
-			List<Integer> lstworkflowcode = objorder.getLstworkflow().stream().map(LSworkflow::getWorkflowcode)
-					.collect(Collectors.toList());
-			if (objorder.getLstworkflow() != null && objupdatedorder.getLsworkflow() != null
-					&& lstworkflowcode.contains(objupdatedorder.getLsworkflow().getWorkflowcode())) {
-				objupdatedorder.setCanuserprocess(true);
-			} else {
-				objupdatedorder.setCanuserprocess(false);
-			}
-		}
-
-		if (objupdatedorder.getFiletype() != 0 && objupdatedorder.getOrderflag().toString().trim().equals("N")) {
-			LSworkflow objlastworkflow = lsworkflowRepository
-					.findTopByAndLssitemasterOrderByWorkflowcodeDesc(objorder.getObjLoggeduser().getLssitemaster());
-			if (objlastworkflow != null && objupdatedorder.getLsworkflow() != null
-					&& objupdatedorder.getLsworkflow().equals(objlastworkflow)) {
-				objupdatedorder.setIsFinalStep(1);
-			} else {
-				objupdatedorder.setIsFinalStep(0);
-			}
-		}
-
-		if (objupdatedorder.getFiletype() == 0) {
-			objupdatedorder
-					.setLstestparameter(lStestparameterRepository.findByntestcode(objupdatedorder.getTestcode()));
-		}
+		LogilabOrderDetails objupdatedorder = logilablimsorderdetailsRepository.findByBatchcode(objorder.getBatchcode());
+//		List<LSlogilablimsorder> lsLogilaborders = lslogilablimsorderRepository
+//				.findBybatchid(objupdatedorder.getBatchid());
+//		List<String> lsorderno = new ArrayList<String>();
+//		objupdatedorder.setResponse(new Response());
+//
+//		if (lsLogilaborders != null && lsLogilaborders.size() > 0) {
+//			int i = 0;
+//			while (lsLogilaborders.size() > i) {
+//				lsorderno.add(lsLogilaborders.get(i).getOrderid().toString());
+//				i++;
+//			}
+//		}
+//		objupdatedorder.setLsLSlogilablimsorder(lsLogilaborders);
+//
+//		if (objupdatedorder.getLsprojectmaster() != null && objorder.getLstworkflow() != null) {
+//			List<Integer> lstworkflowcode = objorder.getLstworkflow().stream().map(LSworkflow::getWorkflowcode)
+//					.collect(Collectors.toList());
+//			if (objorder.getLstworkflow() != null && objupdatedorder.getLsworkflow() != null
+//					&& lstworkflowcode.contains(objupdatedorder.getLsworkflow().getWorkflowcode())) {
+//				objupdatedorder.setCanuserprocess(true);
+//			} else {
+//				objupdatedorder.setCanuserprocess(false);
+//			}
+//		}
+//
+//		if (objupdatedorder.getFiletype() != 0 && objupdatedorder.getOrderflag().toString().trim().equals("N")) {
+//			LSworkflow objlastworkflow = lsworkflowRepository
+//					.findTopByAndLssitemasterOrderByWorkflowcodeDesc(objorder.getObjLoggeduser().getLssitemaster());
+//			if (objlastworkflow != null && objupdatedorder.getLsworkflow() != null
+//					&& objupdatedorder.getLsworkflow().equals(objlastworkflow)) {
+//				objupdatedorder.setIsFinalStep(1);
+//			} else {
+//				objupdatedorder.setIsFinalStep(0);
+//			}
+//		}
+//
+//		if (objupdatedorder.getFiletype() == 0) {
+//			objupdatedorder
+//					.setLstestparameter(lStestparameterRepository.findByntestcode(objupdatedorder.getTestcode()));
+//		}
 
 		if (objupdatedorder.getLssamplefile() != null) {
 			if (objorder.getIsmultitenant() == 1) {
@@ -5316,15 +5220,15 @@ public class InstrumentService {
 			}
 		}
 
-		lsLogilaborders = null;
-		objupdatedorder.setLstworkflow(objorder.getLstworkflow());
-
-		if (objorder.getLsuserMaster() != null && objorder.getLsuserMaster().getUnifieduserid() != null) {
-			LScentralisedUsers objUserId = new LScentralisedUsers();
-			objUserId.setUnifieduserid(objorder.getLsuserMaster().getUnifieduserid());
-			objupdatedorder.setLscentralisedusers(userService.Getcentraliseduserbyid(objUserId));
-		}
-		objupdatedorder.getResponse().setStatus(true);
+//		lsLogilaborders = null;
+//		objupdatedorder.setLstworkflow(objorder.getLstworkflow());
+//
+//		if (objorder.getLsuserMaster() != null && objorder.getLsuserMaster().getUnifieduserid() != null) {
+//			LScentralisedUsers objUserId = new LScentralisedUsers();
+//			objUserId.setUnifieduserid(objorder.getLsuserMaster().getUnifieduserid());
+//			objupdatedorder.setLscentralisedusers(userService.Getcentraliseduserbyid(objUserId));
+//		}
+//		objupdatedorder.getResponse().setStatus(true);
 		return objupdatedorder;
 	}
 

@@ -1,5 +1,6 @@
 package com.agaram.eln.primary.repository.usermanagement;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -86,4 +87,15 @@ public interface LSprojectmasterRepository extends JpaRepository<LSprojectmaster
 			List<LSusersteam> findByLsuserteammappingInAndStatusAndLssitemaster, int i, LSSiteMaster lssitemaster);
 	
 	public List<LSprojectmaster> countByLsusersteamInAndStatus(List<LSusersteam> teamlist, int i);
+
+	public List<LSprojectmaster> findByLsusersteamInAndStatusAndStartdateGreaterThan(List<LSusersteam> lstteam, int i,
+			Date currentdate);
+
+	
+	public List<LSprojectmaster> findByLsusersteamInAndStatusAndEnddateLessThan(List<LSusersteam> lstteam, int i,
+			Date currentdate);
+
+	public List<LSprojectmaster> findByLsusersteamInAndStatusAndStartdateBeforeAndEnddateAfter(
+			List<LSusersteam> lstteam, int i, Date currentdate, Date currentdate2);
+
 }

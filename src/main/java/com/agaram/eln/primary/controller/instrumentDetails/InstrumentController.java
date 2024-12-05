@@ -351,7 +351,7 @@ public class InstrumentController {
 	}
 	
 	@PostMapping("/GetorderForLINKsheet")
-	public LSlogilablimsorderdetail GetorderForLINKsheet(@RequestBody LSlogilablimsorderdetail objorder)throws Exception {
+	public LogilabOrderDetails GetorderForLINKsheet(@RequestBody LSlogilablimsorderdetail objorder)throws Exception {
 		return instrumentService.GetorderForLINKsheet(objorder);
 	}
 	

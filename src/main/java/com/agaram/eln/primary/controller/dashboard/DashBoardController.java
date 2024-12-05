@@ -1,5 +1,6 @@
 package com.agaram.eln.primary.controller.dashboard;
 
+import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
 
@@ -189,5 +190,17 @@ public class DashBoardController {
 	@PostMapping("/Getprojectscountonuser")
 	public Map<String, Object> Getprojectscountonuser(@RequestBody LSuserMaster objuser) {
 		return dashBoardService.Getprojectscountonuser(objuser);
+	}
+	@PostMapping("/Getinprogressprojectsonuser")
+	public List<LSprojectmaster> Getinprogressprojectsonuser(@RequestBody LSuserMaster objuser) throws ParseException {
+		return dashBoardService.Getinprogressprojectsonuser(objuser);
+	}
+	@PostMapping("/Getcomprojectsonuser")
+	public List<LSprojectmaster> Getcomprojectsonuser(@RequestBody LSuserMaster objuser)throws Exception {
+		return dashBoardService.Getcomprojectsonuser(objuser);
+	}
+	@PostMapping("/GetOverdueprojectsonuser")
+	public List<LSprojectmaster> GetOverdueprojectsonuser(@RequestBody LSuserMaster objuser)throws Exception {
+		return dashBoardService.GetOverdueprojectsonuser(objuser);
 	}
 }

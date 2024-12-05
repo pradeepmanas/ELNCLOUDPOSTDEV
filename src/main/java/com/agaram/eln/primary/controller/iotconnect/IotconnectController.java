@@ -84,7 +84,7 @@ public class IotconnectController {
 		}
 		System.out.println("parsedData:" +parsedData);
 
-		if(orderelnmethod.getBatchcode() == null || orderelnmethod.getBatchcode() == 0) {
+		if(orderelnmethod.getBatchcode() == 0) {
 			iotconnectservice.InsertRCTCPResultDetails(parsedData.getBody(),userobj,site,filelist);
 		}else {
 			iotconnectservice.InsertIntoOrders(parsedData.getBody(),orderelnmethod.getBatchcode());

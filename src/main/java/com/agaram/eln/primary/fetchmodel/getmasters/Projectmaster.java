@@ -1,5 +1,10 @@
 package com.agaram.eln.primary.fetchmodel.getmasters;
 
+import java.util.Date;
+
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
 import com.agaram.eln.primary.model.usermanagement.LSusersteam;
 
 public class Projectmaster {
@@ -61,6 +66,4 @@ public class Projectmaster {
 	public void setProjectname(String projectname) {
 		this.projectname = projectname;
 	}
-	
-	
 }
