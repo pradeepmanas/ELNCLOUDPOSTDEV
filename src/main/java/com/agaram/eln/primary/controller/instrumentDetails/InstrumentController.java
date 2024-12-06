@@ -356,7 +356,7 @@ public class InstrumentController {
 	}
 	
 	@PostMapping("/Getexcelorder")
-	public List<LSlogilablimsorderdetail> Getexcelorder(@RequestBody LSlogilablimsorderdetail objorder)throws Exception {
+	public List<LogilabOrderDetails> Getexcelorder(@RequestBody LSlogilablimsorderdetail objorder)throws Exception {
 		return instrumentService.Getexcelorder(objorder);
 	}
 

@@ -4035,7 +4035,23 @@ public class DashBoardService {
 		} 
 		return lstprojectmaster;
 	}
-	
+	public List<LSprojectmaster> Getprojectsoverdueonuser(LSuserMaster objuser) {
+	    List<LSprojectmaster> lstprojectmaster = new ArrayList<LSprojectmaster>();
+	    
+	    if (objuser.getUsercode() != null) {
+	        List<LSuserteammapping> lstteammap = lsuserteammappingRepository
+	                .findByLsuserMasterAndTeamcodeNotNull(objuser);
+	        List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(lstteammap, objuser.getLssitemaster());
+	        
+	        lstprojectmaster = lsprojectmasterRepository.findByLsusersteamInAndStatus(lstteam, 1);
+	        
+	        lstprojectmaster = lstprojectmaster.stream()
+	            .filter(project -> "1".equals(project.getDuedate()))
+	            .collect(Collectors.toList());
+	    }
+	    
+	    return lstprojectmaster;
+	}
 	public List<LogilabOrdermastersh> Getorderonproject(LSprojectmaster objproject)throws Exception
 	{
 		return lslogilablimsorderdetailRepository.findByLsprojectmasterOrderByBatchcodeDesc(objproject);
@@ -4059,20 +4075,24 @@ public class DashBoardService {
 		return rtnobject;
 	}
 	public List<LSprojectmaster> GetInitprojectsonuser(LSuserMaster objuser) throws ParseException {
-		List<LSprojectmaster> lstprojectmaster = new ArrayList<LSprojectmaster>();
-		if (objuser.getUsercode() != null) {
-			Date currentdate = commonfunction.getCurrentUtcTime();
+	    List<LSprojectmaster> lstprojectmaster = new ArrayList<LSprojectmaster>();
+	    
+	    if (objuser.getUsercode() != null) {
+	        Date currentdate = commonfunction.getCurrentUtcTime();
 
-			List<LSuserteammapping> lstteammap = lsuserteammappingRepository
-					.findByLsuserMasterAndTeamcodeNotNull(objuser);
-			List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(lstteammap,
-					objuser.getLssitemaster());
-		 lstprojectmaster = lsprojectmasterRepository.findByLsusersteamInAndStatusAndStartdateGreaterThan(lstteam, 1,currentdate);
-
-			
-		} 
-		return lstprojectmaster;
+	        List<LSuserteammapping> lstteammap = lsuserteammappingRepository.findByLsuserMasterAndTeamcodeNotNull(objuser);
+	        List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(lstteammap, objuser.getLssitemaster());
+	        
+	        lstprojectmaster = lsprojectmasterRepository.findByLsusersteamInAndStatusAndStartdateGreaterThan(lstteam, 1, currentdate);
+	        
+	        lstprojectmaster = lstprojectmaster.stream()
+	            .filter(project -> "1".equals(project.getDuedate())) 
+	            .collect(Collectors.toList());
+	    }
+	    
+	    return lstprojectmaster;
 	}
+
 	public List<LSprojectmaster> Getinprogressprojectsonuser(LSuserMaster objuser) throws ParseException {
 	    List<LSprojectmaster> lstprojectmaster = new ArrayList<LSprojectmaster>();
 	    if (objuser.getUsercode() != null) {
@@ -4086,6 +4106,9 @@ public class DashBoardService {
 	        
 	        lstprojectmaster = lsprojectmasterRepository.findByLsusersteamInAndStatusAndStartdateBeforeAndEnddateAfter(
 	                lstteam, 1, currentdate, currentdate);
+	        lstprojectmaster = lstprojectmaster.stream()
+		            .filter(project -> "1".equals(project.getDuedate()))
+		            .collect(Collectors.toList());
 	    }
 	    return lstprojectmaster;
 	}
@@ -4098,7 +4121,9 @@ public class DashBoardService {
 			List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(lstteammap,
 					objuser.getLssitemaster());
 		 lstprojectmaster = lsprojectmasterRepository.findByLsusersteamInAndStatusAndEnddateLessThan(lstteam, 1, currentdate);
-
+		 lstprojectmaster = lstprojectmaster.stream()
+		            .filter(project -> "1".equals(project.getDuedate())) 
+		            .collect(Collectors.toList());
 			
 		} 
 		return lstprojectmaster;
@@ -4119,8 +4144,75 @@ public class DashBoardService {
 	        {
 	        	lstrtnprojectmaster = lstorder.stream().map(LSlogilablimsorderdetail::getLsprojectmaster).collect(Collectors.toList());
 	        }
+	        lstprojectmaster = lstprojectmaster.stream()
+		            .filter(project -> "1".equals(project.getDuedate())) 
+		            .collect(Collectors.toList());
 	    }
 	    
 	    return lstrtnprojectmaster;
+	}
+	public Map<String, Object> Getintprojectscountonuser(LSuserMaster objuser) throws ParseException {
+		Map<String, Object> rtnobject = new HashMap<>();
+		if (objuser.getUsercode() != null) {
+			Date currentdate = commonfunction.getCurrentUtcTime();
+			List<LSuserteammapping> lstteammap = lsuserteammappingRepository
+					.findByLsuserMasterAndTeamcodeNotNull(objuser);
+			List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(lstteammap,
+					objuser.getLssitemaster());
+			rtnobject.put("count", lsprojectmasterRepository.countByLsusersteamInAndStatusAndStartdateGreaterThan(lstteam, 1,currentdate));
+		} 
+		return rtnobject;
+	}
+	public Map<String, Object> Getinprojectscountonuser(LSuserMaster objuser) throws ParseException {
+		Map<String, Object> rtnobject = new HashMap<>();
+		if (objuser.getUsercode() != null) {
+			Date currentdate = commonfunction.getCurrentUtcTime();
+			List<LSuserteammapping> lstteammap = lsuserteammappingRepository
+					.findByLsuserMasterAndTeamcodeNotNull(objuser);
+			List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(lstteammap,
+					objuser.getLssitemaster());
+			rtnobject.put("count", lsprojectmasterRepository.countByLsusersteamInAndStatusAndStartdateBeforeAndEnddateAfter(lstteam, 1,currentdate, currentdate));
+		} 
+		return rtnobject;
+	}
+	public Map<String, Object> Getcomprojectscountonuser(LSuserMaster objuser) throws ParseException {
+		Map<String, Object> rtnobject = new HashMap<>();
+		if (objuser.getUsercode() != null) {
+			Date currentdate = commonfunction.getCurrentUtcTime();
+			List<LSuserteammapping> lstteammap = lsuserteammappingRepository
+					.findByLsuserMasterAndTeamcodeNotNull(objuser);
+			List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(lstteammap,
+					objuser.getLssitemaster());
+			rtnobject.put("count", lsprojectmasterRepository.countByLsusersteamInAndStatusAndEnddateLessThan(lstteam, 1,currentdate));
+		} 
+		return rtnobject;
+	}
+	public Map<String, Object> Getoverdueprojectscountonuser(LSuserMaster objuser) throws ParseException {
+		Map<String, Object> rtnobject = new HashMap<>();
+		 
+		if (objuser.getUsercode() != null) {
+			Date currentdate = commonfunction.getCurrentUtcTime();
+			List<LSuserteammapping> lstteammap = lsuserteammappingRepository
+					.findByLsuserMasterAndTeamcodeNotNull(objuser);
+			List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(lstteammap,
+					objuser.getLssitemaster());
+			List<LSprojectmaster> lstprojectmaster = new ArrayList<LSprojectmaster>();
+			 lstprojectmaster = lsprojectmasterRepository.findByLsusersteamInAndStatusAndEnddateLessThan(lstteam, 1, currentdate);
+			rtnobject.put("count", lslogilablimsorderdetailRepository.countByOrderflagAndLsprojectmasterIn("R",lstprojectmaster));
+		} 
+		return rtnobject;
+	}
+	public Map<String, Object> Getprojectsoverduecountonuser(LSuserMaster objuser) throws ParseException {
+		Map<String, Object> rtnobject = new HashMap<>();
+		if (objuser.getUsercode() != null) {
+			Date currentdate = commonfunction.getCurrentUtcTime();
+			List<LSuserteammapping> lstteammap = lsuserteammappingRepository
+					.findByLsuserMasterAndTeamcodeNotNull(objuser);
+			List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(lstteammap,
+					objuser.getLssitemaster());
+			rtnobject.put("count", lsprojectmasterRepository.countByLsusersteamInAndStatusAndStartdateBefore(lstteam, 1,currentdate));
+			
+		} 
+		return rtnobject;
 	}
 }

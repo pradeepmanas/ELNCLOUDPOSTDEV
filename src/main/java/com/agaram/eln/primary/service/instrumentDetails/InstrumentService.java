@@ -5231,80 +5231,57 @@ public class InstrumentService {
 //		objupdatedorder.getResponse().setStatus(true);
 		return objupdatedorder;
 	}
+	
+	public List<LogilabOrderDetails> Getexcelorder(LSlogilablimsorderdetail objorder) {
+	    List<LogilabOrderDetails> lstorder = new ArrayList<>();
 
-	@SuppressWarnings("unused")
-	public List<LSlogilablimsorderdetail> Getexcelorder(LSlogilablimsorderdetail objorder) {
+	    if ("administrator".equalsIgnoreCase(objorder.getLsuserMaster().getUsername().trim())) {
+	        lstorder = logilablimsorderdetailsRepository
+	                .findByFiletypeAndApprovelstatusNotAndOrdercancellIsNullOrFiletypeAndApprovelstatusIsNullAndOrdercancellIsNullOrderByBatchcodeDesc(
+	                        objorder.getFiletype(), 3, objorder.getFiletype());
+	    } else {
+	        List<LSuserteammapping> lstteammap = lsuserteammappingRepository
+	                .findBylsuserMaster(objorder.getLsuserMaster());
+	        List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(
+	                lstteammap, objorder.getLsuserMaster().getLssitemaster());
+	        List<LSprojectmaster> lstproject = lsprojectmasterRepository.findByLsusersteamIn(lstteam);
+	        List<Elnmaterial> nmaterialcode = elnmaterialRepository
+	                .findByNsitecode(objorder.getLsuserMaster().getLssitemaster().getSitecode());
 
-		List<LSlogilablimsorderdetail> lstorder = new ArrayList<LSlogilablimsorderdetail>();
-		if (objorder.getLsuserMaster().getUsername().trim().toLowerCase().equals("administrator")) {
-			lstorder = lslogilablimsorderdetailRepository
-					.findByFiletypeAndApprovelstatusNotAndOrdercancellIsNullOrFiletypeAndApprovelstatusIsNullAndOrdercancellIsNullOrderByBatchcodeDesc(
-							objorder.getFiletype(), 3, objorder.getFiletype());
-		} else {
-			List<LSuserteammapping> lstteammap = lsuserteammappingRepository
-					.findBylsuserMaster(objorder.getLsuserMaster());
-			List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(lstteammap,
-					objorder.getLsuserMaster().getLssitemaster());
-			List<LSprojectmaster> lstproject = lsprojectmasterRepository.findByLsusersteamIn(lstteam);
-//			List<LSsamplemaster> lstsample = lssamplemasterrepository.findByLssitemasterAndStatus(objorder.getLsuserMaster().getLssitemaster(), 1);
-			List<Integer> lstsampleint = lssamplemasterrepository.getDistinctByLssitemasterSitecodeAndStatus(
-					objorder.getLsuserMaster().getLssitemaster().getSitecode(), 1);
-			List<LSsamplemaster> lstsample = new ArrayList<>();
-			List<Elnmaterial> nmaterialcode = elnmaterialRepository
-					.findByNsitecode(objorder.getLsuserMaster().getLssitemaster().getSitecode());
-			LSsamplemaster sample = null;
-			if (lstsampleint.size() > 0) {
-				for (Integer item : lstsampleint) {
-					sample = new LSsamplemaster();
-					sample.setSamplecode(item);
-					lstsample.add(sample);
-					sample = null; // Set sample to null after adding it to the list
-				}
-			}
-			lstorder = lslogilablimsorderdetailRepository
-					.findByFiletypeAndLsprojectmasterInAndApprovelstatusNotAndOrdercancellIsNullOrFiletypeAndLsprojectmasterInAndApprovelstatusIsNullAndOrdercancellIsNullOrderByBatchcodeDesc(
-							objorder.getFiletype(), lstproject, 3, objorder.getFiletype(), lstproject);
+	        List<LogilabOrderDetails> projectOrders = logilablimsorderdetailsRepository
+	                .findByFiletypeAndLsprojectmasterInAndApprovelstatusNotAndOrdercancellIsNullOrFiletypeAndLsprojectmasterInAndApprovelstatusIsNullAndOrdercancellIsNullOrderByBatchcodeDesc(
+	                        objorder.getFiletype(), lstproject, 3, objorder.getFiletype(), lstproject);
 
-//			lstorder = lslogilablimsorderdetailRepository
-//					.findByLsprojectmasterInAndFiletypeAndAssignedtoIsNullOrLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndAssignedtoIsNullAndViewoptionOrLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndAssignedtoIsNullAndViewoptionAndLsuserMasterOrLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndAssignedtoIsNullAndViewoptionAndLsuserMasterInOrderByBatchcodeDesc(
-//					lstproject, objorder.getFiletype(),
-//					lstsample, objorder.getFiletype(),1,
-//					lstsample, objorder.getFiletype(),2,objorder.getLsuserMaster(), 
-//					lstsample, objorder.getFiletype(), 3,objorder.getLstuserMaster());
+	        Stream<LogilabOrderDetails> ordersStream = Stream.empty();
 
-//			lstorder = lslogilablimsorderdetailRepository
-//					.findByLsprojectmasterInAndFiletypeAndAssignedtoIsNullOrLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndAssignedtoIsNullAndViewoptionOrLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndAssignedtoIsNullAndViewoptionOrLsprojectmasterIsNullAndLssamplemasterInAndFiletypeAndAssignedtoIsNullAndViewoption
-//					(lstproject, objorder.getFiletype(),
-//					lstsample, objorder.getFiletype(),1,
-//					lstsample, objorder.getFiletype(),2,
-//					lstsample, objorder.getFiletype(),3);
-			int chunkSize = Integer.parseInt(env.getProperty("lssamplecount"));
-			int totalSamples = nmaterialcode.size();
-			List<LSlogilablimsorderdetail> lstorderobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize)
-					.parallel().mapToObj(i -> {
-						int startIndex = i * chunkSize;
-						int endIndex = Math.min(startIndex + chunkSize, totalSamples);
-//						List<LSsamplemaster> currentChunk = lstsample.subList(startIndex, endIndex);
-						List<Elnmaterial> currentChunk = nmaterialcode.subList(startIndex, endIndex);
-						List<LSlogilablimsorderdetail> orderChunk = new ArrayList<>();
-						orderChunk.addAll(lslogilablimsorderdetailRepository
-								.findByLsprojectmasterIsNullAndElnmaterialInAndFiletypeAndAssignedtoIsNullAndViewoption(
-										currentChunk, objorder.getFiletype(), 1));
-						orderChunk.addAll(lslogilablimsorderdetailRepository
-								.findByLsprojectmasterIsNullAndElnmaterialInAndFiletypeAndAssignedtoIsNullAndViewoption(
-										currentChunk, objorder.getFiletype(), 2));
-						orderChunk.addAll(lslogilablimsorderdetailRepository
-								.findByLsprojectmasterIsNullAndElnmaterialInAndFiletypeAndAssignedtoIsNullAndViewoption(
-										currentChunk, objorder.getFiletype(), 3));
-						return orderChunk;
-					}).flatMap(List::stream).collect(Collectors.toList());
-			System.out.print(lstorderobj);
-			lstorderobj.addAll(lstorder);
-			lstorderobj.forEach(objorderDetail -> objorderDetail.setLstworkflow(objorder.getLstworkflow()));
-			return lstorderobj;
-		}
-		return lstorder;
+	        if (!nmaterialcode.isEmpty()) {
+	            ordersStream = Stream.concat(
+	                ordersStream,
+	                logilablimsorderdetailsRepository
+	                        .findByLsprojectmasterIsNullAndElnmaterialInAndFiletypeAndAssignedtoIsNullAndViewoption(
+	                                nmaterialcode, objorder.getFiletype(), 1)
+	                        .stream());
+	            
+	            ordersStream = Stream.concat(
+	                ordersStream,
+	                logilablimsorderdetailsRepository
+	                        .findByLsprojectmasterIsNullAndElnmaterialInAndFiletypeAndAssignedtoIsNullAndViewoption(
+	                                nmaterialcode, objorder.getFiletype(), 2)
+	                        .stream());
+	            
+	            ordersStream = Stream.concat(
+	                ordersStream,
+	                logilablimsorderdetailsRepository
+	                        .findByLsprojectmasterIsNullAndElnmaterialInAndFiletypeAndAssignedtoIsNullAndViewoption(
+	                                nmaterialcode, objorder.getFiletype(), 3)
+	                        .stream());
+	        }
 
+	        lstorder = Stream.concat(projectOrders.stream(), ordersStream)
+	                .collect(Collectors.toList());
+	    }
+
+	    return lstorder;
 	}
 
 	public LSlogilablimsorderdetail updateVersionandWorkflowhistory(LSlogilablimsorderdetail objorder) {

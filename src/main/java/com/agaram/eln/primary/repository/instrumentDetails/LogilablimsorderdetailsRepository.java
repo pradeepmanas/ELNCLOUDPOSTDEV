@@ -193,5 +193,15 @@ public interface LogilablimsorderdetailsRepository extends JpaRepository<LSlogil
 
 	List<LogilabOrderDetails> findByLsprojectmasterIsNullAndElnmaterialInAndFiletypeAndAssignedtoIsNullAndViewoptionAndLsfileInOrderByBatchcodeDesc(
 			List<Elnmaterial> materials, int filetype, int i, List<LSfile> lSfiles);
+
+	List<LogilabOrderDetails> findByFiletypeAndApprovelstatusNotAndOrdercancellIsNullOrFiletypeAndApprovelstatusIsNullAndOrdercancellIsNullOrderByBatchcodeDesc(
+			Integer filetype, int i, Integer filetype2);
+
+	List<LogilabOrderDetails> findByFiletypeAndLsprojectmasterInAndApprovelstatusNotAndOrdercancellIsNullOrFiletypeAndLsprojectmasterInAndApprovelstatusIsNullAndOrdercancellIsNullOrderByBatchcodeDesc(
+			Integer filetype, List<LSprojectmaster> lstproject, int i, Integer filetype2,
+			List<LSprojectmaster> lstproject2);
+
+	List<LogilabOrderDetails> findByLsprojectmasterIsNullAndElnmaterialInAndFiletypeAndAssignedtoIsNullAndViewoption(
+			List<Elnmaterial> nmaterialcode, Integer filetype, int i);
 	
 }

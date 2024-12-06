@@ -1,5 +1,6 @@
 package com.agaram.eln.primary.service.material;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -21,10 +22,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.apache.commons.io.FilenameUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,9 +33,11 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.agaram.eln.primary.commonfunction.commonfunction;
+import com.agaram.eln.primary.config.TenantContext;
 import com.agaram.eln.primary.global.Enumeration;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.instrumentDetails.LsOrderattachments;
@@ -86,6 +89,7 @@ import com.agaram.eln.primary.service.cloudFileManip.CloudFileManipulationservic
 import com.agaram.eln.primary.service.fileManipulation.FileManipulationservice;
 import com.agaram.eln.primary.service.samplestoragelocation.SampleStorageLocationService;
 import com.fasterxml.jackson.core.JsonParseException;
+//import java.util.concurrent.atomic.AtomicInteger;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -142,7 +146,6 @@ public class MaterialInventoryService {
 	SectionRepository sectionRepository;
 	@Autowired
 	ElnmaterialInventoryRepository elnmaterialInventoryReppository;
-	
 	@Autowired
 	ElnresultUsedMaterialRepository ElnresultUsedMaterialRepository;
 
@@ -3076,7 +3079,7 @@ public class MaterialInventoryService {
         }
 	}
 
-	@SuppressWarnings("unchecked")
+//	@SuppressWarnings("unchecked")
 	public ResponseEntity<Object> createElnMaterialInventory(Map<String, Object> inputMap) throws Exception {
 
 		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
@@ -3291,6 +3294,7 @@ public class MaterialInventoryService {
 
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
 	}
+	
 	public ResponseEntity<Object> getElnMaterialInventoryonprotocol(Map<String, Object> inputMap) throws ParseException {
 		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
@@ -3797,7 +3801,7 @@ public class MaterialInventoryService {
 		objmap.put("lstELNInventory", inventoryItems);
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
 	}
-
+	
 	public ResponseEntity<Object> getInventorytransactionhistory(ElnresultUsedMaterial resultusedmaterial) {
 		Date fromdate =resultusedmaterial.getFromdate();
 		Date todate = resultusedmaterial.getTodate();
@@ -3813,7 +3817,81 @@ public class MaterialInventoryService {
 }
 		return new ResponseEntity<>(Elnresult, HttpStatus.OK);
 	}
-	
 
+	public Map<String, Object> uploadInvimages(MultipartFile file, String originurl, String username, String sitecode) {
+		
+		Map<String, Object> map = new HashMap<String, Object>();
+		String id = null;
+		try {
+			id = cloudFileManipulationservice.storecloudfilesreturnUUID(file, "inventorychemicalimagestemp");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		final String getExtn = FilenameUtils.getExtension(file.getOriginalFilename()) == "" ? "png" 
+				: FilenameUtils.getExtension(file.getOriginalFilename());
+
+		map.put("link", originurl + "/Instrument/downloadsheetimagestemp/" + id + "/" + TenantContext.getCurrentTenant()
+				+ "/" + FilenameUtils.removeExtension(file.getOriginalFilename()) + "/" + getExtn);
+
+		return map;
+	}
+
+	public ByteArrayInputStream downloadinvimages(String fileid, String tenant) {
+		TenantContext.setCurrentTenant(tenant);
+		byte[] data = null;
+		try {
+			data = StreamUtils
+					.copyToByteArray(cloudFileManipulationservice.retrieveCloudFile(fileid, tenant + "inventorychemicalimages"));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			data = null;
+		}
+
+		if (data == null) {
+			String[] arrOffiledid = fileid.split("_", 2);
+			String Originalfieldid = arrOffiledid[0];
+			try {
+				data = StreamUtils.copyToByteArray(
+						cloudFileManipulationservice.retrieveCloudFile(Originalfieldid, tenant + "inventorychemicalimages"));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				data = null;
+			}
+
+			if (data == null) {
+				try {
+					data = StreamUtils.copyToByteArray(cloudFileManipulationservice.retrieveCloudFile(Originalfieldid,
+							tenant + "sheetimagestemp"));
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					data = null;
+				}
+			}
+		}
+
+		ByteArrayInputStream bis = new ByteArrayInputStream(data);
+
+		return bis;
+	}
+
+	public ByteArrayInputStream downloadinvimagestemp(String fileid, String tenant) {
+		TenantContext.setCurrentTenant(tenant);
+		byte[] data = null;
+		try {
+			data = StreamUtils.copyToByteArray(
+					cloudFileManipulationservice.retrieveCloudFile(fileid, tenant + "inventorychemicalimagestemp"));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		ByteArrayInputStream bis = new ByteArrayInputStream(data);
+
+		return bis;
+	}
 
 }

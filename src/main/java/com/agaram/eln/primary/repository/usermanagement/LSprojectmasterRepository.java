@@ -91,11 +91,22 @@ public interface LSprojectmasterRepository extends JpaRepository<LSprojectmaster
 	public List<LSprojectmaster> findByLsusersteamInAndStatusAndStartdateGreaterThan(List<LSusersteam> lstteam, int i,
 			Date currentdate);
 
-	
 	public List<LSprojectmaster> findByLsusersteamInAndStatusAndEnddateLessThan(List<LSusersteam> lstteam, int i,
 			Date currentdate);
 
 	public List<LSprojectmaster> findByLsusersteamInAndStatusAndStartdateBeforeAndEnddateAfter(
 			List<LSusersteam> lstteam, int i, Date currentdate, Date currentdate2);
 
+	public List<LSprojectmaster> countByLsusersteamInAndStatusAndEnddateLessThan(List<LSusersteam> lstteam, int i, Date currentdate);
+
+	public List<LSprojectmaster> countByLsusersteamInAndStatusAndStartdateBeforeAndEnddateAfter(List<LSusersteam> lstteam, int i,
+			Date currentdate, Date currentdate2);
+
+	public List<LSprojectmaster> countByLsusersteamInAndStatusAndStartdateGreaterThan(List<LSusersteam> lstteam, int i,
+			Date currentdate);
+
+	public List<LSprojectmaster> countByLsusersteamInAndStatusAndStartdateGreaterThanEqualAndEnddateLessThanEqual(
+			List<LSusersteam> lstteam, int i, Date currentdate, Date currentdate2);
+
+	public List<LSprojectmaster> countByLsusersteamInAndStatusAndStartdateBefore(List<LSusersteam> lstteam, int i, Date currentdate);
 }

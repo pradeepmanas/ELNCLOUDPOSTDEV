@@ -671,5 +671,10 @@ public class BaseMasterService {
 //				.findByLssitemasterAndStatusOrderByProjectcodeDesc(objClass.getLssitemaster(), 1);
 		return prolist;
 	}
+	
+	public LStestmasterlocal Gettestoncode(LStestmasterlocal objtest)
+	{
+		return lStestmasterlocalRepository.findOne(objtest.getTestcode());
+	}
 
 }

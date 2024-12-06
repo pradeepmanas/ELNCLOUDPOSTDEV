@@ -203,4 +203,28 @@ public class DashBoardController {
 	public List<LSprojectmaster> GetOverdueprojectsonuser(@RequestBody LSuserMaster objuser)throws Exception {
 		return dashBoardService.GetOverdueprojectsonuser(objuser);
 	}
+	@PostMapping("/Getintprojectscountonuser")
+	public Map<String, Object> Getintprojectscountonuser(@RequestBody LSuserMaster objuser) throws ParseException {
+		return dashBoardService.Getintprojectscountonuser(objuser);
+	}
+	@PostMapping("/Getinprojectscountonuser")
+	public Map<String, Object> Getinprojectscountonuser(@RequestBody LSuserMaster objuser) throws ParseException {
+		return dashBoardService.Getinprojectscountonuser(objuser);
+	}
+	@PostMapping("/Getcomprojectscountonuser")
+	public Map<String, Object> Getcomprojectscountonuser(@RequestBody LSuserMaster objuser) throws ParseException {
+		return dashBoardService.Getcomprojectscountonuser(objuser);
+	}
+	@PostMapping("/Getoverdueprojectscountonuser")
+	public Map<String, Object> Getoverdueprojectscountonuser(@RequestBody LSuserMaster objuser) throws ParseException {
+		return dashBoardService.Getoverdueprojectscountonuser(objuser);
+	}
+	@PostMapping("/Getprojectsoverdueonuser")
+	public List<LSprojectmaster> Getprojectsoverdueonuser(@RequestBody LSuserMaster objuser)throws Exception {
+		return dashBoardService.Getprojectsoverdueonuser(objuser);
+	}
+	@PostMapping("/Getprojectsoverduecountonuser")
+	public Map<String, Object> Getprojectsoverduecountonuser(@RequestBody LSuserMaster objuser) throws ParseException {
+		return dashBoardService.Getprojectsoverduecountonuser(objuser);
+	}
 }

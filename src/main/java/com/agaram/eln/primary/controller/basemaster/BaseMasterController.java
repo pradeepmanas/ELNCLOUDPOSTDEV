@@ -97,6 +97,12 @@ public class BaseMasterController {
 		return masterService.GetMastersforTestMaster(objuser);
 	}
 	
+	@PostMapping("/Gettestoncode")
+	public LStestmasterlocal Gettestoncode(@RequestBody LStestmasterlocal objtest)throws Exception
+	{
+		return masterService.Gettestoncode(objtest);
+	}
+	
 	@PostMapping("/InsertupdateInstrument")
 	public Lselninstrumentmaster InsertupdateInstrument(@RequestBody Lselninstrumentmaster objClass)throws Exception {
                

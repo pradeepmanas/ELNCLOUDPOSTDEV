@@ -28,6 +28,7 @@ import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
+import com.agaram.eln.primary.model.usermanagement.LSusersteam;
 
 public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogilablimsorderdetail, Long> {
 
@@ -2975,6 +2976,12 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 	@Modifying
 	@Query("update LSlogilablimsorderdetail o set o.lockeduser = null, o.lockedusername = null, o.activeuser = null where o.batchcode in (?1)")
 	int updateLockedUser(List<Long> batcode);
+
+
+	List<LSlogilablimsorderdetail> countByOrderflagAndLsprojectmasterIn(String orderflag,
+			List<LSprojectmaster> lstprojectmaster);
+
+	//Object countByOrderflagAndLsprojectmasterIn(List<LSusersteam> lstteam, int i, Date currentdate);
 
 
 //	public List<LogilabOrdermastersh> findByLsprojectmasterOrderByBatchcodeDesc(LSprojectmaster lstproject);
