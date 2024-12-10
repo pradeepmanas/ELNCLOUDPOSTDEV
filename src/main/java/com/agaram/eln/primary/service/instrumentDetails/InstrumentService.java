@@ -2,6 +2,7 @@ package com.agaram.eln.primary.service.instrumentDetails;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -666,10 +667,6 @@ public class InstrumentService {
 			List<LsMappedTemplate> MappedTemplate = LsMappedTemplateRepository.findAll();
 			List<LsUnmappedTemplate> UnmappedTemplate = LsUnmappedTemplateRepository.findAll();
 
-			List<Method> elnMethod = lsMethodRepository.findByStatusAndSite(1, lssiteMaster);
-			List<ParserBlock> ParserBlock = lsParserBlockRepository.findByStatusAndMethodIn(1, elnMethod);
-			List<ParserField> ParserField = lsParserRepository.findByStatusAndParserblockIn(1, ParserBlock);
-			List<SubParserField> SubParserField = lsSubParserRepository.findByStatusAndParserfieldIn(1, ParserField);
 
 			obj.put("Generalfields", Generalfields);
 
@@ -9398,7 +9395,6 @@ public class InstrumentService {
 				InputStream inputStream = new ByteArrayInputStream(content);
 				resource = new InputStreamResource(inputStream);
 				header.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-				header.setContentLength(size);
 				workbook.close();
 			} else {
 				InputStream fileStream = cloudFileManipulationservice.retrieveCloudFile(fileid,
