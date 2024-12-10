@@ -97,6 +97,10 @@ public class Elnmaterial implements Serializable{
 	@JoinColumn(name = "nmaterialcode")
 	private List<LsOrderattachments> lsOrderattachments;
 	
+	@OneToMany
+	@JoinColumn(name="nmaterialcode")
+	private List<ElnmaterialChemDiagRef> elnmaterialchemdiagref;
+	
 	@Transient
 	private String expiryTypeValue;
 	
@@ -109,6 +113,14 @@ public class Elnmaterial implements Serializable{
 	
 	private Integer samplecode;
 	
+	public List<ElnmaterialChemDiagRef> getElnmaterialchemdiagref() {
+		return elnmaterialchemdiagref;
+	}
+
+	public void setElnmaterialchemdiagref(List<ElnmaterialChemDiagRef> elnmaterialchemdiagref) {
+		this.elnmaterialchemdiagref = elnmaterialchemdiagref;
+	}
+
 	public Integer getSamplecode() {
 		return samplecode;
 	}

@@ -1,17 +1,23 @@
 package com.agaram.eln.primary.controller.material;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.agaram.eln.primary.global.FileDTO;
 import com.agaram.eln.primary.model.material.Elnmaterial;
 import com.agaram.eln.primary.model.material.ElnmaterialInventory;
 import com.agaram.eln.primary.model.material.ElnresultUsedMaterial;
@@ -288,49 +295,39 @@ public class MaterialInventoryController {
 		return materialInventoryService.getInventorytransactionhistory(resultusedmaterial);
 	}
 	
-	@PostMapping("/uploadsheetimages")
+	@PostMapping("/uploadinvimages")
 	public Map<String, Object> uploadInvimages(@RequestParam("file") MultipartFile file,
 			@RequestParam("originurl") String originurl, @RequestParam("username") String username,
-			@RequestParam("sitecode") String sitecode)throws Exception {
-		return materialInventoryService.uploadInvimages(file, originurl, username, sitecode);
+			@RequestParam("sitecode") String sitecode,@RequestParam("selectedMaterial") Integer nmaterialcatcode,
+			@RequestParam("usercode") Integer usercode,@RequestParam("smiles") String smiles
+			,@RequestParam("moljson") String moljson)throws Exception {
+		return materialInventoryService.uploadInvimages(file, originurl, username, sitecode,nmaterialcatcode,usercode,smiles,moljson);
 	}
 	
-	@RequestMapping(value = "downloadinvimages/{fileid}/{tenant}/{filename}/{extension}", method = RequestMethod.GET)
-	@GetMapping
-	public ResponseEntity<InputStreamResource> downloadsheetimages(@PathVariable String fileid,
-			@PathVariable String tenant, @PathVariable String filename, @PathVariable String extension)
-			throws IllegalStateException, IOException {
-
-		ByteArrayInputStream bis = materialInventoryService.downloadinvimages(fileid, tenant);
-
-		HttpHeaders header = new HttpHeaders();
-		header.setContentType(MediaType.parseMediaType("image/png"));
-		header.set("Content-Disposition", "attachment; filename=" + filename + "." + extension);
-
-		return new ResponseEntity<>(new InputStreamResource(bis), header, HttpStatus.OK);
-
-	}
-
-	@RequestMapping(value = "downloadinvimagestemp/{fileid}/{tenant}/{filename}/{extension}", method = RequestMethod.GET)
-	@GetMapping
-	public ResponseEntity<InputStreamResource> downloadinvimagestemp(@PathVariable String fileid,
-			@PathVariable String tenant, @PathVariable String filename, @PathVariable String extension)
-			throws IllegalStateException, IOException {
-
-		ByteArrayInputStream bis = materialInventoryService.downloadinvimagestemp(fileid, tenant);
-
-		HttpHeaders header = new HttpHeaders();
-		header.setContentType(MediaType.parseMediaType("image/png"));
-		header.set("Content-Disposition", "attachment; filename=" + filename + "." + extension);
-
-		return new ResponseEntity<>(new InputStreamResource(bis), header, HttpStatus.OK);
-
+	@PostMapping("/updateinvimages")
+	public Map<String, Object> updateinvimages(@RequestParam("file") MultipartFile file,
+			@RequestParam("fileid") String fileid, @RequestParam("username") String username,
+			@RequestParam("sitecode") String sitecode,@RequestParam("selectedMaterial") Integer nmaterialcatcode,
+			@RequestParam("usercode") Integer usercode,@RequestParam("smiles") String smiles
+			,@RequestParam("moljson") String moljson)throws Exception {
+		return materialInventoryService.updateinvimages(file, fileid, username, sitecode,nmaterialcatcode,usercode,smiles,moljson);
 	}
 	
-//	@PostMapping("/uploadsheetimagesSql")
-//	public Map<String, Object> uploadInvimagesSql(@RequestParam("file") MultipartFile file,
-//			@RequestParam("originurl") String originurl, @RequestParam("username") String username,
-//			@RequestParam("sitecode") String sitecode) throws IOException {
-//		return materialInventoryService.uploadInvimagesSql(file, originurl, username, sitecode);
-//	}
+	@RequestMapping(value = "downloadinvimagesFileDTO")
+	public List<FileDTO> downloadinvimagesFileDTO(@RequestBody Map<String, Object> inputMap)
+			throws IllegalStateException, IOException {
+		
+		String tenant = inputMap.get("tenant").toString();
+		Integer nmaterialcode = Integer.parseInt(inputMap.get("nmaterialcode").toString());
+		
+		List<FileDTO> returnObj = materialInventoryService.downloadinvimagesFileDTO(tenant,nmaterialcode);
+
+		return returnObj;
+	}
+	
+	@PostMapping("/deleteinvimages")
+	public void deleteinvimages(@RequestBody Map<String, Object> inputMap)throws Exception {
+		String fileName = inputMap.get("fileName").toString();
+		materialInventoryService.deleteinvimages(fileName);
+	}
 }

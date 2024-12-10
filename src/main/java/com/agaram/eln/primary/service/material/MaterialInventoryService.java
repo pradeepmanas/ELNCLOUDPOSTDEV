@@ -1,6 +1,5 @@
 package com.agaram.eln.primary.service.material;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -25,7 +24,6 @@ import java.util.TimeZone;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import org.apache.commons.io.FilenameUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,9 +37,11 @@ import org.springframework.web.multipart.MultipartFile;
 import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.config.TenantContext;
 import com.agaram.eln.primary.global.Enumeration;
+import com.agaram.eln.primary.global.FileDTO;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.instrumentDetails.LsOrderattachments;
 import com.agaram.eln.primary.model.material.Elnmaterial;
+import com.agaram.eln.primary.model.material.ElnmaterialChemDiagRef;
 import com.agaram.eln.primary.model.material.ElnmaterialInventory;
 import com.agaram.eln.primary.model.material.ElnresultUsedMaterial;
 import com.agaram.eln.primary.model.material.Manufacturer;
@@ -64,6 +64,7 @@ import com.agaram.eln.primary.model.samplestoragelocation.SampleStorageVersion;
 import com.agaram.eln.primary.model.samplestoragelocation.SelectedInventoryMapped;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.repository.instrumentDetails.LsOrderattachmentsRepository;
+import com.agaram.eln.primary.repository.material.ElnmaterialChemDiagRefRepository;
 import com.agaram.eln.primary.repository.material.ElnmaterialInventoryRepository;
 import com.agaram.eln.primary.repository.material.ElnmaterialRepository;
 import com.agaram.eln.primary.repository.material.ElnresultUsedMaterialRepository;
@@ -129,7 +130,8 @@ public class MaterialInventoryService {
 	private FileManipulationservice fileManipulationservice;
 	@Autowired
 	SelectedInventoryMappedRepository selectedInventoryMappedRepository;
-
+	@Autowired
+	ElnmaterialChemDiagRefRepository ElnmaterialChemDiagRefRepository;
 	@Autowired
 	SampleStorageLocationRepository sampleStorageLocationRepository;
 	@Autowired
@@ -3278,8 +3280,8 @@ public class MaterialInventoryService {
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 		simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 		Integer nsiteInteger = (Integer) inputMap.get("nsitecode");
-		MaterialCategory objmat = (MaterialCategory) inputMap.get("materialcategory");
-		MaterialType objmattype = (MaterialType) inputMap.get("materialtype");
+//		MaterialCategory objmat = (MaterialCategory) inputMap.get("materialcategory");
+//		MaterialType objmattype = (MaterialType) inputMap.get("materialtype");
 		
 		
 //		Date fromDate = simpleDateFormat.parse((String) inputMap.get("fromdate"));
@@ -3818,80 +3820,89 @@ public class MaterialInventoryService {
 		return new ResponseEntity<>(Elnresult, HttpStatus.OK);
 	}
 
-	public Map<String, Object> uploadInvimages(MultipartFile file, String originurl, String username, String sitecode) {
+public Map<String, Object> uploadInvimages(MultipartFile file, String originurl, String username, String sitecode,Integer nmaterialcatcode,Integer usercode,String smiles,String moljson) {
+		
+		Elnmaterial objmaterial = elnMaterialRepository.findOne(nmaterialcatcode);
 		
 		Map<String, Object> map = new HashMap<String, Object>();
 		String id = null;
 		try {
-			id = cloudFileManipulationservice.storecloudfilesreturnUUID(file, "inventorychemicalimagestemp");
+			id = cloudFileManipulationservice.storecloudfilesreturnUUID(file, "inventorychemicalimages");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
+		ElnmaterialChemDiagRef objChem = new ElnmaterialChemDiagRef();
+		
+		objChem.setFileid(id);
+		objChem.setCreateby(lsuserMasterRepository.findByusercode(usercode));
+		objChem.setCreatedate(new Date());
+		objChem.setNmaterialcode(objmaterial.getNmaterialcode());
+		objChem.setSmiles(smiles);
+		objChem.setMoljson(moljson);
+		
+		ElnmaterialChemDiagRefRepository.save(objChem);
+		
+		map.put("fileName", id);
 
-		final String getExtn = FilenameUtils.getExtension(file.getOriginalFilename()) == "" ? "png" 
-				: FilenameUtils.getExtension(file.getOriginalFilename());
-
-		map.put("link", originurl + "/Instrument/downloadsheetimagestemp/" + id + "/" + TenantContext.getCurrentTenant()
-				+ "/" + FilenameUtils.removeExtension(file.getOriginalFilename()) + "/" + getExtn);
+		return map;
+	}	
+	
+	public Map<String, Object> updateinvimages(MultipartFile file, String fileid, String username, String sitecode,
+			Integer nmaterialcatcode, Integer usercode, String smiles, String moljson) {
+		
+		Elnmaterial objmaterial = elnMaterialRepository.findOne(nmaterialcatcode);
+		ElnmaterialChemDiagRef objDigRef = ElnmaterialChemDiagRefRepository.findByFileid(fileid);
+		
+		Map<String, Object> map = new HashMap<String, Object>();
+		String id = null;
+		
+		try {
+			id = cloudFileManipulationservice.storecloudfilesreturnUUID(file, "inventorychemicalimages");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		objDigRef.setFileid(id);
+		objDigRef.setNmaterialcode(objmaterial.getNmaterialcode());
+		objDigRef.setSmiles(smiles);
+		objDigRef.setMoljson(moljson);
+		
+		ElnmaterialChemDiagRefRepository.save(objDigRef);
+		
+		map.put("fileName", id);
 
 		return map;
 	}
-
-	public ByteArrayInputStream downloadinvimages(String fileid, String tenant) {
-		TenantContext.setCurrentTenant(tenant);
-		byte[] data = null;
-		try {
-			data = StreamUtils
-					.copyToByteArray(cloudFileManipulationservice.retrieveCloudFile(fileid, tenant + "inventorychemicalimages"));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			data = null;
-		}
-
-		if (data == null) {
-			String[] arrOffiledid = fileid.split("_", 2);
-			String Originalfieldid = arrOffiledid[0];
-			try {
-				data = StreamUtils.copyToByteArray(
-						cloudFileManipulationservice.retrieveCloudFile(Originalfieldid, tenant + "inventorychemicalimages"));
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				data = null;
-			}
-
-			if (data == null) {
-				try {
-					data = StreamUtils.copyToByteArray(cloudFileManipulationservice.retrieveCloudFile(Originalfieldid,
-							tenant + "sheetimagestemp"));
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					data = null;
-				}
-			}
-		}
-
-		ByteArrayInputStream bis = new ByteArrayInputStream(data);
-
-		return bis;
+	
+	public List<FileDTO> downloadinvimagesFileDTO(String tenant, Integer nmaterialcode) {
+	    List<ElnmaterialChemDiagRef> objListChem = ElnmaterialChemDiagRefRepository.findByNmaterialcodeOrderByDiagramcodeDesc(nmaterialcode);
+	    
+	    List<FileDTO> lstDTO = new ArrayList<FileDTO>();
+	    
+	     objListChem.stream()
+	        .peek(f -> {
+	            byte[] data = getFileData(f.getFileid(), tenant);
+	            lstDTO.add(new FileDTO(f.getFileid(),f.getMoljson(), data));
+	        })
+	        .collect(Collectors.toList());
+	     
+	     return lstDTO;
 	}
 
-	public ByteArrayInputStream downloadinvimagestemp(String fileid, String tenant) {
-		TenantContext.setCurrentTenant(tenant);
-		byte[] data = null;
-		try {
-			data = StreamUtils.copyToByteArray(
-					cloudFileManipulationservice.retrieveCloudFile(fileid, tenant + "inventorychemicalimagestemp"));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		ByteArrayInputStream bis = new ByteArrayInputStream(data);
-
-		return bis;
+	private byte[] getFileData(String fileId, String tenant) {
+	    TenantContext.setCurrentTenant(tenant);
+	    try {
+	        return StreamUtils.copyToByteArray(cloudFileManipulationservice.retrieveCloudFile(fileId, tenant + "inventorychemicalimages"));
+	    } catch (IOException e) {
+	        e.printStackTrace();
+	        return new byte[0];
+	    }
 	}
 
+	public void deleteinvimages(String fileName) {
+		cloudFileManipulationservice.deletecloudFile(fileName, "inventorychemicalimages");
+		ElnmaterialChemDiagRef objChem = ElnmaterialChemDiagRefRepository.findByFileid(fileName);
+		ElnmaterialChemDiagRefRepository.delete(objChem);
+	}
 }

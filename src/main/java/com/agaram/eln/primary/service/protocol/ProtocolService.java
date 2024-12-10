@@ -752,14 +752,14 @@ public class ProtocolService {
 //			LScfttransactionobj = new ObjectMapper().convertValue(argObj.get("objsilentaudit"),
 //					new TypeReference<LScfttransaction>() {
 //					});
-			LSprotocolmastertest testcode = LSprotocolmastertestRepository
+			List<LSprotocolmastertest> testcode = LSprotocolmastertestRepository
 					.findByProtocolmastercode(argObj.get("protocolmastercode"));
-			if (testcode != null && testcode.getTestcode() != null) {
-				LStestmasterlocal test = lstestmasterlocalRepository.findByTestcode(testcode.getTestcode());
-				if (test != null && test.getTestname() != null) {
-					testcode.setTestname(test.getTestname());
+			if (testcode != null ) {
+//				LStestmasterlocal test = lstestmasterlocalRepository.findByTestcode(testcode.getTestcode());
+//				if (test != null && test.getTestname() != null) {
+//					testcode.setTestname(test.getTestname());
 					mapObj.put("LSprotocolmastertest", testcode);
-				}
+//				}
 
 			}
 
@@ -1633,6 +1633,8 @@ public class ProtocolService {
 					newProtocolMasterObj.setElnprotocoltemplateworkflow(elnprotocolTemplateworkflowRepository
 							.findTopByAndLssitemasterAndStatusOrderByWorkflowcodeAsc(lssitemaster, 1));
 				}
+				
+				
 //				newProtocolMasterObj.setlSprotocolworkflow(lsprotocolworkflow);
 
 			}
@@ -1643,6 +1645,15 @@ public class ProtocolService {
 					&& argObj.get("approved") != null) {
 				newProtocolMasterObj.setApproved((Integer) argObj.get("approved"));
 			}
+			
+			if(argObj.containsKey("lstest"))
+			{
+//				List<LSprotocolmastertest> lstprojecttest = new ObjectMapper().convertValue(argObj.get("lstest"), ArrayList<LSprotocolmastertest.class>());
+				List<LSprotocolmastertest> lstprojecttest = new ObjectMapper().convertValue(argObj.get("lstest"), new TypeReference<List<LSprotocolmastertest>>(){});
+				newProtocolMasterObj.setLstest(lstprojecttest);
+				LSprotocolmastertestRepository.save(newProtocolMasterObj.getLstest());
+			}
+			
 
 			LSProtocolMasterRepositoryObj.save(newProtocolMasterObj);
 			protocolcode = newProtocolMasterObj.getProtocolmastercode();
@@ -10077,4 +10088,5 @@ public class ProtocolService {
 
 		return bis;
 	}
+	
 }

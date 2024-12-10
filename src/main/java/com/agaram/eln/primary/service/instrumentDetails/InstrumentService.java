@@ -39,12 +39,21 @@ import javax.persistence.TypedQuery;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.bson.BsonBinarySubType;
 import org.bson.types.Binary;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.env.Environment;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -58,6 +67,7 @@ import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.mail.MailSendException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.client.RestTemplate;
@@ -129,6 +139,8 @@ import com.agaram.eln.primary.model.notification.Email;
 import com.agaram.eln.primary.model.protocols.Elnprotocolworkflow;
 import com.agaram.eln.primary.model.protocols.LSlogilabprotocoldetail;
 import com.agaram.eln.primary.model.reports.lsreportfile;
+import com.agaram.eln.primary.model.reports.reportdesigner.Reporttemplate;
+import com.agaram.eln.primary.model.reports.reportviewer.Reports;
 import com.agaram.eln.primary.model.sheetManipulation.LSfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSfileelnmethod;
 import com.agaram.eln.primary.model.sheetManipulation.LSfilemethod;
@@ -138,6 +150,7 @@ import com.agaram.eln.primary.model.sheetManipulation.LSsamplemaster;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflowgroupmapping;
 import com.agaram.eln.primary.model.sheetManipulation.Notification;
+import com.agaram.eln.primary.model.syncwordconverter.SaveParameter;
 import com.agaram.eln.primary.model.templates.LsMappedTemplate;
 import com.agaram.eln.primary.model.templates.LsUnmappedTemplate;
 import com.agaram.eln.primary.model.usermanagement.LSMultisites;
@@ -233,14 +246,31 @@ import com.agaram.eln.primary.repository.usermanagement.LSuserteammappingReposit
 //import com.agaram.eln.primary.repository4mibatis.LSlogilablimsorderdetailMibatisRepository;
 import com.agaram.eln.primary.service.cloudFileManip.CloudFileManipulationservice;
 import com.agaram.eln.primary.service.fileManipulation.FileManipulationservice;
+import com.agaram.eln.primary.service.protocol.Commonservice;
 import com.agaram.eln.primary.service.protocol.ProtocolService;
 import com.agaram.eln.primary.service.sheetManipulation.FileService;
+import com.agaram.eln.primary.service.syncwordconverter.DocumentViewerService;
+import com.agaram.eln.primary.service.syncwordconverter.DocumenteditorService;
 import com.agaram.eln.primary.service.usermanagement.LoginService;
 import com.agaram.eln.primary.service.usermanagement.UserService;
 import com.agaram.eln.primary.service.webParser.WebparserService;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.gridfs.GridFSDBFile;
+import com.syncfusion.docio.FormatType;
+import com.syncfusion.docio.IWParagraph;
+import com.syncfusion.docio.IWPicture;
+import com.syncfusion.docio.IWSection;
+import com.syncfusion.docio.IWTextRange;
+import com.syncfusion.docio.WParagraph;
+import com.syncfusion.docio.WTextRange;
+import com.syncfusion.docio.WordDocument;
+import com.syncfusion.ej2.wordprocessor.WordProcessorHelper;
+import com.syncfusion.javahelper.system.io.FileAccess;
+import com.syncfusion.javahelper.system.io.FileMode;
+import com.syncfusion.javahelper.system.io.FileStreamSupport;
+import com.syncfusion.javahelper.system.io.MemoryStreamSupport;
 
 @Service
 //@EnableJpaRepositories(basePackageClasses = LsMethodFieldsRepository.class)
@@ -248,6 +278,10 @@ public class InstrumentService {
 
 	@Autowired
 	private Environment env;
+	@Autowired
+	private DocumentViewerService documentViewerService;
+	@Autowired
+	Commonservice commonservice;
 	@Autowired
 	private LsMethodFieldsRepository lsMethodFieldsRepository;
 //	@Autowired
@@ -276,7 +310,7 @@ public class InstrumentService {
 	private LSworkflowRepository lsworkflowRepository;
 	@Autowired
 	private LSfileelnmethodRepository LSfileelnmethodRepository;
-	
+
 //	@Autowired
 //	private LSlimsorderRepository lslimsorderRepository;
 	@Autowired
@@ -373,7 +407,7 @@ public class InstrumentService {
 
 	@Autowired
 	private EquipmentRepository EquipmentRepository;
-	
+
 	@Autowired
 	private LsordersharedbyRepository lsordersharedbyRepository;
 
@@ -424,7 +458,7 @@ public class InstrumentService {
 
 	@Autowired
 	private LSOrderElnMethodRepository LSOrderElnMethodRepository;
-	
+
 //	@Autowired
 //	private UserService userService;
 
@@ -504,7 +538,7 @@ public class InstrumentService {
 
 	@Autowired
 	private NotificationRepository notificationRepository;
-	
+
 	@Autowired
 	private LsActiveWidgetsRepository lsActiveWidgetsRepository;
 
@@ -514,11 +548,21 @@ public class InstrumentService {
 	@Autowired
 	private LogilablimsorderdetailsRepository logilablimsorderdetailsRepository;
 
+	@Autowired
+	private DocumenteditorService documenteditorService;
+
+	private final ObjectMapper objectMapper = new ObjectMapper();
+
 	private Map<Integer, TimerTask> scheduledTasks = new HashMap<>();
 
 	private static Map<String, Timer> timerMap = new HashMap<>();
 	private static Map<String, Boolean> timerStatusMap = new HashMap<>();
-	 private ConcurrentHashMap<String, LSlogilablimsorderdetail> orderDetailMap = new ConcurrentHashMap<>();//	public Map<String, Object> getInstrumentparameters(LSSiteMaster lssiteMaster) {
+	private ConcurrentHashMap<String, LSlogilablimsorderdetail> orderDetailMap = new ConcurrentHashMap<>();// public
+																											// Map<String,
+																											// Object>
+																											// getInstrumentparameters(LSSiteMaster
+																											// lssiteMaster)
+																											// {
 //		Map<String, Object> obj = new HashMap<>();
 //		List<String> lsInst = new ArrayList<String>();
 //		lsInst.add("INST000");
@@ -597,109 +641,117 @@ public class InstrumentService {
 //		return obj;
 //	}
 
-	 public Map<String, Object> getInstrumentparameters(LSSiteMaster lssiteMaster) {
-			Map<String, Object> obj = new HashMap<>();
-			List<String> lsInst = new ArrayList<String>();
-			lsInst.add("INST000");
-			lsInst.add("LPRO");
-			List<LsMethodFields> Methods = lsMethodFieldsRepository.findByinstrumentidNotIn(lsInst);
-			// List<SubParserField> SubParserField = new ArrayList<SubParserField>();
+	public Map<String, Object> getInstrumentparameters(LSSiteMaster lssiteMaster) {
+		Map<String, Object> obj = new HashMap<>();
+		List<String> lsInst = new ArrayList<String>();
+		lsInst.add("INST000");
+		lsInst.add("LPRO");
+		List<LsMethodFields> Methods = lsMethodFieldsRepository.findByinstrumentidNotIn(lsInst);
+		// List<SubParserField> SubParserField = new ArrayList<SubParserField>();
 
-			if (lssiteMaster.getIsmultitenant() != 1) {
-				List<LSfields> Generalfields = lSfieldsRepository.findByisactive(1);
-				List<LsMappedInstruments> Instruments = lsMappedInstrumentsRepository.findAll();
-				List<InstrumentMaster> InstrMaster = lsInstMasterRepository.findByStatusAndSite(1, lssiteMaster);
-				
-				List<Equipment> Equipment = EquipmentRepository.findByNsitecodeAndCmmsettingTrueAndNstatusOrderByNequipmentcodeDesc(lssiteMaster.getSitecode(),1);
-	
-				List<LsMappedTemplate> MappedTemplate = LsMappedTemplateRepository.findAll();
-				List<LsUnmappedTemplate> UnmappedTemplate = LsUnmappedTemplateRepository.findAll();
+		if (lssiteMaster.getIsmultitenant() != 1) {
+			List<LSfields> Generalfields = lSfieldsRepository.findByisactive(1);
+			List<LsMappedInstruments> Instruments = lsMappedInstrumentsRepository.findAll();
+			List<InstrumentMaster> InstrMaster = lsInstMasterRepository.findByStatusAndSite(1, lssiteMaster);
+
+			List<Equipment> Equipment = EquipmentRepository
+					.findByNsitecodeAndCmmsettingTrueAndNstatusOrderByNequipmentcodeDesc(lssiteMaster.getSitecode(), 1);
 
 				List<Method> elnMethod = lsMethodRepository.findByStatusAndSiteAndEquipmentIsNotNull(1, lssiteMaster);
 				List<ParserBlock> ParserBlock = lsParserBlockRepository.findByStatusAndMethodIn(1, elnMethod);
 				List<ParserField> ParserField = lsParserRepository.findByStatusAndParserblockIn(1, ParserBlock);
 				List<SubParserField> SubParserField = lsSubParserRepository.findByStatusAndParserfieldIn(1, ParserField);
 
-				obj.put("Generalfields", Generalfields);
 
-				List<ParserField> filteredList = ParserField.stream()
-						.filter(filterParser -> SubParserField.stream()
-								.anyMatch(filterSubParser -> filterParser.getParserfieldkey()
-										.equals(filterSubParser.getParserfield().getParserfieldkey())))
-						.collect(Collectors.toList());
+			List<LsMappedTemplate> MappedTemplate = LsMappedTemplateRepository.findAll();
+			List<LsUnmappedTemplate> UnmappedTemplate = LsUnmappedTemplateRepository.findAll();
 
-				ParserField.removeAll(filteredList);
+			List<Method> elnMethod = lsMethodRepository.findByStatusAndSite(1, lssiteMaster);
+			List<ParserBlock> ParserBlock = lsParserBlockRepository.findByStatusAndMethodIn(1, elnMethod);
+			List<ParserField> ParserField = lsParserRepository.findByStatusAndParserblockIn(1, ParserBlock);
+			List<SubParserField> SubParserField = lsSubParserRepository.findByStatusAndParserfieldIn(1, ParserField);
 
-				obj.put("Instruments", Instruments);
-				obj.put("Instrmaster", InstrMaster);
-				
-				obj.put("Equipment", Equipment);
-				
-				obj.put("elninstrument", lselninstrumentmasterRepository
-						.findBylssitemasterAndStatusOrderByInstrumentcodeDesc(lssiteMaster, 1));
-				obj.put("Mappedtemplates", MappedTemplate);
-				obj.put("Unmappedtemplates", UnmappedTemplate);
-				obj.put("ELNMethods", elnMethod);
-				obj.put("ParserBlock", ParserBlock);
-				obj.put("ParserField", ParserField);
-				obj.put("SubParserField", SubParserField);
+			obj.put("Generalfields", Generalfields);
 
-				Generalfields = null;
-				Instruments = null;
-				InstrMaster = null;
-				elnMethod = null;
-				ParserBlock = null;
-				ParserField = null;
-				// SubParserField = null;
+			List<ParserField> filteredList = ParserField.stream()
+					.filter(filterParser -> SubParserField.stream()
+							.anyMatch(filterSubParser -> filterParser.getParserfieldkey()
+									.equals(filterSubParser.getParserfield().getParserfieldkey())))
+					.collect(Collectors.toList());
 
-			} else {
-				List<LSfields> Generalfields = lSfieldsRepository.findByisactiveAndMethodname(1, "ID_GENERAL");
+			ParserField.removeAll(filteredList);
 
-				List<InstrumentMaster> InstrMaster = lsInstMasterRepository.findByStatusAndSite(1, lssiteMaster);
-				
-				List<Equipment> Equipment = EquipmentRepository.findByNsitecodeAndCmmsettingTrueAndNstatusOrderByNequipmentcodeDesc(lssiteMaster.getSitecode(),1);
+			obj.put("Instruments", Instruments);
+			obj.put("Instrmaster", InstrMaster);
 
-				List<Method> elnMethod = lsMethodRepository.findByStatusAndSiteAndEquipmentIsNotNull(1, lssiteMaster);
-				List<ParserBlock> ParserBlock = lsParserBlockRepository.findByStatusAndMethodIn(1, elnMethod);
-				List<ParserField> ParserField = lsParserRepository.findByStatusAndParserblockIn(1, ParserBlock);
+			obj.put("Equipment", Equipment);
 
-				List<SubParserField> SubParserField = lsSubParserRepository.findByStatusAndParserfieldIn(1, ParserField);
+			obj.put("elninstrument", lselninstrumentmasterRepository
+					.findBylssitemasterAndStatusOrderByInstrumentcodeDesc(lssiteMaster, 1));
+			obj.put("Mappedtemplates", MappedTemplate);
+			obj.put("Unmappedtemplates", UnmappedTemplate);
+			obj.put("ELNMethods", elnMethod);
+			obj.put("ParserBlock", ParserBlock);
+			obj.put("ParserField", ParserField);
+			obj.put("SubParserField", SubParserField);
 
-				obj.put("Generalfields", Generalfields);
+			Generalfields = null;
+			Instruments = null;
+			InstrMaster = null;
+			elnMethod = null;
+			ParserBlock = null;
+			ParserField = null;
+			// SubParserField = null;
 
-				List<ParserField> filteredList = ParserField.stream()
-						.filter(filterParser -> SubParserField.stream()
-								.anyMatch(filterSubParser -> filterParser.getParserfieldkey()
-										.equals(filterSubParser.getParserfield().getParserfieldkey())))
-						.collect(Collectors.toList());
+		} else {
+			List<LSfields> Generalfields = lSfieldsRepository.findByisactiveAndMethodname(1, "ID_GENERAL");
 
-				ParserField.removeAll(filteredList);
+			List<InstrumentMaster> InstrMaster = lsInstMasterRepository.findByStatusAndSite(1, lssiteMaster);
 
-				obj.put("Instrmaster", InstrMaster);
-				obj.put("Equipment", Equipment);
-				
-				obj.put("ELNMethods", elnMethod);
-				obj.put("ParserBlock", ParserBlock);
-				obj.put("ParserField", ParserField);
-				obj.put("SubParserField", SubParserField);
+			List<Equipment> Equipment = EquipmentRepository
+					.findByNsitecodeAndCmmsettingTrueAndNstatusOrderByNequipmentcodeDesc(lssiteMaster.getSitecode(), 1);
 
-				Generalfields = null;
-				InstrMaster = null;
-				elnMethod = null;
-				ParserBlock = null;
-				ParserField = null;
-			}
-			if (LSpreferencesRepository.findByTasksettings("WebParser") != null && LSpreferencesRepository
-					.findByTasksettings("WebParser").getValuesettings().equalsIgnoreCase("Active")) {
-				obj.put("Methods", parserService.getwebparsemethods());
-				obj.put("Instruments", parserService.getwebparserInstruments());
-			} else {
-				obj.put("Methods", Methods);
-			}
-			Methods = null;
-			lsInst = null;
-			return obj;
+			List<Method> elnMethod = lsMethodRepository.findByStatusAndSiteAndEquipmentIsNotNull(1, lssiteMaster);
+			List<ParserBlock> ParserBlock = lsParserBlockRepository.findByStatusAndMethodIn(1, elnMethod);
+			List<ParserField> ParserField = lsParserRepository.findByStatusAndParserblockIn(1, ParserBlock);
+
+			List<SubParserField> SubParserField = lsSubParserRepository.findByStatusAndParserfieldIn(1, ParserField);
+
+			obj.put("Generalfields", Generalfields);
+
+			List<ParserField> filteredList = ParserField.stream()
+					.filter(filterParser -> SubParserField.stream()
+							.anyMatch(filterSubParser -> filterParser.getParserfieldkey()
+									.equals(filterSubParser.getParserfield().getParserfieldkey())))
+					.collect(Collectors.toList());
+
+			ParserField.removeAll(filteredList);
+
+			obj.put("Instrmaster", InstrMaster);
+			obj.put("Equipment", Equipment);
+
+			obj.put("ELNMethods", elnMethod);
+			obj.put("ParserBlock", ParserBlock);
+			obj.put("ParserField", ParserField);
+			obj.put("SubParserField", SubParserField);
+
+			Generalfields = null;
+			InstrMaster = null;
+			elnMethod = null;
+			ParserBlock = null;
+			ParserField = null;
 		}
+		if (LSpreferencesRepository.findByTasksettings("WebParser") != null && LSpreferencesRepository
+				.findByTasksettings("WebParser").getValuesettings().equalsIgnoreCase("Active")) {
+			obj.put("Methods", parserService.getwebparsemethods());
+			obj.put("Instruments", parserService.getwebparserInstruments());
+		} else {
+			obj.put("Methods", Methods);
+		}
+		Methods = null;
+		lsInst = null;
+		return obj;
+	}
 
 //	public LSlogilablimsorderdetail InsertELNOrder(LSlogilablimsorderdetail objorder) {
 //
@@ -856,9 +908,8 @@ public class InstrumentService {
 		return UUID.randomUUID().toString();
 	}
 
-
-	public LSlogilablimsorderdetail InsertAutoRegisterOrder(LSlogilablimsorderdetail objorderindex,
-			String timerId1) throws IOException, ParseException {
+	public LSlogilablimsorderdetail InsertAutoRegisterOrder(LSlogilablimsorderdetail objorderindex, String timerId1)
+			throws IOException, ParseException {
 
 		List<LSlogilablimsorderdetail> oldorder = lslogilablimsorderdetailRepository
 				.findBybatchcode(objorderindex.getBatchcode());
@@ -870,18 +921,17 @@ public class InstrumentService {
 		Integer Ismultitenant = autoorder.get(0).getIsmultitenant();
 
 		Integer autoregistercount = objorderindex1.getAutoregistercount();
-		if(autoorder != null) {
+		if (autoorder != null) {
 			autoorder.get(0).setRepeat(false);
 			lsautoregisterrepo.save(autoorder.get(0));
 		}
-		
+
 		if (autoregistercount > 0) {
 //			Integer autoregistercountObj = objorderindex1.getAutoregistercount() - 1;
 			objorderindex1.setRepeat(false);
 			objorderindex1.setAutoregistercount(0);
 			lslogilablimsorderdetailRepository.save(objorderindex1);
-			
-			
+
 		}
 		if (autoregistercount != null && autoregistercount > 0) {
 			autoregistercount = autoregistercount - 1;
@@ -925,7 +975,7 @@ public class InstrumentService {
 				autoorder.get(0).setStoptime(null);
 				autoorder.get(0).setScreen("Sheet_Order");
 //				if (autoregistercount == 0) {
-					autoorder.get(0).setIsautoreg(false);
+				autoorder.get(0).setIsautoreg(false);
 //				} else {
 //					autoorder.get(0).setIsautoreg(true);
 //				}
@@ -1048,16 +1098,16 @@ public class InstrumentService {
 				sampversion1.setVersionname("version_1");
 				sampversion1.setVersionno(1);
 				lssamplefileversionRepository.save(sampversion1);
-				
+
 				List<LSsamplefileversion> samplefileVersions = new ArrayList<LSsamplefileversion>();
 				samplefileVersions.add(sampversion1);
-				
+
 				LSsamplefile samplefile = new LSsamplefile();
 				samplefile.setCreatebyuser(objorderindex1.getLsuserMaster());
 				samplefile.setLssamplefileversion(samplefileVersions);
 //				samplefile.setCreatedate(commonfunction.getCurrentUtcTime());
 				samplefile.setVersionno(1);
-				
+
 				objorderindex1.setLssamplefile(samplefile);
 			}
 			try {
@@ -1252,21 +1302,20 @@ public class InstrumentService {
 		return objorderindex1;
 	}
 
-	
-	 public void stopTimer(String timerId) {
-	        Timer timer = timerMap.get(timerId);
-	        if (timer != null) {
-	            timer.cancel();
-	            timer.purge(); 
-	            timerMap.remove(timerId); 
-	            timerStatusMap.remove(timerId);
-	            orderDetailMap.remove(timerId);
-	            System.out.println("Timer " + timerId + " stopped.");
-	        } else {
-	            System.out.println("No timer found with ID " + timerId);
-	        }
-	    }
-	
+	public void stopTimer(String timerId) {
+		Timer timer = timerMap.get(timerId);
+		if (timer != null) {
+			timer.cancel();
+			timer.purge();
+			timerMap.remove(timerId);
+			timerStatusMap.remove(timerId);
+			orderDetailMap.remove(timerId);
+			System.out.println("Timer " + timerId + " stopped.");
+		} else {
+			System.out.println("No timer found with ID " + timerId);
+		}
+	}
+
 	public LSlogilablimsorderdetail InsertELNOrder(LSlogilablimsorderdetail objorder)
 			throws IOException, ParseException {
 		objorder.setLsworkflow(lsworkflowRepository
@@ -1376,7 +1425,9 @@ public class InstrumentService {
 		if (objorder.getRepeat() != null && objorder.getLsautoregisterorderdetail() != null && objorder.getRepeat()) {
 			final List<LsAutoregister> autoordernotList = new ArrayList<>(1);
 
-			Map<String, Object> RtnObject = commonfunction.getdelaymillisecondforautoregister( objorder.getLsautoregisterorderdetail().getTimespan(),objorder.getLsautoregisterorderdetail().getInterval());
+			Map<String, Object> RtnObject = commonfunction.getdelaymillisecondforautoregister(
+					objorder.getLsautoregisterorderdetail().getTimespan(),
+					objorder.getLsautoregisterorderdetail().getInterval());
 			Date updatedDate = (Date) RtnObject.get("Date");
 			milliseconds = (long) RtnObject.get("delay");
 			objorder.getLsautoregisterorderdetail().setAutocreatedate(updatedDate);
@@ -1412,11 +1463,12 @@ public class InstrumentService {
 		String Limsorder = objorder.getBatchcode().toString();
 
 		if (objorder.getLsfile() != null) {
-			List<LSfileelnmethod> filemethodlist = LSfileelnmethodRepository.findByFilecode(objorder.getLsfile().getFilecode());
-			if(filemethodlist!= null) {
-				
+			List<LSfileelnmethod> filemethodlist = LSfileelnmethodRepository
+					.findByFilecode(objorder.getLsfile().getFilecode());
+			if (filemethodlist != null) {
+
 				List<LSOrderElnMethod> lsorderelnmethodobj = new ArrayList<LSOrderElnMethod>();
-				for(int i =0 ; i<filemethodlist.size();i++) {	
+				for (int i = 0; i < filemethodlist.size(); i++) {
 					LSOrderElnMethod ordermethod = new LSOrderElnMethod();
 					ordermethod.setBatchcode(objorder.getBatchcode());
 					ordermethod.setBatchid(Batchid);
@@ -1424,13 +1476,13 @@ public class InstrumentService {
 					ordermethod.setCreatedtimestamp(commonfunction.getCurrentUtcTime());
 					ordermethod.setMethod(filemethodlist.get(i).getMethod());
 					ordermethod.setEquipment(filemethodlist.get(i).getEquipment());
-					
-					lsorderelnmethodobj.add(ordermethod);			
+
+					lsorderelnmethodobj.add(ordermethod);
 				}
 				LSOrderElnMethodRepository.save(lsorderelnmethodobj);
 			}
 		}
-		
+
 		if (objorder.getLsfile() != null) {
 			objorder.getLsfile().setLsmethods(
 					LSfilemethodRepository.findByFilecodeOrderByFilemethodcode(objorder.getLsfile().getFilecode()));
@@ -1506,7 +1558,7 @@ public class InstrumentService {
 					e.printStackTrace();
 				}
 			}
-			
+
 			Notification notify = new Notification();
 			notify.setBatchid(objorder.getBatchid());
 			notify.setOrderid(objorder.getBatchcode());
@@ -1580,7 +1632,7 @@ public class InstrumentService {
 
 	private void scheduleAutoRegister(LSlogilablimsorderdetail objlogilaborderdetail, long delay, String timerId1) {
 		Set<Integer> runningTasks = new HashSet<>();
-	
+
 		int batchcode = objlogilaborderdetail.getBatchcode().intValue();
 		synchronized (runningTasks) {
 			if (runningTasks.contains(batchcode)) {
@@ -1593,24 +1645,24 @@ public class InstrumentService {
 					@Override
 					public void run() {
 						try {
-							LSlogilablimsorderdetail objlogilaborderdetailObject=objlogilaborderdetail;
-							 Timer timerobj = timerMap.get(timerId1);
-							 if (timerobj == null) {
-								 timerMap.put(timerId1, timer);
-							 }
-							 else {
-								 if(orderDetailMap.size()>0) {
-									 objlogilaborderdetailObject=orderDetailMap.get(timerId1);
-								 }
-								 if(objlogilaborderdetailObject == null) {
-									 objlogilaborderdetailObject=objlogilaborderdetail;
-								 }
-								 
-							 }
-							 
-							 objlogilaborderdetailObject=InsertAutoRegisterOrder(objlogilaborderdetailObject, timerId1);
-							 orderDetailMap.put(timerId1, objlogilaborderdetailObject);
-							 System.out.println("kumu");
+							LSlogilablimsorderdetail objlogilaborderdetailObject = objlogilaborderdetail;
+							Timer timerobj = timerMap.get(timerId1);
+							if (timerobj == null) {
+								timerMap.put(timerId1, timer);
+							} else {
+								if (orderDetailMap.size() > 0) {
+									objlogilaborderdetailObject = orderDetailMap.get(timerId1);
+								}
+								if (objlogilaborderdetailObject == null) {
+									objlogilaborderdetailObject = objlogilaborderdetail;
+								}
+
+							}
+
+							objlogilaborderdetailObject = InsertAutoRegisterOrder(objlogilaborderdetailObject,
+									timerId1);
+							orderDetailMap.put(timerId1, objlogilaborderdetailObject);
+							System.out.println("kumu");
 						} catch (IOException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
@@ -1626,7 +1678,7 @@ public class InstrumentService {
 					}
 				};
 				runningTasks.add(batchcode);
-				 timerMap.put(timerId1, timer);
+				timerMap.put(timerId1, timer);
 //	        timer.schedule(task, delay);
 				timer.scheduleAtFixedRate(task, delay, delay);
 				scheduledTasks.put(batchcode, task);
@@ -1882,8 +1934,8 @@ public class InstrumentService {
 
 	}
 
-	public List<Logilaborderssh> GetmyordersonFilter(LSlogilablimsorderdetail objorder, List<Logilaborderssh> lstmyorders,
-			String Orderflag) {
+	public List<Logilaborderssh> GetmyordersonFilter(LSlogilablimsorderdetail objorder,
+			List<Logilaborderssh> lstmyorders, String Orderflag) {
 		List<Logilaborderssh> lstorder = new ArrayList<Logilaborderssh>();
 		List<Long> lstBatchcode = new ArrayList<Long>();
 		List<Integer> lstsamplefilecode = new ArrayList<Integer>();
@@ -2880,24 +2932,22 @@ public class InstrumentService {
 					Assignedcount = lstorder.size();
 
 					Assignedpendingcount = lstorder.stream()
-							.filter(obj -> "N".equals(obj.getOf() != null ? obj.getOf().trim() : ""))
-							.count();
+							.filter(obj -> "N".equals(obj.getOf() != null ? obj.getOf().trim() : "")).count();
 					Assignedcompletedcount = lstorder.stream()
-							.filter(obj -> "R".equals(obj.getOf() != null ? obj.getOf().trim() : ""))
-							.count();
+							.filter(obj -> "R".equals(obj.getOf() != null ? obj.getOf().trim() : "")).count();
 
 					if (objorder.getLsuserMaster() != null && objorder.getLsuserMaster().getLsuserActions() != null) {
 						LSuserActions objaction = objorder.getLsuserMaster().getLsuserActions();
 						if (objaction.getAssignedordershowpending() != null && objaction.getAssignedordershowall() != 1
 								&& objaction.getAssignedordershowpending() == 1) {
-							lstorder = lstorder.stream().filter(
-									obj -> "N".equals(obj.getOf() != null ? obj.getOf().trim() : ""))
+							lstorder = lstorder.stream()
+									.filter(obj -> "N".equals(obj.getOf() != null ? obj.getOf().trim() : ""))
 									.collect(Collectors.toList());
 						} else if (objaction.getAssignedordershowcompleted() != null
 								&& objaction.getAssignedordershowall() != 1
 								&& objaction.getAssignedordershowcompleted() == 1) {
-							lstorder = lstorder.stream().filter(
-									obj -> "R".equals(obj.getOf() != null ? obj.getOf().trim() : ""))
+							lstorder = lstorder.stream()
+									.filter(obj -> "R".equals(obj.getOf() != null ? obj.getOf().trim() : ""))
 									.collect(Collectors.toList());
 						}
 					}
@@ -3311,7 +3361,8 @@ public class InstrumentService {
 
 		if (objupdatedorder.getLockeduser() != null) {
 
-			if (objupdatedorder.getFiletype() != 1 && objupdatedorder.getFiletype()!=0 && !objupdatedorder.getOrderflag().trim().equalsIgnoreCase("R")
+			if (objupdatedorder.getFiletype() != 1 && objupdatedorder.getFiletype() != 0
+					&& !objupdatedorder.getOrderflag().trim().equalsIgnoreCase("R")
 					&& objupdatedorder.getAssignedto() == null
 					&& objupdatedorder.getLockeduser().equals(objorder.getObjLoggeduser().getUsercode())) {
 
@@ -3319,7 +3370,7 @@ public class InstrumentService {
 				objupdatedorder.getResponse().setStatus(false);
 
 				return objupdatedorder;
-			} else if (!objorder.getIsmultitenant().equals(2) && objupdatedorder.getFiletype()!=0) {
+			} else if (!objorder.getIsmultitenant().equals(2) && objupdatedorder.getFiletype() != 0) {
 				LSuserMaster user = new LSuserMaster();
 				user.setUsercode(objupdatedorder.getLockeduser());
 				List<LSactiveUser> LSactiveUsr = lSactiveUserRepository.findByLsusermaster(user);
@@ -3333,7 +3384,7 @@ public class InstrumentService {
 				}
 				objupdatedorder.setIsLock(1);
 //					lslogilablimsorderdetailRepository.save(objupdatedorder);
-			
+
 			}
 
 		} else if (!objorder.getIsmultitenant().equals(2)) {
@@ -3370,15 +3421,15 @@ public class InstrumentService {
 		List<LsOrderattachments> lstattach = lsOrderattachmentsRepository
 				.findByBatchcodeOrderByAttachmentcodeDesc(objorder.getBatchcode());
 		objupdatedorder.setLsOrderattachments(lstattach);
-		
+
 		List<ELNFileAttachments> lstelnfileattach = elnFileattachmentsRepository
 				.findByBatchcodeOrderByAttachmentcodeDesc(objorder.getBatchcode());
 		objupdatedorder.setElnfileAttachments(lstelnfileattach);
-		
-		
-		List<LSlogilablimsorder> lsLogilaborders = lslogilablimsorderRepository.findBybatchid(objupdatedorder.getBatchid());
+
+		List<LSlogilablimsorder> lsLogilaborders = lslogilablimsorderRepository
+				.findBybatchid(objupdatedorder.getBatchid());
 		objupdatedorder.setLsLSlogilablimsorder(lsLogilaborders);
-		
+
 		if (objupdatedorder.getFiletype() == 0) {
 			List<Lsbatchdetails> lstbatch = LsbatchdetailsRepository.findByBatchcode(objupdatedorder.getBatchcode());
 			objupdatedorder.setLsbatchdetails(lstbatch);
@@ -3580,8 +3631,8 @@ public class InstrumentService {
 					content = objCreation.getContent();
 				} else {
 					content = objCloudFileManipulationservice.retrieveCloudSheets(objCreation.getFileuid(),
-							commonfunction.getcontainername(ismultitenant,
-									TenantContext.getCurrentTenant()) + "ordercreation");
+							commonfunction.getcontainername(ismultitenant, TenantContext.getCurrentTenant())
+									+ "ordercreation");
 				}
 			} else {
 				if (mongoTemplate.findById(lssamplefile.getFilesamplecode(), OrderCreation.class) != null) {
@@ -4238,7 +4289,8 @@ public class InstrumentService {
 	}
 
 	public LSlogilablimsorderdetail SheetChangeForLimsOrder(LSlogilablimsorderdetail objorder) throws IOException {
-		List<LSlogilablimsorder> lstorder = lslogilablimsorderRepository.findByBatchidOrderByOrderidDesc(objorder.getBatchid());
+		List<LSlogilablimsorder> lstorder = lslogilablimsorderRepository
+				.findByBatchidOrderByOrderidDesc(objorder.getBatchid());
 		List<Lsbatchdetails> lstbatch = LsbatchdetailsRepository.findByBatchcode(objorder.getBatchcode());
 
 //		if (!LSfilemethodRepository.findByFilecodeOrderByFilemethodcode(objorder.getLsfile().getFilecode()).isEmpty()) {
@@ -4265,21 +4317,22 @@ public class InstrumentService {
 				int methodindex = 1;
 				for (LSfilemethod objmethod : objorder.getLsfile().getLsmethods()) {
 					OptionalInt methodExist = IntStream.range(0, lstorder.size())
-				            .filter(i -> lstorder.get(i).getInstrumentcode().equals(objmethod.getInstrumentid()) 
-				            		&& lstorder.get(i).getMethodcode().equals(objmethod.getMethodid()))
-				            .findFirst();
+							.filter(i -> lstorder.get(i).getInstrumentcode().equals(objmethod.getInstrumentid())
+									&& lstorder.get(i).getMethodcode().equals(objmethod.getMethodid()))
+							.findFirst();
 					if (!methodExist.isPresent()) {
 						LSlogilablimsorder objLimsOrder = new LSlogilablimsorder();
 						objLimsOrder.setOrderid(Limsorder + methodindex);
 						objLimsOrder.setBatchid(objorder.getBatchid());
 						objLimsOrder.setMethodcode(objmethod.getMethodid());
 						objLimsOrder.setInstrumentcode(objmethod.getInstrumentid());
-						objLimsOrder.setTestcode(objorder.getTestcode() != null ? objorder.getTestcode().toString() : null);
+						objLimsOrder
+								.setTestcode(objorder.getTestcode() != null ? objorder.getTestcode().toString() : null);
 						objLimsOrder.setOrderflag("N");
 						objLimsOrder.setCreatedtimestamp(objorder.getCreatedtimestamp());
-	
+
 						lsorder.add(objLimsOrder);
-	
+
 						methodindex++;
 					}
 				}
@@ -4575,10 +4628,10 @@ public class InstrumentService {
 //		String Content = objorder.getLssamplefile().getFilecontent();
 		objorder.getLssamplefile().setFilecontent(null);
 		lssamplefileRepository.save(objorder.getLssamplefile());
-		if(objorder.getLsparsedparameters() !=null) {
+		if (objorder.getLsparsedparameters() != null) {
 			objorder.getLsparsedparameters().forEach((param) -> param.setBatchcode(objorder.getBatchcode()));
 			lsparsedparametersRespository.save(objorder.getLsparsedparameters());
-			}	
+		}
 //		lsorderworkflowhistoryRepositroy.save(objorder.getLsorderworkflowhistory());
 		List<LsOrderattachments> lstattach = lsOrderattachmentsRepository
 				.findByBatchcodeOrderByAttachmentcodeDesc(objorder.getBatchcode());
@@ -4617,8 +4670,6 @@ public class InstrumentService {
 
 		LSlogilablimsorderdetail objDbOrder = lslogilablimsorderdetailRepository.findOne(objorder.getBatchcode());
 
-		
-		
 		updatenotificationfororderworkflow(objorder,
 				lslogilablimsorderdetailRepository.findOne(objorder.getBatchcode()).getLsworkflow());
 
@@ -4683,14 +4734,14 @@ public class InstrumentService {
 				e.printStackTrace();
 			}
 		}
-		
-		if(objorder.getApprovelstatus()!=null && objorder.getApprovelstatus()==3) {
+
+		if (objorder.getApprovelstatus() != null && objorder.getApprovelstatus() == 3) {
 			objDbOrder.setRepeat(false);
 			objDbOrder.setBatchcode(objorder.getBatchcode());
 			objDbOrder.setBatchid(objorder.getBatchid());
 			stopautoregister(objDbOrder);
 		}
-		
+
 		return objorder;
 	}
 
@@ -5374,26 +5425,26 @@ public class InstrumentService {
 		}
 		list.setLsuserMaster(usercode);
 		lscfttransactionRepository.save(list);
-		
+
 		if (objorder != null) {
-		    if (objorder.getLsOrderattachments() == null) {
-		        objorder.setLsOrderattachments(new ArrayList<LsOrderattachments>());
-		    }
-		    objorder.getLsOrderattachments().add(objattachment);
-		    objorder.getLsOrderattachments().sort((a1, a2) -> {
-		        Long code1 = a1.getAttachmentcode();
-		        Long code2 = a2.getAttachmentcode();
-		        
-		        if (code1 == null && code2 == null) {
-		            return 0; // Both are null, considered equal
-		        } else if (code1 == null) {
-		            return -1; // Null values are placed first
-		        } else if (code2 == null) {
-		            return 1; // Null values are placed first
-		        } else {
-		            return code2.compareTo(code1); // Regular comparison, descending order
-		        }
-		    });
+			if (objorder.getLsOrderattachments() == null) {
+				objorder.setLsOrderattachments(new ArrayList<LsOrderattachments>());
+			}
+			objorder.getLsOrderattachments().add(objattachment);
+			objorder.getLsOrderattachments().sort((a1, a2) -> {
+				Long code1 = a1.getAttachmentcode();
+				Long code2 = a2.getAttachmentcode();
+
+				if (code1 == null && code2 == null) {
+					return 0; // Both are null, considered equal
+				} else if (code1 == null) {
+					return -1; // Null values are placed first
+				} else if (code2 == null) {
+					return 1; // Null values are placed first
+				} else {
+					return code2.compareTo(code1); // Regular comparison, descending order
+				}
+			});
 		}
 
 		lsOrderattachmentsRepository.save(objorder.getLsOrderattachments());
@@ -5455,26 +5506,26 @@ public class InstrumentService {
 		}
 		list.setLsuserMaster(usercode);
 		lscfttransactionRepository.save(list);
-		
+
 		if (objorder != null) {
-		    if (objorder.getLsOrderattachments() == null) {
-		        objorder.setLsOrderattachments(new ArrayList<LsOrderattachments>());
-		    }
-		    objorder.getLsOrderattachments().add(objattachment);
-		    objorder.getLsOrderattachments().sort((a1, a2) -> {
-		        Long code1 = a1.getAttachmentcode();
-		        Long code2 = a2.getAttachmentcode();
-		        
-		        if (code1 == null && code2 == null) {
-		            return 0; // Both are null, considered equal
-		        } else if (code1 == null) {
-		            return -1; // Null values are placed first
-		        } else if (code2 == null) {
-		            return 1; // Null values are placed first
-		        } else {
-		            return code2.compareTo(code1); // Regular comparison, descending order
-		        }
-		    });
+			if (objorder.getLsOrderattachments() == null) {
+				objorder.setLsOrderattachments(new ArrayList<LsOrderattachments>());
+			}
+			objorder.getLsOrderattachments().add(objattachment);
+			objorder.getLsOrderattachments().sort((a1, a2) -> {
+				Long code1 = a1.getAttachmentcode();
+				Long code2 = a2.getAttachmentcode();
+
+				if (code1 == null && code2 == null) {
+					return 0; // Both are null, considered equal
+				} else if (code1 == null) {
+					return -1; // Null values are placed first
+				} else if (code2 == null) {
+					return 1; // Null values are placed first
+				} else {
+					return code2.compareTo(code1); // Regular comparison, descending order
+				}
+			});
 		}
 
 		lsOrderattachmentsRepository.save(objorder.getLsOrderattachments());
@@ -7455,7 +7506,7 @@ public class InstrumentService {
 			lstorderstrcarray = GetordersondirectoryFilter(objdir, lstorder);
 			return lstorderstrcarray;
 		}
-	
+
 //		if (objdir.getSearchCriteria() != null && objdir.getSearchCriteria().getContentsearchtype() != null
 //				&& objdir.getSearchCriteria().getContentsearch() != null) {
 //			// lstorderstrcarray.forEach(objorderDetail ->
@@ -7465,11 +7516,11 @@ public class InstrumentService {
 //		} 
 //			else {
 //			// lstorder.forEach(objorderDetail -> objorderDetail.setCanuserprocess(true));
-		
+
 //
-			return lstorder;
+		return lstorder;
 //		}
-			
+
 	}
 
 	public List<LSSheetOrderStructure> Deletedirectories(LSSheetOrderStructure[] directories) {
@@ -7651,12 +7702,10 @@ public class InstrumentService {
 //				}).collect(Collectors.toList());
 //
 //				lslogilablimsorderdetailRepository.save(lsOrder);
-				
+
 				lslogilablimsorderdetailRepository.updateLockedUser(batcode);
 
 			}
-			
-
 
 			objResponse.setStatus(true);
 			objResponse.setInformation("Success");
@@ -8271,7 +8320,7 @@ public class InstrumentService {
 	}
 
 	public Map<String, Object> Getorderbyflaganduser(LSlogilablimsorderdetail objorder) {
-		Map<String, Object> rtn_object=new HashMap<>();
+		Map<String, Object> rtn_object = new HashMap<>();
 		List<LSuserteammapping> lstteammap = lsuserteammappingRepository.findBylsuserMaster(objorder.getLsuserMaster());
 		List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(lstteammap,
 				objorder.getLsuserMaster().getLssitemaster());
@@ -8301,16 +8350,17 @@ public class InstrumentService {
 
 //		List<Long> Directory_Code = lstdir.stream().map(LSSheetOrderStructure::getDirectorycode)
 //				.filter(code -> code > 0).collect(Collectors.toList());
-		
-		List<Long> Directory_Code = objorder.getLstdirectorycode() != null ? objorder.getLstdirectorycode() : new ArrayList<Long>();
+
+		List<Long> Directory_Code = objorder.getLstdirectorycode() != null ? objorder.getLstdirectorycode()
+				: new ArrayList<Long>();
 		if (filetype == -1 && objorder.getOrderflag() == null) {
 			lstorder = lslogilablimsorderdetailRepository
 					.findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullAndOrdercancellIsNull(
 							objorder.getOrderflag(), lstproject, fromdate, todate);
 			int chunkSize = Integer.parseInt(env.getProperty("lssamplecount"));
 			int totalSamples = nmaterialcode.size();
-			List<Logilaborderssh> lstorderobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize).parallel()
-					.mapToObj(i -> {
+			List<Logilaborderssh> lstorderobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize)
+					.parallel().mapToObj(i -> {
 						int startIndex = i * chunkSize;
 						int endIndex = Math.min(startIndex + chunkSize, totalSamples);
 						List<Elnmaterial> currentChunk = nmaterialcode.subList(startIndex, endIndex);
@@ -8334,8 +8384,8 @@ public class InstrumentService {
 							objorder.getOrderflag(), lstproject, fromdate, todate);
 			int chunkSize = Integer.parseInt(env.getProperty("lssamplecount"));
 			int totalSamples = nmaterialcode.size();
-			List<Logilaborderssh> lstorderobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize).parallel()
-					.mapToObj(i -> {
+			List<Logilaborderssh> lstorderobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize)
+					.parallel().mapToObj(i -> {
 						int startIndex = i * chunkSize;
 						int endIndex = Math.min(startIndex + chunkSize, totalSamples);
 						List<Elnmaterial> currentChunk = nmaterialcode.subList(startIndex, endIndex);
@@ -8377,8 +8427,8 @@ public class InstrumentService {
 
 			int chunkSize = Integer.parseInt(env.getProperty("lssamplecount"));
 			int totalSamples = nmaterialcode.size();
-			List<Logilaborderssh> lstorderobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize).parallel()
-					.mapToObj(i -> {
+			List<Logilaborderssh> lstorderobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize)
+					.parallel().mapToObj(i -> {
 						int startIndex = i * chunkSize;
 						int endIndex = Math.min(startIndex + chunkSize, totalSamples);
 						List<Elnmaterial> currentChunk = nmaterialcode.subList(startIndex, endIndex);
@@ -8392,7 +8442,7 @@ public class InstrumentService {
 										objorder.getOrderflag(), objorder.getApprovelstatus(), currentChunk, filetype,
 										fromdate, todate, 2, objorder.getLsuserMaster()));
 						return orderChunk;
-					}).flatMap(List::stream).collect(Collectors.toList());  //kumu
+					}).flatMap(List::stream).collect(Collectors.toList()); // kumu
 			lstorder.addAll(lstorderobj);
 			if (objorder.getLstuserMaster() != null) {
 				lstorder.addAll(lslogilablimsorderdetailRepository
@@ -8425,8 +8475,8 @@ public class InstrumentService {
 
 			int chunkSize = Integer.parseInt(env.getProperty("lssamplecount"));
 			int totalSamples = nmaterialcode.size();
-			List<Logilaborderssh> lstorderobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize).parallel()
-					.mapToObj(i -> {
+			List<Logilaborderssh> lstorderobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize)
+					.parallel().mapToObj(i -> {
 						int startIndex = i * chunkSize;
 						int endIndex = Math.min(startIndex + chunkSize, totalSamples);
 						List<Elnmaterial> currentChunk = nmaterialcode.subList(startIndex, endIndex);
@@ -8470,8 +8520,8 @@ public class InstrumentService {
 							objorder.getOrderflag(), lstproject, filetype, fromdate, todate, testcode);
 			int chunkSize = Integer.parseInt(env.getProperty("lssamplecount"));
 			int totalSamples = nmaterialcode.size();
-			List<Logilaborderssh> lstorderobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize).parallel()
-					.mapToObj(i -> {
+			List<Logilaborderssh> lstorderobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize)
+					.parallel().mapToObj(i -> {
 						int startIndex = i * chunkSize;
 						int endIndex = Math.min(startIndex + chunkSize, totalSamples);
 						List<Elnmaterial> currentChunk = nmaterialcode.subList(startIndex, endIndex);
@@ -8519,8 +8569,8 @@ public class InstrumentService {
 
 			int chunkSize = Integer.parseInt(env.getProperty("lssamplecount"));
 			int totalSamples = nmaterialcode.size();
-			List<Logilaborderssh> lstorderobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize).parallel()
-					.mapToObj(i -> {
+			List<Logilaborderssh> lstorderobj = IntStream.range(0, (totalSamples + chunkSize - 1) / chunkSize)
+					.parallel().mapToObj(i -> {
 						int startIndex = i * chunkSize;
 						int endIndex = Math.min(startIndex + chunkSize, totalSamples);
 						List<Elnmaterial> currentChunk = nmaterialcode.subList(startIndex, endIndex);
@@ -8543,8 +8593,8 @@ public class InstrumentService {
 					.findByOrderflagAndFiletypeAndLsprojectmasterAndCreatedtimestampBetweenAndAssignedtoIsNull(
 							objorder.getOrderflag(), filetype, objorder.getLsprojectmaster(), fromdate, todate);
 		} else if (filetype == 0 && objorder.getOrderflag() != null) {
-			lstorder = lslogilablimsorderdetailRepository.
-					findByCreatedtimestampBetweenAndFiletypeAndOrderflagAndAssignedtoIsNullOrderByBatchcodeDesc(
+			lstorder = lslogilablimsorderdetailRepository
+					.findByCreatedtimestampBetweenAndFiletypeAndOrderflagAndAssignedtoIsNullOrderByBatchcodeDesc(
 							fromdate, todate, filetype, objorder.getOrderflag());
 		}
 
@@ -8588,16 +8638,16 @@ public class InstrumentService {
 
 				lstorder.addAll(lstorderobj);
 
-				if(Directory_Code!=null) {
+				if (Directory_Code != null) {
 					lstorder.addAll(lslogilablimsorderdetailRepository
 							.findByDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndAssignedtoIsNullAndOrdercancellIsNullOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndAssignedtoIsNullAndOrdercancellIsNullOrDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterInAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndAssignedtoIsNullAndOrdercancellIsNullOrderByBatchcodeDesc(
-									Directory_Code, 1, fromdate, todate, objorder.getOrderflag(), filetype, Directory_Code,
-									2, objorder.getLsuserMaster(), fromdate, todate, objorder.getOrderflag(), filetype,
-									Directory_Code, 3, fromdate, todate, objorder.getLstuserMaster(),
-									objorder.getOrderflag(), filetype));
+									Directory_Code, 1, fromdate, todate, objorder.getOrderflag(), filetype,
+									Directory_Code, 2, objorder.getLsuserMaster(), fromdate, todate,
+									objorder.getOrderflag(), filetype, Directory_Code, 3, fromdate, todate,
+									objorder.getLstuserMaster(), objorder.getOrderflag(), filetype));
 
 				}
-		
+
 				lstorder.forEach(objorderDetail -> objorderDetail.setLw(objorder.getLstworkflow()));
 
 			} else {
@@ -8619,13 +8669,13 @@ public class InstrumentService {
 								objorder.getOrderflag(), nmaterialcode, filetype, fromdate, todate, 3,
 								objorder.getLsuserMaster()));
 
-				if(Directory_Code!=null) {
-				lstorder.addAll(lslogilablimsorderdetailRepository
-						.findByDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndAssignedtoIsNullOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndAssignedtoIsNullOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndAssignedtoIsNullOrderByBatchcodeDesc(
-								Directory_Code, 1, fromdate, todate, objorder.getOrderflag(), filetype, Directory_Code,
-								2, objorder.getLsuserMaster(), fromdate, todate, objorder.getOrderflag(), filetype,
-								Directory_Code, 3, objorder.getLsuserMaster(), fromdate, todate,
-								objorder.getOrderflag(), filetype));
+				if (Directory_Code != null) {
+					lstorder.addAll(lslogilablimsorderdetailRepository
+							.findByDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndAssignedtoIsNullOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndAssignedtoIsNullOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndAssignedtoIsNullOrderByBatchcodeDesc(
+									Directory_Code, 1, fromdate, todate, objorder.getOrderflag(), filetype,
+									Directory_Code, 2, objorder.getLsuserMaster(), fromdate, todate,
+									objorder.getOrderflag(), filetype, Directory_Code, 3, objorder.getLsuserMaster(),
+									fromdate, todate, objorder.getOrderflag(), filetype));
 				}
 
 			}
@@ -8658,11 +8708,11 @@ public class InstrumentService {
 
 				if (objorder.getFiletype() == -1 && objorder.getOrderflag() != null) {
 					lstorder = lslogilablimsorderdetailRepository
-							.findByCreatedtimestampBetweenAndOrderflagAndLssamplefileIn(
-									objorder.getFromdate(), objorder.getTodate(), objorder.getOrderflag(), idList);
+							.findByCreatedtimestampBetweenAndOrderflagAndLssamplefileIn(objorder.getFromdate(),
+									objorder.getTodate(), objorder.getOrderflag(), idList);
 				} else if (objorder.getFiletype() == -1 && objorder.getOrderflag() == null) {
-					lstorder = lslogilablimsorderdetailRepository.findByLssamplefileInAndCreatedtimestampBetween(
-							idList, objorder.getFromdate(), objorder.getTodate() );
+					lstorder = lslogilablimsorderdetailRepository.findByLssamplefileInAndCreatedtimestampBetween(idList,
+							objorder.getFromdate(), objorder.getTodate());
 				}
 
 				else if (objorder.getOrderflag() == null) {
@@ -9023,7 +9073,8 @@ public class InstrumentService {
 //		List<Long> Directory_Code = lstdir.stream().map(Lsprotocolorderstructure::getDirectorycode)
 //				.collect(Collectors.toList());
 //		List<LSlogilabprotocoldetail> kumu=LSlogilabprotocoldetailRepository.getallrecords();
-		List<Long> Directory_Code=objorder.getLstdirectorycode()!= null ? objorder.getLstdirectorycode() : new ArrayList<Long>();
+		List<Long> Directory_Code = objorder.getLstdirectorycode() != null ? objorder.getLstdirectorycode()
+				: new ArrayList<Long>();
 		if (objorder.getTestcode() == null && objorder.getLsprojectmaster() == null && objorder.getRejected() == null) {
 			lstorder.addAll(LSlogilabprotocoldetailRepository
 					.findByOrderflagAndLsprojectmasterInAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndOrdercancellIsNull(
@@ -9253,12 +9304,10 @@ public class InstrumentService {
 
 		}
 
-		lstorder.forEach(
-				objorderDetail -> objorderDetail.setLsepw(objorder.getLstelnprotocolworkflow()));
+		lstorder.forEach(objorderDetail -> objorderDetail.setLsepw(objorder.getLstelnprotocolworkflow()));
 		List<Long> protocolordercode = new ArrayList<>();
 		if (lstorder.size() > 0 && objorder.getSearchCriteriaType() != null) {
-			protocolordercode = lstorder.stream().map(LogilabProtocolOrderssh::getPc)
-					.collect(Collectors.toList());
+			protocolordercode = lstorder.stream().map(LogilabProtocolOrderssh::getPc).collect(Collectors.toList());
 			retuobjts.put("protocolordercodeslist", protocolordercode);
 		}
 		retuobjts.put("protocolorders", lstorder);
@@ -9302,31 +9351,78 @@ public class InstrumentService {
 	public ResponseEntity<InputStreamResource> downloadsheetfileforfolder(Integer multitenant, String tenant,
 			String fileid) throws IOException {
 		HttpHeaders header = new HttpHeaders();
+		boolean valid = false;
 		header.set("Content-Disposition", "attachment; filename=" + fileid);
-
+		InputStreamResource resource = null;
 		if (multitenant == 1) {
-			InputStream fileStream = cloudFileManipulationservice.retrieveCloudFile(fileid,
-					tenant + "sheetfolderfiles");
-			InputStreamResource resource = null;
-			byte[] content = IOUtils.toByteArray(fileStream);
-			int size = content.length;
-			InputStream is = null;
+			byte[] documentBytes = objCloudFileManipulationservice.retrieveCloudReportFile(tenant + "sheetfolderfiles",
+					fileid);
+			String jsonString = new String(documentBytes, StandardCharsets.UTF_8);
+			ObjectMapper objectMapper = new ObjectMapper();
 			try {
-				is = new ByteArrayInputStream(content);
-				resource = new InputStreamResource(is);
+				objectMapper.readTree(jsonString);
+				valid = true;
 			} catch (Exception e) {
-				e.printStackTrace();
-			} finally {
-				try {
-					if (is != null)
-						is.close();
-				} catch (Exception ex) {
-
-				}
+				valid = false;
 			}
+			if (valid) {
+				JsonNode jsonNode = objectMapper.readTree(jsonString);
+				JsonNode sheets = jsonNode.path("sheets");
+				Workbook workbook = new XSSFWorkbook();
 
-			header.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-			header.setContentLength(size);
+				for (JsonNode sheetNode : sheets) {
+					String sheetName = sheetNode.path("name").asText();
+					JsonNode rows = sheetNode.path("rows");
+					Sheet sheet = workbook.createSheet(sheetName);
+					int rowIndex = 0;
+					for (JsonNode rowNode : rows) {
+						Row row = sheet.createRow(rowIndex++);
+						JsonNode cells = rowNode.path("cells");
+						int colIndex = 0;
+						for (JsonNode cellNode : cells) {
+							Cell cell = row.createCell(colIndex++);
+							if (cellNode.has("value")) {
+								if (cellNode.get("value").isNumber()) {
+									cell.setCellValue(cellNode.get("value").asDouble());
+								} else {
+									cell.setCellValue(cellNode.get("value").asText());
+								}
+							}
+						}
+					}
+				}
+				ByteArrayOutputStream bos = new ByteArrayOutputStream();
+				workbook.write(bos);
+				byte[] content = bos.toByteArray();
+				int size = content.length;
+				InputStream inputStream = new ByteArrayInputStream(content);
+				resource = new InputStreamResource(inputStream);
+				header.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+				header.setContentLength(size);
+				workbook.close();
+			} else {
+				InputStream fileStream = cloudFileManipulationservice.retrieveCloudFile(fileid,
+						tenant + "sheetfolderfiles");
+				byte[] content = IOUtils.toByteArray(fileStream);
+				int size = content.length;
+				InputStream is = null;
+				try {
+					is = new ByteArrayInputStream(content);
+					resource = new InputStreamResource(is);
+				} catch (Exception e) {
+					e.printStackTrace();
+				} finally {
+					try {
+						if (is != null)
+							is.close();
+					} catch (Exception ex) {
+
+					}
+				}
+
+				header.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+				header.setContentLength(size);
+			}
 			return new ResponseEntity<>(resource, header, HttpStatus.OK);
 		} else {
 			GridFSDBFile gridFsFile = null;
@@ -9497,13 +9593,11 @@ public class InstrumentService {
 
 			lstorder = GetmyordersonFilter(lslogilablimsorderdetail, lstorder, Orderflag);
 
-			lstorder.forEach(
-					objorderDetail -> objorderDetail.setLw(lslogilablimsorderdetail.getLstworkflow()));
+			lstorder.forEach(objorderDetail -> objorderDetail.setLw(lslogilablimsorderdetail.getLstworkflow()));
 			return lstorder;
 		} else {
 
-			lstorder.forEach(
-					objorderDetail -> objorderDetail.setLw(lslogilablimsorderdetail.getLstworkflow()));
+			lstorder.forEach(objorderDetail -> objorderDetail.setLw(lslogilablimsorderdetail.getLstworkflow()));
 			return lstorder;
 		}
 	}
@@ -9971,7 +10065,7 @@ public class InstrumentService {
 
 			for (String uuididex : lstfilesid) {
 
-				if (ismultitenant == 1 || ismultitenant == 2 ) {
+				if (ismultitenant == 1 || ismultitenant == 2) {
 					cloudFileManipulationservice.deletecloudFile(uuididex, "protocolfolderfiles");
 				} else {
 					fileManipulationservice.deletelargeattachments(uuididex);
@@ -10604,7 +10698,7 @@ public class InstrumentService {
 			}
 		}
 		lslogilablimsorderdetailRepository.save(logiobj);
-		
+
 		return logiobj.get(0);
 	}
 

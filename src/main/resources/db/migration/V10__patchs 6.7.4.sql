@@ -67,3 +67,50 @@ BEGIN
 END
 $do$;
 
+
+DO
+$do$
+DECLARE
+   _kind "char";
+BEGIN
+   SELECT relkind
+   FROM   pg_class
+   WHERE  relname = 'elnmaterialchemdiagref_diagramcode_seq' 
+   INTO  _kind;
+
+   IF NOT FOUND THEN CREATE SEQUENCE elnmaterialchemdiagref_diagramcode_seq;
+   ELSIF _kind = 'S' THEN  
+     
+   ELSE                  
+    
+   END IF;
+END
+$do$;
+
+CREATE TABLE IF NOT EXISTS public.elnmaterialchemdiagref
+(
+    diagramcode bigint NOT NULL DEFAULT nextval('elnmaterialchemdiagref_diagramcode_seq'::regclass),
+    createdate timestamp without time zone,
+    fileid character varying(250) COLLATE pg_catalog."default",
+    createby_usercode integer,
+    nmaterialcode integer,
+    smiles TEXT,
+    moljson TEXT,
+    CONSTRAINT elnmaterialchemdiagref_pkey PRIMARY KEY (diagramcode),
+    CONSTRAINT fk701k777d2da33pkkl6lsathis FOREIGN KEY (nmaterialcode)
+        REFERENCES public.elnmaterial (nmaterialcode) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT fk9m36tjv4e767440yabcsup6ab FOREIGN KEY (createby_usercode)
+        REFERENCES public.lsusermaster (usercode) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+WITH (OIDS = FALSE)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.elnmaterialchemdiagref OWNER to postgres;
+
+ALTER TABLE IF EXISTS elnmaterialchemdiagref ADD COLUMN IF NOT EXISTS smiles TEXT;
+ALTER TABLE IF EXISTS elnmaterialchemdiagref ADD COLUMN IF NOT EXISTS moljson TEXT;

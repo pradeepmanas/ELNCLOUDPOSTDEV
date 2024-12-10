@@ -52,6 +52,8 @@ import com.agaram.eln.primary.model.protocols.ElnprotocolTemplateworkflow;
 import com.agaram.eln.primary.model.protocols.ElnprotocolTemplateworkflowgroupmap;
 import com.agaram.eln.primary.model.protocols.Elnprotocolworkflow;
 import com.agaram.eln.primary.model.protocols.LSlogilabprotocoldetail;
+import com.agaram.eln.primary.model.protocols.LSprotocolmaster;
+import com.agaram.eln.primary.model.protocols.LSprotocolmastertest;
 import com.agaram.eln.primary.model.sheetManipulation.LSfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSfileparameter;
 import com.agaram.eln.primary.model.sheetManipulation.LSfiletest;
@@ -1921,6 +1923,12 @@ public class FileService {
 				fileByName.setModifiedby(objfile.getModifiedby());
 				fileByName.setModifieddate(objfile.getModifieddate());
 				fileByName.setViewoption(objfile.getViewoption());
+				
+				if(objfile !=null && objfile.getLstest() != null && objfile.getLstest().size()>0)
+				{
+					lSfiletestRepository.save(objfile.getLstest().get(0));
+				}
+				
 				lSfileRepository.save(fileByName);
 				fileByName.setResponse(new Response());
 				fileByName.getResponse().setStatus(true);
@@ -2310,5 +2318,9 @@ public class FileService {
 		mapOrders.put("material", transactionService.getMaterials(objuser));
 		return mapOrders;
 	}
-	
+
+	public LSfiletest Getelnsheetmappedtest(LSfile lsfile)
+	{
+		return lSfiletestRepository.findByFilecodeAndTesttype(lsfile.getFilecode(), 1);
+	}
 }

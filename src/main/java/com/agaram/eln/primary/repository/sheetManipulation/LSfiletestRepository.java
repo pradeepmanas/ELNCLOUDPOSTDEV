@@ -8,4 +8,5 @@ import com.agaram.eln.primary.model.sheetManipulation.LSfiletest;
 
 public interface LSfiletestRepository  extends JpaRepository<LSfiletest, Integer>{
 	public List<LSfiletest> findByTestcodeAndTesttype(Integer testcode, Integer testtype);
+	public LSfiletest findByFilecodeAndTesttype(Integer filecode, Integer testtype);
 }

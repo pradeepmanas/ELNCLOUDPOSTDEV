@@ -4,6 +4,9 @@ import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
@@ -14,16 +17,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageWriter;
 import javax.imageio.spi.IIORegistry;
-
 import org.apache.commons.io.IOUtils;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.data.mongodb.MongoDbFactory;
@@ -77,14 +83,13 @@ public class DocumenteditorService {
 
 	@Autowired
 	public ReporttemplateRepository reporttemplateRepository;
-	
+
 	@Autowired
 	private CloudFileManipulationservice objCloudFileManipulationservice;
-	
-	
+
 	@Autowired
 	public ReportTemplateVersionRepository reportTemplateVersionRepository;
-	
+
 	@Autowired
 	private GridFsTemplate gridFsTemplate;
 
@@ -303,37 +308,37 @@ public class DocumenteditorService {
 //			String name = data.getTemplatename() + ".json";
 			String jsonContent = convertObjectToJson(data.getTemplatecontent());
 			byte[] documentBytes = jsonContent.getBytes(StandardCharsets.UTF_8);
-			String uniqueDocumentName ="";
+			String uniqueDocumentName = "";
 			Map<String, Object> reporttemplatemap = new HashMap<>();
 			if (data.getIsmultitenant() == 1) {
 				if (Isnew_Template) {
-					 uniqueDocumentName = data.getTemplatename() + "_" + UUID.randomUUID().toString() + ".json";
+					uniqueDocumentName = data.getTemplatename() + "_" + UUID.randomUUID().toString() + ".json";
 					existingTemplate = reporttemplateRepository
 							.findTopByTemplatenameIgnoreCaseAndSitemaster(data.getTemplatename(), data.getSitemaster());
 					if (existingTemplate == null) {
 
 						reporttemplatemap = commonservice.uploadToAzureBlobStorage(documentBytes, data,
-								uniqueDocumentName, "reportdocument", 1, null,Isnew_Version);
+								uniqueDocumentName, "reportdocument", 1, null, Isnew_Version);
 						data = (Reporttemplate) reporttemplatemap.get("Reporttemplate");
 						data.setDateCreated(commonfunction.getCurrentUtcTime());
 						reporttemplateRepository.save(data);
 						response.setStatus(true);
-						
+
 						Map<String, Object> reporttemplatever = new HashMap<>();
 						uniqueDocumentName = data.getTemplatename() + "_" + "Version_" + data.getVersionno() + "_"
 								+ UUID.randomUUID().toString() + ".json";
-						ReportTemplateVersion templateversion=new ReportTemplateVersion();
+						ReportTemplateVersion templateversion = new ReportTemplateVersion();
 						templateversion.setTemplatecode(data.getTemplatecode());
 						templateversion.setCreatedate(commonfunction.getCurrentUtcTime());
 						templateversion.setCreatedby(data.getCreatedby().getUsercode());
 						templateversion.setTemplatename(data.getTemplatename());
-						templateversion.setVersionname("version_"+data.getVersionno());
+						templateversion.setVersionname("version_" + data.getVersionno());
 						templateversion.setVersionno(data.getVersionno());
 						templateversion.setSitecode(data.getSitemaster().getSitecode());
 						templateversion.setTemplatetype(data.getTemplatetype());
 						reporttemplatever = commonservice.uploadToAzureBlobStorage(documentBytes, data,
-								uniqueDocumentName, "reporttemplateversion", 1,templateversion,true);
-						templateversion=(ReportTemplateVersion) reporttemplatever.get("ReportTemplateVersion");
+								uniqueDocumentName, "reporttemplateversion", 1, templateversion, true);
+						templateversion = (ReportTemplateVersion) reporttemplatever.get("ReportTemplateVersion");
 						reportTemplateVersionRepository.save(templateversion);
 						data.setReportTemplateVersion(new ArrayList<ReportTemplateVersion>());
 						data.getReportTemplateVersion().add(templateversion);
@@ -353,49 +358,51 @@ public class DocumenteditorService {
 						List<ReportTemplateVersion> reportversion = data.getReportTemplateVersion().stream()
 								.map(items -> {
 									return items;
-								}).filter(itemsv -> itemsv.isIsnewversion() && itemsv.getTemplateversioncode()==null).collect(Collectors.toList());
+								}).filter(itemsv -> itemsv.isIsnewversion() && itemsv.getTemplateversioncode() == null)
+								.collect(Collectors.toList());
 						Isnew_Version = true;
 						String jsonContent_version = convertObjectToJson(
 								reportversion.get(0).getTemplateversioncontent());
 						byte[] documentBytes_version = jsonContent_version.getBytes(StandardCharsets.UTF_8);
 						reporttemplatever = commonservice.uploadToAzureBlobStorage(documentBytes_version, data,
-								uniqueDocumentName, "reporttemplateversion", 1, reportversion.get(0),Isnew_Version);
-						ReportTemplateVersion templateversion=(ReportTemplateVersion) reporttemplatever.get("ReportTemplateVersion");
+								uniqueDocumentName, "reporttemplateversion", 1, reportversion.get(0), Isnew_Version);
+						ReportTemplateVersion templateversion = (ReportTemplateVersion) reporttemplatever
+								.get("ReportTemplateVersion");
 						templateversion.setCreatedate(commonfunction.getCurrentUtcTime());
 						reportTemplateVersionRepository.save(templateversion);
-					}else {
+					} else {
 						if (data.getReportTemplateVersion() != null && !data.getReportTemplateVersion().isEmpty()) {
-						     Reporttemplate finalData = data; 
-						    List<ReportTemplateVersion> reportversion = finalData.getReportTemplateVersion().stream()
-						            .filter(itemsv -> itemsv.getVersionno() == finalData.getVersionno())
-						            .collect(Collectors.toList());
-						    uniqueDocumentName = reportversion.get(0).getFileuid();
+							Reporttemplate finalData = data;
+							List<ReportTemplateVersion> reportversion = finalData.getReportTemplateVersion().stream()
+									.filter(itemsv -> itemsv.getVersionno() == finalData.getVersionno())
+									.collect(Collectors.toList());
+							uniqueDocumentName = reportversion.get(0).getFileuid();
 							reporttemplatever = commonservice.uploadToAzureBlobStorage(documentBytes, data,
-									uniqueDocumentName, "reporttemplateversion", 1, reportversion.get(0),true);
-							ReportTemplateVersion templateversion=(ReportTemplateVersion) reporttemplatever.get("ReportTemplateVersion");
+									uniqueDocumentName, "reporttemplateversion", 1, reportversion.get(0), true);
+							ReportTemplateVersion templateversion = (ReportTemplateVersion) reporttemplatever
+									.get("ReportTemplateVersion");
 							templateversion.setModifieddate(commonfunction.getCurrentUtcTime());
 							reportTemplateVersionRepository.save(templateversion);
-							 List<ReportTemplateVersion> updatedVersions = data.getReportTemplateVersion().stream()
-							            .map(items -> {
-							                if (items.getTemplateversioncode() == templateversion.getTemplateversioncode()) {
-							                    return templateversion;
-							                }
-							                return items;
-							            })
-							            .collect(Collectors.toList());
-							    data.setReportTemplateVersion(updatedVersions);
+							List<ReportTemplateVersion> updatedVersions = data.getReportTemplateVersion().stream()
+									.map(items -> {
+										if (items.getTemplateversioncode() == templateversion
+												.getTemplateversioncode()) {
+											return templateversion;
+										}
+										return items;
+									}).collect(Collectors.toList());
+							data.setReportTemplateVersion(updatedVersions);
 						}
 					}
 					uniqueDocumentName = data.getFileuid();
 					reporttemplatemap = commonservice.uploadToAzureBlobStorage(documentBytes, data, uniqueDocumentName,
-							"reportdocument", 1, null,false);
+							"reportdocument", 1, null, false);
 					data = (Reporttemplate) reporttemplatemap.get("Reporttemplate");
 					data.setDateModified(commonfunction.getCurrentUtcTime());
 					reporttemplateRepository.save(data);
 
-
-					if(Isnew_Version) {
-						Reporttemplate data_new=reporttemplateRepository.findByTemplatecode(data.getTemplatecode());
+					if (Isnew_Version) {
+						Reporttemplate data_new = reporttemplateRepository.findByTemplatecode(data.getTemplatecode());
 						data_new.setTemplatecontent(data.getTemplatecontent());
 						response.setStatus(true);
 						data_new.setResponse(response);
@@ -408,41 +415,40 @@ public class DocumenteditorService {
 			} else {
 
 				Map<String, Object> reporttemplatever = new HashMap<>();
-				
+
 				if (Isnew_Template) {
-	
-						existingTemplate = reporttemplateRepository
-								.findTopByTemplatenameIgnoreCaseAndSitemaster(data.getTemplatename(), data.getSitemaster());
-						if (existingTemplate == null) {
-							data.setDateCreated(commonfunction.getCurrentUtcTime());
-							reporttemplateRepository.save(data);
-							response.setStatus(true);
-							String templateFileName = "ReportTemplate_" + data.getTemplatecode();
-							deleteAndStoreFile(gridFsTemplate, templateFileName, new ByteArrayInputStream(documentBytes));
-							ReportTemplateVersion templateversion=new ReportTemplateVersion();
-							templateversion=createTemplateVersion(data);
-							reportTemplateVersionRepository.save(templateversion);
-							String templateVersionFileName = "ReportTemplateVersion_"
-									+ templateversion.getTemplateversioncode();
-							deleteAndStoreFile(gridFsTemplate, templateVersionFileName,
-									new ByteArrayInputStream(documentBytes));
-							data.setReportTemplateVersion(new ArrayList<ReportTemplateVersion>());
-							data.getReportTemplateVersion().add(templateversion);
 
-						} else {
-							response.setStatus(false);
-							response.setInformation("IDS_MSG_ALREADY");
+					existingTemplate = reporttemplateRepository
+							.findTopByTemplatenameIgnoreCaseAndSitemaster(data.getTemplatename(), data.getSitemaster());
+					if (existingTemplate == null) {
+						data.setDateCreated(commonfunction.getCurrentUtcTime());
+						reporttemplateRepository.save(data);
+						response.setStatus(true);
+						String templateFileName = "ReportTemplate_" + data.getTemplatecode();
+						deleteAndStoreFile(gridFsTemplate, templateFileName, new ByteArrayInputStream(documentBytes));
+						ReportTemplateVersion templateversion = new ReportTemplateVersion();
+						templateversion = createTemplateVersion(data);
+						reportTemplateVersionRepository.save(templateversion);
+						String templateVersionFileName = "ReportTemplateVersion_"
+								+ templateversion.getTemplateversioncode();
+						deleteAndStoreFile(gridFsTemplate, templateVersionFileName,
+								new ByteArrayInputStream(documentBytes));
+						data.setReportTemplateVersion(new ArrayList<ReportTemplateVersion>());
+						data.getReportTemplateVersion().add(templateversion);
 
-						}
-					
-				}else {
+					} else {
+						response.setStatus(false);
+						response.setInformation("IDS_MSG_ALREADY");
+
+					}
+
+				} else {
 					if (data.isIsnewversion()) {
 						data.setTemplatetype(1);
 						List<ReportTemplateVersion> reportversion = data.getReportTemplateVersion().stream()
 								.map(items -> {
 									return items;
-								}).filter(itemsv -> itemsv.isIsnewversion()
-										&& itemsv.getTemplateversioncode() == null)
+								}).filter(itemsv -> itemsv.isIsnewversion() && itemsv.getTemplateversioncode() == null)
 								.collect(Collectors.toList());
 						Isnew_Version = true;
 						String jsonContent_version = convertObjectToJson(
@@ -458,8 +464,8 @@ public class DocumenteditorService {
 					} else {
 						if (data.getReportTemplateVersion() != null && !data.getReportTemplateVersion().isEmpty()) {
 							Reporttemplate finalData = data;
-							List<ReportTemplateVersion> reportversion = finalData.getReportTemplateVersion()
-									.stream().filter(itemsv -> itemsv.getVersionno() == finalData.getVersionno())
+							List<ReportTemplateVersion> reportversion = finalData.getReportTemplateVersion().stream()
+									.filter(itemsv -> itemsv.getVersionno() == finalData.getVersionno())
 									.collect(Collectors.toList());
 							String templateVersionFileName = "ReportTemplateVersion_"
 									+ reportversion.get(0).getTemplateversioncode();
@@ -484,10 +490,9 @@ public class DocumenteditorService {
 //					data = (Reporttemplate) reporttemplatemap.get("Reporttemplate");
 					data.setDateModified(commonfunction.getCurrentUtcTime());
 					reporttemplateRepository.save(data);
-					
+
 					if (Isnew_Version) {
-						Reporttemplate data_new = reporttemplateRepository
-								.findByTemplatecode(data.getTemplatecode());
+						Reporttemplate data_new = reporttemplateRepository.findByTemplatecode(data.getTemplatecode());
 						data_new.setTemplatecontent(data.getTemplatecontent());
 						response.setStatus(true);
 						data_new.setResponse(response);
@@ -495,7 +500,7 @@ public class DocumenteditorService {
 					}
 					response.setStatus(true);
 				}
-				
+
 				data.setResponse(response);
 
 			}
@@ -505,27 +510,26 @@ public class DocumenteditorService {
 		}
 
 	}
-	
 
 	private void deleteAndStoreFile(GridFsTemplate gridFsTemplate, String fileName, ByteArrayInputStream inputStream) {
-	    GridFSDBFile file = gridFsTemplate.findOne(new Query(Criteria.where("filename").is(fileName)));
-	    if (file != null) {
-	        gridFsTemplate.delete(new Query(Criteria.where("filename").is(fileName)));
-	    }
-	    gridFsTemplate.store(inputStream, fileName, StandardCharsets.UTF_16);
+		GridFSDBFile file = gridFsTemplate.findOne(new Query(Criteria.where("filename").is(fileName)));
+		if (file != null) {
+			gridFsTemplate.delete(new Query(Criteria.where("filename").is(fileName)));
+		}
+		gridFsTemplate.store(inputStream, fileName, StandardCharsets.UTF_16);
 	}
-	
+
 	private ReportTemplateVersion createTemplateVersion(Reporttemplate data) throws ParseException {
-	    ReportTemplateVersion templateVersion = new ReportTemplateVersion();
-	    templateVersion.setTemplatecode(data.getTemplatecode());
-	    templateVersion.setCreatedate(commonfunction.getCurrentUtcTime());
-	    templateVersion.setCreatedby(data.getCreatedby().getUsercode());
-	    templateVersion.setTemplatename(data.getTemplatename());
-	    templateVersion.setVersionname("version_" + data.getVersionno());
-	    templateVersion.setVersionno(data.getVersionno());
-	    templateVersion.setSitecode(data.getSitemaster().getSitecode());
-	    templateVersion.setTemplatetype(data.getTemplatetype());
-	    return templateVersion;
+		ReportTemplateVersion templateVersion = new ReportTemplateVersion();
+		templateVersion.setTemplatecode(data.getTemplatecode());
+		templateVersion.setCreatedate(commonfunction.getCurrentUtcTime());
+		templateVersion.setCreatedby(data.getCreatedby().getUsercode());
+		templateVersion.setTemplatename(data.getTemplatename());
+		templateVersion.setVersionname("version_" + data.getVersionno());
+		templateVersion.setVersionno(data.getVersionno());
+		templateVersion.setSitecode(data.getSitemaster().getSitecode());
+		templateVersion.setTemplatetype(data.getTemplatetype());
+		return templateVersion;
 	}
 
 	private String convertObjectToJson(Object object) {
@@ -568,7 +572,7 @@ public class DocumenteditorService {
 		}
 	}
 
-	private ResponseEntity<Resource> saveDocument(WordDocument document, String format) throws Exception {
+	public ResponseEntity<Resource> saveDocument(WordDocument document, String format) throws Exception {
 		String contentType = "";
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		com.syncfusion.docio.FormatType type = getWFormatType(format);
@@ -653,42 +657,43 @@ public class DocumenteditorService {
 	}
 
 	public Reporttemplate SaveAs(Reporttemplate data) throws Exception {
-		Reporttemplate templateobject=new Reporttemplate();
+		Reporttemplate templateobject = new Reporttemplate();
 //		if (data.getIsmultitenant() == 1 || data.getIsmultitenant() == 2) {
-			String tenant = TenantContext.getCurrentTenant();
-			if (data.getIsmultitenant() == 2) {
-				tenant = "freeusers";
-			}
-			if(data.getIsmultitenant() == 1 || data.getIsmultitenant() == 2) {
-				String containerName = tenant + "reportdocument";
-				String documentName = data.getSaveastemplate().getFileuid();
-				byte[] documentBytes = objCloudFileManipulationservice.retrieveCloudReportFile(containerName, documentName);
-				if (documentBytes != null) {
-					String jsonContent = new String(documentBytes, StandardCharsets.UTF_8);
-					Gson gson = new Gson();
-					String singleStringifiedJson = gson.fromJson(jsonContent, String.class);
-					System.out.println("JSON Content:");
-//					System.out.println(jsonContent);
-					data.setTemplatecontent(singleStringifiedJson);
-					
-				}
-			}else {
-				GridFSDBFile largefile = gridFsTemplate.findOne(new Query(
-						Criteria.where("filename").is("ReportTemplate_" + data.getSaveastemplate().getTemplatecode())));
-				String jsonContent=new BufferedReader(new InputStreamReader(largefile.getInputStream(), StandardCharsets.UTF_8))
-								.lines().collect(Collectors.joining("\n"));
+		String tenant = TenantContext.getCurrentTenant();
+		if (data.getIsmultitenant() == 2) {
+			tenant = "freeusers";
+		}
+		if (data.getIsmultitenant() == 1 || data.getIsmultitenant() == 2) {
+			String containerName = tenant + "reportdocument";
+			String documentName = data.getSaveastemplate().getFileuid();
+			byte[] documentBytes = objCloudFileManipulationservice.retrieveCloudReportFile(containerName, documentName);
+			if (documentBytes != null) {
+				String jsonContent = new String(documentBytes, StandardCharsets.UTF_8);
 				Gson gson = new Gson();
 				String singleStringifiedJson = gson.fromJson(jsonContent, String.class);
+				System.out.println("JSON Content:");
+//					System.out.println(jsonContent);
 				data.setTemplatecontent(singleStringifiedJson);
-			}
 
-			templateobject=save(data);
+			}
+		} else {
+			GridFSDBFile largefile = gridFsTemplate.findOne(new Query(
+					Criteria.where("filename").is("ReportTemplate_" + data.getSaveastemplate().getTemplatecode())));
+			String jsonContent = new BufferedReader(
+					new InputStreamReader(largefile.getInputStream(), StandardCharsets.UTF_8)).lines()
+					.collect(Collectors.joining("\n"));
+			Gson gson = new Gson();
+			String singleStringifiedJson = gson.fromJson(jsonContent, String.class);
+			data.setTemplatecontent(singleStringifiedJson);
+		}
+
+		templateobject = save(data);
 //		}else {
 //			
 //		}
 		return templateobject;
 	}
-	
+
 	public Map<String, Object> Getfilesforedit(SaveParameter file) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
 		String tenant = TenantContext.getCurrentTenant();
@@ -713,33 +718,62 @@ public class DocumenteditorService {
 		objMap.put("status", true);
 		return objMap;
 	}
-	
-//	public ResponseEntity<InputStreamResource> Getfile(SaveParameter file) throws Exception {
-//		HttpHeaders header = new HttpHeaders();
-//		String tenant = TenantContext.getCurrentTenant();
-//		header.set("Content-Disposition", "attachment; filename=" + file.getFileName());
-//			InputStream fileStream = objCloudFileManipulationservice.retrieveCloudFile(file.getFileName(),
-//					tenant + "sheetfolderfiles");
-//			InputStreamResource resource = null;
-//			byte[] content = IOUtils.toByteArray(fileStream);
-//			int size = content.length;
-//			InputStream is = null;
-//			try {
-//				is = new ByteArrayInputStream(content);
-//				resource = new InputStreamResource(is);
-//			} catch (Exception e) {
-//				e.printStackTrace();
-//			} finally {
-//				try {
-//					if (is != null)
-//						is.close();
-//				} catch (Exception ex) {
-//
-//				}
-//			}
-//
-//			header.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-//			header.setContentLength(size);
-//			return new ResponseEntity<>(resource, header, HttpStatus.OK);
-//	}
+
+	public ResponseEntity<InputStreamResource> GetXLSXfile(SaveParameter file) throws Exception {
+		HttpHeaders header = new HttpHeaders();
+		String tenant = TenantContext.getCurrentTenant();
+		header.set("Content-Disposition", "attachment; filename=" + file.getFileName());
+		InputStream fileStream = objCloudFileManipulationservice.retrieveCloudFile(file.getFileName(),
+				tenant + "sheetfolderfiles");
+		InputStreamResource resource = null;
+		byte[] content = IOUtils.toByteArray(fileStream);
+		int size = content.length;
+		InputStream is = null;
+		try {
+			is = new ByteArrayInputStream(content);
+			resource = new InputStreamResource(is);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (is != null)
+					is.close();
+			} catch (Exception ex) {
+
+			}
+		}
+		header.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+		header.setContentLength(size);
+		return new ResponseEntity<>(resource, HttpStatus.OK);
+	}
+
+	public Map<String, Object> GetXLSXContent(SaveParameter file) throws Exception {
+		Map<String, Object> objMap = new HashMap<String, Object>();
+		boolean valid = false;
+		String tenant = TenantContext.getCurrentTenant();
+		String containerName = tenant + "sheetfolderfiles";
+		String documentName = file.getFileName();
+		byte[] documentBytes = objCloudFileManipulationservice.retrieveCloudReportFile(containerName, documentName);
+		String jsonString = new String(documentBytes, StandardCharsets.UTF_8);
+		ObjectMapper objectMapper = new ObjectMapper();
+		try {
+			objectMapper.readTree(jsonString);
+			valid = true;
+		} catch (Exception e) {
+			valid = false;
+		}
+		objMap.put("jsonValue", jsonString);
+		objMap.put("status", valid);
+		return objMap;
+	}
+
+	public Map<String, Object> saveXLSXFile(SaveParameter file) throws Exception {
+		Map<String, Object> objMap = new HashMap<String, Object>();
+		String tenant = TenantContext.getCurrentTenant();
+		String containerName = tenant + "sheetfolderfiles";
+		objMap = objCloudFileManipulationservice.storecloudReportfile(file.getContent().getBytes(), containerName,
+				file.getFileName());
+		objMap.put("status", true);
+		return objMap;
+	}
 }

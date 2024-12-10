@@ -19,6 +19,8 @@ import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 import com.agaram.eln.primary.model.protocols.ElnprotocolTemplateworkflow;
 import com.agaram.eln.primary.model.protocols.Elnprotocolworkflow;
+import com.agaram.eln.primary.model.protocols.LSprotocolmaster;
+import com.agaram.eln.primary.model.protocols.LSprotocolmastertest;
 import com.agaram.eln.primary.model.sheetManipulation.LSfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSfiletest;
 import com.agaram.eln.primary.model.sheetManipulation.LSfileversion;
@@ -362,5 +364,11 @@ public class FileController {
 	@PostMapping("/GetMastersforordercreatesub")
 	public Map<String, Object> GetMastersforordercreatesub(@RequestBody LSuserMaster objuser) {
 		return fileService.GetMastersforordercreatesub(objuser);
+	}
+	
+	@RequestMapping("/Getelnsheetmappedtest")
+	public LSfiletest Getelnsheetmappedtest(@RequestBody LSfile lsfile)
+	{
+		return fileService.Getelnsheetmappedtest(lsfile);
 	}
 }

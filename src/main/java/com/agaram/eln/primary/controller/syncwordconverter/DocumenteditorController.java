@@ -28,43 +28,43 @@ public class DocumenteditorController {
 
 	@Autowired
 	private DocumenteditorService documenteditorService;
-	
+
 	@CrossOrigin(origins = "*", allowedHeaders = "*")
-    @PostMapping("/Import")
-    public String uploadFile(@RequestParam("files") MultipartFile file) throws Exception {
-        return documenteditorService.uploadFile(file);
-    }
-	
+	@PostMapping("/Import")
+	public String uploadFile(@RequestParam("files") MultipartFile file) throws Exception {
+		return documenteditorService.uploadFile(file);
+	}
+
 	@CrossOrigin(origins = "*", allowedHeaders = "*")
 	@GetMapping("/api/wordeditor/test")
 	public String test() {
 		return documenteditorService.test();
 	}
-	
+
 	@CrossOrigin(origins = "*", allowedHeaders = "*")
 	@PostMapping("/api/wordeditor/Import")
 	public Map<String, String> importFile(@RequestParam("files") MultipartFile file) throws Exception {
 		return documenteditorService.importFile(file);
 	}
-	
+
 	@CrossOrigin(origins = "*", allowedHeaders = "*")
 	@PostMapping("/api/wordeditor/SpellCheck")
 	public String spellCheck(@RequestBody SpellCheckJsonData spellChecker) throws Exception {
 		return documenteditorService.spellCheck(spellChecker);
 	}
-	
+
 	@CrossOrigin(origins = "*", allowedHeaders = "*")
 	@PostMapping("/api/wordeditor/RestrictEditing")
 	public String[] restrictEditing(@RequestBody CustomRestrictParameter param) throws Exception {
 		return documenteditorService.restrictEditing(param);
 	}
-	
+
 	@CrossOrigin(origins = "*", allowedHeaders = "*")
 	@PostMapping("/api/wordeditor/SystemClipboard")
 	public String systemClipboard(@RequestBody CustomParameter param) {
 		return documenteditorService.systemClipboard(param);
 	}
-	
+
 	@CrossOrigin(origins = "*", allowedHeaders = "*")
 	@PostMapping("/api/wordeditor/Save")
 	public Reporttemplate save(@RequestBody Reporttemplate data) throws Exception {
@@ -73,41 +73,50 @@ public class DocumenteditorController {
 //	public void save(@RequestBody SaveParameter data) throws Exception {
 //		documenteditorService.save(data);
 //	}
-	
+
 	@CrossOrigin(origins = "*", allowedHeaders = "*")
 	@PostMapping("/api/wordeditor/ExportSFDT")
 	public ResponseEntity<Resource> exportSFDT(@RequestBody SaveParameter data) throws Exception {
 		return documenteditorService.exportSFDT(data);
 	}
-	
+
 	@CrossOrigin(origins = "*", allowedHeaders = "*")
 	@PostMapping("/api/wordeditor/Export")
 	public ResponseEntity<Resource> export(@RequestParam("data") MultipartFile data, String fileName) throws Exception {
-		return documenteditorService.export(data,fileName);
+		return documenteditorService.export(data, fileName);
 	}
-	
+
 	@CrossOrigin(origins = "*", allowedHeaders = "*")
 	@PostMapping("/api/wordeditor/SaveAs")
 	public Reporttemplate SaveAs(@RequestBody Reporttemplate data) throws Exception {
 		return documenteditorService.SaveAs(data);
 	}
-	
+
 	@CrossOrigin(origins = "*", allowedHeaders = "*")
 	@PostMapping("/api/wordeditor/Getfilesforedit")
-	public Map<String, Object>  Getfilesforedit(@RequestBody SaveParameter file) throws Exception {
+	public Map<String, Object> Getfilesforedit(@RequestBody SaveParameter file) throws Exception {
 		return documenteditorService.Getfilesforedit(file);
 	}
-	
+
 	@CrossOrigin(origins = "*", allowedHeaders = "*")
 	@PostMapping("/api/wordeditor/saveFile")
-	public Map<String, Object>  saveFile(@RequestBody SaveParameter file) throws Exception {
+	public Map<String, Object> saveFile(@RequestBody SaveParameter file) throws Exception {
 		return documenteditorService.saveFile(file);
 	}
-	
-//	@CrossOrigin(origins = "*", allowedHeaders = "*")
-//	@PostMapping("/api/wordeditor/Getfile")
-//	public ResponseEntity<InputStreamResource> Getfile(@RequestBody SaveParameter file) throws Exception {
-//		return documenteditorService.Getfile(file);
-//	}
-	
+
+	@CrossOrigin(origins = "*", allowedHeaders = "*")
+	@PostMapping("/api/wordeditor/GetXLSXContent")
+	public Map<String, Object> GetXLSXContent(@RequestBody SaveParameter file) throws Exception {
+		return documenteditorService.GetXLSXContent(file);
+	}
+
+	@CrossOrigin(origins = "*", allowedHeaders = "*")
+	@PostMapping("/api/wordeditor/GetXLSXfile")
+	public ResponseEntity<InputStreamResource> GetXLSXfile(@RequestBody SaveParameter file) throws Exception {
+		return documenteditorService.GetXLSXfile(file);
+	}
+	@PostMapping("/api/wordeditor/saveXLSXFile")
+	public Map<String, Object> saveXLSXFile(@RequestBody SaveParameter file) throws Exception {
+		return documenteditorService.saveXLSXFile(file);
+	}
 }
