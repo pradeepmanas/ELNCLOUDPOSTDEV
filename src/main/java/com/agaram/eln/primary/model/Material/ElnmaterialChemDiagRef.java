@@ -135,4 +135,5 @@ public class ElnmaterialChemDiagRef {
 	public void setResponse(Response response) {
 		this.response = response;
 	}
+
 }

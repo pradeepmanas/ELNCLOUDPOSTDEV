@@ -1,5 +1,6 @@
 package com.agaram.eln.primary.controller.material;
 
+import java.text.ParseException;
 import java.util.Map;
 
 import org.codehaus.jackson.map.ObjectMapper;
@@ -55,5 +56,12 @@ public class MaterialCategoryController {
 		final MaterialCategory materialCategory = objmapper.convertValue(inputMap.get("materialcategory"),MaterialCategory.class);
 		final LScfttransaction objsilentaudit = objmapper.convertValue(inputMap.get("objsilentaudit"),LScfttransaction.class);
 		return materialcategoryservice.deleteMaterialCategory(materialCategory,objsilentaudit);
+	}
+	
+	
+	@PostMapping(value = "/ImportDatatoStore")
+	public ResponseEntity<Map<String, Object>>ImportDatatoStore(@RequestBody Map<String, Object> inputMap) throws ParseException{
+		return materialcategoryservice.ImportDatatoStore(inputMap);
+		
 	}
 }

@@ -2,6 +2,7 @@ package com.agaram.eln.primary.repository.material;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.transaction.Transactional;
 
@@ -64,5 +65,8 @@ public interface ElnmaterialRepository extends JpaRepository<Elnmaterial, Intege
 
 	Elnmaterial findByNsitecodeAndSmaterialnameIgnoreCaseAndMaterialcategory(Integer nsitecode, String smaterialname,
 			MaterialCategory materialcategory);
+
+	List<Elnmaterial> findByNsitecodeAndSmaterialnameIgnoreCaseIn(Integer siteCode,
+			List<String> elnmaterialName);
 
 }

@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.agaram.eln.primary.commonfunction.commonfunction;
+import com.agaram.eln.primary.model.barcode.BarcodeMaster;
 import com.agaram.eln.primary.model.cfr.LSpreferences;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 import com.agaram.eln.primary.model.material.Elnmaterial;
@@ -30,6 +31,8 @@ import com.agaram.eln.primary.repository.protocol.LSlogilabprotocoldetailReposit
 import com.agaram.eln.primary.repository.sheetManipulation.LSsamplemasterRepository;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+
+import io.jsonwebtoken.lang.Arrays;
 
 @Service
 public class MaterialTypeService {
@@ -53,7 +56,7 @@ public class MaterialTypeService {
 
 	public ResponseEntity<Object> getMaterialType(MaterialType objMaterialType) {
 		List<MaterialType> lstmaterialtype = materialTypeRepository.
-				findByNmaterialtypecodeNotAndNstatusAndNsitecodeOrNmaterialtypecodeNotAndNstatusAndNdefaultstatusOrderByNmaterialtypecodeDesc(-1,1,objMaterialType.getNsitecode(),-1,1,4);
+				findByNmaterialtypecodeNotAndNsitecodeOrNmaterialtypecodeNotAndNdefaultstatusOrderByNmaterialtypecodeDesc(-1,objMaterialType.getNsitecode(),-1,4);
 		return new ResponseEntity<>(lstmaterialtype, HttpStatus.OK);
 	}
 	
@@ -228,4 +231,13 @@ public class MaterialTypeService {
 		
 		return null;
 	}
+	
+	public MaterialType RetiredMaterial(MaterialType objMaterialType) {
+
+		objMaterialType.setNstatus(-1);
+		materialTypeRepository.save(objMaterialType);  	
+		return objMaterialType;
+	}
+
+
 }

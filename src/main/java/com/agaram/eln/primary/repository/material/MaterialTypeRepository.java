@@ -42,4 +42,8 @@ public interface MaterialTypeRepository extends JpaRepository<MaterialType, Inte
 	public Number getNameAndKey(Object value, Number sitecode);
 	@Query(value = "select * from materialtype where smaterialtypename = ?1 and nsitecode = ?2 ", nativeQuery = true)
 	public MaterialType getMaterialTypeDetails(String string, Number sitecode);
+	public List<MaterialType> findByNsitecodeAndSmaterialtypenameIgnoreCaseIn(Integer integer,
+			List<String> materialtypename);
+	public List<MaterialType> findByNmaterialtypecodeNotAndNsitecodeOrNmaterialtypecodeNotAndNdefaultstatusOrderByNmaterialtypecodeDesc(
+			int i, Integer nsitecode, int j, int k);
 } 

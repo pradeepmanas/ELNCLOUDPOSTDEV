@@ -61,5 +61,7 @@ public interface MaterialCategoryRepository extends JpaRepository<MaterialCatego
 	@Query(value ="select * from materialcategory where smaterialcatname = ?1 and nsitecode = ?2", nativeQuery = true)
 	public MaterialCategory getMaterialCatgeoryDetails(String string, Number sitecode);
 	public List<MaterialCategory> findByNsitecodeAndNstatusOrderByNmaterialcatcodeDesc(Integer nsiteInteger, int i);
+	public List<MaterialCategory> findByNsitecodeAndSmaterialcatnameIgnoreCaseIn(Integer siteCode,
+			List<String> materialCatNames);
 	
 }

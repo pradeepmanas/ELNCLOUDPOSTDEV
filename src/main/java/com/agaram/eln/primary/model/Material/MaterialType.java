@@ -71,9 +71,22 @@ public class MaterialType implements Serializable {
 	private Boolean expvalidation;
 	private Boolean quarvalidation;
 	private Integer sampletype;
+	@Transient
+	private String smaterialcatname;
 	
+	public String getSmaterialcatname() {
+		return smaterialcatname;
+	}
+	public void setSmaterialcatname(String smaterialcatname) {
+		this.smaterialcatname = smaterialcatname;
+	}
 	@ManyToOne
 	private BarcodeMaster barcode;
+	
+
+	@ColumnDefault("1")
+	@Column(name = "usageoption", nullable = false)
+	private int usageoption;
 	
 	public Integer getSampletype() {
 		return sampletype;
@@ -191,6 +204,13 @@ public class MaterialType implements Serializable {
 	public void setBarcode(BarcodeMaster barcode) {
 		this.barcode = barcode;
 	}
+	public int getUsageoption() {
+		return usageoption;
+	}
+	public void setUsageoption(int usageoption) {
+		this.usageoption = usageoption;
+	}
+	
 	
 }
 

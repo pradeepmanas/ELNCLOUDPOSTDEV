@@ -99,6 +99,10 @@ public class Elnmaterial implements Serializable{
 	
 	@OneToMany
 	@JoinColumn(name="nmaterialcode")
+	private List<MaterialAttachments> lsmaterialAttachments;
+	
+	@OneToMany
+	@JoinColumn(name="nmaterialcode")
 	private List<ElnmaterialChemDiagRef> elnmaterialchemdiagref;
 	
 	@Transient
@@ -112,6 +116,14 @@ public class Elnmaterial implements Serializable{
 	private String displaystatus;
 	
 	private Integer samplecode;
+	
+	public List<MaterialAttachments> getlsMaterialAttachments() {
+		return lsmaterialAttachments;
+	}
+
+	public void setlsMaterialAttachments(List<MaterialAttachments> lsmaterialAttachments) {
+		this.lsmaterialAttachments = lsmaterialAttachments;
+	}
 	
 	public List<ElnmaterialChemDiagRef> getElnmaterialchemdiagref() {
 		return elnmaterialchemdiagref;

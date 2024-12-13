@@ -112,5 +112,41 @@ TABLESPACE pg_default;
 
 ALTER TABLE IF EXISTS public.elnmaterialchemdiagref OWNER to postgres;
 
+CREATE TABLE IF NOT EXISTS public.materialattachments
+(
+    nmaterialattachcode integer NOT NULL,
+    createddate timestamp without time zone,
+    fileextension character varying(10) COLLATE pg_catalog."default",
+    fileid character varying(250) COLLATE pg_catalog."default",
+    filename character varying(250) COLLATE pg_catalog."default",
+    nmaterialcatcode integer,
+    nmaterialcode integer,
+    nmaterialtypecode integer,
+    nsitecode integer,
+    nstatus integer,
+    createby_usercode integer,
+    CONSTRAINT materialattachments_pkey PRIMARY KEY (nmaterialattachcode),
+    CONSTRAINT fk133yuho3utecv6hl5rkkqrnlt FOREIGN KEY (nmaterialcode)
+        REFERENCES public.elnmaterial (nmaterialcode) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT fkmctfht2luiya3aem7u8lp0xo9 FOREIGN KEY (createby_usercode)
+        REFERENCES public.lsusermaster (usercode) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.materialattachments
+    OWNER to postgres;
+
+ALTER TABLE IF EXISTS public.elnmaterialchemdiagref OWNER to postgres;
+ALTER TABLE IF EXISTS public.elnmaterialchemdiagref OWNER to postgres;
+
 ALTER TABLE IF EXISTS elnmaterialchemdiagref ADD COLUMN IF NOT EXISTS smiles TEXT;
 ALTER TABLE IF EXISTS elnmaterialchemdiagref ADD COLUMN IF NOT EXISTS moljson TEXT;
+
+ALTER TABLE IF Exists materialtype ADD COLUMN IF NOT EXISTS usageoption Integer;
+
+update materialtype set usageoption = 1 where usageoption IS NULL;

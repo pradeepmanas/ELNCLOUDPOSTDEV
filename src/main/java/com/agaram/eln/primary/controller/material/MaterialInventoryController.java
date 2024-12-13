@@ -29,7 +29,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.agaram.eln.primary.global.FileDTO;
+import com.agaram.eln.primary.model.fileManipulation.Fileimages;
 import com.agaram.eln.primary.model.material.Elnmaterial;
+import com.agaram.eln.primary.model.material.ElnmaterialChemDiagRef;
 import com.agaram.eln.primary.model.material.ElnmaterialInventory;
 import com.agaram.eln.primary.model.material.ElnresultUsedMaterial;
 import com.agaram.eln.primary.model.material.MaterialInventory;
@@ -329,5 +331,39 @@ public class MaterialInventoryController {
 	public void deleteinvimages(@RequestBody Map<String, Object> inputMap)throws Exception {
 		String fileName = inputMap.get("fileName").toString();
 		materialInventoryService.deleteinvimages(fileName);
+	}
+	
+	@PostMapping("/uploadInvimagesSql")
+	public Map<String, Object> uploadInvimagesSql(@RequestParam("file") MultipartFile file,
+			@RequestParam("originurl") String originurl, @RequestParam("username") String username,
+			@RequestParam("sitecode") String sitecode,@RequestParam("selectedMaterial") Integer nmaterialcatcode,
+			@RequestParam("usercode") Integer usercode,@RequestParam("smiles") String smiles
+			,@RequestParam("moljson") String moljson) throws IOException {
+		return materialInventoryService.uploadInvimagesSql(file, originurl, username, sitecode,nmaterialcatcode,usercode,smiles,moljson);
+	}
+	
+	@PostMapping("/updateinvimagesSql")
+	public Map<String, Object> updateinvimagesSql(@RequestParam("file") MultipartFile file,
+			@RequestParam("fileid") String fileid, @RequestParam("username") String username,
+			@RequestParam("sitecode") String sitecode,@RequestParam("selectedMaterial") Integer nmaterialcatcode,
+			@RequestParam("usercode") Integer usercode,@RequestParam("smiles") String smiles
+			,@RequestParam("moljson") String moljson)throws Exception {
+		return materialInventoryService.updateinvimagesSql(file, fileid, username, sitecode,nmaterialcatcode,usercode,smiles,moljson);
+	}
+	
+	@RequestMapping(value = "downloadinvimagesSQLFileDTO")
+	public List<FileDTO> downloadinvimagesSQLFileDTO(@RequestBody Map<String, Object> inputMap) throws IllegalStateException, IOException {
+
+		Integer nmaterialcode = Integer.parseInt(inputMap.get("nmaterialcode").toString());
+		
+		List<FileDTO> returnObj = materialInventoryService.downloadinvimagesSQLFileDTO(nmaterialcode);
+		
+		return returnObj;
+	}
+	
+	@PostMapping("/deleteinvimagesSQL")
+	public void deleteinvimagesSQL(@RequestBody Map<String, Object> inputMap)throws Exception {
+		String fileName = inputMap.get("fileName").toString();
+		materialInventoryService.deleteinvimagesSQL(fileName);
 	}
 }

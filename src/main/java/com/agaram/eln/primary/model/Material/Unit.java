@@ -48,6 +48,15 @@ public class Unit {
 
 	private transient String sDate;
 	
+	@Transient
+	private String smaterialcatname;
+	
+	public String getSmaterialcatname() {
+		return smaterialcatname;
+	}
+	public void setSmaterialcatname(String smaterialcatname) {
+		this.smaterialcatname = smaterialcatname;
+	}
 	public String getsDate() {
 		return sDate;
 	}

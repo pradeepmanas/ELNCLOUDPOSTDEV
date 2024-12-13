@@ -464,7 +464,7 @@ public class CloudFileManipulationservice {
 	public String storecloudfilesreturnUUID(MultipartFile file, String containername) throws IOException {
 
 		System.out.print("entering storecloudfilesreturnUUID function");
-//		int multitenant = Integer.parseInt(env.getProperty("ismultitenant"));
+		int multitenant = env.getProperty("app.datasource.eln.url").toLowerCase().contains("elntrail") == true ? 2 : -1;
 		// String bloburi="";
 		CloudStorageAccount storageAccount;
 		CloudBlobClient blobClient = null;
@@ -479,8 +479,11 @@ public class CloudFileManipulationservice {
 			// storage
 			storageAccount = CloudStorageAccount.parse(storageConnectionString);
 			blobClient = storageAccount.createCloudBlobClient();
-			container = blobClient.getContainerReference(TenantContext.getCurrentTenant() + containername);
-
+			if(multitenant == 2) {
+				container = blobClient.getContainerReference(commonfunction.getcontainername(multitenant, TenantContext.getCurrentTenant()) + containername);
+			}else {
+				container = blobClient.getContainerReference(TenantContext.getCurrentTenant() + containername);	
+			}	
 			// Create the container if it does not exist with public access.
 			System.out.println("Creating container: " + container.getName());
 			container.createIfNotExists(BlobContainerPublicAccessType.CONTAINER, new BlobRequestOptions(),

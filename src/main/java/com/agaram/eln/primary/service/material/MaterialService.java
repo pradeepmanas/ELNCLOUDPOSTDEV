@@ -34,6 +34,7 @@ import com.agaram.eln.primary.model.instrumentDetails.LsOrderattachments;
 import com.agaram.eln.primary.model.material.Elnmaterial;
 import com.agaram.eln.primary.model.material.MappedTemplateFieldPropsMaterial;
 import com.agaram.eln.primary.model.material.Material;
+import com.agaram.eln.primary.model.material.MaterialAttachments;
 import com.agaram.eln.primary.model.material.MaterialCategory;
 import com.agaram.eln.primary.model.material.MaterialConfig;
 import com.agaram.eln.primary.model.material.MaterialType;
@@ -46,6 +47,7 @@ import com.agaram.eln.primary.repository.equipment.EquipmentTypeRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsOrderattachmentsRepository;
 import com.agaram.eln.primary.repository.material.ElnmaterialRepository;
 import com.agaram.eln.primary.repository.material.MappedTemplateFieldPropsMaterialRepository;
+import com.agaram.eln.primary.repository.material.MaterialAttachmentsRepository;
 import com.agaram.eln.primary.repository.material.MaterialCategoryRepository;
 import com.agaram.eln.primary.repository.material.MaterialConfigRepository;
 import com.agaram.eln.primary.repository.material.MaterialInventoryRepository;
@@ -99,6 +101,8 @@ public class MaterialService {
 	EquipmentTypeRepository equipmentTypeRepository;
 	@Autowired
 	EquipmentCategoryRepository equipmentCategoryRepository;
+	@Autowired
+	private MaterialAttachmentsRepository materialAttachmentsRepository;
 
 	public ResponseEntity<Object> getMaterialcombo(Integer nmaterialtypecode, Integer nsitecode) {
 
@@ -1769,5 +1773,46 @@ public class MaterialService {
 		objmap.put("lstUnit", lstUnits);
 		
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
+	}
+
+
+	public Elnmaterial materialCloudUploadattachments(MultipartFile file, Integer nmaterialtypecode,
+			Integer nmaterialcatcode, Integer nmaterialcode, String filename, String fileexe, Integer usercode,
+			Date currentdate, Integer isMultitenant) throws IOException {
+		Elnmaterial objAttach = elnmaterialRepository.findOne(nmaterialcatcode);
+		MaterialAttachments objattachment = new MaterialAttachments();
+		if (isMultitenant == 0) {
+			if (fileManipulationservice.storeLargeattachment(filename, file) != null) {
+				objattachment.setFileid(fileManipulationservice.storeLargeattachment(filename, file));
+			}
+		}
+
+		objattachment.setFilename(filename);
+		objattachment.setFileextension(fileexe);
+		objattachment.setCreateby(lsuserMasterRepository.findByusercode(usercode));
+		objattachment.setCreateddate(currentdate);
+		objattachment.setNmaterialcode(nmaterialcode);
+		objattachment.setNmaterialcatcode(nmaterialcatcode);
+		objattachment.setNmaterialtypecode(nmaterialtypecode);
+		if (objAttach != null && objAttach.getlsMaterialAttachments() != null) {
+			objAttach.getlsMaterialAttachments().add(objattachment);
+		} else {
+			objAttach.setlsMaterialAttachments(new ArrayList<MaterialAttachments>());
+			objAttach.getlsMaterialAttachments().add(objattachment);
+		}
+		materialAttachmentsRepository.save(objAttach.getlsMaterialAttachments());
+		if (isMultitenant != 0) {
+			String filenameval = "attach_" + objAttach.getNmaterialcode() + "_" + objAttach.getlsMaterialAttachments()
+					.get(objAttach.getlsMaterialAttachments().lastIndexOf(objattachment)).getNmaterialattachcode() + "_"
+					+ filename;
+			String id = cloudFileManipulationservice.storeLargeattachment(filenameval, file);
+			if (id != null) {
+				objattachment.setFileid(id);
+			}
+
+			materialAttachmentsRepository.save(objAttach.getlsMaterialAttachments());
+		}
+
+		return objAttach;
 	}
 }

@@ -211,4 +211,16 @@ public class MaterialController {
 
 		return objMaterialService.getElnMaterialOnProtocol(inputMap);
 	}
+	
+	@PostMapping("/materialCloudUploadattachments")
+	public Elnmaterial materialCloudUploadattachments(@RequestParam("file") MultipartFile file,
+			@RequestParam("nmaterialtypecode") Integer nmaterialtypecode,
+			@RequestParam("nmaterialcatcode") Integer nmaterialcatcode,
+			@RequestParam("nmaterialcode") Integer nmaterialcode, @RequestParam("filename") String filename,
+			@RequestParam("fileexe") String fileexe, @RequestParam("usercode") Integer usercode,
+			@RequestParam("date") Date currentdate, @RequestParam("isMultitenant") Integer isMultitenant)
+			throws IOException {
+		return objMaterialService.materialCloudUploadattachments(file, nmaterialtypecode, nmaterialcatcode,
+				nmaterialcode, filename, fileexe, usercode, currentdate, isMultitenant);
+	}
 }

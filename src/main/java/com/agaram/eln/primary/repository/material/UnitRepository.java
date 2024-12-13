@@ -57,4 +57,6 @@ public interface UnitRepository extends JpaRepository<Unit, Integer>{
 	@Query(value ="select * from unit where sunitname = ?1 and nsitecode = ?2", nativeQuery = true)
 	public Unit getUnitDetails(String string, Number sitecode);
 
+	public List<Unit> findByNsitecodeAndSunitnameIgnoreCaseIn(Integer siteCode, List<String> unitName);
+
 }

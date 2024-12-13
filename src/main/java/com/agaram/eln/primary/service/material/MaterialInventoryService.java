@@ -1,5 +1,6 @@
 package com.agaram.eln.primary.service.material;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -21,9 +22,12 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.bson.BsonBinarySubType;
+import org.bson.types.Binary;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +52,7 @@ import com.agaram.eln.primary.model.material.Manufacturer;
 import com.agaram.eln.primary.model.material.MappedTemplateFieldPropsMaterial;
 import com.agaram.eln.primary.model.material.Material;
 import com.agaram.eln.primary.model.material.MaterialCategory;
+import com.agaram.eln.primary.model.material.MaterialChemicalDiag;
 import com.agaram.eln.primary.model.material.MaterialConfig;
 import com.agaram.eln.primary.model.material.MaterialGrade;
 import com.agaram.eln.primary.model.material.MaterialInventory;
@@ -71,6 +76,7 @@ import com.agaram.eln.primary.repository.material.ElnresultUsedMaterialRepositor
 import com.agaram.eln.primary.repository.material.ManufacturerRepository;
 import com.agaram.eln.primary.repository.material.MappedTemplateFieldPropsMaterialRepository;
 import com.agaram.eln.primary.repository.material.MaterialCategoryRepository;
+import com.agaram.eln.primary.repository.material.MaterialChemicalDiagRepository;
 import com.agaram.eln.primary.repository.material.MaterialConfigRepository;
 import com.agaram.eln.primary.repository.material.MaterialGradeRepository;
 import com.agaram.eln.primary.repository.material.MaterialInventoryRepository;
@@ -150,6 +156,8 @@ public class MaterialInventoryService {
 	ElnmaterialInventoryRepository elnmaterialInventoryReppository;
 	@Autowired
 	ElnresultUsedMaterialRepository ElnresultUsedMaterialRepository;
+	@Autowired
+	MaterialChemicalDiagRepository MaterialChemicalDiagRepository;
 
 	@SuppressWarnings("unchecked")
 	public ResponseEntity<Object> getMaterialInventory(Integer nsiteInteger) throws Exception {
@@ -3820,7 +3828,7 @@ public class MaterialInventoryService {
 		return new ResponseEntity<>(Elnresult, HttpStatus.OK);
 	}
 
-public Map<String, Object> uploadInvimages(MultipartFile file, String originurl, String username, String sitecode,Integer nmaterialcatcode,Integer usercode,String smiles,String moljson) {
+	public Map<String, Object> uploadInvimages(MultipartFile file, String originurl, String username, String sitecode,Integer nmaterialcatcode,Integer usercode,String smiles,String moljson) {
 		
 		Elnmaterial objmaterial = elnMaterialRepository.findOne(nmaterialcatcode);
 		
@@ -3902,6 +3910,95 @@ public Map<String, Object> uploadInvimages(MultipartFile file, String originurl,
 
 	public void deleteinvimages(String fileName) {
 		cloudFileManipulationservice.deletecloudFile(fileName, "inventorychemicalimages");
+		ElnmaterialChemDiagRef objChem = ElnmaterialChemDiagRefRepository.findByFileid(fileName);
+		ElnmaterialChemDiagRefRepository.delete(objChem);
+	}
+
+	public Map<String, Object> uploadInvimagesSql(MultipartFile file, String originurl, String username,
+			String sitecode, Integer nmaterialcatcode, Integer usercode, String smiles, String moljson) throws IOException {
+		
+		Elnmaterial objmaterial = elnMaterialRepository.findOne(nmaterialcatcode);
+		Map<String, Object> map = new HashMap<String, Object>();
+
+		UUID objGUID = UUID.randomUUID();
+		String randomUUIDString = objGUID.toString();
+
+		ElnmaterialChemDiagRef objDigRef = new ElnmaterialChemDiagRef();
+		
+		objDigRef.setFileid(randomUUIDString);
+		objDigRef.setCreateby(lsuserMasterRepository.findByusercode(usercode));
+		objDigRef.setCreatedate(new Date());
+		objDigRef.setNmaterialcode(objmaterial.getNmaterialcode());
+		objDigRef.setSmiles(smiles);
+		objDigRef.setMoljson(moljson);
+		
+		ElnmaterialChemDiagRefRepository.save(objDigRef);
+
+		MaterialChemicalDiag fileImg = new MaterialChemicalDiag();
+
+		fileImg.setId(objmaterial.getNmaterialcode());
+		fileImg.setFileid(randomUUIDString);
+		fileImg.setFile(new Binary(BsonBinarySubType.BINARY, file.getBytes()));
+		fileImg = MaterialChemicalDiagRepository.insert(fileImg);
+
+		return map;
+	}
+	
+	public Map<String, Object> updateinvimagesSql(MultipartFile file, String fileid, String username, String sitecode,
+			Integer nmaterialcatcode, Integer usercode, String smiles, String moljson) throws IOException {
+		
+		Map<String, Object> map = new HashMap<>();
+		
+		MaterialChemicalDiag fileImg = MaterialChemicalDiagRepository.findByFileid(fileid);
+		ElnmaterialChemDiagRef objDigRef = ElnmaterialChemDiagRefRepository.findByFileid(fileid);
+	    	
+    	objDigRef.setSmiles(smiles);
+		objDigRef.setMoljson(moljson);
+		ElnmaterialChemDiagRefRepository.save(objDigRef);
+    	
+        fileImg.setFileid(fileid);
+        fileImg.setFile(new Binary(BsonBinarySubType.BINARY, file.getBytes()));
+        MaterialChemicalDiagRepository.save(fileImg);
+
+	    return map;
+	}
+
+	public List<FileDTO> downloadinvimagesSQLFileDTO(Integer nmaterialcode) {
+		List<ElnmaterialChemDiagRef> objListChem = ElnmaterialChemDiagRefRepository.findByNmaterialcodeOrderByDiagramcodeDesc(nmaterialcode);
+	    
+	    List<FileDTO> lstDTO = new ArrayList<FileDTO>();
+	    
+	     objListChem.stream()
+	        .peek(f -> {
+	            byte[] data = null;
+				try {
+					data = getSQLFileData(f.getFileid());
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+	            lstDTO.add(new FileDTO(f.getFileid(),f.getMoljson(), data));
+	        })
+	        .collect(Collectors.toList());
+	     
+	     return lstDTO;
+	}
+	
+	private byte[] getSQLFileData(String fileId) throws IOException {
+		MaterialChemicalDiag fileImg = MaterialChemicalDiagRepository.findByFileid(fileId);
+		
+		byte[] data = null;
+		
+		if (fileImg != null) {
+			data = fileImg.getFile().getData();
+			ByteArrayInputStream bis = new ByteArrayInputStream(data);
+			return StreamUtils.copyToByteArray(bis);
+		}
+		
+		return data;
+	}
+
+	public void deleteinvimagesSQL(String fileName) {
+		MaterialChemicalDiagRepository.delete(fileName);
 		ElnmaterialChemDiagRef objChem = ElnmaterialChemDiagRefRepository.findByFileid(fileName);
 		ElnmaterialChemDiagRefRepository.delete(objChem);
 	}

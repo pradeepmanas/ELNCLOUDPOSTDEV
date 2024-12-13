@@ -6830,7 +6830,7 @@ public class InstrumentService {
 	public Map<String, Object> uploadsheetimages(MultipartFile file, String originurl, String username,
 			String sitecode) {
 		Map<String, Object> map = new HashMap<String, Object>();
-//		int multitenant = Integer.parseInt(env.getProperty("ismultitenant"));
+		int multitenant = env.getProperty("app.datasource.eln.url").toLowerCase().contains("elntrail") == true ? 2 : -1;
 		String id = null;
 		try {
 			id = cloudFileManipulationservice.storecloudfilesreturnUUID(file, "sheetimagestemp");
@@ -6843,13 +6843,13 @@ public class InstrumentService {
 		final String getExtn = FilenameUtils.getExtension(file.getOriginalFilename()) == "" ? "png"
 				: FilenameUtils.getExtension(file.getOriginalFilename());
 
-//		if(multitenant == 2) {
-//			map.put("link", originurl + "/Instrument/downloadsheetimagestemp/" + id + "/" + commonfunction.getcontainername(multitenant, TenantContext.getCurrentTenant())
-//			+ "/" + FilenameUtils.removeExtension(file.getOriginalFilename()) + "/" + getExtn);
-//		}else {
+		if(multitenant == 2) {
+			map.put("link", originurl + "/Instrument/downloadsheetimagestemp/" + id + "/" + commonfunction.getcontainername(multitenant, TenantContext.getCurrentTenant())
+			+ "/" + FilenameUtils.removeExtension(file.getOriginalFilename()) + "/" + getExtn);
+		}else {
 		map.put("link", originurl + "/Instrument/downloadsheetimagestemp/" + id + "/" + TenantContext.getCurrentTenant()
 				+ "/" + FilenameUtils.removeExtension(file.getOriginalFilename()) + "/" + getExtn);
-//		}
+		}
 
 		return map;
 	}
@@ -7035,15 +7035,16 @@ public class InstrumentService {
 			String copyto = fileObj.get("copyto");
 			String isnew = fileObj.get("isnew");
 //			int ismultitenant = Integer.parseInt(env.getProperty("ismultitenant"));
+			int multitenant = env.getProperty("app.datasource.eln.url").toLowerCase().contains("elntrail") == true ? 2 : -1;
 			if (isnew.equals("true")) {
 				cloudFileManipulationservice.movefiletoanothercontainerandremove(
-						TenantContext.getCurrentTenant() + "sheetimagestemp",
-						TenantContext.getCurrentTenant() + "sheetimages", copyfrom);
+						commonfunction.getcontainername(multitenant, TenantContext.getCurrentTenant()) + "sheetimagestemp",
+								commonfunction.getcontainername(multitenant, TenantContext.getCurrentTenant()) + "sheetimages", copyfrom);
 			}
 
 			try {
 				cloudFileManipulationservice.updateversionCloudFile(copyfrom,
-						TenantContext.getCurrentTenant() + "sheetimages", copyto);
+						commonfunction.getcontainername(multitenant, TenantContext.getCurrentTenant()) + "sheetimages", copyto);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
