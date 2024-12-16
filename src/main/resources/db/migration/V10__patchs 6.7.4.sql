@@ -150,3 +150,209 @@ ALTER TABLE IF EXISTS elnmaterialchemdiagref ADD COLUMN IF NOT EXISTS moljson TE
 ALTER TABLE IF Exists materialtype ADD COLUMN IF NOT EXISTS usageoption Integer;
 
 update materialtype set usageoption = 1 where usageoption IS NULL;
+
+DO
+$do$
+DECLARE
+   _kind "char";
+BEGIN
+   SELECT relkind
+   FROM   pg_class
+   WHERE  relname = 'sequencetable_sequencecode_seq' 
+   INTO  _kind;
+
+   IF NOT FOUND THEN CREATE SEQUENCE sequencetable_sequencecode_seq;
+   ELSIF _kind = 'S' THEN  
+     
+   ELSE                  
+    
+   END IF;
+END
+$do$;
+
+CREATE TABLE IF NOT EXISTS public.sequencetable
+(
+    sequencecode integer NOT NULL DEFAULT nextval('sequencetable_sequencecode_seq'::regclass),
+    applicationsequence bigint,
+    resetperiod integer,
+    screenname character varying(255) COLLATE pg_catalog."default",
+    sequenceday integer,
+    sequenceformat character varying(255) COLLATE pg_catalog."default",
+    sequencemonth integer,
+    sequenceview integer,
+    sequenceyear integer,
+    CONSTRAINT sequencetable_pkey PRIMARY KEY (sequencecode)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.sequencetable
+    OWNER to postgres;
+
+
+INSERT into sequencetable(sequencecode, screenname, resetperiod,sequenceview,sequenceformat,applicationsequence,sequenceday,sequencemonth,sequenceyear) VALUES (1,'IDS_SCN_SHEETORDERS',1,1,'{"t":{"t":"ELN"},"s":{"l":"6"}}',-1,0,0,0) ON CONFLICT (sequencecode) DO NOTHING;; 
+INSERT into sequencetable(sequencecode, screenname, resetperiod,sequenceview,sequenceformat,applicationsequence,sequenceday,sequencemonth,sequenceyear) VALUES (2,'IDS_SCN_PROTOCOLORDERS',1,1,'{"t":{"t":"ELN"},"s":{"l":"6"}}',-1,0,0,0) ON CONFLICT (sequencecode) DO NOTHING;; 
+
+ALTER TABLE IF EXISTS lslogilablimsorderdetail ADD COLUMN IF NOT EXISTS applicationsequence bigint;
+ALTER TABLE IF EXISTS lslogilablimsorderdetail ADD COLUMN IF NOT EXISTS projectsequence bigint;
+ALTER TABLE IF EXISTS lslogilablimsorderdetail ADD COLUMN IF NOT EXISTS sitesequence bigint;
+ALTER TABLE IF EXISTS lslogilablimsorderdetail ADD COLUMN IF NOT EXISTS tasksequence bigint;
+ALTER TABLE IF EXISTS lslogilablimsorderdetail ADD COLUMN IF NOT EXISTS ordertypesequence bigint;
+
+ALTER TABLE IF EXISTS lslogilabprotocoldetail ADD COLUMN IF NOT EXISTS applicationsequence bigint;
+ALTER TABLE IF EXISTS lslogilabprotocoldetail ADD COLUMN IF NOT EXISTS projectsequence bigint;
+ALTER TABLE IF EXISTS lslogilabprotocoldetail ADD COLUMN IF NOT EXISTS sitesequence bigint;
+ALTER TABLE IF EXISTS lslogilabprotocoldetail ADD COLUMN IF NOT EXISTS tasksequence bigint;
+ALTER TABLE IF EXISTS lslogilabprotocoldetail ADD COLUMN IF NOT EXISTS ordertypesequence bigint;
+
+
+DO
+$do$
+DECLARE
+   _kind "char";
+BEGIN
+   SELECT relkind
+   FROM   pg_class
+   WHERE  relname = 'sequencetablesite_sequencecodesite_seq' 
+   INTO  _kind;
+
+   IF NOT FOUND THEN CREATE SEQUENCE sequencetablesite_sequencecodesite_seq;
+   ELSIF _kind = 'S' THEN  
+     
+   ELSE                  
+    
+   END IF;
+END
+$do$;
+
+CREATE TABLE IF NOT EXISTS public.sequencetablesite
+(
+    sequencecodesite integer NOT NULL DEFAULT nextval('sequencetablesite_sequencecodesite_seq'::regclass),
+    sequencecode integer,
+    sitesequence bigint,
+	sitecode integer,
+    CONSTRAINT sequencetablesite_pkey PRIMARY KEY (sequencecodesite),
+    CONSTRAINT fksguwcp89bljj2buemq8jedqjm FOREIGN KEY (sequencecode)
+        REFERENCES public.sequencetable (sequencecode) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.sequencetablesite
+    OWNER to postgres;
+
+	DO
+$do$
+DECLARE
+   _kind "char";
+BEGIN
+   SELECT relkind
+   FROM   pg_class
+   WHERE  relname = 'sequencetableproject_sequencecodeproject_seq' 
+   INTO  _kind;
+
+   IF NOT FOUND THEN CREATE SEQUENCE sequencetableproject_sequencecodeproject_seq;
+   ELSIF _kind = 'S' THEN  
+     
+   ELSE                  
+    
+   END IF;
+END
+$do$;
+
+	CREATE TABLE IF NOT EXISTS public.sequencetableproject
+(
+    sequencecodeproject integer NOT NULL DEFAULT nextval('sequencetableproject_sequencecodeproject_seq'::regclass),
+    projectsequence bigint,
+    sequencecode integer,
+	projectcode integer,
+    CONSTRAINT sequencetableproject_pkey PRIMARY KEY (sequencecodeproject),
+    CONSTRAINT fkhkeunrng30mjqhoeuiwal9qm3 FOREIGN KEY (sequencecode)
+        REFERENCES public.sequencetable (sequencecode) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.sequencetableproject
+    OWNER to postgres;
+
+		DO
+$do$
+DECLARE
+   _kind "char";
+BEGIN
+   SELECT relkind
+   FROM   pg_class
+   WHERE  relname = 'sequencetabletask_sequencecodetask_seq' 
+   INTO  _kind;
+
+   IF NOT FOUND THEN CREATE SEQUENCE sequencetabletask_sequencecodetask_seq;
+   ELSIF _kind = 'S' THEN  
+     
+   ELSE                  
+    
+   END IF;
+END
+$do$;
+
+	CREATE TABLE IF NOT EXISTS public.sequencetabletask
+(
+    sequencecodetask integer NOT NULL DEFAULT nextval('sequencetabletask_sequencecodetask_seq'::regclass),
+    sequencecode integer,
+    tasksequence bigint,
+	testcode integer,
+    CONSTRAINT sequencetabletask_pkey PRIMARY KEY (sequencecodetask),
+    CONSTRAINT fkic732g9sb7cp8let7ehg0nb68 FOREIGN KEY (sequencecode)
+        REFERENCES public.sequencetable (sequencecode) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.sequencetabletask
+    OWNER to postgres;
+
+
+		DO
+$do$
+DECLARE
+   _kind "char";
+BEGIN
+   SELECT relkind
+   FROM   pg_class
+   WHERE  relname = 'sequencetableordertype_sequencecodeordertype_seq' 
+   INTO  _kind;
+
+   IF NOT FOUND THEN CREATE SEQUENCE sequencetableordertype_sequencecodeordertype_seq;
+   ELSIF _kind = 'S' THEN  
+     
+   ELSE                  
+    
+   END IF;
+END
+$do$;
+
+	
+CREATE TABLE IF NOT EXISTS public.sequencetableordertype
+(
+    sequencecodeordertype integer NOT NULL DEFAULT nextval('sequencetableordertype_sequencecodeordertype_seq'::regclass),
+    ordertype integer,
+    ordertypesequence bigint,
+    sequencecode integer,
+    CONSTRAINT sequencetableordertype_pkey PRIMARY KEY (sequencecodeordertype),
+    CONSTRAINT fkev1183angphftoup3tfo0825y FOREIGN KEY (sequencecode)
+        REFERENCES public.sequencetable (sequencecode) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.sequencetableordertype OWNER to postgres;
+
+ALTER TABLE IF EXISTS elnmaterial ADD COLUMN IF NOT EXISTS assignedtasks TEXT;

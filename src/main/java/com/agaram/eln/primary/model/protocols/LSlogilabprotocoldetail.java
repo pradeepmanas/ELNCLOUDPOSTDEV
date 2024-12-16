@@ -75,22 +75,6 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 
 	private Integer autoregistercount;
 
-	public Integer getAutoregistercount() {
-		return autoregistercount;
-	}
-
-	public void setAutoregistercount(Integer autoregistercount) {
-		this.autoregistercount = autoregistercount;
-	}
-
-	public Lsprotocolorderstructure getLsprotocolorderstructure() {
-		return lsprotocolorderstructure;
-	}
-
-	public void setLsprotocolorderstructure(Lsprotocolorderstructure lsprotocolorderstructure) {
-		this.lsprotocolorderstructure = lsprotocolorderstructure;
-	}
-
 	private Integer lockeduser;
 
 	private String lockedusername;
@@ -98,37 +82,13 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	@Transient
 	private String period;
 
-	public String getPeriod() {
-		return period;
-	}
-
-	public void setPeriod(String period) {
-		this.period = period;
-	}
-
 	@Transient
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date duedate;
 
-	public Date getDuedate() {
-		return duedate;
-	}
-
-	public void setDuedate(Date duedate) {
-		this.duedate = duedate;
-	}
-
 	@Transient
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date cautiondate;
-
-	public Date getCautiondate() {
-		return cautiondate;
-	}
-
-	public void setCautiondate(Date cautiondate) {
-		this.cautiondate = cautiondate;
-	}
 
 	@ManyToOne
 	private Material material;
@@ -138,44 +98,12 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	@Transient
 	private List<LSlogilablimsorder> lsLSlogilablimsorder;
 
-	public List<LSlogilablimsorder> getLsLSlogilablimsorder() {
-		return lsLSlogilablimsorder;
-	}
-
-	public void setLsLSlogilablimsorder(List<LSlogilablimsorder> lsLSlogilablimsorder) {
-		this.lsLSlogilablimsorder = lsLSlogilablimsorder;
-	}
-
 	private String approvelaccept;
-
-	public String getApprovelaccept() {
-		return approvelaccept;
-	}
-
-	public void setApprovelaccept(String approvelaccept) {
-		this.approvelaccept = approvelaccept;
-	}
 
 	private Boolean sentforapprovel;
 
-	public Boolean getSentforapprovel() {
-		return sentforapprovel;
-	}
-
-	public void setSentforapprovel(Boolean sentforapprovel) {
-		this.sentforapprovel = sentforapprovel;
-	}
-
 	@ManyToOne
 	private LSOrdernotification lsordernotification;
-
-	public LSOrdernotification getLsordernotification() {
-		return lsordernotification;
-	}
-
-	public void setLsordernotification(LSOrdernotification lsordernotification) {
-		this.lsordernotification = lsordernotification;
-	}
 
 	@ManyToOne
 	private Elnmaterial elnmaterial;
@@ -184,111 +112,7 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 
 	private Integer activeuser;
 
-	public Integer getActiveuser() {
-		return activeuser;
-	}
-
-	public void setActiveuser(Integer activeuser) {
-		this.activeuser = activeuser;
-	}
-
-	public Elnmaterial getElnmaterial() {
-		return elnmaterial;
-	}
-
-	public Integer getLockeduser() {
-		return lockeduser;
-	}
-
-	public void setLockeduser(Integer lockeduser) {
-		this.lockeduser = lockeduser;
-	}
-
-	public String getLockedusername() {
-		return lockedusername;
-	}
-
-	public void setLockedusername(String lockedusername) {
-		this.lockedusername = lockedusername;
-	}
-
-	public void setElnmaterial(Elnmaterial elnmaterial) {
-		this.elnmaterial = elnmaterial;
-	}
-
-	public ElnmaterialInventory getElnmaterialinventory() {
-		return elnmaterialinventory;
-	}
-
-	public void setElnmaterialinventory(ElnmaterialInventory elnmaterialinventory) {
-		this.elnmaterialinventory = elnmaterialinventory;
-	}
-
-	public Material getMaterial() {
-		return material;
-	}
-
-	public void setMaterial(Material material) {
-		this.material = material;
-	}
-
-	public MaterialInventory getMaterialinventory() {
-		return materialinventory;
-	}
-
-	public void setMaterialinventory(MaterialInventory materialinventory) {
-		this.materialinventory = materialinventory;
-	}
-
-	public String getComment() {
-		return comment;
-	}
-
-	public void setComment(String comment) {
-		this.comment = comment;
-	}
-
-	public Date getModifidate() {
-		return modifidate;
-	}
-
-	public void setModifidate(Date modifidate) {
-		this.modifidate = modifidate;
-	}
-
-	public LoggedUser getObjuser() {
-		return objuser;
-	}
-
-	public void setObjuser(LoggedUser objuser) {
-		this.objuser = objuser;
-	}
-
-	public Integer getMultiusergroupcode() {
-		return multiusergroupcode;
-	}
-
-	public void setMultiusergroupcode(Integer multiusergroupcode) {
-		this.multiusergroupcode = multiusergroupcode;
-	}
-
-	public String getKeyword() {
-		return keyword;
-	}
-
-	public void setKeyword(String keyword) {
-		this.keyword = keyword;
-	}
-
 	private String orderflag;
-
-	public String getOrderflag() {
-		return orderflag;
-	}
-
-	public void setOrderflag(String orderflag) {
-		this.orderflag = orderflag;
-	}
 
 	@Column(name = "Protocoltype")
 	private Integer protocoltype;
@@ -312,14 +136,6 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	@ManyToOne
 	private LStestmasterlocal lstestmasterlocal;
 
-	public LStestmasterlocal getLstestmasterlocal() {
-		return lstestmasterlocal;
-	}
-
-	public void setLstestmasterlocal(LStestmasterlocal lstestmasterlocal) {
-		this.lstestmasterlocal = lstestmasterlocal;
-	}
-
 	private Long directorycode;
 
 	private Integer teamcode;
@@ -336,63 +152,23 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	@ManyToOne
 	private Elnprotocolworkflow elnprotocolworkflow;
 
-	public Elnprotocolworkflow getElnprotocolworkflow() {
-		return elnprotocolworkflow;
-	}
-
-	public void setElnprotocolworkflow(Elnprotocolworkflow elnprotocolworkflow) {
-		this.elnprotocolworkflow = elnprotocolworkflow;
-	}
-
 	@ManyToOne
 	private LSworkflow lsworkflow;
 
 	private Integer ordercancell;
 
 	private Integer orderstarted = 0;
-
-	public Integer getOrderstarted() {
-		return orderstarted;
-	}
-
-	public void setOrderstarted(Integer orderstarted) {
-		this.orderstarted = orderstarted;
-	}
-
+	
 	@ManyToOne
 	LSuserMaster orderstartedby;
-
-	public LSuserMaster getOrderstartedby() {
-		return orderstartedby;
-	}
-
-	public void setOrderstartedby(LSuserMaster orderstartedby) {
-		this.orderstartedby = orderstartedby;
-	}
 
 	@Column(name = "orderstartedon")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date orderstartedon;
 
-	public Date getOrderstartedon() {
-		return orderstartedon;
-	}
-
-	public void setOrderstartedon(Date orderstartedon) {
-		this.orderstartedon = orderstartedon;
-	}
-
 	@Type(type = "jsonb")
 	@Column(columnDefinition = "jsonb")
 	public String protocoldatainfo;
-
-	public String getProtocoldatainfo() {
-		return protocoldatainfo;
-	}
-
-	public void setProtocoldatainfo(String protocoldatainfo) {
-		this.protocoldatainfo = protocoldatainfo;
-	}
 
 	@Transient
 	LSuserMaster objLoggeduser;
@@ -411,114 +187,17 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 
 	@Transient
 	private List<LSuserMaster> lstuserMaster;
-
-	public List<Elnprotocolworkflow> getLstelnprotocolworkflow() {
-		return lstelnprotocolworkflow;
-	}
-
-	public void setLstelnprotocolworkflow(List<Elnprotocolworkflow> lstelnprotocolworkflow) {
-//		this.lstelnprotocolworkflow = lstelnprotocolworkflow;
-		if (this.elnprotocolworkflow != null && lstelnprotocolworkflow != null && lstelnprotocolworkflow.size() > 0) {
-			List<Integer> lstworkflowcode = new ArrayList<Integer>();
-			if (lstelnprotocolworkflow != null && lstelnprotocolworkflow.size() > 0) {
-				lstworkflowcode = lstelnprotocolworkflow.stream().map(Elnprotocolworkflow::getWorkflowcode)
-						.collect(Collectors.toList());
-
-				if (lstworkflowcode.contains(this.elnprotocolworkflow.getWorkflowcode())) {
-					this.setCanuserprocess(true);
-				} else {
-					this.setCanuserprocess(false);
-				}
-			} else {
-				this.setCanuserprocess(false);
-			}
-		} else {
-			this.setCanuserprocess(false);
-		}
-
-		this.lstelnprotocolworkflow = lstelnprotocolworkflow;
-	}
-
-	public List<LSuserMaster> getLstuserMaster() {
-		return lstuserMaster;
-	}
-
-	public void setLstuserMaster(List<LSuserMaster> lstuserMaster) {
-		this.lstuserMaster = lstuserMaster;
-	}
-
+	
+	private Integer viewoption;
+	
 	@Transient
 	private LSworkflow currentStep;
-
-	public LSworkflow getCurrentStep() {
-		return currentStep;
-	}
-
-	public void setCurrentStep(LSworkflow currentStep) {
-		this.currentStep = currentStep;
-	}
-
-	public List<Long> getLstdirectorycode() {
-		return lstdirectorycode;
-	}
-
-	public void setLstdirectorycode(List<Long> lstdirectorycode) {
-		this.lstdirectorycode = lstdirectorycode;
-	}
-
-	public Integer getSearchCriteriaType() {
-		return searchCriteriaType;
-	}
-
-	public void setSearchCriteriaType(Integer searchCriteriaType) {
-		this.searchCriteriaType = searchCriteriaType;
-	}
-
-	private Integer viewoption;
-
-	public List<LSworkflow> getLstworkflow() {
-		return lstworkflow;
-	}
-
-	public void setLstworkflow(List<LSworkflow> lstworkflow) {
-		this.lstworkflow = lstworkflow;
-//		if (this.lsworkflow != null && lstworkflow != null  && lstworkflow.size() > 0) {
-//			List<Integer> lstworkflowcode = new ArrayList<Integer>();
-//			if (lstworkflow != null && lstworkflow.size() > 0) {
-//				lstworkflowcode = lstworkflow.stream().map(LSworkflow::getWorkflowcode).collect(Collectors.toList());
-//
-//				if (lstworkflowcode.contains(this.lsworkflow.getWorkflowcode())) {
-//					this.setCanuserprocess(true);
-//				} else {
-//					this.setCanuserprocess(false);
-//				}
-//			} else {
-//				this.setCanuserprocess(false);
-//			}
-//		} else {
-//			this.setCanuserprocess(false);
-//		}
-//		
-//		this.lstworkflow = lstworkflow;
-
-	}
-
+	
 	@ManyToOne
 	private Lsrepositoriesdata lsrepositoriesdata;
 
 	@ManyToOne
 	private Lsrepositories lsrepositories;
-
-//	@Transient
-//	private Integer lStprotocolworkflow;
-//	
-//	public Integer getlStprotocolworkflow() {
-//		return lStprotocolworkflow;
-//	}
-//
-//	public void setlStprotocolworkflow(LSprotocolworkflow lStprotocolworkflow) {
-//		this.lStprotocolworkflow = lSprotocolworkflow != null ? lSprotocolworkflow.getWorkflowcode() : null;
-//	}
 
 	@ManyToOne
 	private LSuserMaster assignedto;
@@ -530,59 +209,11 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	@Transient
 	List<LSprojectmaster> lstproject;
 
-	public LSworkflow getLsworkflow() {
-		return lsworkflow;
-	}
-
-	public void setLsworkflow(LSworkflow lsworkflow) {
-		this.lsworkflow = lsworkflow;
-	}
-
 	@Transient
 	private Integer activekey;
 
-	public Integer getActivekey() {
-		return activekey;
-	}
-
-	public void setActivekey(Integer activekey) {
-		this.activekey = activekey;
-	}
-
 	@Transient
 	private Date notificationdate;
-
-	public Date getNotificationdate() {
-		return notificationdate;
-	}
-
-	public void setNotificationdate(Date notificationdate) {
-		this.notificationdate = notificationdate;
-	}
-
-	public List<LSprojectmaster> getLstproject() {
-		return lstproject;
-	}
-
-	public void setLstproject(List<LSprojectmaster> lstproject) {
-		this.lstproject = lstproject;
-	}
-
-	public Integer getOrderdisplaytype() {
-		return orderdisplaytype;
-	}
-
-	public void setOrderdisplaytype(Integer orderdisplaytype) {
-		this.orderdisplaytype = orderdisplaytype;
-	}
-
-	public Long getDirectorycode() {
-		return directorycode;
-	}
-
-	public void setDirectorycode(Long directorycode) {
-		this.directorycode = directorycode;
-	}
 
 	@Transient
 	LScfttransaction objmanualaudit;
@@ -602,61 +233,10 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	@Transient
 	private String createdbyusername;
 
-//	@Transient
-//	private String tenantname;
-
-	public String getCreatedbyusername() {
-		return createdbyusername;
-	}
-
-	public void setCreatedbyusername(String createdbyusername) {
-		this.createdbyusername = createdbyusername;
-	}
-
-	public String getTestname() {
-		return testname;
-	}
-
-	public Lsrepositoriesdata getLsrepositoriesdata() {
-		return lsrepositoriesdata;
-	}
-
-	public Lsrepositories getLsrepositories() {
-		return lsrepositories;
-	}
-
-	public void setLsrepositoriesdata(Lsrepositoriesdata lsrepositoriesdata) {
-		this.lsrepositoriesdata = lsrepositoriesdata;
-	}
-
-	public void setLsrepositories(Lsrepositories lsrepositories) {
-		this.lsrepositories = lsrepositories;
-	}
-
-	public void setTestname(String testname) {
-		this.testname = testname;
-	}
-
 	@ManyToOne
 	private LsAutoregister lsautoregister;
 
-	public LsAutoregister getLsautoregister() {
-		return lsautoregister;
-	}
-
-	public void setLsautoregister(LsAutoregister lsautoregister) {
-		this.lsautoregister = lsautoregister;
-	}
-
 	private Boolean repeat;
-
-	public Boolean getRepeat() {
-		return repeat;
-	}
-
-	public void setRepeat(Boolean repeat) {
-		this.repeat = repeat;
-	}
 
 	@Transient
 	private String originurl;
@@ -670,22 +250,6 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	@Transient
 	private LsAutoregister lsautoregisterorder;
 
-	public LsAutoregister getLsautoregisterorder() {
-		return lsautoregisterorder;
-	}
-
-	public void setLsautoregisterorder(LsAutoregister lsautoregisterorder) {
-		this.lsautoregisterorder = lsautoregisterorder;
-	}
-
-	public List<CloudLsLogilabprotocolstepInfo> getCloudLsLogilabprotocolstepInfo() {
-		return CloudLsLogilabprotocolstepInfo;
-	}
-
-	public void setCloudLsLogilabprotocolstepInfo(List<CloudLsLogilabprotocolstepInfo> cloudLsLogilabprotocolstepInfo) {
-		CloudLsLogilabprotocolstepInfo = cloudLsLogilabprotocolstepInfo;
-	}
-
 	@Transient
 	private List<LSprotocolorderworkflowhistory> lsprotocolorderworkflowhistory;
 
@@ -698,70 +262,6 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	@Transient
 	private List<LsLogilabprotocolstepInfo> LsLogilabprotocolstepInfo;
 
-	public List<LsLogilabprotocolstepInfo> getLsLogilabprotocolstepInfo() {
-		return LsLogilabprotocolstepInfo;
-	}
-
-	public void setLsLogilabprotocolstepInfo(List<LsLogilabprotocolstepInfo> lsLogilabprotocolstepInfo) {
-		LsLogilabprotocolstepInfo = lsLogilabprotocolstepInfo;
-	}
-
-	public Integer getVersionno() {
-		return versionno;
-	}
-
-	public Integer getRegister() {
-		return register;
-	}
-
-	public void setVersionno(Integer versionno) {
-		this.versionno = versionno;
-	}
-
-	public void setRegister(Integer register) {
-		this.register = register;
-	}
-
-	public List<LSprotocolorderworkflowhistory> getLsprotocolorderworkflowhistory() {
-		return lsprotocolorderworkflowhistory;
-	}
-
-	public void setLsprotocolorderworkflowhistory(List<LSprotocolorderworkflowhistory> lsprotocolorderworkflowhistory) {
-		this.lsprotocolorderworkflowhistory = lsprotocolorderworkflowhistory;
-	}
-
-	public String getUnifielduserid() {
-		return unifielduserid;
-	}
-
-	public void setUnifielduserid(String unifielduserid) {
-		this.unifielduserid = unifielduserid;
-	}
-
-	public Boolean getCanuserprocess() {
-		return canuserprocess;
-	}
-
-	public void setCanuserprocess(Boolean canuserprocess) {
-		this.canuserprocess = canuserprocess;
-	}
-
-	public String getOriginurl() {
-		return originurl;
-	}
-
-	public void setOriginurl(String originurl) {
-		this.originurl = originurl;
-	}
-
-//	public String getTenantname() {
-//		return tenantname;
-//	}
-//
-//	public void setTenantname(String tenantname) {
-//		this.tenantname = tenantname;
-//	}
-
 	private Integer approved;
 
 	private Integer rejected;
@@ -770,6 +270,276 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 
 	private Integer createby;
 
+	@Transient
+	private Integer ismultitenant;
+
+	private String fileuid;
+
+	private Integer containerstored;
+
+	private String fileuri;
+	
+	@Transient
+	private LsActiveWidgets lsActiveWidgets;
+	
+	@Transient
+	private Integer accouttype;
+
+	@Transient
+	private String orderlink;
+	
+	@Transient
+	private List<LSprotocolorderversion> lSprotocolorderversion;
+
+	@Transient
+	private String content;
+
+	private Long applicationsequence;
+	private Long sitesequence;
+	private Long projectsequence;
+	private Long tasksequence;
+	private Long ordertypesequence;
+
+	public String getFileuid() {
+		return fileuid;
+	}
+
+	public void setFileuid(String fileuid) {
+		this.fileuid = fileuid;
+	}
+
+	public Integer getContainerstored() {
+		return containerstored;
+	}
+
+	public void setContainerstored(Integer containerstored) {
+		this.containerstored = containerstored;
+	}
+
+	public String getFileuri() {
+		return fileuri;
+	}
+
+	public void setFileuri(String fileuri) {
+		this.fileuri = fileuri;
+	}
+
+	public String getOrderlink() {
+		return orderlink;
+	}
+
+	public void setOrderlink(String orderlink) {
+		this.orderlink = orderlink;
+	}
+
+	public List<LSprotocolorderversion> getlSprotocolorderversion() {
+		return lSprotocolorderversion;
+	}
+
+	public void setlSprotocolorderversion(List<LSprotocolorderversion> lSprotocolorderversion) {
+		this.lSprotocolorderversion = lSprotocolorderversion;
+	}
+
+	public String getContent() {
+		return content;
+	}
+
+	public void setContent(String content) {
+		this.content = content;
+	}
+
+	public interface Protocolorder {
+		public Long getProtocolordercode();
+
+		public String getProtoclordername();
+
+		public Date getCreatedtimestamp();
+
+		public LSuserMasterInterfaceforassignto getAssignedto();
+
+		public LSuserMasterInterface getLsuserMaster();
+
+		public Integer getTestcode();
+
+		public Integer getOrdercancell();
+
+	}
+
+	public interface LSuserMasterInterfaceforassignto {
+		String getUsername();
+	}
+
+	public interface LSuserMasterInterface {
+		String getUsername();
+	}
+
+	public LsActiveWidgets getLsActiveWidgets() {
+		return lsActiveWidgets;
+	}
+
+	public void setLsActiveWidgets(LsActiveWidgets lsActiveWidgets) {
+		this.lsActiveWidgets = lsActiveWidgets;
+	}
+	
+	public Integer getAccouttype() {
+		return accouttype;
+	}
+
+	public void setAccouttype(Integer accouttype) {
+		this.accouttype = accouttype;
+	}
+	
+
+	public Integer getAutoregistercount() {
+		return autoregistercount;
+	}
+
+	public void setAutoregistercount(Integer autoregistercount) {
+		this.autoregistercount = autoregistercount;
+	}
+
+	public Lsprotocolorderstructure getLsprotocolorderstructure() {
+		return lsprotocolorderstructure;
+	}
+
+	public void setLsprotocolorderstructure(Lsprotocolorderstructure lsprotocolorderstructure) {
+		this.lsprotocolorderstructure = lsprotocolorderstructure;
+	}
+	
+	public LSOrdernotification getLsordernotification() {
+		return lsordernotification;
+	}
+
+	public void setLsordernotification(LSOrdernotification lsordernotification) {
+		this.lsordernotification = lsordernotification;
+	}
+	
+
+	public String getApprovelaccept() {
+		return approvelaccept;
+	}
+
+	public void setApprovelaccept(String approvelaccept) {
+		this.approvelaccept = approvelaccept;
+	}
+	
+	public Date getCautiondate() {
+		return cautiondate;
+	}
+
+	public void setCautiondate(Date cautiondate) {
+		this.cautiondate = cautiondate;
+	}
+	
+	public Date getDuedate() {
+		return duedate;
+	}
+
+	public void setDuedate(Date duedate) {
+		this.duedate = duedate;
+	}
+
+	public Long getApplicationsequence() {
+		return applicationsequence;
+	}
+
+	public void setApplicationsequence(Long applicationsequence) {
+		this.applicationsequence = applicationsequence;
+	}
+
+	public Long getSitesequence() {
+		return sitesequence;
+	}
+
+	public void setSitesequence(Long sitesequence) {
+		this.sitesequence = sitesequence;
+	}
+
+	public Long getProjectsequence() {
+		return projectsequence;
+	}
+
+	public void setProjectsequence(Long projectsequence) {
+		this.projectsequence = projectsequence;
+	}
+
+	public Long getTasksequence() {
+		return tasksequence;
+	}
+
+	public void setTasksequence(Long tasksequence) {
+		this.tasksequence = tasksequence;
+	}
+	
+	@Override
+	public int compareTo(LSlogilabprotocoldetail o) {
+		return this.getProtocolordercode().compareTo(o.getProtocolordercode());
+	}
+
+	public Integer getViewoption() {
+		return viewoption;
+	}
+
+	public void setViewoption(Integer viewoption) {
+		this.viewoption = viewoption;
+	}
+
+	public Integer getOrdercancell() {
+		return ordercancell;
+	}
+
+	public void setOrdercancell(Integer ordercancell) {
+		this.ordercancell = ordercancell;
+	}
+
+	public Integer getTeamcode() {
+		return teamcode;
+	}
+
+	public void setTeamcode(Integer teamcode) {
+		this.teamcode = teamcode;
+	}
+
+	public Integer getApprovelstatus() {
+		return approvelstatus;
+	}
+
+	public void setApprovelstatus(Integer approvelstatus) {
+		this.approvelstatus = approvelstatus;
+	}
+
+	public LSworkflow getIsFinalStep() {
+		return isFinalStep;
+	}
+
+	public void setIsFinalStep(LSworkflow isFinalStep) {
+		this.isFinalStep = isFinalStep;
+	}
+
+	public Integer getFinalworkflow() {
+		return finalworkflow;
+	}
+
+	public void setFinalworkflow(Integer finalworkflow) {
+		this.finalworkflow = finalworkflow;
+	}
+
+	public LSsheetworkflow getIsfinalstep() {
+		return isfinalstep;
+	}
+
+	public void setIsfinalstep(LSsheetworkflow isfinalstep) {
+		this.isfinalstep = isfinalstep;
+	}
+
+	public LSuserMaster getObjLoggeduser() {
+		return objLoggeduser;
+	}
+
+	public void setObjLoggeduser(LSuserMaster objLoggeduser) {
+		this.objLoggeduser = objLoggeduser;
+	}
+	
 	public Integer getCreateby() {
 		return createby;
 	}
@@ -938,185 +708,426 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 		this.ismultitenant = ismultitenant;
 	}
 
-	@Transient
-	private Integer ismultitenant;
-
-	@Override
-	public int compareTo(LSlogilabprotocoldetail o) {
-		return this.getProtocolordercode().compareTo(o.getProtocolordercode());
+	public List<LsLogilabprotocolstepInfo> getLsLogilabprotocolstepInfo() {
+		return LsLogilabprotocolstepInfo;
 	}
 
-	public Integer getViewoption() {
-		return viewoption;
+	public void setLsLogilabprotocolstepInfo(List<LsLogilabprotocolstepInfo> lsLogilabprotocolstepInfo) {
+		LsLogilabprotocolstepInfo = lsLogilabprotocolstepInfo;
 	}
 
-	public void setViewoption(Integer viewoption) {
-		this.viewoption = viewoption;
+	public Integer getVersionno() {
+		return versionno;
 	}
 
-	public Integer getOrdercancell() {
-		return ordercancell;
+	public Integer getRegister() {
+		return register;
 	}
 
-	public void setOrdercancell(Integer ordercancell) {
-		this.ordercancell = ordercancell;
+	public void setVersionno(Integer versionno) {
+		this.versionno = versionno;
 	}
 
-	public Integer getTeamcode() {
-		return teamcode;
+	public void setRegister(Integer register) {
+		this.register = register;
 	}
 
-	public void setTeamcode(Integer teamcode) {
-		this.teamcode = teamcode;
+	public List<LSprotocolorderworkflowhistory> getLsprotocolorderworkflowhistory() {
+		return lsprotocolorderworkflowhistory;
 	}
 
-	public Integer getApprovelstatus() {
-		return approvelstatus;
+	public void setLsprotocolorderworkflowhistory(List<LSprotocolorderworkflowhistory> lsprotocolorderworkflowhistory) {
+		this.lsprotocolorderworkflowhistory = lsprotocolorderworkflowhistory;
 	}
 
-	public void setApprovelstatus(Integer approvelstatus) {
-		this.approvelstatus = approvelstatus;
+	public String getUnifielduserid() {
+		return unifielduserid;
 	}
 
-	public LSworkflow getIsFinalStep() {
-		return isFinalStep;
+	public void setUnifielduserid(String unifielduserid) {
+		this.unifielduserid = unifielduserid;
 	}
 
-	public void setIsFinalStep(LSworkflow isFinalStep) {
-		this.isFinalStep = isFinalStep;
+	public Boolean getCanuserprocess() {
+		return canuserprocess;
 	}
 
-	public Integer getFinalworkflow() {
-		return finalworkflow;
+	public void setCanuserprocess(Boolean canuserprocess) {
+		this.canuserprocess = canuserprocess;
 	}
 
-	public void setFinalworkflow(Integer finalworkflow) {
-		this.finalworkflow = finalworkflow;
+	public String getOriginurl() {
+		return originurl;
 	}
 
-	public LSsheetworkflow getIsfinalstep() {
-		return isfinalstep;
+	public void setOriginurl(String originurl) {
+		this.originurl = originurl;
+	}
+	
+
+	public LsAutoregister getLsautoregisterorder() {
+		return lsautoregisterorder;
 	}
 
-	public void setIsfinalstep(LSsheetworkflow isfinalstep) {
-		this.isfinalstep = isfinalstep;
+	public void setLsautoregisterorder(LsAutoregister lsautoregisterorder) {
+		this.lsautoregisterorder = lsautoregisterorder;
 	}
 
-	public LSuserMaster getObjLoggeduser() {
-		return objLoggeduser;
+	public List<CloudLsLogilabprotocolstepInfo> getCloudLsLogilabprotocolstepInfo() {
+		return CloudLsLogilabprotocolstepInfo;
 	}
 
-	public void setObjLoggeduser(LSuserMaster objLoggeduser) {
-		this.objLoggeduser = objLoggeduser;
+	public void setCloudLsLogilabprotocolstepInfo(List<CloudLsLogilabprotocolstepInfo> cloudLsLogilabprotocolstepInfo) {
+		CloudLsLogilabprotocolstepInfo = cloudLsLogilabprotocolstepInfo;
 	}
 
-	private String fileuid;
-
-	private Integer containerstored;
-
-	private String fileuri;
-
-	public String getFileuid() {
-		return fileuid;
+	public Date getOrderstartedon() {
+		return orderstartedon;
 	}
 
-	public void setFileuid(String fileuid) {
-		this.fileuid = fileuid;
+	public void setOrderstartedon(Date orderstartedon) {
+		this.orderstartedon = orderstartedon;
+	}
+	public String getProtocoldatainfo() {
+		return protocoldatainfo;
 	}
 
-	public Integer getContainerstored() {
-		return containerstored;
+	public void setProtocoldatainfo(String protocoldatainfo) {
+		this.protocoldatainfo = protocoldatainfo;
 	}
 
-	public void setContainerstored(Integer containerstored) {
-		this.containerstored = containerstored;
+
+	public LsAutoregister getLsautoregister() {
+		return lsautoregister;
 	}
 
-	public String getFileuri() {
-		return fileuri;
+	public void setLsautoregister(LsAutoregister lsautoregister) {
+		this.lsautoregister = lsautoregister;
 	}
 
-	public void setFileuri(String fileuri) {
-		this.fileuri = fileuri;
+	public String getCreatedbyusername() {
+		return createdbyusername;
 	}
 
-	@Transient
-	private String orderlink;
-
-	public String getOrderlink() {
-		return orderlink;
+	public void setCreatedbyusername(String createdbyusername) {
+		this.createdbyusername = createdbyusername;
 	}
 
-	public void setOrderlink(String orderlink) {
-		this.orderlink = orderlink;
+	public String getTestname() {
+		return testname;
 	}
 
-	@Transient
-	private List<LSprotocolorderversion> lSprotocolorderversion;
-
-	public List<LSprotocolorderversion> getlSprotocolorderversion() {
-		return lSprotocolorderversion;
+	public Lsrepositoriesdata getLsrepositoriesdata() {
+		return lsrepositoriesdata;
 	}
 
-	public void setlSprotocolorderversion(List<LSprotocolorderversion> lSprotocolorderversion) {
-		this.lSprotocolorderversion = lSprotocolorderversion;
+	public Lsrepositories getLsrepositories() {
+		return lsrepositories;
 	}
 
-	@Transient
-	private String content;
-
-	public String getContent() {
-		return content;
+	public void setLsrepositoriesdata(Lsrepositoriesdata lsrepositoriesdata) {
+		this.lsrepositoriesdata = lsrepositoriesdata;
 	}
 
-	public void setContent(String content) {
-		this.content = content;
+	public void setLsrepositories(Lsrepositories lsrepositories) {
+		this.lsrepositories = lsrepositories;
 	}
 
-	public interface Protocolorder {
-		public Long getProtocolordercode();
-
-		public String getProtoclordername();
-
-		public Date getCreatedtimestamp();
-
-		public LSuserMasterInterfaceforassignto getAssignedto();
-
-		public LSuserMasterInterface getLsuserMaster();
-
-		public Integer getTestcode();
-
-		public Integer getOrdercancell();
-
+	public void setTestname(String testname) {
+		this.testname = testname;
+	}
+	
+	public Boolean getRepeat() {
+		return repeat;
 	}
 
-	public interface LSuserMasterInterfaceforassignto {
-		String getUsername();
+	public void setRepeat(Boolean repeat) {
+		this.repeat = repeat;
 	}
 
-	public interface LSuserMasterInterface {
-		String getUsername();
+	public String getPeriod() {
+		return period;
 	}
 
-	@Transient
-	private LsActiveWidgets lsActiveWidgets;
-
-	public LsActiveWidgets getLsActiveWidgets() {
-		return lsActiveWidgets;
+	public void setPeriod(String period) {
+		this.period = period;
 	}
 
-	public void setLsActiveWidgets(LsActiveWidgets lsActiveWidgets) {
-		this.lsActiveWidgets = lsActiveWidgets;
+	public Date getNotificationdate() {
+		return notificationdate;
 	}
 
-	@Transient
-	private Integer accouttype;
-
-	public Integer getAccouttype() {
-		return accouttype;
+	public void setNotificationdate(Date notificationdate) {
+		this.notificationdate = notificationdate;
 	}
 
-	public void setAccouttype(Integer accouttype) {
-		this.accouttype = accouttype;
+	public List<LSprojectmaster> getLstproject() {
+		return lstproject;
 	}
+
+	public void setLstproject(List<LSprojectmaster> lstproject) {
+		this.lstproject = lstproject;
+	}
+
+	public Integer getOrderdisplaytype() {
+		return orderdisplaytype;
+	}
+
+	public void setOrderdisplaytype(Integer orderdisplaytype) {
+		this.orderdisplaytype = orderdisplaytype;
+	}
+
+	public Long getDirectorycode() {
+		return directorycode;
+	}
+
+	public void setDirectorycode(Long directorycode) {
+		this.directorycode = directorycode;
+	}
+	
+
+	public Integer getActiveuser() {
+		return activeuser;
+	}
+
+	public void setActiveuser(Integer activeuser) {
+		this.activeuser = activeuser;
+	}
+	
+	public Boolean getSentforapprovel() {
+		return sentforapprovel;
+	}
+
+	public void setSentforapprovel(Boolean sentforapprovel) {
+		this.sentforapprovel = sentforapprovel;
+	}
+
+	public List<LSlogilablimsorder> getLsLSlogilablimsorder() {
+		return lsLSlogilablimsorder;
+	}
+
+	public void setLsLSlogilablimsorder(List<LSlogilablimsorder> lsLSlogilablimsorder) {
+		this.lsLSlogilablimsorder = lsLSlogilablimsorder;
+	}
+
+	public Elnmaterial getElnmaterial() {
+		return elnmaterial;
+	}
+
+	public Integer getLockeduser() {
+		return lockeduser;
+	}
+
+	public void setLockeduser(Integer lockeduser) {
+		this.lockeduser = lockeduser;
+	}
+
+	public String getLockedusername() {
+		return lockedusername;
+	}
+
+	public void setLockedusername(String lockedusername) {
+		this.lockedusername = lockedusername;
+	}
+
+	public void setElnmaterial(Elnmaterial elnmaterial) {
+		this.elnmaterial = elnmaterial;
+	}
+
+	public ElnmaterialInventory getElnmaterialinventory() {
+		return elnmaterialinventory;
+	}
+
+	public void setElnmaterialinventory(ElnmaterialInventory elnmaterialinventory) {
+		this.elnmaterialinventory = elnmaterialinventory;
+	}
+
+	public Material getMaterial() {
+		return material;
+	}
+
+	public void setMaterial(Material material) {
+		this.material = material;
+	}
+
+	public MaterialInventory getMaterialinventory() {
+		return materialinventory;
+	}
+
+	public void setMaterialinventory(MaterialInventory materialinventory) {
+		this.materialinventory = materialinventory;
+	}
+
+	public String getComment() {
+		return comment;
+	}
+
+	public void setComment(String comment) {
+		this.comment = comment;
+	}
+
+	public Date getModifidate() {
+		return modifidate;
+	}
+
+	public void setModifidate(Date modifidate) {
+		this.modifidate = modifidate;
+	}
+
+	public LoggedUser getObjuser() {
+		return objuser;
+	}
+
+	public void setObjuser(LoggedUser objuser) {
+		this.objuser = objuser;
+	}
+
+	public Integer getMultiusergroupcode() {
+		return multiusergroupcode;
+	}
+
+	public void setMultiusergroupcode(Integer multiusergroupcode) {
+		this.multiusergroupcode = multiusergroupcode;
+	}
+
+	public String getKeyword() {
+		return keyword;
+	}
+
+	public void setKeyword(String keyword) {
+		this.keyword = keyword;
+	}
+
+	public String getOrderflag() {
+		return orderflag;
+	}
+
+	public void setOrderflag(String orderflag) {
+		this.orderflag = orderflag;
+	}
+	
+	public Integer getActivekey() {
+		return activekey;
+	}
+
+	public void setActivekey(Integer activekey) {
+		this.activekey = activekey;
+	}
+
+	public Integer getOrderstarted() {
+		return orderstarted;
+	}
+
+	public void setOrderstarted(Integer orderstarted) {
+		this.orderstarted = orderstarted;
+	}
+	
+	public Elnprotocolworkflow getElnprotocolworkflow() {
+		return elnprotocolworkflow;
+	}
+
+	public void setElnprotocolworkflow(Elnprotocolworkflow elnprotocolworkflow) {
+		this.elnprotocolworkflow = elnprotocolworkflow;
+	}
+
+	public LSuserMaster getOrderstartedby() {
+		return orderstartedby;
+	}
+
+	public void setOrderstartedby(LSuserMaster orderstartedby) {
+		this.orderstartedby = orderstartedby;
+	}
+
+	public List<Elnprotocolworkflow> getLstelnprotocolworkflow() {
+		return lstelnprotocolworkflow;
+	}
+
+	public void setLstelnprotocolworkflow(List<Elnprotocolworkflow> lstelnprotocolworkflow) {
+//		this.lstelnprotocolworkflow = lstelnprotocolworkflow;
+		if (this.elnprotocolworkflow != null && lstelnprotocolworkflow != null && lstelnprotocolworkflow.size() > 0) {
+			List<Integer> lstworkflowcode = new ArrayList<Integer>();
+			if (lstelnprotocolworkflow != null && lstelnprotocolworkflow.size() > 0) {
+				lstworkflowcode = lstelnprotocolworkflow.stream().map(Elnprotocolworkflow::getWorkflowcode)
+						.collect(Collectors.toList());
+
+				if (lstworkflowcode.contains(this.elnprotocolworkflow.getWorkflowcode())) {
+					this.setCanuserprocess(true);
+				} else {
+					this.setCanuserprocess(false);
+				}
+			} else {
+				this.setCanuserprocess(false);
+			}
+		} else {
+			this.setCanuserprocess(false);
+		}
+
+		this.lstelnprotocolworkflow = lstelnprotocolworkflow;
+	}
+
+	public List<LSuserMaster> getLstuserMaster() {
+		return lstuserMaster;
+	}
+
+	public void setLstuserMaster(List<LSuserMaster> lstuserMaster) {
+		this.lstuserMaster = lstuserMaster;
+	}
+
+
+	public LSworkflow getCurrentStep() {
+		return currentStep;
+	}
+
+	public void setCurrentStep(LSworkflow currentStep) {
+		this.currentStep = currentStep;
+	}
+
+	public List<Long> getLstdirectorycode() {
+		return lstdirectorycode;
+	}
+
+	public void setLstdirectorycode(List<Long> lstdirectorycode) {
+		this.lstdirectorycode = lstdirectorycode;
+	}
+
+	public Integer getSearchCriteriaType() {
+		return searchCriteriaType;
+	}
+
+	public void setSearchCriteriaType(Integer searchCriteriaType) {
+		this.searchCriteriaType = searchCriteriaType;
+	}
+	
+	public List<LSworkflow> getLstworkflow() {
+		return lstworkflow;
+	}
+
+	public void setLstworkflow(List<LSworkflow> lstworkflow) {
+		this.lstworkflow = lstworkflow;
+	}
+	
+	public LSworkflow getLsworkflow() {
+		return lsworkflow;
+	}
+
+	public void setLsworkflow(LSworkflow lsworkflow) {
+		this.lsworkflow = lsworkflow;
+	}
+
+	public LStestmasterlocal getLstestmasterlocal() {
+		return lstestmasterlocal;
+	}
+
+	public void setLstestmasterlocal(LStestmasterlocal lstestmasterlocal) {
+		this.lstestmasterlocal = lstestmasterlocal;
+	}
+
+	public Long getOrdertypesequence() {
+		return ordertypesequence;
+	}
+
+	public void setOrdertypesequence(Long ordertypesequence) {
+		this.ordertypesequence = ordertypesequence;
+	}
+
 }

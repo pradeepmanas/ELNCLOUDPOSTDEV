@@ -58,25 +58,11 @@ public class LSlogilablimsorderdetail {
 	
 	@Transient
 	private String period;
-	
-	public String getPeriod() {
-		return period;
-	}
-
-	public void setPeriod(String period) {
-		this.period = period;
-	}
+	@Transient
+	private Integer accouttype;
 
 	@Transient
 	private SearchCriteria searchCriteria;
-
-	public SearchCriteria getSearchCriteria() {
-		return searchCriteria;
-	}
-
-	public void setSearchCriteria(SearchCriteria searchCriteria) {
-		this.searchCriteria = searchCriteria;
-	}
 
 	@Column(name = "filetype")
 	private Integer filetype;
@@ -87,59 +73,17 @@ public class LSlogilablimsorderdetail {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date duedate;
 	
-	public Date getDuedate() {
-		return duedate;
-	}
-
-	public void setDuedate(Date duedate) {
-		this.duedate = duedate;
-	}
-	
 	@OneToMany
 	@JoinColumn(name="batchcode")
 	private List<LSOrderElnMethod> lsorderelnmethod;
-	
 	
 	@Transient
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date cautiondate;
 	
-	public Date getCautiondate() {
-		return cautiondate;
-	}
-
-	public void setCautiondate(Date cautiondate) {
-		this.cautiondate = cautiondate;
-	}
-
 	private String approvelaccept;
-
-	public String getApprovelaccept() {
-		return approvelaccept;
-	}
-
-	public void setApprovelaccept(String approvelaccept) {
-		this.approvelaccept = approvelaccept;
-	}
-
 	private Boolean sentforapprovel;
 	
-	public Boolean getSentforapprovel() {
-		return sentforapprovel;
-	}
-
-	public void setSentforapprovel(Boolean sentforapprovel) {
-		this.sentforapprovel = sentforapprovel;
-	}
-
-	public LoggedUser getObjuser() {
-		return objuser;
-	}
-
-	public void setObjuser(LoggedUser objuser) {
-		this.objuser = objuser;
-	}
-
 	@Column(name = "approvelstatus")
 	private Integer approvelstatus;
 	@Column(name = "lockeduser")
@@ -160,41 +104,10 @@ public class LSlogilablimsorderdetail {
 	@Transient
 	private LSSheetOrderStructure lssheetOrderStructure;
 	
-	public LSSheetOrderStructure getLssheetOrderStructure() {
-		return lssheetOrderStructure;
-	}
-
-	public void setLssheetOrderStructure(LSSheetOrderStructure lssheetOrderStructure) {
-		this.lssheetOrderStructure = lssheetOrderStructure;
-	}
-
-	public LScentralisedUsers getLscentralisedusers() {
-		return lscentralisedusers;
-	}
-
-	public void setLscentralisedusers(LScentralisedUsers lscentralisedusers) {
-		this.lscentralisedusers = lscentralisedusers;
-	}
-
 	@Transient
 	private List<LSuserMaster> lstuserMaster;
 	
-	public List<LSuserMaster> getLstuserMaster() {
-		return lstuserMaster;
-	}
-
-	public void setLstuserMaster(List<LSuserMaster> lstuserMaster) {
-		this.lstuserMaster = lstuserMaster;
-	}
-
-	public Date getModifidate() {
-		return modifidate;
-	}
-
-	public void setModifidate(Date modifidate) {
-		this.modifidate = modifidate;
-	}
-
+	
 	@Column(columnDefinition = "char(10)", name = "OrderFlag")
 	private String orderflag;
 
@@ -218,14 +131,6 @@ public class LSlogilablimsorderdetail {
 	@Transient
 	private String comment;
 
-	public String getKeyword() {
-		return keyword;
-	}
-
-	public void setKeyword(String keyword) {
-		this.keyword = keyword;
-	}
-
 	@ManyToOne
 	private LSworkflow lsworkflow;
 
@@ -241,34 +146,10 @@ public class LSlogilablimsorderdetail {
 	private Boolean repeat;
 	
     private Integer autoregistercount;
-
-	public Integer getAutoregistercount() {
-		return autoregistercount;
-	}
-
-	public void setAutoregistercount(Integer autoregistercount) {
-		this.autoregistercount = autoregistercount;
-	}
-
-	public Boolean getRepeat() {
-		return repeat;
-	}
-
-	public void setRepeat(Boolean repeat) {
-		this.repeat = repeat;
-	}
-
+    
 	@ManyToOne
 	private LSOrdernotification lsordernotification;
 	
-	public LSOrdernotification getLsordernotification() {
-		return lsordernotification;
-	}
-
-	public void setLsordernotification(LSOrdernotification lsordernotification) {
-		this.lsordernotification = lsordernotification;
-	}
-
 	@ManyToOne
 	private Material material;
 	@ManyToOne
@@ -278,38 +159,6 @@ public class LSlogilablimsorderdetail {
 	private Elnmaterial elnmaterial;
 	@ManyToOne
 	private ElnmaterialInventory elnmaterialinventory;
-
-	public Elnmaterial getElnmaterial() {
-		return elnmaterial;
-	}
-
-	public void setElnmaterial(Elnmaterial elnmaterial) {
-		this.elnmaterial = elnmaterial;
-	}
-
-	public ElnmaterialInventory getElnmaterialinventory() {
-		return elnmaterialinventory;
-	}
-
-	public void setElnmaterialinventory(ElnmaterialInventory elnmaterialinventory) {
-		this.elnmaterialinventory = elnmaterialinventory;
-	}
-
-	public Material getMaterial() {
-		return material;
-	}
-
-	public void setMaterial(Material material) {
-		this.material = material;
-	}
-
-	public MaterialInventory getMaterialinventory() {
-		return materialinventory;
-	}
-
-	public void setMaterialinventory(MaterialInventory materialinventory) {
-		this.materialinventory = materialinventory;
-	}
 
 	@OneToMany
 	@JoinColumn(name = "batchcode")
@@ -324,14 +173,6 @@ public class LSlogilablimsorderdetail {
 
 	@Transient
 	private LsAutoregister lsautoregisterorderdetail;
-
-	public LsAutoregister getLsautoregisterorderdetail() {
-		return lsautoregisterorderdetail;
-	}
-
-	public void setLsautoregisterorderdetail(LsAutoregister lsautoregisterorderdetail) {
-		this.lsautoregisterorderdetail = lsautoregisterorderdetail;
-	}
 
 	@ManyToOne
 	private LSuserMaster lsuserMaster;
@@ -366,19 +207,9 @@ public class LSlogilablimsorderdetail {
 	@ManyToOne
 	private Lsrepositories lsrepositories;
 
-//	@Transient
-//	private List<LSlimsorder> lsLSlimsorder;
-
 	@ManyToOne
 	private LsAutoregister lsautoregisterorders;
 
-	public LsAutoregister getLsautoregisterorders() {
-		return lsautoregisterorders;
-	}
-
-	public void setLsautoregisterorders(LsAutoregister lsautoregisterorders) {
-		this.lsautoregisterorders = lsautoregisterorders;
-	}
 	@Transient
 	private List<LSlogilablimsorder> lsLSlogilablimsorder;
 
@@ -406,57 +237,17 @@ public class LSlogilablimsorderdetail {
 	@Transient
 	private String filefor;
 	
-	
-	public String getFilefor() {
-		return filefor;
-	}
-
-	public void setFilefor(String filefor) {
-		this.filefor = filefor;
-	}
 
 	@Transient
 	private List<Long> lstdirectorycode;
 
 	private Integer activeuser;
 
-	public Integer getActiveuser() {
-		return activeuser;
-	}
-
-	public void setActiveuser(Integer activeuser) {
-		this.activeuser = activeuser;
-	}
-	
-	public List<Long> getLstdirectorycode() {
-		return lstdirectorycode;
-	}
-
-	public void setLstdirectorycode(List<Long> lstdirectorycode) {
-		this.lstdirectorycode = lstdirectorycode;
-	}
-
 	@Transient
 	List<LSprotocolorderstephistory> lSprotocolorderstephistory;
 
-	public List<LSprotocolorderstephistory> getlSprotocolorderstephistory() {
-		return lSprotocolorderstephistory;
-	}
-
-	public void setlSprotocolorderstephistory(List<LSprotocolorderstephistory> lSprotocolorderstephistory) {
-		this.lSprotocolorderstephistory = lSprotocolorderstephistory;
-	}
-	
 	@Transient
 	private Date notificationdate;
-	
-	public Date getNotificationdate() {
-		return notificationdate;
-	}
-
-	public void setNotificationdate(Date notificationdate) {
-		this.notificationdate = notificationdate;
-	}
 
 	private Integer filecode;
 
@@ -466,28 +257,6 @@ public class LSlogilablimsorderdetail {
 
 	private Integer teamcode;
 
-	public Integer getTeamcode() {
-		return teamcode;
-	}
-
-	public void setTeamcode(Integer teamcode) {
-		this.teamcode = teamcode;
-	}
-
-	public Integer getOrdercancell() {
-		return ordercancell;
-	}
-
-	public void setOrdercancell(Integer ordercancell) {
-		this.ordercancell = ordercancell;
-	}
-
-	// public Integer getRejected() {
-//		return rejected;
-//	}
-//	public void setRejected(Integer rejected) {
-//		this.rejected = rejected;
-//	}
 	@ManyToOne
 	private LSuserMaster assignedto;
 
@@ -501,119 +270,9 @@ public class LSlogilablimsorderdetail {
 	@Column(name = "ordersaved")
 	private Integer ordersaved = 0;
 	
-	public Integer getOrdersaved() {
-		return ordersaved;
-	}
-
-	public void setOrdersaved(Integer ordersaved) {
-		this.ordersaved = ordersaved;
-	}
-	
-	public List<LsOrderattachments> getLsOrderattachments() {
-		return lsOrderattachments;
-	}
-
-	public void setLsOrderattachments(List<LsOrderattachments> lsOrderattachments) {
-		this.lsOrderattachments = lsOrderattachments;
-	}
-
-	public List<ELNFileAttachments> getELNFileAttachments() {
-		return ELNFileAttachments;
-	}
-
-	public void setELNFileAttachments(List<ELNFileAttachments> ELNFileAttachments) {
-		this.ELNFileAttachments = ELNFileAttachments;
-	}
-
-	public LScfttransaction getObjmanualaudit() {
-		return objmanualaudit;
-	}
-
-	public void setObjmanualaudit(LScfttransaction objmanualaudit) {
-		this.objmanualaudit = objmanualaudit;
-	}
-
-	public Lsrepositoriesdata getLsrepositoriesdata() {
-		return lsrepositoriesdata;
-	}
-
-	public void setLsrepositoriesdata(Lsrepositoriesdata lsrepositoriesdata) {
-		this.lsrepositoriesdata = lsrepositoriesdata;
-	}
-
-	public List<LSprojectmaster> getLstproject() {
-		return lstproject;
-	}
-
-	public void setLstproject(List<LSprojectmaster> lstproject) {
-		this.lstproject = lstproject;
-	}
-
-	public Lsrepositories getLsrepositories() {
-		return lsrepositories;
-	}
-
-	public void setLsrepositories(Lsrepositories lsrepositories) {
-		this.lsrepositories = lsrepositories;
-	}
-
-	public List<LSworkflow> getLstworkflow() {
-		return lstworkflow;
-	}
-//	public void setLstworkflow(List<LSworkflow> lstworkflow) {
-//		this.lstworkflow = lstworkflow;
-//	}
 
 	@Transient
 	private boolean canuserprocess;
-
-	public boolean isCanuserprocess() {
-		return canuserprocess;
-	}
-
-	public void setCanuserprocess(boolean canuserprocess) {
-		this.canuserprocess = canuserprocess;
-	}
-
-	public void setLstworkflow(List<LSworkflow> lstworkflow) {
-
-//		this.lstworkflow = lstworkflow;
-
-		if (this.lsworkflow != null && lstworkflow != null && lstworkflow.size() > 0) {
-			List<Integer> lstworkflowcode = new ArrayList<Integer>();
-			if (lstworkflow != null && lstworkflow.size() > 0) {
-				lstworkflowcode = lstworkflow.stream().map(LSworkflow::getWorkflowcode).collect(Collectors.toList());
-
-				if (lstworkflowcode.contains(this.lsworkflow.getWorkflowcode())) {
-					this.setCanuserprocess(true);
-				} else {
-					this.setCanuserprocess(false);
-				}
-			} else {
-				this.setCanuserprocess(false);
-			}
-		} else {
-			this.setCanuserprocess(false);
-		}
-
-		this.lstworkflow = lstworkflow;
-	}
-
-	public Integer getApproved() {
-		return approved;
-	}
-
-	public void setApproved(Integer approved) {
-		this.approved = approved;
-	}
-
-	public String getNbatchcode() {
-		return nbatchcode;
-	}
-
-	public void setNbatchcode(String nbatchcode) {
-		this.nbatchcode = nbatchcode;
-	}
 
 	@Transient
 	private Integer isLockbycurrentuser;
@@ -647,20 +306,24 @@ public class LSlogilablimsorderdetail {
 
 	@Transient
 	private Integer checked = 0;
-
-	public Integer getChecked() {
-		return checked;
-	}
-
-	public void setChecked(Integer checked) {
-		this.checked = checked;
-	}
+	
+	@Transient
+	private String orderlink;
+	
+	@Transient
+	private LsActiveWidgets lsActiveWidgets;
 
 	@Transient
 	List<LStestparameter> lstestparameter;
 
 	@Transient
 	private Boolean noworkflow = false;
+	
+	private Long applicationsequence;
+	private Long sitesequence;
+	private Long projectsequence;
+	private Long tasksequence;
+	private Long ordertypesequence;
 
 	public LSlogilablimsorderdetail() {
 
@@ -682,6 +345,15 @@ public class LSlogilablimsorderdetail {
 		this.filetype = filetype;
 		this.completedtimestamp = completedtimestamp;
 
+	}
+	
+
+	public Integer getChecked() {
+		return checked;
+	}
+
+	public void setChecked(Integer checked) {
+		this.checked = checked;
 	}
 
 	public Response getResponse() {
@@ -855,14 +527,6 @@ public class LSlogilablimsorderdetail {
 	public void setLsprojectmaster(LSprojectmaster lsprojectmaster) {
 		this.lsprojectmaster = lsprojectmaster;
 	}
-
-//	public List<LSlimsorder> getLsLSlimsorder() {
-//		return lsLSlimsorder;
-//	}
-//
-//	public void setLsLSlimsorder(List<LSlimsorder> lsLSlimsorder) {
-//		this.lsLSlimsorder = lsLSlimsorder;
-//	}
 
 	public List<LSlogilablimsorder> getLsLSlogilablimsorder() {
 		return lsLSlogilablimsorder;
@@ -1137,12 +801,6 @@ public class LSlogilablimsorderdetail {
 		this.comment = comment;
 	}
 	
-	@Transient
-	private String orderlink;
-	
-	@Transient
-	private LsActiveWidgets lsActiveWidgets;
-
 	public LsActiveWidgets getLsActiveWidgets() {
 		return lsActiveWidgets;
 	}
@@ -1175,8 +833,7 @@ public class LSlogilablimsorderdetail {
 	 public interface LSuserMasterInterface {
 		 String getUsername();
 	 }
-	 @Transient
-		private Integer accouttype;	
+	 	
 
 		public Integer getAccouttype() {
 			return accouttype;
@@ -1194,6 +851,382 @@ public class LSlogilablimsorderdetail {
 			this.lsorderelnmethod = lsorderelnmethod;
 		}
 
+		public String getPeriod() {
+			return period;
+		}
+
+		public void setPeriod(String period) {
+			this.period = period;
+		}
+
+		public SearchCriteria getSearchCriteria() {
+			return searchCriteria;
+		}
+
+		public void setSearchCriteria(SearchCriteria searchCriteria) {
+			this.searchCriteria = searchCriteria;
+		}
 
 
+		public Date getDuedate() {
+			return duedate;
+		}
+
+		public void setDuedate(Date duedate) {
+			this.duedate = duedate;
+		}
+		
+
+		public String getApprovelaccept() {
+			return approvelaccept;
+		}
+
+		public void setApprovelaccept(String approvelaccept) {
+			this.approvelaccept = approvelaccept;
+		}
+
+		public Date getCautiondate() {
+			return cautiondate;
+		}
+
+		public void setCautiondate(Date cautiondate) {
+			this.cautiondate = cautiondate;
+		}
+
+		public boolean isCanuserprocess() {
+			return canuserprocess;
+		}
+
+		public void setCanuserprocess(boolean canuserprocess) {
+			this.canuserprocess = canuserprocess;
+		}
+
+		public void setLstworkflow(List<LSworkflow> lstworkflow) {
+
+//			this.lstworkflow = lstworkflow;
+
+			if (this.lsworkflow != null && lstworkflow != null && lstworkflow.size() > 0) {
+				List<Integer> lstworkflowcode = new ArrayList<Integer>();
+				if (lstworkflow != null && lstworkflow.size() > 0) {
+					lstworkflowcode = lstworkflow.stream().map(LSworkflow::getWorkflowcode).collect(Collectors.toList());
+
+					if (lstworkflowcode.contains(this.lsworkflow.getWorkflowcode())) {
+						this.setCanuserprocess(true);
+					} else {
+						this.setCanuserprocess(false);
+					}
+				} else {
+					this.setCanuserprocess(false);
+				}
+			} else {
+				this.setCanuserprocess(false);
+			}
+
+			this.lstworkflow = lstworkflow;
+		}
+
+		public Integer getApproved() {
+			return approved;
+		}
+
+		public void setApproved(Integer approved) {
+			this.approved = approved;
+		}
+
+		public String getNbatchcode() {
+			return nbatchcode;
+		}
+
+		public void setNbatchcode(String nbatchcode) {
+			this.nbatchcode = nbatchcode;
+		}
+		
+
+		public Boolean getSentforapprovel() {
+			return sentforapprovel;
+		}
+
+		public void setSentforapprovel(Boolean sentforapprovel) {
+			this.sentforapprovel = sentforapprovel;
+		}
+
+		public LoggedUser getObjuser() {
+			return objuser;
+		}
+
+		public void setObjuser(LoggedUser objuser) {
+			this.objuser = objuser;
+		}
+		public LSSheetOrderStructure getLssheetOrderStructure() {
+			return lssheetOrderStructure;
+		}
+
+		public void setLssheetOrderStructure(LSSheetOrderStructure lssheetOrderStructure) {
+			this.lssheetOrderStructure = lssheetOrderStructure;
+		}
+
+		public LScentralisedUsers getLscentralisedusers() {
+			return lscentralisedusers;
+		}
+
+		public void setLscentralisedusers(LScentralisedUsers lscentralisedusers) {
+			this.lscentralisedusers = lscentralisedusers;
+		}
+		public List<LSuserMaster> getLstuserMaster() {
+			return lstuserMaster;
+		}
+
+		public void setLstuserMaster(List<LSuserMaster> lstuserMaster) {
+			this.lstuserMaster = lstuserMaster;
+		}
+
+		public Date getModifidate() {
+			return modifidate;
+		}
+
+		public void setModifidate(Date modifidate) {
+			this.modifidate = modifidate;
+		}
+
+
+		public String getKeyword() {
+			return keyword;
+		}
+
+		public void setKeyword(String keyword) {
+			this.keyword = keyword;
+		}
+
+		public Integer getAutoregistercount() {
+			return autoregistercount;
+		}
+
+		public void setAutoregistercount(Integer autoregistercount) {
+			this.autoregistercount = autoregistercount;
+		}
+
+		public Boolean getRepeat() {
+			return repeat;
+		}
+
+		public void setRepeat(Boolean repeat) {
+			this.repeat = repeat;
+		}
+
+		public LSOrdernotification getLsordernotification() {
+			return lsordernotification;
+		}
+
+		public void setLsordernotification(LSOrdernotification lsordernotification) {
+			this.lsordernotification = lsordernotification;
+		}
+
+		public Integer getOrdersaved() {
+			return ordersaved;
+		}
+
+		public void setOrdersaved(Integer ordersaved) {
+			this.ordersaved = ordersaved;
+		}
+		
+		public List<LsOrderattachments> getLsOrderattachments() {
+			return lsOrderattachments;
+		}
+
+		public void setLsOrderattachments(List<LsOrderattachments> lsOrderattachments) {
+			this.lsOrderattachments = lsOrderattachments;
+		}
+
+		public List<ELNFileAttachments> getELNFileAttachments() {
+			return ELNFileAttachments;
+		}
+
+		public void setELNFileAttachments(List<ELNFileAttachments> ELNFileAttachments) {
+			this.ELNFileAttachments = ELNFileAttachments;
+		}
+
+		public LScfttransaction getObjmanualaudit() {
+			return objmanualaudit;
+		}
+
+		public void setObjmanualaudit(LScfttransaction objmanualaudit) {
+			this.objmanualaudit = objmanualaudit;
+		}
+
+		public Lsrepositoriesdata getLsrepositoriesdata() {
+			return lsrepositoriesdata;
+		}
+
+		public void setLsrepositoriesdata(Lsrepositoriesdata lsrepositoriesdata) {
+			this.lsrepositoriesdata = lsrepositoriesdata;
+		}
+
+		public List<LSprojectmaster> getLstproject() {
+			return lstproject;
+		}
+
+		public void setLstproject(List<LSprojectmaster> lstproject) {
+			this.lstproject = lstproject;
+		}
+
+		public Lsrepositories getLsrepositories() {
+			return lsrepositories;
+		}
+
+		public void setLsrepositories(Lsrepositories lsrepositories) {
+			this.lsrepositories = lsrepositories;
+		}
+
+		public List<LSworkflow> getLstworkflow() {
+			return lstworkflow;
+		}
+
+		public List<LSprotocolorderstephistory> getlSprotocolorderstephistory() {
+			return lSprotocolorderstephistory;
+		}
+
+		public void setlSprotocolorderstephistory(List<LSprotocolorderstephistory> lSprotocolorderstephistory) {
+			this.lSprotocolorderstephistory = lSprotocolorderstephistory;
+		}
+
+		public Integer getTeamcode() {
+			return teamcode;
+		}
+
+		public void setTeamcode(Integer teamcode) {
+			this.teamcode = teamcode;
+		}
+
+		public Integer getOrdercancell() {
+			return ordercancell;
+		}
+
+		public void setOrdercancell(Integer ordercancell) {
+			this.ordercancell = ordercancell;
+		}
+		
+
+		public LsAutoregister getLsautoregisterorderdetail() {
+			return lsautoregisterorderdetail;
+		}
+
+		public void setLsautoregisterorderdetail(LsAutoregister lsautoregisterorderdetail) {
+			this.lsautoregisterorderdetail = lsautoregisterorderdetail;
+		}
+
+		public Elnmaterial getElnmaterial() {
+			return elnmaterial;
+		}
+
+		public void setElnmaterial(Elnmaterial elnmaterial) {
+			this.elnmaterial = elnmaterial;
+		}
+
+		public ElnmaterialInventory getElnmaterialinventory() {
+			return elnmaterialinventory;
+		}
+
+		public void setElnmaterialinventory(ElnmaterialInventory elnmaterialinventory) {
+			this.elnmaterialinventory = elnmaterialinventory;
+		}
+
+		public Material getMaterial() {
+			return material;
+		}
+
+		public void setMaterial(Material material) {
+			this.material = material;
+		}
+
+		public MaterialInventory getMaterialinventory() {
+			return materialinventory;
+		}
+
+		public void setMaterialinventory(MaterialInventory materialinventory) {
+			this.materialinventory = materialinventory;
+		}
+
+		public Date getNotificationdate() {
+			return notificationdate;
+		}
+
+		public void setNotificationdate(Date notificationdate) {
+			this.notificationdate = notificationdate;
+		}
+		
+
+		public LsAutoregister getLsautoregisterorders() {
+			return lsautoregisterorders;
+		}
+
+		public void setLsautoregisterorders(LsAutoregister lsautoregisterorders) {
+			this.lsautoregisterorders = lsautoregisterorders;
+		}
+		
+
+		public Integer getActiveuser() {
+			return activeuser;
+		}
+
+		public void setActiveuser(Integer activeuser) {
+			this.activeuser = activeuser;
+		}
+		
+		public List<Long> getLstdirectorycode() {
+			return lstdirectorycode;
+		}
+
+		public void setLstdirectorycode(List<Long> lstdirectorycode) {
+			this.lstdirectorycode = lstdirectorycode;
+		}
+		
+		public String getFilefor() {
+			return filefor;
+		}
+
+		public void setFilefor(String filefor) {
+			this.filefor = filefor;
+		}
+
+		public Long getApplicationsequence() {
+			return applicationsequence;
+		}
+
+		public void setApplicationsequence(Long applicationsequence) {
+			this.applicationsequence = applicationsequence;
+		}
+
+		public Long getSitesequence() {
+			return sitesequence;
+		}
+
+		public void setSitesequence(Long sitesequence) {
+			this.sitesequence = sitesequence;
+		}
+
+		public Long getProjectsequence() {
+			return projectsequence;
+		}
+
+		public void setProjectsequence(Long projectsequence) {
+			this.projectsequence = projectsequence;
+		}
+
+		public Long getTasksequence() {
+			return tasksequence;
+		}
+
+		public void setTasksequence(Long tasksequence) {
+			this.tasksequence = tasksequence;
+		}
+
+		public Long getOrdertypesequence() {
+			return ordertypesequence;
+		}
+
+		public void setOrdertypesequence(Long ordertypesequence) {
+			this.ordertypesequence = ordertypesequence;
+		}
+		
+		
 }

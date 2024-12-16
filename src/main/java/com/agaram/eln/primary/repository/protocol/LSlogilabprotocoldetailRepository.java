@@ -24,6 +24,7 @@ import com.agaram.eln.primary.model.protocols.LSlogilabprotocoldetail.Protocolor
 import com.agaram.eln.primary.model.protocols.LSprotocolmaster;
 import com.agaram.eln.primary.model.protocols.LSprotocolworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplemaster;
+import com.agaram.eln.primary.model.sheetManipulation.LStestmasterlocal;
 import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 
@@ -1926,7 +1927,11 @@ List<Logilabprotocolorders> findByOrdercancellAndSitecodeAndLsprojectmasterIsNul
 	
 	
 //	List<LogilabProtocolOrderssh> findByLsprojectmasterOrderByProtocolordercodeDesc(LSprojectmaster lsprojectmaster);
+	long countByLsuserMasterIn(List<LSuserMaster> lstuser);
 
+	long countByLsprojectmaster(LSprojectmaster objproject);
+	long countByLstestmasterlocal(LStestmasterlocal objtest);
+	long countByProtocoltype(Integer filetype);
 
 	}
 

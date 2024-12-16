@@ -117,6 +117,17 @@ public class Elnmaterial implements Serializable{
 	
 	private Integer samplecode;
 	
+	@Column(columnDefinition = "TEXT")
+	private String assignedtasks;
+	
+	public String getAssignedtasks() {
+		return assignedtasks;
+	}
+
+	public void setAssignedtasks(String assignedtasks) {
+		this.assignedtasks = assignedtasks;
+	}
+	
 	public List<MaterialAttachments> getlsMaterialAttachments() {
 		return lsmaterialAttachments;
 	}

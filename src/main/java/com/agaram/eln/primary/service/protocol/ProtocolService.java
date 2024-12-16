@@ -84,7 +84,6 @@ import com.agaram.eln.primary.model.fileManipulation.UserSignature;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.instrumentDetails.LSOrdernotification;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorder;
-import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 import com.agaram.eln.primary.model.instrumentDetails.LSprotocolfolderfiles;
 import com.agaram.eln.primary.model.instrumentDetails.LSsheetfolderfiles;
 import com.agaram.eln.primary.model.instrumentDetails.LsAutoregister;
@@ -137,6 +136,11 @@ import com.agaram.eln.primary.model.protocols.ProtocolImage;
 import com.agaram.eln.primary.model.protocols.ProtocolorderImage;
 import com.agaram.eln.primary.model.protocols.Protocolordervideos;
 import com.agaram.eln.primary.model.protocols.Protocolvideos;
+import com.agaram.eln.primary.model.sequence.SequenceTable;
+import com.agaram.eln.primary.model.sequence.SequenceTableOrderType;
+import com.agaram.eln.primary.model.sequence.SequenceTableProject;
+import com.agaram.eln.primary.model.sequence.SequenceTableSite;
+import com.agaram.eln.primary.model.sequence.SequenceTableTask;
 import com.agaram.eln.primary.model.sheetManipulation.LStestmasterlocal;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.Notification;
@@ -184,6 +188,11 @@ import com.agaram.eln.primary.repository.protocol.LSprotocolorderfilesRepository
 import com.agaram.eln.primary.repository.protocol.LSprotocolorderimagesRepository;
 import com.agaram.eln.primary.repository.protocol.LSprotocolordersampleupdatesRepository;
 import com.agaram.eln.primary.repository.protocol.LSprotocolordersampleupdatesRepository.UserProjection1;
+import com.agaram.eln.primary.repository.sequence.SequenceTableOrderTypeRepository;
+import com.agaram.eln.primary.repository.sequence.SequenceTableProjectRepository;
+import com.agaram.eln.primary.repository.sequence.SequenceTableRepository;
+import com.agaram.eln.primary.repository.sequence.SequenceTableSiteRepository;
+import com.agaram.eln.primary.repository.sequence.SequenceTableTaskRepository;
 import com.agaram.eln.primary.repository.protocol.LSprotocolorderstephistoryRepository;
 import com.agaram.eln.primary.repository.protocol.LSprotocolorderstepversionRepository;
 import com.agaram.eln.primary.repository.protocol.LSprotocolorderversionRepository;
@@ -498,6 +507,21 @@ public class ProtocolService {
 	
 	@Autowired
 	private LsActiveWidgetsRepository lsActiveWidgetsRepository;
+	
+	@Autowired
+	private SequenceTableRepository sequencetableRepository;
+	
+	@Autowired
+	private SequenceTableSiteRepository sequencetablesiteRepository;
+	
+	@Autowired
+	private SequenceTableProjectRepository sequencetableprojectRepository;
+	
+	@Autowired
+	private SequenceTableTaskRepository sequencetabletaskRepository;
+
+	@Autowired
+	private SequenceTableOrderTypeRepository sequencetableordertyperepository;
 	
 	private static Map<String, Timer> timerMapPro = new HashMap<>();
 	private static Map<String, Boolean> timerStatusMapPro = new HashMap<>();
@@ -3465,9 +3489,228 @@ public class ProtocolService {
 	            System.out.println("No timer found with ID " + timerId);
 	        }
 	    }
+	 
+	 public SequenceTable validateandupdatesheetordersequencenumber(LSlogilabprotocoldetail objorder)
+		{
+			SequenceTable seqorder= new SequenceTable();
+			int sequence =2;
+			seqorder = sequencetableRepository.findOne(sequence);
+			
+			if(seqorder!=null && seqorder.getApplicationsequence()==-1)
+			{
+				long appcount = LSlogilabprotocoldetailRepository.count();
+				sequencetableRepository.setinitialapplicationsequence(appcount,sequence);
+				seqorder.setApplicationsequence(appcount);
+			}
+			
+			if(sequencetablesiteRepository.findBySequencecodeAndSitecode(sequence,objorder.getLsuserMaster().getLssitemaster().getSitecode()) == null)
+			{
+				SequenceTableSite objsiteseq= new SequenceTableSite();
+				objsiteseq.setSequencecode(sequence);
+				objsiteseq.setSitecode(objorder.getLsuserMaster().getLssitemaster().getSitecode());
+				List<LSuserMaster> lstuser = lsusermasterRepository.findByLssitemasterOrderByCreateddateDesc(objorder.getLsuserMaster().getLssitemaster());
+				if(lstuser != null)
+				{
+					objsiteseq.setSitesequence(LSlogilabprotocoldetailRepository.countByLsuserMasterIn(lstuser));
+				}
+				else
+				{
+					objsiteseq.setSitesequence((long)0);
+				}
+				sequencetablesiteRepository.save(objsiteseq);
+				
+				if(seqorder.getSequencetablesite() !=null)
+				{
+					seqorder.getSequencetablesite().add(objsiteseq);
+				}
+				else
+				{
+					List<SequenceTableSite> lstseq= new ArrayList<SequenceTableSite>();
+					lstseq.add(objsiteseq);
+					seqorder.setSequencetablesite(lstseq);
+				}
+			}
+			
+			if(objorder.getLsprojectmaster() != null && sequencetableprojectRepository.findBySequencecodeAndProjectcode(sequence,objorder.getLsprojectmaster().getProjectcode()) == null)
+			{
+				SequenceTableProject objsiteseq= new SequenceTableProject();
+				objsiteseq.setSequencecode(sequence);
+				objsiteseq.setProjectcode(objorder.getLsprojectmaster().getProjectcode());
+				
+				if(objorder.getLsprojectmaster() != null)
+				{
+					objsiteseq.setProjectsequence(LSlogilabprotocoldetailRepository.countByLsprojectmaster(objorder.getLsprojectmaster()));
+				}
+				else
+				{
+					objsiteseq.setProjectsequence((long)0);
+				}
+				sequencetableprojectRepository.save(objsiteseq);
+				
+				if(seqorder.getSequencetableproject() !=null)
+				{
+					seqorder.getSequencetableproject().add(objsiteseq);
+				}
+				else
+				{
+					List<SequenceTableProject> lstseq= new ArrayList<SequenceTableProject>();
+					lstseq.add(objsiteseq);
+					seqorder.setSequencetableproject(lstseq);
+				}
+			}
+			
+			if(objorder.getLstestmasterlocal() != null && sequencetabletaskRepository.findBySequencecodeAndTestcode(sequence,objorder.getLstestmasterlocal().getTestcode()) == null)
+			{
+				SequenceTableTask objsiteseq= new SequenceTableTask();
+				objsiteseq.setSequencecode(sequence);
+				objsiteseq.setTestcode(objorder.getLstestmasterlocal().getTestcode());
+				if(objorder.getLstestmasterlocal() != null)
+				{
+					objsiteseq.setTasksequence(LSlogilabprotocoldetailRepository.countByLstestmasterlocal(objorder.getLstestmasterlocal()));
+				}
+				else
+				{
+				objsiteseq.setTasksequence((long)0);
+				}
+				sequencetabletaskRepository.save(objsiteseq);
+				
+				if(seqorder.getSequencesabletask() !=null)
+				{
+					seqorder.getSequencesabletask().add(objsiteseq);
+				}
+				else
+				{
+					List<SequenceTableTask> lstseq= new ArrayList<SequenceTableTask>();
+					lstseq.add(objsiteseq);
+					seqorder.setSequencesabletask(lstseq);
+				}
+			}
+			
+			if(objorder.getProtocoltype() != null && sequencetableordertyperepository.findBySequencecodeAndOrdertype(sequence,objorder.getProtocoltype()) == null)
+			{
+				SequenceTableOrderType objordertype = new SequenceTableOrderType();
+				objordertype.setSequencecode(sequence);
+				objordertype.setOrdertype(objorder.getProtocoltype());
+				if(objorder.getProtocoltype() != null)
+				{
+					objordertype.setOrdertypesequence(LSlogilabprotocoldetailRepository.countByProtocoltype(objorder.getProtocoltype()));
+				}
+				else
+				{
+					objordertype.setOrdertypesequence((long)0);
+				}
+				sequencetableordertyperepository.save(objordertype);
+				
+				if(seqorder.getSequencetableordertype() !=null)
+				{
+					seqorder.getSequencetableordertype().add(objordertype);
+				}
+				else
+				{
+					List<SequenceTableOrderType> lstseq= new ArrayList<SequenceTableOrderType>();
+					lstseq.add(objordertype);
+					seqorder.setSequencetableordertype(lstseq);
+				}
+			}
+			
+			return seqorder;
+		}
+	 
+	 public void GetSequences(LSlogilabprotocoldetail objorder,SequenceTable seqorder)
+		{
+			SequenceTable sqa = seqorder;
+			
+			if(sqa != null)
+			{
+				objorder.setApplicationsequence(sqa.getApplicationsequence()+1);
+				
+				if(objorder !=null && objorder.getLsuserMaster() != null&&
+						objorder.getLsuserMaster().getLssitemaster()!=null && 
+						objorder.getLsuserMaster().getLssitemaster().getSitecode()!=null)
+				{
+					SequenceTableSite sqsite = sqa.getSequencetablesite().stream()
+					        .filter(sq -> sq.getSitecode().equals(objorder.getLsuserMaster().getLssitemaster().getSitecode())
+					        && sq.getSequencecode().equals(sqa.getSequencecode())).findFirst().orElse(null);
+					if(sqsite != null)
+					{
+						objorder.setSitesequence(sqsite.getSitesequence()+1);
+					}
+				}
+				
+				
+				if(objorder !=null && objorder.getLsprojectmaster() != null
+						&& objorder.getLsprojectmaster().getProjectcode() != null) {
+					SequenceTableProject sqproject = sqa.getSequencetableproject().stream()
+					        .filter(sq -> sq.getProjectcode().equals(objorder.getLsprojectmaster().getProjectcode())
+					        && sq.getSequencecode().equals(sqa.getSequencecode())).findFirst().orElse(null);
+					
+					if(sqproject != null)
+					{
+						objorder.setProjectsequence(sqproject.getProjectsequence()+1);
+					}
+				}
+				
+				if(objorder !=null && objorder.getLstestmasterlocal() != null
+						&& objorder.getLstestmasterlocal().getTestcode() != null) {
+					SequenceTableTask sqtask = sqa.getSequencesabletask().stream()
+					        .filter(sq -> sq.getTestcode().equals(objorder.getLstestmasterlocal().getTestcode())
+					        && sq.getSequencecode().equals(sqa.getSequencecode())).findFirst().orElse(null);
+					
+					if(sqtask != null)
+					{
+						objorder.setTasksequence(sqtask.getTasksequence()+1);
+					}
+				}
+				
+				if(objorder !=null && objorder.getProtocoltype() != null) {
+					SequenceTableOrderType sqordertype = sqa.getSequencetableordertype().stream()
+					        .filter(sq -> sq.getOrdertype().equals(objorder.getProtocoltype())
+					        && sq.getSequencecode().equals(sqa.getSequencecode())).findFirst().orElse(null);
+					
+					if(sqordertype != null)
+					{
+						objorder.setOrdertypesequence(sqordertype.getOrdertypesequence()+1);
+					}
+				}
+			}
+		}
+	 
+	 public void updatesequence(Integer sequenceno, LSlogilabprotocoldetail objorder)
+		{
+			if(objorder.getApplicationsequence() != null)
+			{
+				sequencetableRepository.setinitialapplicationsequence(objorder.getApplicationsequence(),sequenceno);
+			}
+			
+			if(objorder.getSitesequence() != null && objorder.getLsuserMaster() != null&&
+					objorder.getLsuserMaster().getLssitemaster()!=null && 
+					objorder.getLsuserMaster().getLssitemaster().getSitecode()!=null)
+			{
+				sequencetablesiteRepository.setinitialsitesequence(objorder.getSitesequence(), sequenceno,
+						objorder.getLsuserMaster().getLssitemaster().getSitecode());
+			}
+			
+			if(objorder.getProjectsequence() != null && objorder.getLsprojectmaster() != null
+					&& objorder.getLsprojectmaster().getProjectcode() != null)
+			{
+				sequencetableprojectRepository.setinitialprojectsequence(objorder.getProjectsequence(), sequenceno,objorder.getLsprojectmaster().getProjectcode());
+			}
+			
+			if(objorder.getTasksequence() != null && objorder.getLstestmasterlocal() != null
+					&& objorder.getLstestmasterlocal().getTestcode() != null)
+			{
+				sequencetabletaskRepository.setinitialtasksequence(objorder.getTasksequence(), sequenceno, objorder.getLstestmasterlocal().getTestcode());
+			}
+			
+			if(objorder.getOrdertypesequence() != null && objorder.getProtocoltype() != null)
+			{
+				sequencetableordertyperepository.setinitialordertypesequence(objorder.getOrdertypesequence(), sequenceno, objorder.getProtocoltype());
+			}
+		}
 
 	public Map<String, Object> addProtocolOrder(LSlogilabprotocoldetail lSlogilabprotocoldetail) throws ParseException, IOException {
 		Map<String, Object> mapObj = new HashMap<String, Object>();
+		SequenceTable seqorder=validateandupdatesheetordersequencenumber(lSlogilabprotocoldetail);
 		String Content = "";
 		try {
 			lSlogilabprotocoldetail.setCreatedtimestamp(commonfunction.getCurrentUtcTime());
@@ -3495,9 +3738,10 @@ public class ProtocolService {
 				}
 
 			}
-
+			GetSequences(lSlogilabprotocoldetail, seqorder);
 			LSlogilabprotocoldetailRepository.save(lSlogilabprotocoldetail);
-
+			updatesequence(2,lSlogilabprotocoldetail);
+			
 			// sri
 			List<LSlogilablimsorder> lsorder = new ArrayList<LSlogilablimsorder>();
 			if (lSlogilabprotocoldetail.getLsprotocolmaster().getLsprotocolmethod() != null

@@ -5,8 +5,10 @@ import java.util.Date;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -212,6 +214,11 @@ public class MaterialController {
 		return objMaterialService.getElnMaterialOnProtocol(inputMap);
 	}
 	
+	@RequestMapping(value = "/geMaterialtAttachments", method = RequestMethod.POST)
+	public Map<String, Object> geMaterialtAttachments(@RequestBody Map<String, Object> inputMap) throws Exception {
+		return objMaterialService.geMaterialtAttachments(inputMap);
+	}
+
 	@PostMapping("/materialCloudUploadattachments")
 	public Elnmaterial materialCloudUploadattachments(@RequestParam("file") MultipartFile file,
 			@RequestParam("nmaterialtypecode") Integer nmaterialtypecode,
@@ -222,5 +229,23 @@ public class MaterialController {
 			throws IOException {
 		return objMaterialService.materialCloudUploadattachments(file, nmaterialtypecode, nmaterialcatcode,
 				nmaterialcode, filename, fileexe, usercode, currentdate, isMultitenant);
+	}
+
+	@RequestMapping(path = "/materialView/{param}/{fileid}", method = RequestMethod.GET)
+	public ResponseEntity<InputStreamResource> materialView(@PathVariable String param, @PathVariable String fileid)
+			throws IOException {
+		return objMaterialService.materialView(param, fileid);
+	}
+	
+	@PostMapping("/updateAssignedTaskOnMaterial")
+	public void updateAssignedTaskOnMaterial(@RequestBody Map<String, Object> inputMap)throws Exception
+	{
+		objMaterialService.updateAssignedTaskOnMaterial(inputMap);
+	}
+	
+	@PostMapping("/getAssignedTaskOnMaterial")
+	public ResponseEntity<Object> getAssignedTaskOnMaterial(@RequestBody Map<String, Object> inputMap)throws Exception
+	{
+		return objMaterialService.getAssignedTaskOnMaterial(inputMap);
 	}
 }

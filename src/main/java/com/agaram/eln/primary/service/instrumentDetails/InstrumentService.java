@@ -142,6 +142,11 @@ import com.agaram.eln.primary.model.protocols.LSlogilabprotocoldetail;
 import com.agaram.eln.primary.model.reports.lsreportfile;
 import com.agaram.eln.primary.model.reports.reportdesigner.Reporttemplate;
 import com.agaram.eln.primary.model.reports.reportviewer.Reports;
+import com.agaram.eln.primary.model.sequence.SequenceTable;
+import com.agaram.eln.primary.model.sequence.SequenceTableOrderType;
+import com.agaram.eln.primary.model.sequence.SequenceTableProject;
+import com.agaram.eln.primary.model.sequence.SequenceTableSite;
+import com.agaram.eln.primary.model.sequence.SequenceTableTask;
 import com.agaram.eln.primary.model.sheetManipulation.LSfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSfileelnmethod;
 import com.agaram.eln.primary.model.sheetManipulation.LSfilemethod;
@@ -219,6 +224,11 @@ import com.agaram.eln.primary.repository.protocol.ElnprotocolworkflowRepository;
 import com.agaram.eln.primary.repository.protocol.ElnprotocolworkflowgroupmapRepository;
 import com.agaram.eln.primary.repository.protocol.LSlogilabprotocoldetailRepository;
 import com.agaram.eln.primary.repository.reports.ReportfileRepository;
+import com.agaram.eln.primary.repository.sequence.SequenceTableOrderTypeRepository;
+import com.agaram.eln.primary.repository.sequence.SequenceTableProjectRepository;
+import com.agaram.eln.primary.repository.sequence.SequenceTableRepository;
+import com.agaram.eln.primary.repository.sequence.SequenceTableSiteRepository;
+import com.agaram.eln.primary.repository.sequence.SequenceTableTaskRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSfileRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSfileelnmethodRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSfilemethodRepository;
@@ -548,12 +558,22 @@ public class InstrumentService {
 
 	@Autowired
 	private LogilablimsorderdetailsRepository logilablimsorderdetailsRepository;
+	
+	@Autowired
+	private SequenceTableRepository sequencetableRepository;
+	
+	@Autowired
+	private SequenceTableSiteRepository sequencetablesiteRepository;
+	
+	@Autowired
+	private SequenceTableProjectRepository sequencetableprojectRepository;
+	
+	@Autowired
+	private SequenceTableTaskRepository sequencetabletaskRepository;
 
 	@Autowired
-	private DocumenteditorService documenteditorService;
-
-	private final ObjectMapper objectMapper = new ObjectMapper();
-
+	private SequenceTableOrderTypeRepository sequencetableordertyperepository;
+	
 	private Map<Integer, TimerTask> scheduledTasks = new HashMap<>();
 
 	private static Map<String, Timer> timerMap = new HashMap<>();
@@ -1312,9 +1332,138 @@ public class InstrumentService {
 			System.out.println("No timer found with ID " + timerId);
 		}
 	}
+	
+	public SequenceTable validateandupdatesheetordersequencenumber(LSlogilablimsorderdetail objorder)
+	{
+		SequenceTable seqorder= new SequenceTable();
+		int sequence =1;
+		seqorder = sequencetableRepository.findOne(sequence);
+		
+		if(seqorder!=null && seqorder.getApplicationsequence()==-1)
+		{
+			long appcount = lslogilablimsorderdetailRepository.count();
+			sequencetableRepository.setinitialapplicationsequence(appcount,sequence);
+			seqorder.setApplicationsequence(appcount);
+		}
+		
+		if(sequencetablesiteRepository.findBySequencecodeAndSitecode(sequence,objorder.getLsuserMaster().getLssitemaster().getSitecode()) == null)
+		{
+			SequenceTableSite objsiteseq= new SequenceTableSite();
+			objsiteseq.setSequencecode(sequence);
+			objsiteseq.setSitecode(objorder.getLsuserMaster().getLssitemaster().getSitecode());
+			List<LSuserMaster> lstuser = lsuserMasterRepository.findByLssitemasterOrderByCreateddateDesc(objorder.getLsuserMaster().getLssitemaster());
+			if(lstuser != null)
+			{
+				objsiteseq.setSitesequence(logilablimsorderdetailsRepository.countByLsuserMasterIn(lstuser));
+			}
+			else
+			{
+				objsiteseq.setSitesequence((long)0);
+			}
+			sequencetablesiteRepository.save(objsiteseq);
+			
+			if(seqorder.getSequencetablesite() !=null)
+			{
+				seqorder.getSequencetablesite().add(objsiteseq);
+			}
+			else
+			{
+				List<SequenceTableSite> lstseq= new ArrayList<SequenceTableSite>();
+				lstseq.add(objsiteseq);
+				seqorder.setSequencetablesite(lstseq);
+			}
+		}
+		
+		if(objorder.getLsprojectmaster() != null && sequencetableprojectRepository.findBySequencecodeAndProjectcode(sequence,objorder.getLsprojectmaster().getProjectcode()) == null)
+		{
+			SequenceTableProject objsiteseq= new SequenceTableProject();
+			objsiteseq.setSequencecode(sequence);
+			objsiteseq.setProjectcode(objorder.getLsprojectmaster().getProjectcode());
+			
+			if(objorder.getLsprojectmaster() != null)
+			{
+				objsiteseq.setProjectsequence(logilablimsorderdetailsRepository.countByLsprojectmaster(objorder.getLsprojectmaster()));
+			}
+			else
+			{
+				objsiteseq.setProjectsequence((long)0);
+			}
+			sequencetableprojectRepository.save(objsiteseq);
+			
+			if(seqorder.getSequencetableproject() !=null)
+			{
+				seqorder.getSequencetableproject().add(objsiteseq);
+			}
+			else
+			{
+				List<SequenceTableProject> lstseq= new ArrayList<SequenceTableProject>();
+				lstseq.add(objsiteseq);
+				seqorder.setSequencetableproject(lstseq);
+			}
+		}
+		
+		if(objorder.getLstestmasterlocal() != null && sequencetabletaskRepository.findBySequencecodeAndTestcode(sequence,objorder.getLstestmasterlocal().getTestcode()) == null)
+		{
+			SequenceTableTask objsiteseq= new SequenceTableTask();
+			objsiteseq.setSequencecode(sequence);
+			objsiteseq.setTestcode(objorder.getLstestmasterlocal().getTestcode());
+			if(objorder.getLstestmasterlocal() != null)
+			{
+				objsiteseq.setTasksequence(logilablimsorderdetailsRepository.countByLstestmasterlocal(objorder.getLstestmasterlocal()));
+			}
+			else
+			{
+			objsiteseq.setTasksequence((long)0);
+			}
+			sequencetabletaskRepository.save(objsiteseq);
+			
+			if(seqorder.getSequencesabletask() !=null)
+			{
+				seqorder.getSequencesabletask().add(objsiteseq);
+			}
+			else
+			{
+				List<SequenceTableTask> lstseq= new ArrayList<SequenceTableTask>();
+				lstseq.add(objsiteseq);
+				seqorder.setSequencesabletask(lstseq);
+			}
+		}
+		
+		if(objorder.getFiletype() != null && sequencetableordertyperepository.findBySequencecodeAndOrdertype(sequence,objorder.getFiletype()) == null)
+		{
+			SequenceTableOrderType objordertype = new SequenceTableOrderType();
+			objordertype.setSequencecode(sequence);
+			objordertype.setOrdertype(objorder.getFiletype());
+			if(objorder.getFiletype() != null)
+			{
+				objordertype.setOrdertypesequence(logilablimsorderdetailsRepository.countByFiletype(objorder.getFiletype()));
+			}
+			else
+			{
+				objordertype.setOrdertypesequence((long)0);
+			}
+			sequencetableordertyperepository.save(objordertype);
+			
+			if(seqorder.getSequencetableordertype() !=null)
+			{
+				seqorder.getSequencetableordertype().add(objordertype);
+			}
+			else
+			{
+				List<SequenceTableOrderType> lstseq= new ArrayList<SequenceTableOrderType>();
+				lstseq.add(objordertype);
+				seqorder.setSequencetableordertype(lstseq);
+			}
+		}
+		
+		return seqorder;
+	}
 
 	public LSlogilablimsorderdetail InsertELNOrder(LSlogilablimsorderdetail objorder)
 			throws IOException, ParseException {
+		
+		SequenceTable seqorder=validateandupdatesheetordersequencenumber(objorder);
+		
 		objorder.setLsworkflow(lsworkflowRepository
 				.findTopByAndLssitemasterOrderByWorkflowcodeAsc(objorder.getLsuserMaster().getLssitemaster()));
 
@@ -1415,8 +1564,9 @@ public class InstrumentService {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
+		GetSequences(objorder, seqorder);
 		lslogilablimsorderdetailRepository.save(objorder);
+		updatesequence(1,objorder);
 		long milliseconds = 0;
 		String timerId1 = generateUniqueTimerId();
 		if (objorder.getRepeat() != null && objorder.getLsautoregisterorderdetail() != null && objorder.getRepeat()) {
@@ -1607,6 +1757,97 @@ public class InstrumentService {
 		return objorder;
 	}
 
+	public void GetSequences(LSlogilablimsorderdetail objorder,SequenceTable seqorder)
+	{
+		SequenceTable sqa = seqorder;
+		
+		if(sqa != null)
+		{
+			objorder.setApplicationsequence(sqa.getApplicationsequence()+1);
+			
+			if(objorder !=null && objorder.getLsuserMaster() != null&&
+					objorder.getLsuserMaster().getLssitemaster()!=null && 
+					objorder.getLsuserMaster().getLssitemaster().getSitecode()!=null)
+			{
+				SequenceTableSite sqsite = sqa.getSequencetablesite().stream()
+				        .filter(sq -> sq.getSitecode().equals(objorder.getLsuserMaster().getLssitemaster().getSitecode())
+				        && sq.getSequencecode().equals(sqa.getSequencecode())).findFirst().orElse(null);
+				if(sqsite != null)
+				{
+					objorder.setSitesequence(sqsite.getSitesequence()+1);
+				}
+			}
+			
+			
+			if(objorder !=null && objorder.getLsprojectmaster() != null
+					&& objorder.getLsprojectmaster().getProjectcode() != null) {
+				SequenceTableProject sqproject = sqa.getSequencetableproject().stream()
+				        .filter(sq -> sq.getProjectcode().equals(objorder.getLsprojectmaster().getProjectcode())
+				        && sq.getSequencecode().equals(sqa.getSequencecode())).findFirst().orElse(null);
+				
+				if(sqproject != null)
+				{
+					objorder.setProjectsequence(sqproject.getProjectsequence()+1);
+				}
+			}
+			
+			if(objorder !=null && objorder.getLstestmasterlocal() != null
+					&& objorder.getLstestmasterlocal().getTestcode() != null) {
+				SequenceTableTask sqtask = sqa.getSequencesabletask().stream()
+				        .filter(sq -> sq.getTestcode().equals(objorder.getLstestmasterlocal().getTestcode())
+				        && sq.getSequencecode().equals(sqa.getSequencecode())).findFirst().orElse(null);
+				
+				if(sqtask != null)
+				{
+					objorder.setTasksequence(sqtask.getTasksequence()+1);
+				}
+			}
+			
+			if(objorder !=null && objorder.getFiletype() != null) {
+				SequenceTableOrderType sqordertype = sqa.getSequencetableordertype().stream()
+				        .filter(sq -> sq.getOrdertype().equals(objorder.getFiletype())
+				        && sq.getSequencecode().equals(sqa.getSequencecode())).findFirst().orElse(null);
+				
+				if(sqordertype != null)
+				{
+					objorder.setOrdertypesequence(sqordertype.getOrdertypesequence()+1);
+				}
+			}
+		}
+	}
+	
+	public void updatesequence(Integer sequenceno, LSlogilablimsorderdetail objorder)
+	{
+		if(objorder.getApplicationsequence() != null)
+		{
+			sequencetableRepository.setinitialapplicationsequence(objorder.getApplicationsequence(),sequenceno);
+		}
+		
+		if(objorder.getSitesequence() != null && objorder.getLsuserMaster() != null&&
+				objorder.getLsuserMaster().getLssitemaster()!=null && 
+				objorder.getLsuserMaster().getLssitemaster().getSitecode()!=null)
+		{
+			sequencetablesiteRepository.setinitialsitesequence(objorder.getSitesequence(), sequenceno,
+					objorder.getLsuserMaster().getLssitemaster().getSitecode());
+		}
+		
+		if(objorder.getProjectsequence() != null && objorder.getLsprojectmaster() != null
+				&& objorder.getLsprojectmaster().getProjectcode() != null)
+		{
+			sequencetableprojectRepository.setinitialprojectsequence(objorder.getProjectsequence(), sequenceno,objorder.getLsprojectmaster().getProjectcode());
+		}
+		
+		if(objorder.getTasksequence() != null && objorder.getLstestmasterlocal() != null
+				&& objorder.getLstestmasterlocal().getTestcode() != null)
+		{
+			sequencetabletaskRepository.setinitialtasksequence(objorder.getTasksequence(), sequenceno, objorder.getLstestmasterlocal().getTestcode());
+		}
+		
+		if(objorder.getOrdertypesequence() != null && objorder.getFiletype() != null)
+		{
+			sequencetableordertyperepository.setinitialordertypesequence(objorder.getOrdertypesequence(), sequenceno, objorder.getFiletype());
+		}
+	}
 //	public void ValidateAutoRegister(LSlogilablimsorderdetail objlogilaborderdetail,long milliseconds) throws ParseException {
 //		// lsordernotificationrepo.save(objnotification);
 //		scheduleAutoregduringregister(objlogilaborderdetail,milliseconds);

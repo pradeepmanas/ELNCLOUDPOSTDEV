@@ -13,6 +13,7 @@ import com.agaram.eln.primary.fetchmodel.getorders.LogilabOrderDetails;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 import com.agaram.eln.primary.model.material.Elnmaterial;
 import com.agaram.eln.primary.model.sheetManipulation.LSfile;
+import com.agaram.eln.primary.model.sheetManipulation.LStestmasterlocal;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
@@ -204,4 +205,9 @@ public interface LogilablimsorderdetailsRepository extends JpaRepository<LSlogil
 	List<LogilabOrderDetails> findByLsprojectmasterIsNullAndElnmaterialInAndFiletypeAndAssignedtoIsNullAndViewoption(
 			List<Elnmaterial> nmaterialcode, Integer filetype, int i);
 	
+	long countByLsuserMasterIn(List<LSuserMaster> lstuser);
+
+	long countByLsprojectmaster(LSprojectmaster objproject);
+	long countByLstestmasterlocal(LStestmasterlocal objtest);
+	long countByFiletype(Integer filetype);
 }

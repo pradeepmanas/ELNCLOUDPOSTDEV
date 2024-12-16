@@ -1,6 +1,8 @@
 package com.agaram.eln.primary.service.material;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -14,11 +16,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,6 +33,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.global.Enumeration;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
+import com.agaram.eln.primary.model.cloudFileManip.CloudOrderAttachment;
 import com.agaram.eln.primary.model.equipment.EquipmentCategory;
 import com.agaram.eln.primary.model.equipment.EquipmentType;
 import com.agaram.eln.primary.model.general.Response;
@@ -42,6 +49,7 @@ import com.agaram.eln.primary.model.material.Period;
 import com.agaram.eln.primary.model.material.Section;
 import com.agaram.eln.primary.model.material.Unit;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
+import com.agaram.eln.primary.repository.cloudFileManip.CloudOrderAttachmentRepository;
 import com.agaram.eln.primary.repository.equipment.EquipmentCategoryRepository;
 import com.agaram.eln.primary.repository.equipment.EquipmentTypeRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsOrderattachmentsRepository;
@@ -101,6 +109,8 @@ public class MaterialService {
 	EquipmentTypeRepository equipmentTypeRepository;
 	@Autowired
 	EquipmentCategoryRepository equipmentCategoryRepository;
+	@Autowired
+	private CloudOrderAttachmentRepository CloudOrderAttachmentRepository;
 	@Autowired
 	private MaterialAttachmentsRepository materialAttachmentsRepository;
 
@@ -1812,7 +1822,95 @@ public class MaterialService {
 
 			materialAttachmentsRepository.save(objAttach.getlsMaterialAttachments());
 		}
-
+		List<MaterialAttachments> objFilels = materialAttachmentsRepository.findByNmaterialcode(nmaterialcode);
+		objAttach.setlsMaterialAttachments(objFilels);
 		return objAttach;
+	}
+
+	public Map<String, Object> geMaterialtAttachments(Map<String, Object> inputMap) {
+		Map<String, Object> objMap = new HashMap<>();
+		int nmaterialcode = (int) inputMap.get("nmaterialcode");
+		List<MaterialAttachments> objFilels = materialAttachmentsRepository.findByNmaterialcode(nmaterialcode);
+		objMap.put("lsMaterialAttachments", objFilels);
+		return objMap;
+	}
+
+	public ResponseEntity<InputStreamResource> materialView(String param, String fileid)
+			throws IOException {
+		if (param == null) {
+			return null;
+		}
+
+		MaterialAttachments objFile = materialAttachmentsRepository.findByFileid(fileid);
+		HttpHeaders header = new HttpHeaders();
+		header.set("Content-Disposition", "attachment; filename=" + objFile.getFilename());
+
+		if (Integer.parseInt(param) == 0) {
+			CloudOrderAttachment objfile = CloudOrderAttachmentRepository.findByFileid(fileid);
+			InputStreamResource resource = null;
+			byte[] content = objfile.getFile().getData();
+			int size = content.length;
+			InputStream is = null;
+			try {
+				is = new ByteArrayInputStream(content);
+				resource = new InputStreamResource(is);
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				try {
+					if (is != null)
+						is.close();
+				} catch (Exception ex) {
+
+				}
+			}
+			header.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+			header.setContentLength(size);
+			return new ResponseEntity<>(resource, header, HttpStatus.OK);
+		} else if (Integer.parseInt(param) == 1) {
+			InputStream fileDtream = cloudFileManipulationservice.retrieveLargeFile(fileid);
+
+			InputStreamResource resource = null;
+			byte[] content = IOUtils.toByteArray(fileDtream);
+			int size = content.length;
+			InputStream is = null;
+			try {
+				is = new ByteArrayInputStream(content);
+				resource = new InputStreamResource(is);
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				try {
+					if (is != null)
+						is.close();
+				} catch (Exception ex) {
+
+				}
+			}
+
+			header.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+			header.setContentLength(size);
+			return new ResponseEntity<>(resource, header, HttpStatus.OK);
+		}
+		return null;
+
+	}
+	
+	public void updateAssignedTaskOnMaterial(Map<String, Object> inputMap) {
+		
+		Integer selectedMaterial = Integer.parseInt(inputMap.get("selectedMaterial").toString());
+		String task = inputMap.get("task").toString(); 
+		
+		Elnmaterial objElnmaterial = elnmaterialRepository.findOne(selectedMaterial);
+		objElnmaterial.setAssignedtasks(task);
+		
+		elnmaterialRepository.save(objElnmaterial);
+	}
+
+	public ResponseEntity<Object> getAssignedTaskOnMaterial(Map<String, Object> inputMap) {
+		Integer selectedMaterial = Integer.parseInt(inputMap.get("selectedMaterial").toString());
+		
+		Elnmaterial objElnmaterial = elnmaterialRepository.findOne(selectedMaterial);
+		return new ResponseEntity<>(objElnmaterial.getAssignedtasks(), HttpStatus.OK);
 	}
 }

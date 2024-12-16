@@ -212,19 +212,19 @@ public class MethodImportService {
 			impEquipType = expEquipType;
 			final List<EquipmentType> equipTypeList = new ArrayList<>(1);
 		
-			final List<EquipmentType> equipTypeExist = EquipmentTypeRepository.findBysequipmenttypenameIgnoreCaseAndNsitecodeAndNstatus(expMethod.getEquipment().getEquipmenttype().getSequipmenttypename(),site.getSitecode(),1);
+//			final List<EquipmentType> equipTypeExist = EquipmentTypeRepository.findBysequipmenttypenameIgnoreCaseAndNsitecodeAndNstatus(expMethod.getEquipment().getEquipmenttype().getSequipmenttypename(),site.getSitecode(),1);
             Date date = new Date();		
-            if(equipTypeExist.isEmpty()) {
-            	impEquipType.setSequipmenttypename(expMethod.getEquipment().getEquipmenttype().getSequipmenttypename());
-            	impEquipType.setCreateby(createdUser);
-            	impEquipType.setCreatedate(date);
-            	impEquipType.setNsitecode(site.getSitecode());
-            	
-            	equipTypeList.add(EquipmentTypeRepository.save(impEquipType));
-			
-			} else {
-				equipTypeList.add(equipTypeExist.get(0));
-			}
+//            if(equipTypeExist.isEmpty()) {
+//            	impEquipType.setSequipmenttypename(expMethod.getEquipment().getEquipmenttype().getSequipmenttypename());
+//            	impEquipType.setCreateby(createdUser);
+//            	impEquipType.setCreatedate(date);
+//            	impEquipType.setNsitecode(site.getSitecode());
+//            	
+//            	equipTypeList.add(EquipmentTypeRepository.save(impEquipType));
+//			
+//			} else {
+//				equipTypeList.add(equipTypeExist.get(0));
+//			}
 			
 			
 			// Equipment Category
@@ -234,18 +234,18 @@ public class MethodImportService {
 			impEquipCategory = expEquipCategory;
 			final List<EquipmentCategory> equipCategoryList = new ArrayList<>(1);
 		
-			final List<EquipmentCategory> equipCategoryExist = equipCategoryRepo.findBySequipmentcatnameIgnoreCaseAndNsitecodeAndNstatus(expEquipCategory.getSequipmentcatname(),site.getSitecode(),1);
-           // Date date = new Date();		
-            if(equipCategoryExist.isEmpty()) {
-            	impEquipCategory.setNequipmentcatcode(0);
-            	impEquipCategory.setCreateby(createdUser);
-            	impEquipCategory.setCreatedate(date);
-            	impEquipCategory.setEquipmenttype(equipTypeList.get(0));
-            	equipCategoryList.add(equipCategoryRepo.save(impEquipCategory));
-			
-			} else {
-				equipCategoryList.add(equipCategoryExist.get(0));
-			}
+//			final List<EquipmentCategory> equipCategoryExist = equipCategoryRepo.findBySequipmentcatnameIgnoreCaseAndNsitecodeAndNstatus(expEquipCategory.getSequipmentcatname(),site.getSitecode(),1);
+//   	
+//            if(equipCategoryExist.isEmpty()) {
+//            	impEquipCategory.setNequipmentcatcode(0);
+//            	impEquipCategory.setCreateby(createdUser);
+//            	impEquipCategory.setCreatedate(date);
+//            	impEquipCategory.setEquipmenttype(equipTypeList.get(0));
+//            	equipCategoryList.add(equipCategoryRepo.save(impEquipCategory));
+//			
+//			} else {
+//				equipCategoryList.add(equipCategoryExist.get(0));
+//			}
             
        		//EquipmentMaster
             String EquipmentJson = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(expMethod.getEquipment());
@@ -255,20 +255,20 @@ public class MethodImportService {
 			
 			impEquipMaster.setNequipmentcode(userdefinedinstdetails.getInstmastkey());
 			impEquipMaster.setSequipmentname(userdefinedinstdetails.getInstrumentname());
-			
-			final List<Equipment> EquipmentList = new ArrayList<>(1);
-
-			final Optional<Equipment> equipMasterExist = equipmentRepo.findByNequipmentcodeAndNsitecodeAndNstatus(impEquipMaster.getNequipmentcode(), site.getSitecode(), 1);
-	    	if(!equipMasterExist.isPresent()) {
-	    		impEquipMaster.setNequipmentcode(0);
-	    		impEquipMaster.setNsitecode(site.getSitecode());;
-	    		impEquipMaster.setEquipmentcategory(equipCategoryList.get(0));
-	    		impEquipMaster.setCreateby(createdUser);
-	    		impEquipMaster.setCreateddate(date);
-	    		EquipmentList.add(equipmentRepo.save(impEquipMaster));
-	    	} else {
-	    		EquipmentList.add(equipMasterExist.get());
-	    	}	
+//			
+//			final List<Equipment> EquipmentList = new ArrayList<>(1);
+//
+//			final Optional<Equipment> equipMasterExist = equipmentRepo.findByNequipmentcodeAndNsitecodeAndNstatus(impEquipMaster.getNequipmentcode(), site.getSitecode(), 1);
+//	    	if(!equipMasterExist.isPresent()) {
+//	    		impEquipMaster.setNequipmentcode(0);
+//	    		impEquipMaster.setNsitecode(site.getSitecode());;
+//	    		impEquipMaster.setEquipmentcategory(equipCategoryList.get(0));
+//	    		impEquipMaster.setCreateby(createdUser);
+//	    		impEquipMaster.setCreateddate(date);
+//	    		EquipmentList.add(equipmentRepo.save(impEquipMaster));
+//	    	} else {
+//	    		EquipmentList.add(equipMasterExist.get());
+//	    	}	
 			
 //	    	Method
 			final Method impMethod = new Method(expMethod);
@@ -282,8 +282,7 @@ public class MethodImportService {
 			impMethod.setMethodname(userdefinedmethod.getMethodname());
 			impMethod.setInstrawdataurl(userdefinedmethod.getInstrawdataurl());
 			
-		//	final Optional<Method> methodExist = methodRepo.findByMethodnameAndInstmasterAndStatus(expMethod.getMethodname(), instMasterList.get(0), 1);
-			final Optional<Method> methodExist = methodRepo.findByMethodnameAndEquipmentAndStatus(impMethod.getMethodname(), EquipmentList.get(0), 1);
+			final Optional<Method> methodExist = methodRepo.findByMethodnameAndEquipmentAndStatus(impMethod.getMethodname(), impEquipMaster, 1);
 			if(!methodExist.isPresent()) {
 				
 				//method version
@@ -303,7 +302,7 @@ public class MethodImportService {
 				
 				
 				impMethod.setMethodkey(0);
-				impMethod.setEquipment(EquipmentList.get(0));
+				impMethod.setEquipment(impEquipMaster);
 				impMethod.setSite(site);
 				impMethod.setCreatedby(createdUser);
 				impMethod.setCreateddate(date);
