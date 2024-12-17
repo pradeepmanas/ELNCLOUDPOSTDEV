@@ -504,7 +504,7 @@ public class MethodImportService {
 					parserFieldItem.setCreateddate(date);
 					final MethodDelimiter methodDelimItem = methodDelimiter.stream()
 							.filter(methodDelim -> methodDelim.getDelimiter().getDelimitername()
-									.equals(parserFieldItem.getMethoddelimiter().getDelimiter().getDelimitername()) && 
+									.equalsIgnoreCase(parserFieldItem.getMethoddelimiter().getDelimiter().getDelimitername()) && 
 									methodDelim.getParsermethod().getParsermethodkey().equals(parserFieldItem.getMethoddelimiter().getParsermethod().getParsermethodkey()))
 							.findAny()
 							.orElse(null);
