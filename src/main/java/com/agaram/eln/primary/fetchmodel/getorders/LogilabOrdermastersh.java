@@ -47,6 +47,11 @@ public class LogilabOrdermastersh implements Comparable<LogilabOrdermastersh> {
 	private Integer arc;
 	private String mn;
 	private String loc;
+	private Long ase;
+	private Long sse;
+	private Long pse;
+	private Long tse;
+	private Long ose;
 
 	public LogilabOrdermastersh(Long batchcode, String batchid, LSworkflow lsworkflow, String testname, LSfile lsfile,
 			LSsamplemaster lssamplemaster, LSprojectmaster lsprojectmaster, Integer filetype, String orderflag,
@@ -54,7 +59,8 @@ public class LogilabOrdermastersh implements Comparable<LogilabOrdermastersh> {
 			LStestmasterlocal lstestmasterlocal, Integer ordercancell, Integer viewoption, LSuserMaster lsuserMaster,
 			Integer testcode, Integer approvelstatus, LSOrdernotification lsordernotification, Integer ordersaved,
 			Boolean repeat, LsAutoregister lsautoregisterorders, Boolean sentforapprovel, String approvelaccept,
-			Integer autoregistercount, Elnmaterial elnmaterial, String lockedusername) {
+			Integer autoregistercount, Elnmaterial elnmaterial, String lockedusername, Long applicationsequence,
+			Long sitesequence, Long projectsequence, Long tasksequence, Long ordertypesequence) {
 		this.bc = batchcode;
 		this.bi = batchid;
 		this.wc = lsworkflow != null ? lsworkflow.getWorkflowcode() : null;
@@ -85,6 +91,11 @@ public class LogilabOrdermastersh implements Comparable<LogilabOrdermastersh> {
 		this.arc = autoregistercount;
 		this.mn = elnmaterial != null ? elnmaterial.getSmaterialname() : null;
 		this.loc = lockedusername;
+		this.ase = applicationsequence;
+		this.sse = sitesequence;
+		this.pse = projectsequence;
+		this.tse = tasksequence;
+		this.ose = ordertypesequence;
 	}
 
 	public String getLoc() {
@@ -366,6 +377,46 @@ public class LogilabOrdermastersh implements Comparable<LogilabOrdermastersh> {
 
 	public void setMn(String mn) {
 		this.mn = mn;
+	}
+	
+	public Long getAse() {
+		return ase;
+	}
+
+	public void setAse(Long ase) {
+		this.ase = ase;
+	}
+
+	public Long getSse() {
+		return sse;
+	}
+
+	public void setSse(Long sse) {
+		this.sse = sse;
+	}
+
+	public Long getPse() {
+		return pse;
+	}
+
+	public void setPse(Long pse) {
+		this.pse = pse;
+	}
+
+	public Long getTse() {
+		return tse;
+	}
+
+	public void setTse(Long tse) {
+		this.tse = tse;
+	}
+
+	public Long getOse() {
+		return ose;
+	}
+
+	public void setOse(Long ose) {
+		this.ose = ose;
 	}
 
 	@Override

@@ -1332,7 +1332,9 @@ public class DashBoardService {
 									lsOrderDetail.getRepeat(), lsOrderDetail.getLsautoregisterorders(),
 									lsOrderDetail.getSentforapprovel(), lsOrderDetail.getApprovelaccept(),
 									lsOrderDetail.getAutoregistercount(), lsOrderDetail.getElnmaterial(),
-									lsOrderDetail.getLockedusername()))
+									lsOrderDetail.getLockedusername(), lsOrderDetail.getApplicationsequence(),
+									lsOrderDetail.getSitesequence(), lsOrderDetail.getProjectsequence(), 
+									lsOrderDetail.getTasksequence(), lsOrderDetail.getOrdertypesequence() ))
 							.collect(Collectors.toList()));
 				}
 //			} else {
@@ -1817,7 +1819,9 @@ public class DashBoardService {
 								lsOrderDetail.getOrdersaved(), lsOrderDetail.getRepeat(),
 								lsOrderDetail.getLsautoregisterorders(), lsOrderDetail.getSentforapprovel(),
 								lsOrderDetail.getApprovelaccept(), lsOrderDetail.getAutoregistercount(),
-								lsOrderDetail.getElnmaterial(), lsOrderDetail.getLockedusername()
+								lsOrderDetail.getElnmaterial(), lsOrderDetail.getLockedusername(), lsOrderDetail.getApplicationsequence(),
+								lsOrderDetail.getSitesequence(), lsOrderDetail.getProjectsequence(), 
+								lsOrderDetail.getTasksequence(), lsOrderDetail.getOrdertypesequence()
 
 						)).collect(Collectors.toList());
 			}

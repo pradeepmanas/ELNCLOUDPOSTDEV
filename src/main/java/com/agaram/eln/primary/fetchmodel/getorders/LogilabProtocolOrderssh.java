@@ -71,6 +71,11 @@ public class LogilabProtocolOrderssh implements Comparable<LogilabProtocolOrders
 	private String aa;
 	private Integer arc;
 	private LSuserMaster lum;
+	private Long ase;
+	private Long sse;
+	private Long pse;
+	private Long tse;
+	private Long ose;
 	
 	public LogilabProtocolOrderssh(Long protocolordercode, Integer Testcode, String protoclordername, String orderflag,
 			Integer protocoltype, Date createdtimestamp, Date completedtimestamp, LSprotocolmaster lsprotocolmaster,
@@ -81,7 +86,8 @@ public class LogilabProtocolOrderssh implements Comparable<LogilabProtocolOrders
 			Integer ordercancell, Integer viewoption, Integer orderstarted, LSuserMaster orderstartedby,
 			Date orderstartedon,Integer lockeduser,String lockedusername, Integer versionno,Elnprotocolworkflow elnprotocolworkflow,
 			LSOrdernotification lsordernotification,LsAutoregister lsautoregister,Boolean repeat,
-			Boolean sentforapprovel,String approvelaccept,Integer autoregistercount, LSuserMaster lsuserMaster, LStestmasterlocal lstestmasterlocal) {
+			Boolean sentforapprovel,String approvelaccept,Integer autoregistercount, LSuserMaster lsuserMaster, LStestmasterlocal lstestmasterlocal, 
+			Long applicationsequence, Long sitesequence, Long projectsequence, Long tasksequence, Long ordertypesequence) {
 
 		this.pc = protocolordercode;
 		this.tc = Testcode;
@@ -125,7 +131,11 @@ public class LogilabProtocolOrderssh implements Comparable<LogilabProtocolOrders
 		this.aa=approvelaccept;
 		this.arc=autoregistercount;
 		this.lum = lsuserMaster!=null? new LSuserMaster(lsuserMaster.getUsercode(),lsuserMaster.getUsername(),lsuserMaster.getLssitemaster()):null;
-		
+		this.ase = applicationsequence;
+		this.sse = sitesequence;
+		this.pse = projectsequence;
+		this.tse = tasksequence;
+		this.ose = ordertypesequence;
 	}
 	
 	@Override
@@ -500,6 +510,46 @@ public class LogilabProtocolOrderssh implements Comparable<LogilabProtocolOrders
 
 	public void setLum(LSuserMaster lum) {
 		this.lum = lum;
+	}
+
+	public Long getAse() {
+		return ase;
+	}
+
+	public void setAse(Long ase) {
+		this.ase = ase;
+	}
+
+	public Long getSse() {
+		return sse;
+	}
+
+	public void setSse(Long sse) {
+		this.sse = sse;
+	}
+
+	public Long getPse() {
+		return pse;
+	}
+
+	public void setPse(Long pse) {
+		this.pse = pse;
+	}
+
+	public Long getTse() {
+		return tse;
+	}
+
+	public void setTse(Long tse) {
+		this.tse = tse;
+	}
+
+	public Long getOse() {
+		return ose;
+	}
+
+	public void setOse(Long ose) {
+		this.ose = ose;
 	}
 
 	
