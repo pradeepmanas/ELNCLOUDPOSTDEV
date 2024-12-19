@@ -1789,7 +1789,7 @@ public class MaterialService {
 	public Elnmaterial materialCloudUploadattachments(MultipartFile file, Integer nmaterialtypecode,
 			Integer nmaterialcatcode, Integer nmaterialcode, String filename, String fileexe, Integer usercode,
 			Date currentdate, Integer isMultitenant) throws IOException {
-		Elnmaterial objAttach = elnmaterialRepository.findOne(nmaterialcatcode);
+		Elnmaterial objAttach = elnmaterialRepository.findOne(nmaterialcode);
 		MaterialAttachments objattachment = new MaterialAttachments();
 		if (isMultitenant == 0) {
 			if (fileManipulationservice.storeLargeattachment(filename, file) != null) {
