@@ -355,4 +355,4 @@ TABLESPACE pg_default;
 
 ALTER TABLE IF EXISTS public.sequencetableordertype OWNER to postgres;
 
-ALTER TABLE IF EXISTS elnmaterial ADD COLUMN IF NOT EXISTS assignedtasks TEXT;
+ALTER TABLE IF EXISTS elnmaterial ADD COLUMN IF NOT EXISTS assignedproject TEXT;ALTER TABLE IF EXISTS sequencetable ADD COLUMN IF NOT EXISTS seperator character varying(10);update sequencetable set seperator='_' where seperator Is Null;
