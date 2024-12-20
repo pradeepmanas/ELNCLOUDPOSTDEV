@@ -6208,14 +6208,7 @@ public class ProtocolService {
 		objimg.setProtocolstepname(protocolstepname);
 		objimg.setStepno(stepno);
 		objimg.setFilename(FilenameUtils.removeExtension(file.getOriginalFilename()));
-//		String url = originurl + "/protocol/downloadprotocolimage/" + objimg.getFileid() + "/"
-//				+ TenantContext.getCurrentTenant() + "/" + objimg.getFilename() + "/" + objimg.getExtension();
-//		Gson g = new Gson();
-//		String str = g.toJson(url);
-//		objimg.setSrc(str);
-//		lsprotocolimagesRepository.save(objimg);
-//		map.put("link", originurl + "/protocol/downloadprotocolimage/" + objimg.getFileid() + "/"
-//				+ TenantContext.getCurrentTenant() + "/" + objimg.getFilename() + "/" + objimg.getExtension());
+		objimg.setIslinkimage(true);
 
 		String filename = "No Name";
 		if (!objimg.getFilename().isEmpty()) {

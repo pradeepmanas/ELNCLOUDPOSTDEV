@@ -17,5 +17,11 @@ public interface SequenceTableRepository extends JpaRepository<SequenceTable, In
 	@Query("update SequenceTable s set s.applicationsequence = ?1 where s.sequencecode = ?2")
 	void setinitialapplicationsequence(Long applicationsequence, Integer sequencecode);
 	
-	List<SequenceTablesh> findBySequencecodeNot(int code);
+	List<SequenceTablesh> findBySequencecodeNotOrderBySequencecode(int code);
+	
+	@Transactional
+	@Modifying
+	@Query("update SequenceTable s set s.resetperiod = ?1, s.sequenceview = ?2, "
+			+ "s.sequenceformat = ?3, s.seperator = ?4 where s.sequencecode = ?5")
+	void updatesequencedata(Integer resetperiod, Integer sequenceview, String sequenceformat,String seperator, Integer sequencecode);
 }

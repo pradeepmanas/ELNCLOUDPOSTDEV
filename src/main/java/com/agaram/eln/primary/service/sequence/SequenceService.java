@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.agaram.eln.primary.fetchmodel.sequence.SequenceTablesh;
+import com.agaram.eln.primary.model.sequence.SequenceTable;
 import com.agaram.eln.primary.repository.sequence.SequenceTableRepository;
 
 @Service
@@ -15,6 +16,13 @@ public class SequenceService {
 	
 	public List<SequenceTablesh> getAllSequence()
 	{
-		return sequencetableRepository.findBySequencecodeNot(-1);
+		return sequencetableRepository.findBySequencecodeNotOrderBySequencecode(-1);
+	}
+	
+	public SequenceTable updatesequence(SequenceTable objClass)
+	{
+		 sequencetableRepository.updatesequencedata(objClass.getResetperiod(),objClass.getSequenceview(),
+				 objClass.getSequenceformat(),objClass.getSeperator(),objClass.getSequencecode());
+		 return objClass;
 	}
 }

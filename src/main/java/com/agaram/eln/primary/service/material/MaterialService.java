@@ -1076,6 +1076,8 @@ public class MaterialService {
 			
 			Elnmaterial objMaterial = elnmaterialRepository.findOne(obj.getNmaterialcode());
 
+			obj.setAssignedproject(objMaterial.getAssignedproject());
+			obj.setElnmaterialchemdiagref(objMaterial.getElnmaterialchemdiagref());
 			obj.setCreateddate(objMaterial.getCreateddate());
 			elnmaterialRepository.save(obj);
 			
@@ -1902,7 +1904,7 @@ public class MaterialService {
 		String task = inputMap.get("task").toString(); 
 		
 		Elnmaterial objElnmaterial = elnmaterialRepository.findOne(selectedMaterial);
-		objElnmaterial.setAssignedtasks(task);
+		objElnmaterial.setAssignedproject(task);
 		
 		elnmaterialRepository.save(objElnmaterial);
 	}
@@ -1911,6 +1913,6 @@ public class MaterialService {
 		Integer selectedMaterial = Integer.parseInt(inputMap.get("selectedMaterial").toString());
 		
 		Elnmaterial objElnmaterial = elnmaterialRepository.findOne(selectedMaterial);
-		return new ResponseEntity<>(objElnmaterial.getAssignedtasks(), HttpStatus.OK);
+		return new ResponseEntity<>(objElnmaterial.getAssignedproject(), HttpStatus.OK);
 	}
 }

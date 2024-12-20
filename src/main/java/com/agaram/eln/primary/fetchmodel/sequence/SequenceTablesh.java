@@ -6,14 +6,17 @@ public class SequenceTablesh {
 	private String sqf;
 	private Integer rp;
 	private String sn;
+	private String sep;
 	
-	public SequenceTablesh(Integer sequencecode,Integer sequenceview, String sequenceformat,Integer resetperiod,String screenname)
+	public SequenceTablesh(Integer sequencecode,Integer sequenceview, String sequenceformat,
+			Integer resetperiod,String screenname,String seperator)
 	{
 		this.sc = sequencecode;
 		this.sqv = sequenceview;
 		this.sqf = sequenceformat;
 		this.rp = resetperiod;
 		this.sn = screenname;
+		this.sep = seperator;
 	}
 	
 	public Integer getSc() {
@@ -49,6 +52,14 @@ public class SequenceTablesh {
 
 	public void setSn(String sn) {
 		this.sn = sn;
+	}
+
+	public String getSep() {
+		return sep;
+	}
+
+	public void setSep(String sep) {
+		this.sep = sep;
 	}
 	
 	

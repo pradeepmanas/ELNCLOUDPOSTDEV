@@ -237,13 +237,13 @@ public class MaterialController {
 		return objMaterialService.materialView(param, fileid);
 	}
 	
-	@PostMapping("/updateAssignedTaskOnMaterial")
+	@PostMapping("/updateAssignedProjectOnMaterial")
 	public void updateAssignedTaskOnMaterial(@RequestBody Map<String, Object> inputMap)throws Exception
 	{
 		objMaterialService.updateAssignedTaskOnMaterial(inputMap);
 	}
 	
-	@PostMapping("/getAssignedTaskOnMaterial")
+	@PostMapping("/getAssignedProjectOnMaterial")
 	public ResponseEntity<Object> getAssignedTaskOnMaterial(@RequestBody Map<String, Object> inputMap)throws Exception
 	{
 		return objMaterialService.getAssignedTaskOnMaterial(inputMap);

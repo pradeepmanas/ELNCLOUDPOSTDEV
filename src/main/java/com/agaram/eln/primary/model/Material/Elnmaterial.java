@@ -120,6 +120,17 @@ public class Elnmaterial implements Serializable{
 	@Column(columnDefinition = "TEXT")
 	private String assignedtasks;
 	
+	@Column(columnDefinition = "TEXT")
+	private String assignedproject;
+	
+	public String getAssignedproject() {
+		return assignedproject;
+	}
+
+	public void setAssignedproject(String assignedproject) {
+		this.assignedproject = assignedproject;
+	}
+	
 	public String getAssignedtasks() {
 		return assignedtasks;
 	}

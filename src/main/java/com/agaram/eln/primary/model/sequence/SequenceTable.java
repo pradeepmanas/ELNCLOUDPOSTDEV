@@ -23,6 +23,7 @@ public class SequenceTable {
 	private Integer resetperiod;
 	private Integer sequenceview;
 	private String sequenceformat;
+	private String seperator;
 	
 	@OneToMany
 	@JoinColumn(name="sequencecode")
@@ -124,6 +125,12 @@ public class SequenceTable {
 	}
 	public void setSequencetableordertype(List<SequenceTableOrderType> sequencetableordertype) {
 		this.sequencetableordertype = sequencetableordertype;
+	}
+	public String getSeperator() {
+		return seperator;
+	}
+	public void setSeperator(String seperator) {
+		this.seperator = seperator;
 	}
 	
 }
