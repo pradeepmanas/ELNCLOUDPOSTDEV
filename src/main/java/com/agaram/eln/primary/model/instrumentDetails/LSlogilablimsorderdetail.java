@@ -324,6 +324,8 @@ public class LSlogilablimsorderdetail {
 	private Long projectsequence;
 	private Long tasksequence;
 	private Long ordertypesequence;
+	
+	private String sequenceid;
 
 	public LSlogilablimsorderdetail() {
 
@@ -1226,6 +1228,14 @@ public class LSlogilablimsorderdetail {
 
 		public void setOrdertypesequence(Long ordertypesequence) {
 			this.ordertypesequence = ordertypesequence;
+		}
+
+		public String getSequenceid() {
+			return sequenceid;
+		}
+
+		public void setSequenceid(String sequenceid) {
+			this.sequenceid = sequenceid;
 		}
 		
 		

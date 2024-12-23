@@ -238,7 +238,7 @@ public class BaseMasterService {
 //		List<LSprojectmaster> projectlist = lSprojectmasterRepository
 //				.findByLssitemasterAndStatusOrderByProjectcodeDesc(objClass.getLssitemaster(), 1);
 
-		return lSprojectmasterRepository.findByLssitemasterAndStatusOrderByProjectcodeDesc(objClass.getLssitemaster(),1);
+		return lSprojectmasterRepository.findByLssitemasterOrderByProjectcodeDesc(objClass.getLssitemaster());
 	}
 
 	public LStestmasterlocal InsertupdateTest(LStestmasterlocal objClass) {
@@ -393,7 +393,15 @@ public class BaseMasterService {
 			objClass.getResponse().setInformation("ID_EXIST");
 			return objClass;
 		}
-
+		   if (objClass.getStatus() == -1) {
+		        LSprojectmaster existingProject = lSprojectmasterRepository.findOne(objClass.getProjectcode());
+		        if (existingProject != null) {
+		            // Retain the existing dates if status is "Retired" (-1)
+		            objClass.setEnddate(existingProject.getEnddate());
+		            objClass.setStartdate(existingProject.getStartdate());
+		            objClass.setDuedate(existingProject.getDuedate());
+		        }
+		    }
 		else if (objClass.getStatus() == -1
 				&& LSlogilablimsorderdetailRepository.findByOrderflagAndLsprojectmaster("N", objClass).size() != 0) {
 			objClass.getResponse().setStatus(false);

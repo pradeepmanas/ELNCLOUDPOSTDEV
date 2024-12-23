@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import com.agaram.eln.primary.commonfunction.commonfunction;
+import com.agaram.eln.primary.fetchmodel.getmasters.Projectmaster;
 import com.agaram.eln.primary.fetchmodel.getmasters.Repositorymaster;
 import com.agaram.eln.primary.fetchmodel.getorders.LogilabOrdermastersh;
 import com.agaram.eln.primary.fetchmodel.getorders.LogilabProtocolOrderssh;
@@ -4033,7 +4034,7 @@ public class DashBoardService {
 					.findByLsuserMasterAndTeamcodeNotNull(objuser);
 			List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(lstteammap,
 					objuser.getLssitemaster());
-			 lstprojectmaster = lsprojectmasterRepository.findByLsusersteamInAndStatus(lstteam, 1);
+			 lstprojectmaster = lsprojectmasterRepository.findByLsusersteamInAndStatusOrderByProjectcodeDesc(lstteam, 1);
 
 			
 		} 
@@ -4047,13 +4048,13 @@ public class DashBoardService {
 	                .findByLsuserMasterAndTeamcodeNotNull(objuser);
 	        List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(lstteammap, objuser.getLssitemaster());
 	        
-	        lstprojectmaster = lsprojectmasterRepository.findByLsusersteamInAndStatus(lstteam, 1);
+	        lstprojectmaster = lsprojectmasterRepository.findByLsusersteamInAndStatusOrderByProjectcodeDesc(lstteam, 1 );
 	        
 	        lstprojectmaster = lstprojectmaster.stream()
 	            .filter(project -> "1".equals(project.getDuedate()))
 	            .collect(Collectors.toList());
 	    }
-	    
+	  
 	    return lstprojectmaster;
 	}
 	public List<LogilabOrdermastersh> Getorderonproject(LSprojectmaster objproject)throws Exception
@@ -4087,7 +4088,7 @@ public class DashBoardService {
 	        List<LSuserteammapping> lstteammap = lsuserteammappingRepository.findByLsuserMasterAndTeamcodeNotNull(objuser);
 	        List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(lstteammap, objuser.getLssitemaster());
 	        
-	        lstprojectmaster = lsprojectmasterRepository.findByLsusersteamInAndStatusAndStartdateGreaterThan(lstteam, 1, currentdate);
+	        lstprojectmaster = lsprojectmasterRepository.findByLsusersteamInAndStatusAndStartdateGreaterThanOrderByProjectcodeDesc(lstteam, 1, currentdate);
 	        
 	        lstprojectmaster = lstprojectmaster.stream()
 	            .filter(project -> "1".equals(project.getDuedate())) 
@@ -4108,7 +4109,7 @@ public class DashBoardService {
 	        List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(lstteammap,
 	                objuser.getLssitemaster());
 	        
-	        lstprojectmaster = lsprojectmasterRepository.findByLsusersteamInAndStatusAndStartdateBeforeAndEnddateAfter(
+	        lstprojectmaster = lsprojectmasterRepository.findByLsusersteamInAndStatusAndStartdateBeforeAndEnddateAfterOrderByProjectcodeDesc(
 	                lstteam, 1, currentdate, currentdate);
 	        lstprojectmaster = lstprojectmaster.stream()
 		            .filter(project -> "1".equals(project.getDuedate()))
@@ -4124,7 +4125,7 @@ public class DashBoardService {
 					.findByLsuserMasterAndTeamcodeNotNull(objuser);
 			List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(lstteammap,
 					objuser.getLssitemaster());
-		 lstprojectmaster = lsprojectmasterRepository.findByLsusersteamInAndStatusAndEnddateLessThan(lstteam, 1, currentdate);
+		 lstprojectmaster = lsprojectmasterRepository.findByLsusersteamInAndStatusAndEnddateLessThanOrderByProjectcodeDesc(lstteam, 1, currentdate);
 		 lstprojectmaster = lstprojectmaster.stream()
 		            .filter(project -> "1".equals(project.getDuedate())) 
 		            .collect(Collectors.toList());
@@ -4142,7 +4143,7 @@ public class DashBoardService {
 	        List<LSuserteammapping> lstteammap = lsuserteammappingRepository.findByLsuserMasterAndTeamcodeNotNull(objuser);
 	        List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(lstteammap, objuser.getLssitemaster());
 	        
-	        lstprojectmaster = lsprojectmasterRepository.findByLsusersteamInAndStatusAndEnddateLessThan(lstteam, 1, currentdate);
+	        lstprojectmaster = lsprojectmasterRepository.findByLsusersteamInAndStatusAndEnddateLessThanOrderByProjectcodeDesc(lstteam, 1, currentdate);
 	        lstorder = lslogilablimsorderdetailRepository.findByOrderflagAndLsprojectmasterIn("R", lstprojectmaster);
 	        if(lstorder != null)
 	        {
@@ -4201,7 +4202,7 @@ public class DashBoardService {
 			List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(lstteammap,
 					objuser.getLssitemaster());
 			List<LSprojectmaster> lstprojectmaster = new ArrayList<LSprojectmaster>();
-			 lstprojectmaster = lsprojectmasterRepository.findByLsusersteamInAndStatusAndEnddateLessThan(lstteam, 1, currentdate);
+			 lstprojectmaster = lsprojectmasterRepository.findByLsusersteamInAndStatusAndEnddateLessThanOrderByProjectcodeDesc(lstteam, 1, currentdate);
 			rtnobject.put("count", lslogilablimsorderdetailRepository.countByOrderflagAndLsprojectmasterIn("R",lstprojectmaster));
 		} 
 		return rtnobject;

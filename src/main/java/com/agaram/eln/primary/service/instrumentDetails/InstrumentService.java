@@ -1813,11 +1813,41 @@ public class InstrumentService {
 					objorder.setOrdertypesequence(sqordertype.getOrdertypesequence()+1);
 				}
 			}
+			String sequence = objorder.getSequenceid();
+			String sequencetext = sequence.substring(sequence.indexOf("{s&")+3, sequence.indexOf("#s}"));
+			String replacedseq ="";
+			if(sqa.getSequenceview().equals(2) && objorder.getApplicationsequence()!=null)
+			{
+				replacedseq = String.format("%0"+sequencetext.length()+"d", objorder.getApplicationsequence());
+			}
+			else if(sqa.getSequenceview().equals(3) && objorder.getSitesequence() != null)
+			{
+				replacedseq = String.format("%0"+sequencetext.length()+"d", objorder.getApplicationsequence());
+				
+			}else if(sqa.getSequenceview().equals(4) && objorder.getOrdertypesequence()!=null)
+			{
+				replacedseq = String.format("%0"+sequencetext.length()+"d", objorder.getApplicationsequence());
+			}
+			else if(sqa.getSequenceview().equals(5) && objorder.getTasksequence() != null)
+			{
+				replacedseq = String.format("%0"+sequencetext.length()+"d", objorder.getApplicationsequence());
+			}
+			else if(sqa.getSequenceview().equals(6)&& objorder.getProjectsequence() != null)
+			{
+				replacedseq = String.format("%0"+sequencetext.length()+"d", objorder.getApplicationsequence());
+			}
+			
+			if(!sequencetext.equals("")&& !replacedseq.equals(""))
+			{
+				String replacedtext = sequence.substring(0, sequence.indexOf("{s&"))+replacedseq+sequence.substring(sequence.indexOf("#s}")+2, sequence.length()-1);
+				objorder.setSequenceid(replacedtext);
+			}
 		}
 	}
 	
 	public void updatesequence(Integer sequenceno, LSlogilablimsorderdetail objorder)
 	{
+		
 		if(objorder.getApplicationsequence() != null)
 		{
 			sequencetableRepository.setinitialapplicationsequence(objorder.getApplicationsequence(),sequenceno);

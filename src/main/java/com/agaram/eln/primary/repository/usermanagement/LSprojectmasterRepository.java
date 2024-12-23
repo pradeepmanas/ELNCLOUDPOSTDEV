@@ -62,8 +62,9 @@ public interface LSprojectmasterRepository extends JpaRepository<LSprojectmaster
 	public List<LSprojectmaster> findByLssitemasterAndStatusOrderByProjectcodeDesc(LSSiteMaster lssitemaster, int i);
 
 	public List<LSprojectmaster> findByLssitemasterOrderByProjectcodeDesc(LSSiteMaster lssitemaster);
-
 	public List<LSprojectmaster> findByLsusersteamInAndStatus(List<LSusersteam> teamlist, int i);
+
+	public List<LSprojectmaster> findByLsusersteamInAndStatusOrderByProjectcodeDesc(List<LSusersteam> teamlist, int i);
 
 	public LSprojectmaster findByProjectcode(Integer projectcode);
 
@@ -88,13 +89,13 @@ public interface LSprojectmasterRepository extends JpaRepository<LSprojectmaster
 	
 	public List<LSprojectmaster> countByLsusersteamInAndStatus(List<LSusersteam> teamlist, int i);
 
-	public List<LSprojectmaster> findByLsusersteamInAndStatusAndStartdateGreaterThan(List<LSusersteam> lstteam, int i,
+	public List<LSprojectmaster> findByLsusersteamInAndStatusAndStartdateGreaterThanOrderByProjectcodeDesc(List<LSusersteam> lstteam, int i,
 			Date currentdate);
 
-	public List<LSprojectmaster> findByLsusersteamInAndStatusAndEnddateLessThan(List<LSusersteam> lstteam, int i,
+	public List<LSprojectmaster> findByLsusersteamInAndStatusAndEnddateLessThanOrderByProjectcodeDesc(List<LSusersteam> lstteam, int i,
 			Date currentdate);
 
-	public List<LSprojectmaster> findByLsusersteamInAndStatusAndStartdateBeforeAndEnddateAfter(
+	public List<LSprojectmaster> findByLsusersteamInAndStatusAndStartdateBeforeAndEnddateAfterOrderByProjectcodeDesc(
 			List<LSusersteam> lstteam, int i, Date currentdate, Date currentdate2);
 
 	public List<LSprojectmaster> countByLsusersteamInAndStatusAndEnddateLessThan(List<LSusersteam> lstteam, int i, Date currentdate);
@@ -116,6 +117,8 @@ public interface LSprojectmasterRepository extends JpaRepository<LSprojectmaster
 
 	public List<LSprojectmaster> findByLsusersteamInAndStatusAndDuedate(List<LSusersteam> lstteam, int i,
 			String string);
+
+	
 
 
 }
