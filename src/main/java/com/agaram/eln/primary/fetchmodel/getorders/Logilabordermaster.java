@@ -46,6 +46,7 @@ public class Logilabordermaster implements Comparable<Logilabordermaster> {
 	private String approvelaccept;
 	private Integer autoregistercount;
 	private String materialname;
+	private String sequenceid;
 
 	public Logilabordermaster(Long batchcode, String batchid, LSworkflow lsworkflow, String testname, LSfile lsfile,
 			LSsamplemaster lssamplemaster, LSprojectmaster lsprojectmaster, Integer filetype, String orderflag,
@@ -53,7 +54,7 @@ public class Logilabordermaster implements Comparable<Logilabordermaster> {
 			LStestmasterlocal lstestmasterlocal, Integer ordercancell, Integer viewoption, LSuserMaster lsuserMaster,
 			Integer testcode, Integer approvelstatus, LSOrdernotification lsordernotification, Integer ordersaved,
 			Boolean repeat, LsAutoregister lsautoregisterorders, Boolean sentforapprovel, String approvelaccept,
-			Integer autoregistercount, Elnmaterial elnmaterial) {
+			Integer autoregistercount, Elnmaterial elnmaterial,String sequenceid) {
 		this.batchcode = batchcode;
 		this.batchid = batchid;
 		this.workflowcode = lsworkflow != null ? lsworkflow.getWorkflowcode() : null;
@@ -84,7 +85,7 @@ public class Logilabordermaster implements Comparable<Logilabordermaster> {
 		this.approvelaccept = approvelaccept;
 		this.autoregistercount = autoregistercount;
 		this.materialname = elnmaterial != null ? elnmaterial.getSmaterialname() : null;
-
+		this.sequenceid = sequenceid;
 	}
 
 	public String getMaterialname() {
@@ -386,6 +387,14 @@ public class Logilabordermaster implements Comparable<Logilabordermaster> {
 
 	public void setAutoregistercount(Integer autoregistercount) {
 		this.autoregistercount = autoregistercount;
+	}
+
+	public String getSequenceid() {
+		return sequenceid;
+	}
+
+	public void setSequenceid(String sequenceid) {
+		this.sequenceid = sequenceid;
 	}
 
 }

@@ -52,6 +52,7 @@ public class LogilabOrdermastersh implements Comparable<LogilabOrdermastersh> {
 	private Long pse;
 	private Long tse;
 	private Long ose;
+	private String sid;
 
 	public LogilabOrdermastersh(Long batchcode, String batchid, LSworkflow lsworkflow, String testname, LSfile lsfile,
 			LSsamplemaster lssamplemaster, LSprojectmaster lsprojectmaster, Integer filetype, String orderflag,
@@ -60,7 +61,7 @@ public class LogilabOrdermastersh implements Comparable<LogilabOrdermastersh> {
 			Integer testcode, Integer approvelstatus, LSOrdernotification lsordernotification, Integer ordersaved,
 			Boolean repeat, LsAutoregister lsautoregisterorders, Boolean sentforapprovel, String approvelaccept,
 			Integer autoregistercount, Elnmaterial elnmaterial, String lockedusername, Long applicationsequence,
-			Long sitesequence, Long projectsequence, Long tasksequence, Long ordertypesequence) {
+			Long sitesequence, Long projectsequence, Long tasksequence, Long ordertypesequence,String sequenceid) {
 		this.bc = batchcode;
 		this.bi = batchid;
 		this.wc = lsworkflow != null ? lsworkflow.getWorkflowcode() : null;
@@ -96,6 +97,7 @@ public class LogilabOrdermastersh implements Comparable<LogilabOrdermastersh> {
 		this.pse = projectsequence;
 		this.tse = tasksequence;
 		this.ose = ordertypesequence;
+		this.sid = sequenceid;
 	}
 
 	public String getLoc() {
@@ -417,6 +419,14 @@ public class LogilabOrdermastersh implements Comparable<LogilabOrdermastersh> {
 
 	public void setOse(Long ose) {
 		this.ose = ose;
+	}
+	
+	public String getSid() {
+		return sid;
+	}
+
+	public void setSid(String sid) {
+		this.sid = sid;
 	}
 
 	@Override

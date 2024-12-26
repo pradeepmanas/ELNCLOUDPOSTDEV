@@ -55,11 +55,11 @@ public class Logilaborderssh extends LogilabOrdermastersh {
 			Lsrepositoriesdata lsrepositoriesdata,Lsrepositories lsrepositories,String keyword, Long directorycode,LStestmasterlocal lstestmasterlocal,
 			Integer ordercancell,Integer viewoption,Elnmaterial elnmaterial,MaterialInventory materialinventory,Integer approved,LSOrdernotification lsordernotification, 
 			Integer ordersaved,Boolean repeat,LsAutoregister lsautoregisterorders,Boolean sentforapprovel,String approvelaccept,Integer autoregistercount, String lockedusername, Long applicationsequence,
-			Long sitesequence, Long projectsequence, Long tasksequence, Long ordertypesequence) {
+			Long sitesequence, Long projectsequence, Long tasksequence, Long ordertypesequence, String sequenceid) {
 		
 		super(batchcode, batchid, lsworkflow, testname, lsfile, lssamplemaster, lsprojectmaster, filetype, orderflag,assignedto, createdtimestamp,completedtimestamp,keyword,
 				lstestmasterlocal, ordercancell,viewoption,lsuserMaster,testcode, approvelstatus,lsordernotification, ordersaved,repeat,lsautoregisterorders,sentforapprovel,
-				approvelaccept,autoregistercount, elnmaterial,lockedusername,applicationsequence,sitesequence,projectsequence,tasksequence,ordertypesequence);
+				approvelaccept,autoregistercount, elnmaterial,lockedusername,applicationsequence,sitesequence,projectsequence,tasksequence,ordertypesequence,sequenceid);
 		 
 		if(lssamplefile != null)
 		{

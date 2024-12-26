@@ -58,7 +58,7 @@ public class LogilabOrderDetails extends Logilaborders {
 			Integer viewoption, Elnmaterial elnmaterial, MaterialInventory materialinventory, String lockedusername,
 			Integer activeuser, Integer approved,LSOrdernotification lsordernotification, 
 			Integer ordersaved,Boolean repeat,LsAutoregister lsautoregisterorders,Boolean sentforapprovel,
-			String approvelaccept,Integer autoregistercount
+			String approvelaccept,Integer autoregistercount,String sequenceid
 //			,
 //			List<Lsorderworkflowhistory> lsorderworkflowhistory
 	) {
@@ -66,7 +66,7 @@ public class LogilabOrderDetails extends Logilaborders {
 				lsprojectmaster, lsfile, filetype, lsuserMaster, assignedto, lssamplefile, lsworkflow, createdtimestamp,
 				completedtimestamp, lsrepositoriesdata, lsrepositories, keyword, directorycode, lstestmasterlocal,
 				ordercancell, viewoption, elnmaterial, materialinventory, approved, lsordernotification, ordersaved,
-				repeat, lsautoregisterorders, sentforapprovel, approvelaccept, autoregistercount);
+				repeat, lsautoregisterorders, sentforapprovel, approvelaccept, autoregistercount,sequenceid);
 
 		this.lockedusername = lockedusername;
 		this.activeuser = activeuser;

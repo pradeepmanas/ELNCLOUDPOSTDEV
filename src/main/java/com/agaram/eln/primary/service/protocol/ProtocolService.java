@@ -3672,6 +3672,40 @@ public class ProtocolService {
 						objorder.setOrdertypesequence(sqordertype.getOrdertypesequence()+1);
 					}
 				}
+				
+				String sequence = objorder.getSequenceid();
+				String sequencetext = sequence.substring(sequence.indexOf("{s&")+3, sequence.indexOf("$s}"));
+				String replacedseq ="";
+				if(sqa.getSequenceview().equals(2) && objorder.getApplicationsequence()!=null && !sequencetext.equals(""))
+				{
+					replacedseq = String.format("%0"+sequencetext.length()+"d", objorder.getApplicationsequence());
+				}
+				else if(sqa.getSequenceview().equals(3) && objorder.getSitesequence() != null && !sequencetext.equals(""))
+				{
+					replacedseq = String.format("%0"+sequencetext.length()+"d", objorder.getSitesequence());
+					
+				}else if(sqa.getSequenceview().equals(4) && objorder.getOrdertypesequence()!=null && !sequencetext.equals(""))
+				{
+					replacedseq = String.format("%0"+sequencetext.length()+"d", objorder.getOrdertypesequence());
+				}
+				else if(sqa.getSequenceview().equals(5) && objorder.getTasksequence() != null && !sequencetext.equals(""))
+				{
+					replacedseq = String.format("%0"+sequencetext.length()+"d", objorder.getTasksequence());
+				}
+				else if(sqa.getSequenceview().equals(6)&& objorder.getProjectsequence() != null && !sequencetext.equals(""))
+				{
+					replacedseq = String.format("%0"+sequencetext.length()+"d", objorder.getProjectsequence());
+				}
+				else if(!sequencetext.equals("") && objorder.getApplicationsequence()!=null)
+				{
+					replacedseq = String.format("%0"+sequencetext.length()+"d", objorder.getApplicationsequence());
+				}
+				
+				if(!sequencetext.equals("")&& !replacedseq.equals(""))
+				{
+					String replacedtext = sequence.substring(0, sequence.indexOf("{s&"))+replacedseq+sequence.substring(sequence.indexOf("$s}")+3, sequence.length());
+					objorder.setSequenceid(replacedtext);
+				}
 			}
 		}
 	 

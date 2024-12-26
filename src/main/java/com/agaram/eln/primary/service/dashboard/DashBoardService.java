@@ -1335,7 +1335,8 @@ public class DashBoardService {
 									lsOrderDetail.getAutoregistercount(), lsOrderDetail.getElnmaterial(),
 									lsOrderDetail.getLockedusername(), lsOrderDetail.getApplicationsequence(),
 									lsOrderDetail.getSitesequence(), lsOrderDetail.getProjectsequence(), 
-									lsOrderDetail.getTasksequence(), lsOrderDetail.getOrdertypesequence() ))
+									lsOrderDetail.getTasksequence(), lsOrderDetail.getOrdertypesequence(),
+									lsOrderDetail.getSequenceid()))
 							.collect(Collectors.toList()));
 				}
 //			} else {
@@ -1822,7 +1823,8 @@ public class DashBoardService {
 								lsOrderDetail.getApprovelaccept(), lsOrderDetail.getAutoregistercount(),
 								lsOrderDetail.getElnmaterial(), lsOrderDetail.getLockedusername(), lsOrderDetail.getApplicationsequence(),
 								lsOrderDetail.getSitesequence(), lsOrderDetail.getProjectsequence(), 
-								lsOrderDetail.getTasksequence(), lsOrderDetail.getOrdertypesequence()
+								lsOrderDetail.getTasksequence(), lsOrderDetail.getOrdertypesequence(),
+								lsOrderDetail.getSequenceid()
 
 						)).collect(Collectors.toList());
 			}
@@ -3414,7 +3416,7 @@ public class DashBoardService {
 										lsOrderDetail.getLsordernotification(), lsOrderDetail.getOrdersaved(),
 										lsOrderDetail.getRepeat(), lsOrderDetail.getLsautoregisterorders(),
 										lsOrderDetail.getSentforapprovel(), lsOrderDetail.getApprovelaccept(),
-										lsOrderDetail.getAutoregistercount(), lsOrderDetail.getElnmaterial()))
+										lsOrderDetail.getAutoregistercount(), lsOrderDetail.getElnmaterial(), lsOrderDetail.getSequenceid()))
 								.collect(Collectors.toList());
 						rtnobj.put("orders", lstorders);
 
@@ -3464,7 +3466,7 @@ public class DashBoardService {
 										protocolrecord.getLsordernotification(), protocolrecord.getLsautoregister(),
 										protocolrecord.getRepeat(), protocolrecord.getSentforapprovel(),
 										protocolrecord.getApprovelaccept(), protocolrecord.getAutoregistercount(),
-										protocolrecord.getLsuserMaster()))
+										protocolrecord.getLsuserMaster(), protocolrecord.getSequenceid()))
 								.collect(Collectors.toList());
 
 //						lstordersprotocol = LSlogilabprotocoldetailRepository

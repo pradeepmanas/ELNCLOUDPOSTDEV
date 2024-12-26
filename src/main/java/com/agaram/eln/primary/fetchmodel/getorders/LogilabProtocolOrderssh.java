@@ -76,6 +76,7 @@ public class LogilabProtocolOrderssh implements Comparable<LogilabProtocolOrders
 	private Long pse;
 	private Long tse;
 	private Long ose;
+	private String sid;
 	
 	public LogilabProtocolOrderssh(Long protocolordercode, Integer Testcode, String protoclordername, String orderflag,
 			Integer protocoltype, Date createdtimestamp, Date completedtimestamp, LSprotocolmaster lsprotocolmaster,
@@ -87,7 +88,7 @@ public class LogilabProtocolOrderssh implements Comparable<LogilabProtocolOrders
 			Date orderstartedon,Integer lockeduser,String lockedusername, Integer versionno,Elnprotocolworkflow elnprotocolworkflow,
 			LSOrdernotification lsordernotification,LsAutoregister lsautoregister,Boolean repeat,
 			Boolean sentforapprovel,String approvelaccept,Integer autoregistercount, LSuserMaster lsuserMaster, LStestmasterlocal lstestmasterlocal, 
-			Long applicationsequence, Long sitesequence, Long projectsequence, Long tasksequence, Long ordertypesequence) {
+			Long applicationsequence, Long sitesequence, Long projectsequence, Long tasksequence, Long ordertypesequence,String sequenceid) {
 
 		this.pc = protocolordercode;
 		this.tc = Testcode;
@@ -136,6 +137,7 @@ public class LogilabProtocolOrderssh implements Comparable<LogilabProtocolOrders
 		this.pse = projectsequence;
 		this.tse = tasksequence;
 		this.ose = ordertypesequence;
+		this.sid = sequenceid;
 	}
 	
 	@Override
@@ -550,6 +552,14 @@ public class LogilabProtocolOrderssh implements Comparable<LogilabProtocolOrders
 
 	public void setOse(Long ose) {
 		this.ose = ose;
+	}
+
+	public String getSid() {
+		return sid;
+	}
+
+	public void setSid(String sid) {
+		this.sid = sid;
 	}
 
 	

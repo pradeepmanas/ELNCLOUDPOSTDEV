@@ -64,4 +64,13 @@ public class MaterialCategoryController {
 		return materialcategoryservice.ImportDatatoStore(inputMap);
 		
 	}
+	
+	@PostMapping(value = "/getAllActiveSampleStorageLocationforimport")
+	public ResponseEntity<Object> getAllActiveSampleStorageLocationforimport(@RequestBody Map<String, Object> mapObject) {
+		
+		Integer nsiteInteger = (Integer) mapObject.get("sitekey");
+		
+		return materialcategoryservice.getAllActiveSampleStorageLocationforimport(nsiteInteger);
+	}
+	
 }

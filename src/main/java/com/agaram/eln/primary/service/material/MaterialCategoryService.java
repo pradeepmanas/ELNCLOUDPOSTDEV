@@ -31,6 +31,7 @@ import com.agaram.eln.primary.model.material.MaterialCategory;
 import com.agaram.eln.primary.model.material.MaterialType;
 import com.agaram.eln.primary.model.material.Unit;
 import com.agaram.eln.primary.model.samplestoragelocation.SampleStorageLocation;
+import com.agaram.eln.primary.model.samplestoragelocation.SampleStorageVersion;
 import com.agaram.eln.primary.model.samplestoragelocation.SelectedInventoryMapped;
 import com.agaram.eln.primary.model.usermanagement.LSMultiusergroup;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
@@ -39,6 +40,7 @@ import com.agaram.eln.primary.repository.material.ElnmaterialRepository;
 import com.agaram.eln.primary.repository.material.MaterialCategoryRepository;
 import com.agaram.eln.primary.repository.material.MaterialTypeRepository;
 import com.agaram.eln.primary.repository.material.UnitRepository;
+import com.agaram.eln.primary.repository.samplestoragelocation.SampleStorageLocationRepository;
 import com.agaram.eln.primary.repository.samplestoragelocation.SelectedInventoryMappedRepository;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -69,6 +71,9 @@ public class MaterialCategoryService {
 
 	@PersistenceContext
 	private EntityManager entityManager;
+	
+	@Autowired
+	SampleStorageLocationRepository sampleStorageLocationRepository;
 
 	public ResponseEntity<Object> getMaterialType(Integer nsitecode) {
 
@@ -166,93 +171,82 @@ public class MaterialCategoryService {
 	public ResponseEntity<Map<String, Object>> ImportDatatoStore(Map<String, Object> inputMap) throws ParseException {
 		ObjectMapper obj = new ObjectMapper();
 		Integer siteCode = Integer.parseInt((String) inputMap.get("sitecode"));
-		List<String> materialCatNames = (List<String>) inputMap.get("MaterialCatName");
-		List<String> materialTypeNames = (List<String>) inputMap.get("MaterialName");
+//		List<String> materialCatNames = (List<String>) inputMap.get("MaterialCatName");
+//		List<String> materialTypeNames = (List<String>) inputMap.get("MaterialName");
 		List<String> UnitName = (List<String>) inputMap.get("UnitName");
-		List<MaterialType> materialTypes = obj.convertValue(inputMap.get("Materialcategory_MaterialType"),
-				new TypeReference<List<MaterialType>>() {
-				});
+
 		Date currentDate = commonfunction.getCurrentUtcTime();
 		Map<String, Object> responseMap = new HashMap<>();
 		// MaterialType ---------------------------------
 
-//		Map<String, Long> rtnvalues = checkDeblicaterecord(materialTypeNames, siteCode, "MaterialType",
-//				"smaterialtypename");
-		 List<MaterialType> materialTypeValues = MaterialTypeRepository
-		            .findByNsitecodeAndSmaterialtypenameIgnoreCaseIn(siteCode, materialTypeNames);
-		    Map<String, MaterialType> materialTypeMap = materialTypeValues.stream()
-		            .collect(Collectors.toMap(MaterialType::getSmaterialtypename, materialType -> materialType));
-		materialTypes = materialTypes.stream().map(item -> {
-			 MaterialType matchedMaterialType = materialTypeMap.get(item.getSmaterialtypename());
-             if (matchedMaterialType != null) {
-                 return matchedMaterialType;
-             } else {
-                 item.setCreatedate(currentDate);
-                 return item;
-             }
-		}).filter(Objects::nonNull).collect(Collectors.toList());
-
-		MaterialTypeRepository.save(materialTypes);
+//		 List<MaterialType> materialTypeValues = MaterialTypeRepository
+//		            .findByNsitecodeAndSmaterialtypenameIgnoreCaseIn(siteCode, materialTypeNames);
+//		    Map<String, MaterialType> materialTypeMap = materialTypeValues.stream()
+//		            .collect(Collectors.toMap(MaterialType::getSmaterialtypename, materialType -> materialType));
+//		List<MaterialType> materialTypes = obj.convertValue(inputMap.get("Materialcategory_MaterialType"),
+//				new TypeReference<List<MaterialType>>() {
+//				});
+//		materialTypes = materialTypes.stream().map(item -> {
+//			 MaterialType matchedMaterialType = materialTypeMap.get(item.getSmaterialtypename());
+//             if (matchedMaterialType != null) {
+//                 return matchedMaterialType;
+//             } else {
+//                 item.setCreatedate(currentDate);
+//                 return item;
+//             }
+//		}).filter(Objects::nonNull).collect(Collectors.toList());
+//
+//		MaterialTypeRepository.save(materialTypes);
 
 		// Materialcategory -----------------------------------
 
-		List<MaterialCategory> materialCategories = obj.convertValue(inputMap.get("Materialcategory"),
-				new TypeReference<List<MaterialCategory>>() {
-				});
-		Map<String, MaterialType> materialTypeMapFull = materialTypes.stream()
-				.collect(Collectors.toMap(MaterialType::getSmaterialtypename, materialType -> materialType));
-
-		Map<String, Long> materialCategoriesExistvalues = checkDeblicaterecord(materialCatNames, siteCode,
-				"MaterialCategory", "Smaterialcatname");
-
-		List<MaterialCategory> updatedMaterialCategories = materialCategories.stream().map(item -> {
-			if (materialCategoriesExistvalues.get(item.getSmaterialcatname()) > 0) {
-				Long existcount = materialCategoriesExistvalues.get(item.getSmaterialcatname()) + 1;
-				item.setSmaterialcatname(item.getSmaterialcatname() + "(" + existcount + ")");
-			}
-			MaterialType matchedMaterialType = materialTypeMapFull.get(item.getSmaterialtypename());
-//			if (rtnvalues.get(item.getSmaterialtypename()) > 0) {
-//				Long existcount = rtnvalues.get(item.getSmaterialtypename()) + 1;
-//				matchedMaterialType = materialTypeMapFull.get(item.getSmaterialtypename() + "(" + existcount + ")");
+//		List<MaterialCategory> materialCategories = obj.convertValue(inputMap.get("Materialcategory"),
+//				new TypeReference<List<MaterialCategory>>() {
+//				});
+//		Map<String, Long> materialCategoriesExistvalues = checkDeblicaterecord(materialCatNames, siteCode,
+//				"MaterialCategory", "Smaterialcatname");
+//
+//		List<MaterialCategory> updatedMaterialCategories = materialCategories.stream().map(item -> {
+//			if (materialCategoriesExistvalues.get(item.getSmaterialcatname()) > 0) {
+//				Long existcount = materialCategoriesExistvalues.get(item.getSmaterialcatname()) + 1;
+//				item.setSmaterialcatname(item.getSmaterialcatname() + "(" + existcount + ")");
 //			}
-			if (matchedMaterialType != null && matchedMaterialType.getNmaterialtypecode() != null) {
-				item.setNmaterialtypecode(matchedMaterialType.getNmaterialtypecode());
-			}
-			item.setCreatedate(currentDate);
-			return item;
-
-		}).filter(Objects::nonNull).collect(Collectors.toList());
-
-		MaterialCategoryRepository.save(updatedMaterialCategories);
-		responseMap.put("materialcategory", updatedMaterialCategories);
-
-		Map<String, MaterialCategory> materialCatMapaftersave = updatedMaterialCategories.stream()
-				.collect(Collectors.toMap(MaterialCategory::getSmaterialcatname, materialcategory -> materialcategory));
+//			item.setCreatedate(currentDate);
+//			return item;
+//
+//		}).filter(Objects::nonNull).collect(Collectors.toList());
+//
+//		MaterialCategoryRepository.save(updatedMaterialCategories);
+//		responseMap.put("materialcategory", updatedMaterialCategories);
+//
+//		Map<String, MaterialCategory> materialCatMapaftersave = updatedMaterialCategories.stream()
+//				.collect(Collectors.toMap(MaterialCategory::getSmaterialcatname, materialcategory -> materialcategory));
 
 //	    //unit -------------------------------------
 
 		List<Unit> unitvalues = obj.convertValue(inputMap.get("Unit"), new TypeReference<List<Unit>>() {
 		});
-//		Map<String, Long> existUnitList = new HashMap<>();
-		final Map<String, Long>[] existUnitList = new Map[]{new HashMap<>()};
-		if (!UnitName.isEmpty()) {
-			Map<String, Long> existUnitList1 =checkDeblicaterecord(UnitName, siteCode, "unit", "Sunitname");
-			unitvalues = unitvalues.stream().map(item -> {
-				if (existUnitList1.get(item.getSunitname()) > 0) {
-					Long existcount = existUnitList1.get(item.getSunitname()) + 1;
-					item.setSunitname(item.getSunitname() + "(" + existcount + ")");
-				}
-				item.setCreatedate(currentDate);
-				return item;
-			}).collect(Collectors.toMap(Unit::getSunitname, item -> item, (existing, replacement) -> existing)).values()
-					.stream().filter(Objects::nonNull).collect(Collectors.toList());
-			existUnitList[0] = existUnitList1;
-			UnitRepository.save(unitvalues);
 
+		if (!UnitName.isEmpty()) {
+			List<Unit> existunitData = UnitRepository.findByNsitecodeAndSunitnameIgnoreCaseIn(siteCode, UnitName);
+			Map<String, Unit> existUnitListvalues = existunitData.stream()
+					.collect(Collectors.toMap(Unit::getSunitname, unit -> unit));
+			unitvalues = unitvalues.stream().map(item -> {
+				Unit existingUnit = existUnitListvalues.get(item.getSunitname());
+
+				if (existingUnit != null) {
+					return existingUnit;
+				} else {
+					item.setCreatedate(currentDate);
+					return item;
+				}
+			}).collect(Collectors.toList());
+			
+			UnitRepository.save(unitvalues);
 		}
 
 		// material -------------------------------------------------------
-		
+
 		List<Elnmaterial> materialDatas = obj.convertValue(inputMap.get("Elnmaterial"),
 				new TypeReference<List<Elnmaterial>>() {
 				});
@@ -260,41 +254,25 @@ public class MaterialCategoryService {
 		Map<String, Unit> unitfinalmap = unitvalues.stream()
 				.collect(Collectors.toMap(Unit::getSunitname, unit -> unit));
 		if (!materialDatas.isEmpty()) {
-			
+
 			Map<String, Long> existMaterialList = checkDeblicaterecord(ElnmaterialName, siteCode, "Elnmaterial",
 					"Smaterialname");
 
 			materialDatas = materialDatas.stream().map(itemsv -> {
-				MaterialCategory unitmaterialcategory = materialCatMapaftersave
-						.get(itemsv.getMaterialcategory().getSmaterialcatname());
-				if (materialCategoriesExistvalues.get(itemsv.getMaterialcategory().getSmaterialcatname()) > 0) {
-					Long existcount = materialCategoriesExistvalues
-							.get(itemsv.getMaterialcategory().getSmaterialcatname()) + 1;
-					unitmaterialcategory = materialCatMapaftersave
-							.get(itemsv.getMaterialcategory().getSmaterialcatname() + "(" + existcount + ")");
-				}
-
-				MaterialType materialtype = materialTypeMapFull.get(itemsv.getMaterialtype().getSmaterialtypename());
-//				if (rtnvalues.get(itemsv.getMaterialtype().getSmaterialtypename()) > 0) {
-//					Long existcount = rtnvalues.get(itemsv.getMaterialtype().getSmaterialtypename()) + 1;
-//					materialtype = materialTypeMapFull
-//							.get(itemsv.getMaterialtype().getSmaterialtypename() + "(" + existcount + ")");
+//				MaterialCategory unitmaterialcategory = materialCatMapaftersave
+//						.get(itemsv.getMaterialcategory().getSmaterialcatname());
+//				if (materialCategoriesExistvalues.get(itemsv.getMaterialcategory().getSmaterialcatname()) > 0) {
+//					Long existcount = materialCategoriesExistvalues
+//							.get(itemsv.getMaterialcategory().getSmaterialcatname()) + 1;
+//					unitmaterialcategory = materialCatMapaftersave
+//							.get(itemsv.getMaterialcategory().getSmaterialcatname() + "(" + existcount + ")");
 //				}
-
-				if (unitmaterialcategory != null && unitmaterialcategory.getNmaterialcatcode() != null
-						&& materialtype != null && materialtype.getNmaterialtypecode() != null) {
-					itemsv.setMaterialcategory(unitmaterialcategory);
-					itemsv.setMaterialtype(materialtype);
+//				if (unitmaterialcategory != null && unitmaterialcategory.getNmaterialcatcode() != null) {
+//					itemsv.setMaterialcategory(unitmaterialcategory);
 					if (itemsv.getUnit().getSunitname() != null && !unitfinalmap.isEmpty()) {
-						if (existUnitList[0].get(itemsv.getUnit().getSunitname()) > 0) {
-							Long existcount = existUnitList[0].get(itemsv.getUnit().getSunitname()) + 1;
-							itemsv.setUnit(unitfinalmap.get(itemsv.getUnit().getSunitname() + "(" + existcount + ")"));
-						} else {
-							itemsv.setUnit(unitfinalmap.get(itemsv.getUnit().getSunitname()));
-						}
-
+						itemsv.setUnit(unitfinalmap.get(itemsv.getUnit().getSunitname()));
 					}
-				}
+//				}
 				if (existMaterialList.get(itemsv.getSmaterialname()) > 0) {
 					Long existcount = existMaterialList.get(itemsv.getSmaterialname()) + 1;
 					itemsv.setSmaterialname(itemsv.getSmaterialname() + "(" + existcount + ")");
@@ -304,8 +282,6 @@ public class MaterialCategoryService {
 			}).filter(Objects::nonNull).collect(Collectors.toList());
 
 			ElnmaterialRepository.save(materialDatas);
-//			responseMap.put("materialDatas", materialDatas);
-
 			Map<String, Elnmaterial> materialMapaftersave = materialDatas.stream()
 					.collect(Collectors.toMap(Elnmaterial::getSmaterialname, material -> material));
 
@@ -322,9 +298,9 @@ public class MaterialCategoryService {
 			objInventory.forEach(objInv -> {
 				try {
 					String materialName = objInv.getMaterial().getSmaterialname();
-					String materialCategoryName = objInv.getMaterialcategory().getSmaterialcatname();
-					String materialTypeName = objInv.getMaterialtype().getSmaterialtypename();
-					String unitname=objInv.getUnit().getSunitname();
+//					String materialCategoryName = objInv.getMaterialcategory().getSmaterialcatname();
+//					String materialTypeName = objInv.getMaterialtype().getSmaterialtypename();
+					String unitname = objInv.getUnit().getSunitname();
 					boolean isExpiry = objInv.getMaterial().getExpirytype() != null
 							&& objInv.getMaterial().getExpirytype() == 1;
 					Integer ntransStatus = (objInv.getMaterial().getQuarantine() != null
@@ -332,18 +308,20 @@ public class MaterialCategoryService {
 									: (objInv.getMaterial().getOpenexpiry() != null
 											&& objInv.getMaterial().getOpenexpiry()) ? 22 : 28;
 					objInv.setMaterial(updateMaterial(materialName, existMaterialList, materialMapaftersave));
-					objInv.setMaterialcategory(updateMaterial(materialCategoryName, materialCategoriesExistvalues,
-							materialCatMapaftersave));
-					if(unitname != null) {
-						objInv.setUnit(updateMaterial(unitname,existUnitList[0],unitfinalmap));
+//					objInv.setMaterialcategory(updateMaterial(materialCategoryName, materialCategoriesExistvalues,
+//							materialCatMapaftersave));
+					if (unitname != null) {
+						objInv.setUnit(unitfinalmap.get(unitname));
 					}
-					
-					objInv.setMaterialtype(materialTypeMapFull.get(objInv.getMaterialtype().getSmaterialtypename()));
-//					objInv.setMaterialtype(updateMaterial(materialTypeName, rtnvalues, materialTypeMapFull));
+
+//					objInv.setMaterialtype(materialTypeMapFull.get(objInv.getMaterialtype().getSmaterialtypename()));
 					objInv.setCreateddate(commonfunction.getCurrentUtcTime());
 					objInv.setIsexpiry(isExpiry);
 					objInv.setNtransactionstatus(ntransStatus);
-					objInv.setInventoryname(objInv.getInventoryname());
+//					if(objInv.getInventoryname()!=null) {
+//						objInv.setInventoryname(objInv.getInventoryname());
+//					}
+					
 					objInv.setCreatedby(objInv.getCreatedby());
 
 				} catch (ParseException e) {
@@ -383,10 +361,6 @@ public class MaterialCategoryService {
 
 			selectedInventoryMappedRepository.save(newStorageEntry);
 		}
-
-//		responseMap.put("materialCatMapaftersave", materialCatMapaftersave);
-//		responseMap.put("materialTypeMapFull", materialTypeMapFull);
-
 		return new ResponseEntity<>(responseMap, HttpStatus.OK);
 	}
 
@@ -420,22 +394,31 @@ public class MaterialCategoryService {
 		}
 		List<Object[]> results = query.getResultList();
 		if (!results.isEmpty()) {
-		    Object firstElement = results.get(0);
-		    if (firstElement instanceof BigInteger) {
-		        BigInteger bigInt = (BigInteger) firstElement;
-		        materialTypeNames.forEach(materialType -> 
-		            resultMap.put(materialType, bigInt.longValue())
-		        );
-		    } 
-		    else if (firstElement instanceof Object[]) {
-		        Object[] row = (Object[]) firstElement;
-		        for (int i = 0; i < materialTypeNames.size(); i++) {
-		            BigInteger count = (BigInteger) row[i];
-		            resultMap.put(materialTypeNames.get(i), count.longValue());
-		        }
-		    }
+			Object firstElement = results.get(0);
+			if (firstElement instanceof BigInteger) {
+				BigInteger bigInt = (BigInteger) firstElement;
+				materialTypeNames.forEach(materialType -> resultMap.put(materialType, bigInt.longValue()));
+			} else if (firstElement instanceof Object[]) {
+				Object[] row = (Object[]) firstElement;
+				for (int i = 0; i < materialTypeNames.size(); i++) {
+					BigInteger count = (BigInteger) row[i];
+					resultMap.put(materialTypeNames.get(i), count.longValue());
+				}
+			}
 		}
 
 		return resultMap;
+	}
+
+	public ResponseEntity<Object> getAllActiveSampleStorageLocationforimport(Integer nsiteInteger) {
+		List<SampleStorageLocation> sampleStorageLocationList = sampleStorageLocationRepository
+				.findBySamplestoragelocationkeyOrSitekeyOrderBySamplestoragelocationkeyDesc(-1,nsiteInteger);
+
+		Map<String, Object> objMap = new LinkedHashMap<String, Object>();
+
+		if (sampleStorageLocationList != null && sampleStorageLocationList.size() > 0) {
+			objMap.put("sampleStorageLocation", sampleStorageLocationList);
+		}
+		return new ResponseEntity<>(objMap, HttpStatus.OK);
 	}
 }
