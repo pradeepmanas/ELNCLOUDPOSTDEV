@@ -25,6 +25,11 @@ import org.json.JSONObject;
 
 import com.agaram.eln.config.AESEncryption;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
+import com.agaram.eln.primary.model.sequence.SequenceTable;
+import com.agaram.eln.primary.model.sequence.SequenceTableOrderType;
+import com.agaram.eln.primary.model.sequence.SequenceTableProject;
+import com.agaram.eln.primary.model.sequence.SequenceTableSite;
+import com.agaram.eln.primary.model.sequence.SequenceTableTask;
 
 public class commonfunction {
 
@@ -537,6 +542,77 @@ public class commonfunction {
 	    return jsonString;
 	}
 
+	public static SequenceTable ResetSequence(SequenceTable currentseq,boolean resetall) throws ParseException
+	{
+		if(currentseq.getResetperiod() == 1)
+		{
+			return currentseq;
+		}
+		
+		Date currentdate = commonfunction.getCurrentUtcTime();
+		SimpleDateFormat day = new SimpleDateFormat("dd");
+		SimpleDateFormat month = new SimpleDateFormat("mm");
+		SimpleDateFormat year = new SimpleDateFormat("yyyy");
+		
+		currentseq.setSequenceday(Integer.parseInt(day.format(currentdate)));
+		currentseq.setSequencemonth(Integer.parseInt(month.format(currentdate)));
+		currentseq.setSequenceyear(Integer.parseInt(year.format(currentdate)));
+		
+		if(currentseq.getResetperiod() == 2 && currentseq.getSequenceday() == Integer.parseInt(day.format(currentdate)))
+		{
+			resetall = true;
+		}
+		else if(currentseq.getResetperiod() == 3 && currentseq.getSequencemonth() == Integer.parseInt(month.format(currentdate)))
+		{
+			resetall = true;
+		}
+		else if(currentseq.getResetperiod() == 4 && currentseq.getSequenceyear() == Integer.parseInt(year.format(currentdate)))
+		{
+			resetall = true;
+		}
+		
+		if(resetall)
+		{
+			currentseq.setApplicationsequence((long)0);
+			currentseq.setSequenceday(Integer.parseInt(day.format(currentdate)));
+			currentseq.setSequencemonth(Integer.parseInt(month.format(currentdate)));
+			currentseq.setSequenceyear(Integer.parseInt(year.format(currentdate)));
+			
+			if(currentseq.getSequencetablesite() != null)
+			{
+				for(SequenceTableSite sts : currentseq.getSequencetablesite())
+				{
+					sts.setSitesequence((long)0);
+				}
+			}
+			
+			if(currentseq.getSequencesabletask() != null)
+			{
+				for(SequenceTableTask sts : currentseq.getSequencesabletask())
+				{
+					sts.setTasksequence((long)0);
+				}
+			}
+			
+			if(currentseq.getSequencetableproject() != null)
+			{
+				for(SequenceTableProject sts : currentseq.getSequencetableproject())
+				{
+					sts.setProjectsequence((long)0);
+				}
+			}
+			
+			if(currentseq.getSequencetableordertype() != null)
+			{
+				for(SequenceTableOrderType sts : currentseq.getSequencetableordertype())
+				{
+					sts.setOrdertypesequence((long)0);
+				}
+			}
+		}
+		
+		return currentseq;
+	}
 	 
 
 }

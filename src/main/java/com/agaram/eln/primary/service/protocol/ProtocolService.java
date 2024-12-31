@@ -139,8 +139,10 @@ import com.agaram.eln.primary.model.protocols.Protocolvideos;
 import com.agaram.eln.primary.model.sequence.SequenceTable;
 import com.agaram.eln.primary.model.sequence.SequenceTableOrderType;
 import com.agaram.eln.primary.model.sequence.SequenceTableProject;
+import com.agaram.eln.primary.model.sequence.SequenceTableProjectLevel;
 import com.agaram.eln.primary.model.sequence.SequenceTableSite;
 import com.agaram.eln.primary.model.sequence.SequenceTableTask;
+import com.agaram.eln.primary.model.sequence.SequenceTableTaskLevel;
 import com.agaram.eln.primary.model.sheetManipulation.LStestmasterlocal;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.Notification;
@@ -164,6 +166,7 @@ import com.agaram.eln.primary.repository.instrumentDetails.LSlogilablimsorderRep
 import com.agaram.eln.primary.repository.instrumentDetails.LSordernotificationRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSprotocolfolderfilesRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSsheetfolderfilesRepository;
+import com.agaram.eln.primary.repository.instrumentDetails.LogilablimsorderdetailsRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsAutoregisterRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsprotocolOrderStructureRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsprotocolordersharedbyRepository;
@@ -189,9 +192,11 @@ import com.agaram.eln.primary.repository.protocol.LSprotocolorderimagesRepositor
 import com.agaram.eln.primary.repository.protocol.LSprotocolordersampleupdatesRepository;
 import com.agaram.eln.primary.repository.protocol.LSprotocolordersampleupdatesRepository.UserProjection1;
 import com.agaram.eln.primary.repository.sequence.SequenceTableOrderTypeRepository;
+import com.agaram.eln.primary.repository.sequence.SequenceTableProjectLevelRepository;
 import com.agaram.eln.primary.repository.sequence.SequenceTableProjectRepository;
 import com.agaram.eln.primary.repository.sequence.SequenceTableRepository;
 import com.agaram.eln.primary.repository.sequence.SequenceTableSiteRepository;
+import com.agaram.eln.primary.repository.sequence.SequenceTableTaskLevelRepository;
 import com.agaram.eln.primary.repository.sequence.SequenceTableTaskRepository;
 import com.agaram.eln.primary.repository.protocol.LSprotocolorderstephistoryRepository;
 import com.agaram.eln.primary.repository.protocol.LSprotocolorderstepversionRepository;
@@ -522,6 +527,15 @@ public class ProtocolService {
 
 	@Autowired
 	private SequenceTableOrderTypeRepository sequencetableordertyperepository;
+	
+	@Autowired
+	private SequenceTableProjectLevelRepository sequencetableprojectlevelrepository;
+	
+	@Autowired
+	private SequenceTableTaskLevelRepository sequencetabletasklevelrepository;
+	
+	@Autowired
+	private LogilablimsorderdetailsRepository logilablimsorderdetailsRepository;
 	
 	private static Map<String, Timer> timerMapPro = new HashMap<>();
 	private static Map<String, Boolean> timerStatusMapPro = new HashMap<>();
@@ -3490,7 +3504,7 @@ public class ProtocolService {
 	        }
 	    }
 	 
-	 public SequenceTable validateandupdatesheetordersequencenumber(LSlogilabprotocoldetail objorder)
+	 public SequenceTable validateandupdatesheetordersequencenumber(LSlogilabprotocoldetail objorder, SequenceTableProjectLevel objprojectseq, SequenceTableTaskLevel objtaskseq)
 		{
 			SequenceTable seqorder= new SequenceTable();
 			int sequence =2;
@@ -3559,6 +3573,36 @@ public class ProtocolService {
 				}
 			}
 			
+			if(objorder.getLsprojectmaster() != null && sequencetableprojectlevelrepository.findByProjectcode(objorder.getLsprojectmaster().getProjectcode()) == null)
+			{
+				SequenceTableProjectLevel objprolevel = new SequenceTableProjectLevel();
+				objprolevel.setProjectcode(objorder.getLsprojectmaster().getProjectcode());
+				long projectseq =0;
+				
+				projectseq = projectseq + logilablimsorderdetailsRepository.countByLsprojectmaster(objorder.getLsprojectmaster());
+				
+				projectseq = projectseq + LSlogilabprotocoldetailRepository.countByLsprojectmaster(objorder.getLsprojectmaster());
+				
+				objprolevel.setProjectsequence(projectseq);
+				
+				objprojectseq = sequencetableprojectlevelrepository.save(objprolevel);
+			}
+			
+			if(objorder.getLstestmasterlocal() != null && sequencetabletasklevelrepository.findByTestcode(objorder.getLstestmasterlocal().getTestcode()) == null)
+			{
+				SequenceTableTaskLevel objtsklevel = new SequenceTableTaskLevel();
+				objtsklevel.setTestcode(objorder.getLstestmasterlocal().getTestcode());
+				long taskseq =0;
+				
+				taskseq = taskseq + logilablimsorderdetailsRepository.countByLstestmasterlocal(objorder.getLstestmasterlocal());
+				
+				taskseq = taskseq + LSlogilabprotocoldetailRepository.countByLstestmasterlocal(objorder.getLstestmasterlocal());
+				
+				objtsklevel.setTasksequence(taskseq);
+				
+				objtaskseq = sequencetabletasklevelrepository.save(objtsklevel);
+			}
+			
 			if(objorder.getLstestmasterlocal() != null && sequencetabletaskRepository.findBySequencecodeAndTestcode(sequence,objorder.getLstestmasterlocal().getTestcode()) == null)
 			{
 				SequenceTableTask objsiteseq= new SequenceTableTask();
@@ -3616,7 +3660,7 @@ public class ProtocolService {
 			return seqorder;
 		}
 	 
-	 public void GetSequences(LSlogilabprotocoldetail objorder,SequenceTable seqorder)
+	 public void GetSequences(LSlogilabprotocoldetail objorder,SequenceTable seqorder, SequenceTableProjectLevel objprojectseq, SequenceTableTaskLevel objtaskseq)
 		{
 			SequenceTable sqa = seqorder;
 			
@@ -3648,6 +3692,16 @@ public class ProtocolService {
 					{
 						objorder.setProjectsequence(sqproject.getProjectsequence()+1);
 					}
+					
+					if(objprojectseq == null|| objprojectseq.getProjectcode() == null)
+					{
+						objprojectseq = sequencetableprojectlevelrepository.findByProjectcode(objorder.getLsprojectmaster().getProjectcode());
+					}
+					
+					if(objprojectseq != null)
+					{
+						objorder.setProjectlevelsequence(objprojectseq.getProjectsequence()+1);
+					}
 				}
 				
 				if(objorder !=null && objorder.getLstestmasterlocal() != null
@@ -3659,6 +3713,16 @@ public class ProtocolService {
 					if(sqtask != null)
 					{
 						objorder.setTasksequence(sqtask.getTasksequence()+1);
+					}
+					
+					if(objtaskseq == null || objtaskseq.getTestcode() == null)
+					{
+						objtaskseq = sequencetabletasklevelrepository.findByTestcode(objorder.getLstestmasterlocal().getTestcode());
+					}
+					
+					if(objtaskseq != null)
+					{
+						objorder.setTasklevelsequence(objtaskseq.getTasksequence()+1);
 					}
 				}
 				
@@ -3674,38 +3738,63 @@ public class ProtocolService {
 				}
 				
 				String sequence = objorder.getSequenceid();
-				String sequencetext = sequence.substring(sequence.indexOf("{s&")+3, sequence.indexOf("$s}"));
-				String replacedseq ="";
-				if(sqa.getSequenceview().equals(2) && objorder.getApplicationsequence()!=null && !sequencetext.equals(""))
+				String sequencetext = sequence;
+				if(sequence.contains("{s&") && sequence.contains("$s}"))
 				{
-					replacedseq = String.format("%0"+sequencetext.length()+"d", objorder.getApplicationsequence());
-				}
-				else if(sqa.getSequenceview().equals(3) && objorder.getSitesequence() != null && !sequencetext.equals(""))
-				{
-					replacedseq = String.format("%0"+sequencetext.length()+"d", objorder.getSitesequence());
+					sequencetext = sequence.substring(sequence.indexOf("{s&")+3, sequence.indexOf("$s}"));
+					String replacedseq ="";
+					if(sqa.getSequenceview().equals(2) && objorder.getApplicationsequence()!=null && !sequencetext.equals(""))
+					{
+						replacedseq = String.format("%0"+sequencetext.length()+"d", objorder.getApplicationsequence());
+					}
+					else if(sqa.getSequenceview().equals(3) && objorder.getSitesequence() != null && !sequencetext.equals(""))
+					{
+						replacedseq = String.format("%0"+sequencetext.length()+"d", objorder.getSitesequence());
+						
+					}else if(sqa.getSequenceview().equals(4) && objorder.getOrdertypesequence()!=null && !sequencetext.equals(""))
+					{
+						replacedseq = String.format("%0"+sequencetext.length()+"d", objorder.getOrdertypesequence());
+					}
+					else if(sqa.getSequenceview().equals(5) && objorder.getTasksequence() != null && !sequencetext.equals(""))
+					{
+						replacedseq = String.format("%0"+sequencetext.length()+"d", objorder.getTasksequence());
+					}
+					else if(sqa.getSequenceview().equals(6)&& objorder.getProjectsequence() != null && !sequencetext.equals(""))
+					{
+						replacedseq = String.format("%0"+sequencetext.length()+"d", objorder.getProjectsequence());
+					}
+					else if(!sequencetext.equals("") && objorder.getApplicationsequence()!=null)
+					{
+						replacedseq = String.format("%0"+sequencetext.length()+"d", objorder.getApplicationsequence());
+					}
 					
-				}else if(sqa.getSequenceview().equals(4) && objorder.getOrdertypesequence()!=null && !sequencetext.equals(""))
-				{
-					replacedseq = String.format("%0"+sequencetext.length()+"d", objorder.getOrdertypesequence());
-				}
-				else if(sqa.getSequenceview().equals(5) && objorder.getTasksequence() != null && !sequencetext.equals(""))
-				{
-					replacedseq = String.format("%0"+sequencetext.length()+"d", objorder.getTasksequence());
-				}
-				else if(sqa.getSequenceview().equals(6)&& objorder.getProjectsequence() != null && !sequencetext.equals(""))
-				{
-					replacedseq = String.format("%0"+sequencetext.length()+"d", objorder.getProjectsequence());
-				}
-				else if(!sequencetext.equals("") && objorder.getApplicationsequence()!=null)
-				{
-					replacedseq = String.format("%0"+sequencetext.length()+"d", objorder.getApplicationsequence());
+					if(!sequencetext.equals("") && !replacedseq.equals(""))
+					{
+						sequencetext = sequence.substring(0, sequence.indexOf("{s&"))+replacedseq+sequence.substring(sequence.indexOf("$s}")+3, sequence.length());
+					}
 				}
 				
-				if(!sequencetext.equals("")&& !replacedseq.equals(""))
+				if(sequence.contains("{sp&") && sequence.contains("$sp}"))
 				{
-					String replacedtext = sequence.substring(0, sequence.indexOf("{s&"))+replacedseq+sequence.substring(sequence.indexOf("$s}")+3, sequence.length());
-					objorder.setSequenceid(replacedtext);
+					String projectleveltext = sequencetext.substring(sequencetext.indexOf("{sp&")+4, sequencetext.indexOf("$sp}"));
+					if(objorder.getProjectlevelsequence() != null && !projectleveltext.equals(""))
+					{
+						String replacedseq = String.format("%0"+projectleveltext.length()+"d", objorder.getProjectlevelsequence());
+						sequencetext = sequencetext.substring(0, sequencetext.indexOf("{sp&"))+replacedseq+sequencetext.substring(sequencetext.indexOf("$sp}")+4, sequencetext.length());
+					}
 				}
+				
+				if(sequence.contains("{st&") && sequence.contains("$st}"))
+				{
+					String taskleveltext = sequencetext.substring(sequencetext.indexOf("{st&")+4, sequencetext.indexOf("$st}"));
+					if(objorder.getTasklevelsequence() != null && !taskleveltext.equals(""))
+					{
+						String replacedseq = String.format("%0"+taskleveltext.length()+"d", objorder.getTasklevelsequence());
+						sequencetext = sequencetext.substring(0, sequencetext.indexOf("{st&"))+replacedseq+sequencetext.substring(sequencetext.indexOf("$st}")+4, sequencetext.length());
+					}
+				}
+				
+				objorder.setSequenceid(sequencetext);
 			}
 		}
 	 
@@ -3740,11 +3829,25 @@ public class ProtocolService {
 			{
 				sequencetableordertyperepository.setinitialordertypesequence(objorder.getOrdertypesequence(), sequenceno, objorder.getProtocoltype());
 			}
+			
+			if(objorder.getProjectlevelsequence() != null&& objorder.getLsprojectmaster() != null
+					&& objorder.getLsprojectmaster().getProjectcode() != null)
+			{
+				sequencetableprojectlevelrepository.setinitialprojectsequence(objorder.getProjectlevelsequence(), objorder.getLsprojectmaster().getProjectcode());
+			}
+			
+			if(objorder.getTasklevelsequence() != null && objorder.getLstestmasterlocal() != null
+					&& objorder.getLstestmasterlocal().getTestcode() != null)
+			{
+				sequencetabletasklevelrepository.setinitialtasksequence(objorder.getTasklevelsequence(), objorder.getLstestmasterlocal().getTestcode());
+			}
 		}
 
 	public Map<String, Object> addProtocolOrder(LSlogilabprotocoldetail lSlogilabprotocoldetail) throws ParseException, IOException {
 		Map<String, Object> mapObj = new HashMap<String, Object>();
-		SequenceTable seqorder=validateandupdatesheetordersequencenumber(lSlogilabprotocoldetail);
+		SequenceTableProjectLevel objprojectseq = new SequenceTableProjectLevel();
+		SequenceTableTaskLevel objtaskseq = new SequenceTableTaskLevel();
+		SequenceTable seqorder = validateandupdatesheetordersequencenumber(lSlogilabprotocoldetail, objprojectseq, objtaskseq);
 		String Content = "";
 		try {
 			lSlogilabprotocoldetail.setCreatedtimestamp(commonfunction.getCurrentUtcTime());
@@ -3772,7 +3875,7 @@ public class ProtocolService {
 				}
 
 			}
-			GetSequences(lSlogilabprotocoldetail, seqorder);
+			GetSequences(lSlogilabprotocoldetail, seqorder, objprojectseq, objtaskseq);
 			LSlogilabprotocoldetailRepository.save(lSlogilabprotocoldetail);
 			updatesequence(2,lSlogilabprotocoldetail);
 			

@@ -299,6 +299,8 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	private Long projectsequence;
 	private Long tasksequence;
 	private Long ordertypesequence;
+	private Long projectlevelsequence;
+	private Long tasklevelsequence;
 	
 	private String sequenceid;
 
@@ -1138,6 +1140,22 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 
 	public void setSequenceid(String sequenceid) {
 		this.sequenceid = sequenceid;
+	}
+
+	public Long getProjectlevelsequence() {
+		return projectlevelsequence;
+	}
+
+	public void setProjectlevelsequence(Long projectlevelsequence) {
+		this.projectlevelsequence = projectlevelsequence;
+	}
+
+	public Long getTasklevelsequence() {
+		return tasklevelsequence;
+	}
+
+	public void setTasklevelsequence(Long tasklevelsequence) {
+		this.tasklevelsequence = tasklevelsequence;
 	}
 
 }

@@ -134,7 +134,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements A
 	                "/Freeuserlogin/Sentotpmail","/iotconnect/getpreferencedata","/Login/LoginonIOT","/iotconnect/getOrdersBasedOnmethod",
 	                "/iotconnect/getEquipmenttype"
 	                ,"/iotconnect/getEquipmentcat","/iotconnect/getEquipment","/iotconnect/getEquipmentmethod"
-	             
+	                ,"/protocol/Uploadprotocolimage","/protocol/Uploadprotocolimagesqls"
+	                ,"/protocol/Uploadprotocolorderimage","/protocol/Uploadprotocolorderimagesql"
 	                )
 	        
 	        		

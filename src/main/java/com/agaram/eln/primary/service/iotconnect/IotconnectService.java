@@ -17,6 +17,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.bson.BsonBinarySubType;
 import org.bson.types.Binary;
@@ -32,6 +33,7 @@ import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.config.TenantContext;
 import com.agaram.eln.primary.model.cfr.LSpreferences;
 import com.agaram.eln.primary.model.cloudFileManip.CloudOrderAttachment;
+import com.agaram.eln.primary.model.communicationsetting.CommunicationSetting;
 import com.agaram.eln.primary.model.equipment.Equipment;
 import com.agaram.eln.primary.model.equipment.EquipmentCategory;
 import com.agaram.eln.primary.model.equipment.EquipmentType;
@@ -58,6 +60,7 @@ import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.repository.cfr.LSpreferencesRepository;
 import com.agaram.eln.primary.repository.cloudFileManip.CloudOrderAttachmentRepository;
+import com.agaram.eln.primary.repository.communicationsetting.CommunicationRepository;
 import com.agaram.eln.primary.repository.equipment.EquipmentCategoryRepository;
 import com.agaram.eln.primary.repository.equipment.EquipmentRepository;
 import com.agaram.eln.primary.repository.equipment.EquipmentTypeRepository;
@@ -136,6 +139,9 @@ public class IotconnectService {
 	private EquipmentCategoryRepository equipmentCategoryRepository;
 	@Autowired
 	private EquipmentRepository equipmentRepository;
+	
+	@Autowired
+	private CommunicationRepository commRepository;
 	
 	@Autowired
 	private LSOrderElnMethodRepository LSOrderElnMethodRepository;
@@ -356,7 +362,7 @@ public class IotconnectService {
 	    Date endOfDayTo = Date.from(toDate.toLocalDate().atTime(23, 59, 59).atZone(ZoneId.systemDefault()).toInstant());
 	
 	    Integer valueloaded = 1;
-	    List<RCTCPResultDetails> results = RCTCPResultDetailsRepository.findByMethodMethodkeyInAndEquipmentNequipmentcodeInAndCreateddateBetweenAndValueloadedNot(methodkeys,instkeys,startOfDayFrom,endOfDayTo,valueloaded);
+	    List<RCTCPResultDetails> results = RCTCPResultDetailsRepository.findByMethodMethodkeyInAndEquipmentNequipmentcodeInAndCreateddateBetweenAndValueloadedNotOrderByResultidDesc(methodkeys,instkeys,startOfDayFrom,endOfDayTo,valueloaded);
 		return results;
 	}
 	
@@ -380,11 +386,9 @@ public class IotconnectService {
 	public List<Equipment> getEquipment(EquipmentCategory equicat) {
 		
 		List<Equipment> lstEquipments = new ArrayList<Equipment>();
-
-		
 		//lstEquipments = equipmentRepository.findByEquipmentcategoryAndStatusNotIn(equicat,1);
-		
-		lstEquipments = equipmentRepository.findByEquipmentcategoryAndNstatus(equicat,1);
+		List<CommunicationSetting> lstcommtype = commRepository.GetInstrumentType();
+		lstEquipments = equipmentRepository.findByEquipmentcategoryAndNstatusAndCommunicationsettingNotIn(equicat,1,lstcommtype);
 		return lstEquipments;
 	}
 

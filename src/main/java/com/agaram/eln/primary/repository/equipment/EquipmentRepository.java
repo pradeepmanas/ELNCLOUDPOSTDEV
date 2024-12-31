@@ -7,9 +7,11 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import com.agaram.eln.primary.model.communicationsetting.CommunicationSetting;
 import com.agaram.eln.primary.model.equipment.Equipment;
 import com.agaram.eln.primary.model.equipment.EquipmentCategory;
 import com.agaram.eln.primary.model.equipment.EquipmentType;
+import com.agaram.eln.primary.model.instrumentsetup.InstrumentType;
 
 @SuppressWarnings("unused")
 public interface EquipmentRepository extends JpaRepository<Equipment, Integer>{
@@ -121,9 +123,13 @@ public interface EquipmentRepository extends JpaRepository<Equipment, Integer>{
 
 	//List<Equipment> findByEquipmentcategoryAndNstatus(String sequipmentcatname, int i);
 
-	List<Equipment> findByEquipmentcategoryAndNstatus(EquipmentCategory equicat, int i);
+//	List<Equipment> findByEquipmentcategoryAndNstatus(EquipmentCategory equicat, int i);
 
 	List<Equipment> findByNsitecodeAndNstatus(Integer sitecode, int i);
+
+
+	List<Equipment> findByEquipmentcategoryAndNstatusAndCommunicationsettingNotIn(EquipmentCategory equicat, int i,
+			List<CommunicationSetting> lstcommtype);
 
 	
 

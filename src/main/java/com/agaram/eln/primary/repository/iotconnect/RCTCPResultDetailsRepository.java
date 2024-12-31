@@ -33,6 +33,10 @@ public interface RCTCPResultDetailsRepository extends JpaRepository<RCTCPResultD
 	List<RCTCPResultDetails> findByMethodMethodkeyInAndEquipmentNequipmentcodeInAndCreateddateBetweenAndValueloadedNot(
 			List<Integer> methodkeys, List<Integer> instkeys, Date startOfDayFrom, Date endOfDayTo,
 			Integer valueloaded);
+
+	List<RCTCPResultDetails> findByMethodMethodkeyInAndEquipmentNequipmentcodeInAndCreateddateBetweenAndValueloadedNotOrderByResultidDesc(
+			List<Integer> methodkeys, List<Integer> instkeys, Date startOfDayFrom, Date endOfDayTo,
+			Integer valueloaded);
 	
 	
 

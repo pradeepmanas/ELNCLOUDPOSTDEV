@@ -190,8 +190,8 @@ ALTER TABLE IF EXISTS public.sequencetable
     OWNER to postgres;
 
 
-INSERT into sequencetable(sequencecode, screenname, resetperiod,sequenceview,sequenceformat,applicationsequence,sequenceday,sequencemonth,sequenceyear) VALUES (1,'IDS_SCN_SHEETORDERS',1,1,'{"t":{"t":"ELN"},"s":{"l":"6"}}',-1,0,0,0) ON CONFLICT (sequencecode) DO NOTHING;; 
-INSERT into sequencetable(sequencecode, screenname, resetperiod,sequenceview,sequenceformat,applicationsequence,sequenceday,sequencemonth,sequenceyear) VALUES (2,'IDS_SCN_PROTOCOLORDERS',1,1,'{"t":{"t":"ELN"},"s":{"l":"6"}}',-1,0,0,0) ON CONFLICT (sequencecode) DO NOTHING;; 
+INSERT into sequencetable(sequencecode, screenname, resetperiod,sequenceview,sequenceformat,applicationsequence,sequenceday,sequencemonth,sequenceyear) VALUES (1,'IDS_SCN_SHEETORDERS',1,1,'{"t":{"t":"ELN"},"s":{"l":"6"}}',-1,0,0,0) ON CONFLICT (sequencecode) DO NOTHING; 
+INSERT into sequencetable(sequencecode, screenname, resetperiod,sequenceview,sequenceformat,applicationsequence,sequenceday,sequencemonth,sequenceyear) VALUES (2,'IDS_SCN_PROTOCOLORDERS',1,1,'{"t":{"t":"ELN"},"s":{"l":"6"}}',-1,0,0,0) ON CONFLICT (sequencecode) DO NOTHING; 
 
 ALTER TABLE IF EXISTS lslogilablimsorderdetail ADD COLUMN IF NOT EXISTS applicationsequence bigint;
 ALTER TABLE IF EXISTS lslogilablimsorderdetail ADD COLUMN IF NOT EXISTS projectsequence bigint;
@@ -364,3 +364,80 @@ update sequencetable set seperator='_' where seperator Is Null;
 ALTER TABLE IF EXISTS lslogilablimsorderdetail ADD COLUMN IF NOT EXISTS sequenceid character varying(255);
 
 ALTER TABLE IF EXISTS lslogilabprotocoldetail ADD COLUMN IF NOT EXISTS sequenceid character varying(255);
+
+DO
+$do$
+DECLARE
+   _kind "char";
+BEGIN
+   SELECT relkind
+   FROM   pg_class
+   WHERE  relname = 'sequencetableprojectlevel_sequencecodeprojectlevel_seq' 
+   INTO  _kind;
+
+   IF NOT FOUND THEN CREATE SEQUENCE sequencetableprojectlevel_sequencecodeprojectlevel_seq;
+   ELSIF _kind = 'S' THEN  
+     
+   ELSE                  
+    
+   END IF;
+END
+$do$;
+
+CREATE TABLE IF NOT EXISTS public.sequencetableprojectlevel
+(
+    sequencecodeprojectlevel integer NOT NULL DEFAULT nextval('sequencetableprojectlevel_sequencecodeprojectlevel_seq'::regclass),
+    projectcode integer,
+    projectsequence bigint,
+    CONSTRAINT sequencetableprojectlevel_pkey PRIMARY KEY (sequencecodeprojectlevel)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.sequencetableprojectlevel
+    OWNER to postgres;
+
+	DO
+$do$
+DECLARE
+   _kind "char";
+BEGIN
+   SELECT relkind
+   FROM   pg_class
+   WHERE  relname = 'sequencetabletasklevel_sequencecodetasklevel_seq' 
+   INTO  _kind;
+
+   IF NOT FOUND THEN CREATE SEQUENCE sequencetabletasklevel_sequencecodetasklevel_seq;
+   ELSIF _kind = 'S' THEN  
+     
+   ELSE                  
+    
+   END IF;
+END
+$do$;
+
+
+	CREATE TABLE IF NOT EXISTS public.sequencetabletasklevel
+(
+    sequencecodetasklevel integer NOT NULL DEFAULT nextval('sequencetabletasklevel_sequencecodetasklevel_seq'::regclass),
+    tasksequence bigint,
+    testcode integer,
+    CONSTRAINT sequencetabletasklevel_pkey PRIMARY KEY (sequencecodetasklevel)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.sequencetabletasklevel
+    OWNER to postgres;
+
+
+	ALTER TABLE IF EXISTS lslogilablimsorderdetail ADD COLUMN IF NOT EXISTS projectlevelsequence bigint;
+ALTER TABLE IF EXISTS lslogilablimsorderdetail ADD COLUMN IF NOT EXISTS tasklevelsequence bigint;
+
+ALTER TABLE IF EXISTS lslogilabprotocoldetail ADD COLUMN IF NOT EXISTS projectlevelsequence bigint;
+ALTER TABLE IF EXISTS lslogilabprotocoldetail ADD COLUMN IF NOT EXISTS tasklevelsequence bigint;
+
+
+INSERT into sequencetable(sequencecode, screenname, resetperiod,sequenceview,sequenceformat,applicationsequence,sequenceday,sequencemonth,sequenceyear,seperator) VALUES (3,'IDS_SCN_MATERIALMGNT',1,1,'{"t":{"t":"ELN"},"s":{"l":"6"}}',-1,0,0,0,'_') ON CONFLICT (sequencecode) DO NOTHING;
+INSERT into sequencetable(sequencecode, screenname, resetperiod,sequenceview,sequenceformat,applicationsequence,sequenceday,sequencemonth,sequenceyear,seperator) VALUES (4,'IDS_SCN_EQUIPMENTMGNT',1,1,'{"t":{"t":"ELN"},"s":{"l":"6"}}',-1,0,0,0,'_') ON CONFLICT (sequencecode) DO NOTHING;
+INSERT into sequencetable(sequencecode, screenname, resetperiod,sequenceview,sequenceformat,applicationsequence,sequenceday,sequencemonth,sequenceyear,seperator) VALUES (5,'IDS_SCN_SAMPLEMGNT',1,1,'{"t":{"t":"ELN"},"s":{"l":"6"}}',-1,0,0,0,'_') ON CONFLICT (sequencecode) DO NOTHING;
