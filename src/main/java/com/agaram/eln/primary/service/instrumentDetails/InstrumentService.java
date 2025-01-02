@@ -1358,7 +1358,7 @@ public class InstrumentService {
 		
 		Date currentdate = commonfunction.getCurrentUtcTime();
 		SimpleDateFormat day = new SimpleDateFormat("dd");
-		SimpleDateFormat month = new SimpleDateFormat("mm");
+		SimpleDateFormat month = new SimpleDateFormat("MM");
 		SimpleDateFormat year = new SimpleDateFormat("yyyy");
 		if(seqorder.getSequenceday() == 0)
 		{
@@ -1897,7 +1897,6 @@ public class InstrumentService {
 				}
 			}
 			
-			Date currentdate = commonfunction.getCurrentUtcTime();
 			String sequence = objorder.getSequenceid();
 			String sequencetext = sequence;
 			if(sequence.contains("{s&") && sequence.contains("$s}"))
@@ -1955,65 +1954,7 @@ public class InstrumentService {
 				}
 			}
 			
-			if(sequence.contains("{m&") && sequence.contains("$m}"))
-			{
-				SimpleDateFormat month = new SimpleDateFormat("mm");
-		        String currentMonth = month.format(currentdate);
-		        String namedmonth = sequencetext.substring(sequencetext.indexOf("{m&")+3, sequencetext.indexOf("$m}"));
-		        
-		        if(!namedmonth.equals(""))
-		        {
-					sequencetext = sequencetext.substring(0, sequencetext.indexOf("{m&"))+currentMonth+sequencetext.substring(sequencetext.indexOf("$m}")+3, sequencetext.length());
-		        }
-			}
-			
-			if(sequence.contains("{mm&") && sequence.contains("$mm}"))
-			{
-				SimpleDateFormat month = new SimpleDateFormat("MMM");
-		        String currentMonth = month.format(currentdate);
-		        String namedmonth = sequencetext.substring(sequencetext.indexOf("{mm&")+4, sequencetext.indexOf("$mm}"));
-		        
-		        if(!namedmonth.equals(""))
-		        {
-					sequencetext = sequencetext.substring(0, sequencetext.indexOf("{mm&"))+currentMonth+sequencetext.substring(sequencetext.indexOf("$mm}")+4, sequencetext.length());
-		        }
-			}
-			
-			if(sequence.contains("{dd&") && sequence.contains("$dd}"))
-			{
-				SimpleDateFormat day = new SimpleDateFormat("dd");
-		        String currentMonth = day.format(currentdate);
-		        String namedday = sequencetext.substring(sequencetext.indexOf("{dd&")+4, sequencetext.indexOf("$dd}"));
-		        
-		        if(!namedday.equals(""))
-		        {
-					sequencetext = sequencetext.substring(0, sequencetext.indexOf("{dd&"))+currentMonth+sequencetext.substring(sequencetext.indexOf("$dd}")+4, sequencetext.length());
-		        }
-			}
-			
-			if(sequence.contains("{y&") && sequence.contains("$y}"))
-			{
-				SimpleDateFormat year = new SimpleDateFormat("yy");
-		        String currentMonth = year.format(currentdate);
-		        String namedyear = sequencetext.substring(sequencetext.indexOf("{y&")+3, sequencetext.indexOf("$y}"));
-		        
-		        if(!namedyear.equals(""))
-		        {
-					sequencetext = sequencetext.substring(0, sequencetext.indexOf("{y&"))+currentMonth+sequencetext.substring(sequencetext.indexOf("$y}")+3, sequencetext.length());
-		        }
-			}
-			
-			if(sequence.contains("{yy&") && sequence.contains("$yy}"))
-			{
-				SimpleDateFormat year = new SimpleDateFormat("yyyy");
-		        String currentMonth = year.format(currentdate);
-		        String namedyear = sequencetext.substring(sequencetext.indexOf("{yy&")+4, sequencetext.indexOf("$yy}"));
-		        
-		        if(!namedyear.equals(""))
-		        {
-					sequencetext = sequencetext.substring(0, sequencetext.indexOf("{yy&"))+currentMonth+sequencetext.substring(sequencetext.indexOf("$yy}")+4, sequencetext.length());
-		        }
-			}
+			sequencetext = commonfunction.Updatedatesinsequence(sequence, sequencetext);
 			
 			objorder.setSequenceid(sequencetext);
 		}

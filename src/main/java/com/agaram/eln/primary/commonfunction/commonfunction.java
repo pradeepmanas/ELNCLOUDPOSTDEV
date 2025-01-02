@@ -551,22 +551,22 @@ public class commonfunction {
 		
 		Date currentdate = commonfunction.getCurrentUtcTime();
 		SimpleDateFormat day = new SimpleDateFormat("dd");
-		SimpleDateFormat month = new SimpleDateFormat("mm");
+		SimpleDateFormat month = new SimpleDateFormat("MM");
 		SimpleDateFormat year = new SimpleDateFormat("yyyy");
 		
 		currentseq.setSequenceday(Integer.parseInt(day.format(currentdate)));
 		currentseq.setSequencemonth(Integer.parseInt(month.format(currentdate)));
 		currentseq.setSequenceyear(Integer.parseInt(year.format(currentdate)));
 		
-		if(currentseq.getResetperiod() == 2 && currentseq.getSequenceday() == Integer.parseInt(day.format(currentdate)))
+		if(currentseq.getResetperiod() == 2 && currentseq.getSequenceday() != Integer.parseInt(day.format(currentdate)))
 		{
 			resetall = true;
 		}
-		else if(currentseq.getResetperiod() == 3 && currentseq.getSequencemonth() == Integer.parseInt(month.format(currentdate)))
+		else if(currentseq.getResetperiod() == 3 && currentseq.getSequencemonth() != Integer.parseInt(month.format(currentdate)))
 		{
 			resetall = true;
 		}
-		else if(currentseq.getResetperiod() == 4 && currentseq.getSequenceyear() == Integer.parseInt(year.format(currentdate)))
+		else if(currentseq.getResetperiod() == 4 && currentseq.getSequenceyear() != Integer.parseInt(year.format(currentdate)))
 		{
 			resetall = true;
 		}
@@ -614,5 +614,71 @@ public class commonfunction {
 		return currentseq;
 	}
 	 
+	public static String Updatedatesinsequence(String originalstring, String modifiedstring) throws ParseException
+	{
+		Date currentdate = getCurrentUtcTime();
+		
+		if(originalstring.contains("{m&") && originalstring.contains("$m}"))
+		{
+			SimpleDateFormat month = new SimpleDateFormat("mm");
+	        String currentMonth = month.format(currentdate);
+	        String namedmonth = modifiedstring.substring(modifiedstring.indexOf("{m&")+3, modifiedstring.indexOf("$m}"));
+	        
+	        if(!namedmonth.equals(""))
+	        {
+				modifiedstring = modifiedstring.substring(0, modifiedstring.indexOf("{m&"))+currentMonth+modifiedstring.substring(modifiedstring.indexOf("$m}")+3, modifiedstring.length());
+	        }
+		}
+		
+		if(originalstring.contains("{mm&") && originalstring.contains("$mm}"))
+		{
+			SimpleDateFormat month = new SimpleDateFormat("MMM");
+	        String currentMonth = month.format(currentdate);
+	        String namedmonth = modifiedstring.substring(modifiedstring.indexOf("{mm&")+4, modifiedstring.indexOf("$mm}"));
+	        
+	        if(!namedmonth.equals(""))
+	        {
+				modifiedstring = modifiedstring.substring(0, modifiedstring.indexOf("{mm&"))+currentMonth+modifiedstring.substring(modifiedstring.indexOf("$mm}")+4, modifiedstring.length());
+	        }
+		}
+		
+		if(originalstring.contains("{dd&") && originalstring.contains("$dd}"))
+		{
+			SimpleDateFormat day = new SimpleDateFormat("dd");
+	        String currentMonth = day.format(currentdate);
+	        String namedday = modifiedstring.substring(modifiedstring.indexOf("{dd&")+4, modifiedstring.indexOf("$dd}"));
+	        
+	        if(!namedday.equals(""))
+	        {
+				modifiedstring = modifiedstring.substring(0, modifiedstring.indexOf("{dd&"))+currentMonth+modifiedstring.substring(modifiedstring.indexOf("$dd}")+4, modifiedstring.length());
+	        }
+		}
+		
+		if(originalstring.contains("{y&") && originalstring.contains("$y}"))
+		{
+			SimpleDateFormat year = new SimpleDateFormat("yy");
+	        String currentMonth = year.format(currentdate);
+	        String namedyear = modifiedstring.substring(modifiedstring.indexOf("{y&")+3, modifiedstring.indexOf("$y}"));
+	        
+	        if(!namedyear.equals(""))
+	        {
+				modifiedstring = modifiedstring.substring(0, modifiedstring.indexOf("{y&"))+currentMonth+modifiedstring.substring(modifiedstring.indexOf("$y}")+3, modifiedstring.length());
+	        }
+		}
+		
+		if(originalstring.contains("{yy&") && originalstring.contains("$yy}"))
+		{
+			SimpleDateFormat year = new SimpleDateFormat("yyyy");
+	        String currentMonth = year.format(currentdate);
+	        String namedyear = modifiedstring.substring(modifiedstring.indexOf("{yy&")+4, modifiedstring.indexOf("$yy}"));
+	        
+	        if(!namedyear.equals(""))
+	        {
+				modifiedstring = modifiedstring.substring(0, modifiedstring.indexOf("{yy&"))+currentMonth+modifiedstring.substring(modifiedstring.indexOf("$yy}")+4, modifiedstring.length());
+	        }
+		}
+		
+		return modifiedstring;
+	}
 
 }

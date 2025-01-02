@@ -3660,7 +3660,7 @@ public class ProtocolService {
 			return seqorder;
 		}
 	 
-	 public void GetSequences(LSlogilabprotocoldetail objorder,SequenceTable seqorder, SequenceTableProjectLevel objprojectseq, SequenceTableTaskLevel objtaskseq)
+	 public void GetSequences(LSlogilabprotocoldetail objorder,SequenceTable seqorder, SequenceTableProjectLevel objprojectseq, SequenceTableTaskLevel objtaskseq) throws ParseException
 		{
 			SequenceTable sqa = seqorder;
 			
@@ -3794,6 +3794,8 @@ public class ProtocolService {
 					}
 				}
 				
+				sequencetext = commonfunction.Updatedatesinsequence(sequence, sequencetext);
+				
 				objorder.setSequenceid(sequencetext);
 			}
 		}
@@ -3848,6 +3850,8 @@ public class ProtocolService {
 		SequenceTableProjectLevel objprojectseq = new SequenceTableProjectLevel();
 		SequenceTableTaskLevel objtaskseq = new SequenceTableTaskLevel();
 		SequenceTable seqorder = validateandupdatesheetordersequencenumber(lSlogilabprotocoldetail, objprojectseq, objtaskseq);
+		boolean isrest = false;
+		seqorder = commonfunction.ResetSequence(seqorder, isrest);
 		String Content = "";
 		try {
 			lSlogilabprotocoldetail.setCreatedtimestamp(commonfunction.getCurrentUtcTime());
