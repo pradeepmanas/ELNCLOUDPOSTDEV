@@ -373,7 +373,7 @@ public class MaterialCategoryService {
 		}
 	}
 
-	private Map<String, Long> checkDeblicaterecord(List<String> materialTypeNames, Integer siteCode, String tableName,
+	public Map<String, Long> checkDeblicaterecord(List<String> materialTypeNames, Integer siteCode, String tableName,
 			String Columnanme) {
 		Map<String, Long> resultMap = new HashMap<>();
 		StringBuilder queryBuilder = new StringBuilder();

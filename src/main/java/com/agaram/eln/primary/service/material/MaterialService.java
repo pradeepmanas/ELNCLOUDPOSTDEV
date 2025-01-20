@@ -44,10 +44,18 @@ import com.agaram.eln.primary.model.material.Material;
 import com.agaram.eln.primary.model.material.MaterialAttachments;
 import com.agaram.eln.primary.model.material.MaterialCategory;
 import com.agaram.eln.primary.model.material.MaterialConfig;
+import com.agaram.eln.primary.model.material.MaterialLinks;
 import com.agaram.eln.primary.model.material.MaterialType;
 import com.agaram.eln.primary.model.material.Period;
 import com.agaram.eln.primary.model.material.Section;
 import com.agaram.eln.primary.model.material.Unit;
+import com.agaram.eln.primary.model.sequence.SequenceTable;
+import com.agaram.eln.primary.model.sequence.SequenceTableOrderType;
+import com.agaram.eln.primary.model.sequence.SequenceTableProject;
+import com.agaram.eln.primary.model.sequence.SequenceTableProjectLevel;
+import com.agaram.eln.primary.model.sequence.SequenceTableSite;
+import com.agaram.eln.primary.model.sequence.SequenceTableTask;
+import com.agaram.eln.primary.model.sequence.SequenceTableTaskLevel;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.repository.cloudFileManip.CloudOrderAttachmentRepository;
 import com.agaram.eln.primary.repository.equipment.EquipmentCategoryRepository;
@@ -59,11 +67,14 @@ import com.agaram.eln.primary.repository.material.MaterialAttachmentsRepository;
 import com.agaram.eln.primary.repository.material.MaterialCategoryRepository;
 import com.agaram.eln.primary.repository.material.MaterialConfigRepository;
 import com.agaram.eln.primary.repository.material.MaterialInventoryRepository;
+import com.agaram.eln.primary.repository.material.MaterialLinksRepository;
 import com.agaram.eln.primary.repository.material.MaterialRepository;
 import com.agaram.eln.primary.repository.material.MaterialTypeRepository;
 import com.agaram.eln.primary.repository.material.PeriodRepository;
 import com.agaram.eln.primary.repository.material.SectionRepository;
 import com.agaram.eln.primary.repository.material.UnitRepository;
+import com.agaram.eln.primary.repository.sequence.SequenceTableRepository;
+import com.agaram.eln.primary.repository.sequence.SequenceTableSiteRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
 import com.agaram.eln.primary.service.cloudFileManip.CloudFileManipulationservice;
 import com.agaram.eln.primary.service.fileManipulation.FileManipulationservice;
@@ -113,6 +124,12 @@ public class MaterialService {
 	private CloudOrderAttachmentRepository CloudOrderAttachmentRepository;
 	@Autowired
 	private MaterialAttachmentsRepository materialAttachmentsRepository;
+	@Autowired
+	private SequenceTableRepository sequencetableRepository;
+	@Autowired
+	private SequenceTableSiteRepository sequencetablesiteRepository;
+	@Autowired
+	private MaterialLinksRepository materiallinksrepository;
 
 	public ResponseEntity<Object> getMaterialcombo(Integer nmaterialtypecode, Integer nsitecode) {
 
@@ -1037,10 +1054,104 @@ public class MaterialService {
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
 	}
 	
+	private SequenceTable validateandupdatematerialsequencenumber(Elnmaterial objInv,
+			SequenceTableProjectLevel objprojectseq, SequenceTableTaskLevel objtaskseq) throws ParseException {
+		SequenceTable seqorder = new SequenceTable();
+		int sequence = 3;
+		seqorder = sequencetableRepository.findOne(sequence);
+		if (seqorder != null && seqorder.getApplicationsequence() == -1) {
+			long appcount = elnmaterialRepository.count();
+			sequencetableRepository.setinitialapplicationsequence(appcount, sequence);
+			seqorder.setApplicationsequence(appcount);
+		}
+
+		Date currentdate = commonfunction.getCurrentUtcTime();
+		SimpleDateFormat day = new SimpleDateFormat("dd");
+		SimpleDateFormat month = new SimpleDateFormat("mm");
+		SimpleDateFormat year = new SimpleDateFormat("yyyy");
+		if (seqorder.getSequenceday() == 0) {
+			seqorder.setSequenceday(Integer.parseInt(day.format(currentdate)));
+		}
+
+		if (seqorder.getSequencemonth() == 0) {
+			seqorder.setSequencemonth(Integer.parseInt(month.format(currentdate)));
+		}
+
+		if (seqorder.getSequenceyear() == 0) {
+			seqorder.setSequenceyear(Integer.parseInt(year.format(currentdate)));
+		}
+
+		if (sequencetablesiteRepository.findBySequencecodeAndSitecode(sequence, objInv.getNsitecode()) == null) {
+			SequenceTableSite objsiteseq = new SequenceTableSite();
+			objsiteseq.setSequencecode(sequence);
+			objsiteseq.setSitecode(objInv.getNsitecode());
+			sequencetablesiteRepository.save(objsiteseq);
+
+			if (seqorder.getSequencetablesite() != null) {
+				seqorder.getSequencetablesite().add(objsiteseq);
+			} else {
+				List<SequenceTableSite> lstseq = new ArrayList<SequenceTableSite>();
+				lstseq.add(objsiteseq);
+				seqorder.setSequencetablesite(lstseq);
+			}
+		}
+
+		return seqorder;
+	}
+
+	public void GetSequences(Elnmaterial objInv, SequenceTable seqorder, SequenceTableProjectLevel objprojectseq,
+			SequenceTableTaskLevel objtaskseq) {
+		SequenceTable sqa = seqorder;
+
+		if (sqa != null) {
+			objInv.setApplicationsequence(sqa.getApplicationsequence() + 1);
+
+			String sequence = objInv.getSequenceid();
+			String sequencetext = sequence;
+			if (sequence.contains("{s&") && sequence.contains("$s}")) {
+				sequencetext = sequence.substring(sequence.indexOf("{s&") + 3, sequence.indexOf("$s}"));
+				String replacedseq = "";
+				if (sqa.getSequenceview().equals(2) && objInv.getApplicationsequence() != null
+						&& !sequencetext.equals("")) {
+					replacedseq = String.format("%0" + sequencetext.length() + "d", objInv.getApplicationsequence());
+				} else if (sqa.getSequenceview().equals(3) && objInv.getNsitecode() != null
+						&& !sequencetext.equals("")) {
+					replacedseq = String.format("%0" + sequencetext.length() + "d", objInv.getNsitecode());
+
+				} else if (!sequencetext.equals("") && objInv.getApplicationsequence() != null) {
+					replacedseq = String.format("%0" + sequencetext.length() + "d", objInv.getApplicationsequence());
+				}
+
+				if (!sequencetext.equals("") && !replacedseq.equals("")) {
+					sequencetext = sequence.substring(0, sequence.indexOf("{s&")) + replacedseq
+							+ sequence.substring(sequence.indexOf("$s}") + 3, sequence.length());
+				}
+			}
+
+			objInv.setSequenceid(sequencetext);
+		}
+	}
+
+	public void updatesequence(Integer sequenceno, Elnmaterial objInv) {
+
+		long sitecodeInt = objInv.getNsitecode();
+
+		if (objInv.getApplicationsequence() != null) {
+			sequencetableRepository.setinitialapplicationsequence(objInv.getApplicationsequence(), sequenceno);
+		}
+
+		if (objInv.getNsitecode() != null) {
+			sequencetablesiteRepository.setinitialsitesequence(sitecodeInt, sequenceno, objInv.getNsitecode());
+		}
+	}
+
 	public ResponseEntity<Object> createElnMaterial(Elnmaterial obj) throws ParseException, JsonProcessingException {
 		
 		Elnmaterial objElnmaterial = elnmaterialRepository.findByNsitecodeAndSmaterialnameIgnoreCaseAndMaterialcategory(
 				obj.getNsitecode(),obj.getSmaterialname(),obj.getMaterialcategory());
+		SequenceTableProjectLevel objprojectseq = new SequenceTableProjectLevel();
+		SequenceTableTaskLevel objtaskseq = new SequenceTableTaskLevel();
+    	SequenceTable seqorder = validateandupdatematerialsequencenumber(obj, objprojectseq, objtaskseq);
 		
 		obj.setResponse(new Response());
 		
@@ -1051,8 +1162,9 @@ public class MaterialService {
 
 			obj.setCreateby(objMaster);
 			obj.setCreateddate(commonfunction.getCurrentUtcTime());
+			GetSequences(obj, seqorder, objprojectseq, objtaskseq);
 			elnmaterialRepository.save(obj);
-			
+			updatesequence(3,obj);
 			obj.getResponse().setInformation("IDS_SAVE_SUCCEED");
 			obj.getResponse().setStatus(true);
 			
@@ -1790,7 +1902,7 @@ public class MaterialService {
 
 	public Elnmaterial materialCloudUploadattachments(MultipartFile file, Integer nmaterialtypecode,
 			Integer nmaterialcatcode, Integer nmaterialcode, String filename, String fileexe, Integer usercode,
-			Date currentdate, Integer isMultitenant) throws IOException {
+			Date currentdate, Integer isMultitenant, Integer nsitecode) throws IOException {
 		Elnmaterial objAttach = elnmaterialRepository.findOne(nmaterialcode);
 		MaterialAttachments objattachment = new MaterialAttachments();
 		if (isMultitenant == 0) {
@@ -1806,6 +1918,9 @@ public class MaterialService {
 		objattachment.setNmaterialcode(nmaterialcode);
 		objattachment.setNmaterialcatcode(nmaterialcatcode);
 		objattachment.setNmaterialtypecode(nmaterialtypecode);
+		objattachment.setNstatus(1);
+		objattachment.setNsitecode(nsitecode);
+
 		if (objAttach != null && objAttach.getlsMaterialAttachments() != null) {
 			objAttach.getlsMaterialAttachments().add(objattachment);
 		} else {
@@ -1914,5 +2029,23 @@ public class MaterialService {
 		
 		Elnmaterial objElnmaterial = elnmaterialRepository.findOne(selectedMaterial);
 		return new ResponseEntity<>(objElnmaterial.getAssignedproject(), HttpStatus.OK);
+	}
+	
+	public ResponseEntity<Object> uploadLinkforMaterial(MaterialLinks materiallink) throws ParseException
+	{
+		materiallink.setCreateddate(commonfunction.getCurrentUtcTime());
+		materiallinksrepository.save(materiallink);
+		return new ResponseEntity<>(materiallink, HttpStatus.OK);
+	}
+	
+	public ResponseEntity<Object> getLinksOnMaterial(MaterialLinks materiallink)
+	{
+		return new ResponseEntity<>(materiallinksrepository.findAll(), HttpStatus.OK);
+	}
+	
+	public ResponseEntity<Object> deleteLinkforMaterial(MaterialLinks materiallink)
+	{
+		materiallinksrepository.delete(materiallink);
+		return new ResponseEntity<>(materiallink, HttpStatus.OK);
 	}
 }

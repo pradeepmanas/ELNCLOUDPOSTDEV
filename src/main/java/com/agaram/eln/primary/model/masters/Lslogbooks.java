@@ -9,6 +9,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.hibernate.annotations.Type;
@@ -75,7 +77,24 @@ public class Lslogbooks {
 	private String addedby;
 	
 	private Date addedon;
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date modifieddate;
 	
+	@Column(name = "modifiedby")
+	private String modifiedby;
+	
+	public String getModifiedby() {
+		return modifiedby;
+	}
+	public void setModifiedby(String modifiedby) {
+		this.modifiedby = modifiedby;
+	}
+	public Date getModifieddate() {
+		return modifieddate;
+	}
+	public void setModifieddate(Date modifieddate) {
+		this.modifieddate = modifieddate;
+	}
 	
 	@Transient
 	private String addedonview;

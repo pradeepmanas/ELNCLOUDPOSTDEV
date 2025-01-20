@@ -10,14 +10,21 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.mail.MessagingException;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.couchbase.CouchbaseProperties.Env;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.agaram.eln.config.AESEncryption;
@@ -78,6 +85,7 @@ import com.agaram.eln.primary.repository.usermanagement.LSusersteamRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserteammappingRepository;
 import com.agaram.eln.primary.repository.usermanagement.LsusersettingsRepository;
 import com.agaram.eln.primary.service.cfr.AuditService;
+import com.agaram.eln.primary.service.material.MaterialCategoryService;
 import com.agaram.eln.primary.service.notification.EmailService;
 import com.agaram.eln.primary.service.protocol.Commonservice;
 import com.aspose.pdf.internal.imaging.internal.Exceptions.IO.IOException;
@@ -149,7 +157,7 @@ public class UserService {
 
 	@Autowired
 	LSusergroupedcolumnsRepository lsusergroupedcolumnsRepository;
-	
+
 	@Autowired
 	LSusershowhidecolumnsRepository lsusershowhidecolumnsRepository;
 
@@ -164,27 +172,30 @@ public class UserService {
 
 	@Autowired
 	private LSMultisitesRepositery LSMultisitesRepositery;
-	
+
 	@Autowired
 	ElnmaterialRepository elnmaterialRepository;
-	
+
 	@Autowired
 	private AuditService auditService;
 	@Autowired
 	Commonservice commonservice;
-	
+
 	@Autowired
 	private LSProtocolMasterRepository LSProtocolMasterRepository;
-	
+
 	@Autowired
 	private LSfileRepository LSfileRepository;
-	
+
 //	@Autowired
 //	private FileService fileService;
-	
+
 	@Autowired
 	private LSlogilabprotocoldetailRepository LSlogilabprotocoldetailRepository;
-	
+
+	@Autowired
+	private MaterialCategoryService MaterialCategoryService;
+
 	public LSusergroup InsertUpdateUserGroup(LSusergroup objusergroup) {
 		if (lSusergroupRepository.findByusergroupnameIgnoreCaseAndLssitemaster(objusergroup.getUsergroupname(),
 				objusergroup.getLssitemaster()) != null && objusergroup.getUsergroupcode() == null) {
@@ -314,9 +325,10 @@ public class UserService {
 		List<LSMultisites> obj = LSMultisitesRepositery.findByLssiteMaster(objusergroup.getLssitemaster());
 		List<Integer> usercode = obj.stream().map(LSMultisites::getUsercode).collect(Collectors.toList());
 
-		if(objusergroup.getObjResponse()!=null && objusergroup.getObjResponse().getInformation().equals("UserMaster")) {
+		if (objusergroup.getObjResponse() != null
+				&& objusergroup.getObjResponse().getInformation().equals("UserMaster")) {
 			return lsuserMasterRepository.findByUsercodeIn(usercode);
-		}else {
+		} else {
 			return lsuserMasterRepository.findByUsercodeInAndUserretirestatusNot(usercode, 1);
 		}
 //		return lsuserMasterRepository.findByLssitemasterOrderByCreateddateDesc(objusergroup.getLssitemaster());
@@ -324,7 +336,7 @@ public class UserService {
 //		return lsuserMasterRepository.findByUserretirestatusNotAndLssitemasterOrderByCreateddateDesc(1,
 //				objusergroup.getLssitemaster());
 	}
-	
+
 	public List<LSuserMaster> GetUsersregister(LSuserMaster objusergroup) {
 
 //		if (objusergroup.getUsername().equalsIgnoreCase("Administrator")) {
@@ -341,7 +353,7 @@ public class UserService {
 //		return lsuserMasterRepository.findByUserretirestatusNotAndLssitemasterOrderByCreateddateDesc(1,
 //				objusergroup.getLssitemaster());
 	}
-	
+
 	public List<LSuserMaster> GetUsersOnsite(LSSiteMaster objclass) {
 		if (objclass.getObjsilentaudit() != null) {
 			objclass.getObjsilentaudit().setTableName("LSuserMaster");
@@ -362,7 +374,8 @@ public class UserService {
 	}
 
 	@SuppressWarnings("unused")
-	public LSuserMaster InsertUpdateUser(LSuserMaster objusermaster) throws MessagingException, JsonParseException, JsonMappingException, IOException {
+	public LSuserMaster InsertUpdateUser(LSuserMaster objusermaster)
+			throws MessagingException, JsonParseException, JsonMappingException, IOException {
 		boolean isnewuser = false;
 
 		if (objusermaster.getUsercode() == null) {
@@ -372,17 +385,16 @@ public class UserService {
 		}
 
 		List<LSSiteMaster> siteobj = objusermaster.getLsmultisites().stream()
-		    .map(multisite -> multisite.getLssiteMaster())
-		    .collect(Collectors.toList());
+				.map(multisite -> multisite.getLssiteMaster()).collect(Collectors.toList());
 
-		 List<LSMultisites> userocedsites = LSMultisitesRepositery.findByLssiteMasterIn(siteobj);
-		List<Integer> usercodes =userocedsites.stream().map(LSMultisites::getUsercode).collect(Collectors.toList());
+		List<LSMultisites> userocedsites = LSMultisitesRepositery.findByLssiteMasterIn(siteobj);
+		List<Integer> usercodes = userocedsites.stream().map(LSMultisites::getUsercode).collect(Collectors.toList());
 //		if (objusermaster.getUsercode() == null
 //				&& lsuserMasterRepository.findByLssitemasterAndUsernameIgnoreCase(objusermaster.getLssitemaster(),
 //						objusermaster.getUsername()) != null) {
 //		List<LSuserMaster> kumu=lsuserMasterRepository.findByUsernameIgnoreCaseAndUsercodeIn(objusermaster.getUsername(), usercodes);
-		if (objusermaster.getUsercode() == null
-				&& lsuserMasterRepository.findByUsernameIgnoreCaseAndUsercodeIn(objusermaster.getUsername(), usercodes).size()>0) {
+		if (objusermaster.getUsercode() == null && lsuserMasterRepository
+				.findByUsernameIgnoreCaseAndUsercodeIn(objusermaster.getUsername(), usercodes).size() > 0) {
 			objusermaster.setResponse(new Response());
 			objusermaster.getResponse().setStatus(false);
 			objusermaster.getResponse().setInformation("ID_EXIST");
@@ -403,13 +415,13 @@ public class UserService {
 							: updateUser.getUserretirestatus());
 
 			if (objusermaster.getMultiusergroupcode() != null && objusermaster.getUsercode() != null) {
-				
-				if(objusermaster.getLsmultisites().size()>0) {
+
+				if (objusermaster.getLsmultisites().size() > 0) {
 					LSMultisitesRepositery.deleteByusercode(objusermaster.getUsercode());
 					LSMultisitesRepositery.save(objusermaster.getLsmultisites());
 				}
 				LSMultiusergroupRepositery.deleteByusercode(objusermaster.getUsercode());
-				List<LSMultiusergroup> objects=objusermaster.getMultiusergroupcode();
+				List<LSMultiusergroup> objects = objusermaster.getMultiusergroupcode();
 				LSMultiusergroupRepositery.save(objects);
 				updateUser.setMultiusergroupcode(objects);
 				updateUser.setUserstatus(objusermaster.getUserstatus().equals("Active") ? "A"
@@ -462,18 +474,18 @@ public class UserService {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			LSSiteMaster obj=new LSSiteMaster();
+			LSSiteMaster obj = new LSSiteMaster();
 			obj.setSitecode(sitecode);
 			objusermaster.setLssitemaster(obj);
 			lsuserMasterRepository.save(objusermaster);
-		}else{
-			LSuserMaster editobj =lsuserMasterRepository.findByusercode(objusermaster.getUsercode());
-			if(editobj.getLssitemaster().getSitecode()!=sitecode) {
+		} else {
+			LSuserMaster editobj = lsuserMasterRepository.findByusercode(objusermaster.getUsercode());
+			if (editobj.getLssitemaster().getSitecode() != sitecode) {
 				String unifieduser = objusermaster.getUsername().toLowerCase().replaceAll("[^a-zA-Z0-9]", "") + "u"
 						+ objusermaster.getUsercode() + "s" + sitecode + objusermaster.getUnifieduserid();
 
 				editobj.setUnifieduserid(unifieduser);
-				LSSiteMaster obj=new LSSiteMaster();
+				LSSiteMaster obj = new LSSiteMaster();
 				obj.setSitecode(sitecode);
 				editobj.setLssitemaster(obj);
 				lsuserMasterRepository.save(editobj);
@@ -1124,20 +1136,15 @@ public class UserService {
 			return lSusergroupRepository.findByUsergroupstatusInOrderByUsergroupcodeDesc(status);
 		}
 
-		
 		List<LSusergroup> lstusergroup = new ArrayList<LSusergroup>();
-		
-		if(Objclass.getIsmultitenant()!=null && Objclass.getIsmultitenant() == 2)
-		{
-			lstusergroup = lSusergroupRepository
-					.findBylssitemasterAndUsergroupstatusInOrderByUsergroupcodeDesc(1, status);
-		}
-		else
-		{
+
+		if (Objclass.getIsmultitenant() != null && Objclass.getIsmultitenant() == 2) {
+			lstusergroup = lSusergroupRepository.findBylssitemasterAndUsergroupstatusInOrderByUsergroupcodeDesc(1,
+					status);
+		} else {
 			lstusergroup = lSusergroupRepository
 					.findBylssitemasterAndUsergroupstatusInOrderByUsergroupcodeDesc(Objclass.getSitecode(), status);
 		}
-		
 
 		return lstusergroup;
 	}
@@ -1409,8 +1416,7 @@ public class UserService {
 				.countByNotifationtoAndIsnewnotificationAndNotificationforOrNotifationtoAndIsnewnotificationAndNotificationfor(
 						lsnotification.getNotifationto(), 1, 1, lsnotification.getNotifationto(), 1, 2));
 		objresmap.put("mynotificationcount", lsnotificationRepository
-				.countByNotifationtoAndIsnewnotificationAndNotificationfor(
-						lsnotification.getNotifationto(), 1, 1));
+				.countByNotifationtoAndIsnewnotificationAndNotificationfor(lsnotification.getNotifationto(), 1, 1));
 
 		return objresmap;
 	}
@@ -1447,9 +1453,10 @@ public class UserService {
 	@SuppressWarnings("unused")
 	public LSuserMaster Usersendpasswormail(LSuserMaster objusermaster) throws MessagingException {
 
-
-		if ((objusermaster.getIsmultitenant() == 2 && objusermaster.getObjResponse().getInformation() == "Forget password") || objusermaster.getIsmultitenant() != null && objusermaster.getMultitenantusercount() != null
-				&& (objusermaster.getIsmultitenant() == 1 || objusermaster.getIsmultitenant() == 2)) {
+		if ((objusermaster.getIsmultitenant() == 2
+				&& objusermaster.getObjResponse().getInformation() == "Forget password")
+				|| objusermaster.getIsmultitenant() != null && objusermaster.getMultitenantusercount() != null
+						&& (objusermaster.getIsmultitenant() == 1 || objusermaster.getIsmultitenant() == 2)) {
 			String password = Generatetenantpassword();
 			String passwordadmin = AESEncryption.encrypt(password);
 			LSuserMaster lsuserMaster = new LSuserMaster();
@@ -1457,135 +1464,128 @@ public class UserService {
 			Email email = new Email();
 			email.setMailto(objusermaster.getEmailid());
 			LocalDate date = LocalDate.now();
-	        // Define a DateTimeFormatter with a specific pattern
-	        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-	        // Format the date
-	        String formattedDate = date.format(formatter);
-	        Integer accounttype;
-	        Integer days = null;
-	        String Accounttype = null;
-	        if(objusermaster.getIsmultitenant().equals(2)) {
-	        	accounttype =objusermaster.getLssitemaster().getAccouttype();
-		        // days print
-	        	days=  accounttype.toString().equals("3") ? 90 : 30;
-		        Accounttype = accounttype.toString().equals("3") ? "Academic" : accounttype.toString().equals("2") ? "Corporate" : "Personal" ;		
-	        }
-	        if(objusermaster.getAutenticatefrom() != null && (objusermaster.getAutenticatefrom() == 1 || objusermaster.getAutenticatefrom() == 2) && objusermaster.getIsmultitenant() == 2) {		
-	
+			// Define a DateTimeFormatter with a specific pattern
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+			// Format the date
+			String formattedDate = date.format(formatter);
+			Integer accounttype;
+			Integer days = null;
+			String Accounttype = null;
+			if (objusermaster.getIsmultitenant().equals(2)) {
+				accounttype = objusermaster.getLssitemaster().getAccouttype();
+				// days print
+				days = accounttype.toString().equals("3") ? 90 : 30;
+				Accounttype = accounttype.toString().equals("3") ? "Academic"
+						: accounttype.toString().equals("2") ? "Corporate" : "Personal";
+			}
+			if (objusermaster.getAutenticatefrom() != null
+					&& (objusermaster.getAutenticatefrom() == 1 || objusermaster.getAutenticatefrom() == 2)
+					&& objusermaster.getIsmultitenant() == 2) {
+
 				email.setSubject("ELN LITE User Credentials");
 				email.setMailcontent(
-						
+
 						"<div class=\"container\" style=\" width: 100%;max-width: 600px; margin: 0 auto;background-color: #ffffff;font-family: Arial, sans-serif;\">\r\n"
-						+ "        <!-- Header -->\r\n"
-						+ "        <div class=\"header\" style=\" padding: 20px; background-color: #ffffff; color: #ffffff;\">\r\n"
-						+ "           <img src=\"cid:image1\" alt=\"Logo 1\" width=\"130px\"/>\r\n"
-						+ "           <img src=\"cid:image2\" alt=\"Logo 2\" width=\"75px\" style=\"float: right;\"/>\r\n"
-						+ "        </div>\r\n"
-						+ "        \r\n"
-						+ "        <!-- Content -->\r\n"
-						+ "        <div class=\"content\" style=\" padding: 20px; background-color: #cce0fb;\">\r\n"
-						+ "            <p><b>Dear Customer,</b></p>\r\n"
-						+ "            <div class=\"content-text\" style=\"text-align: center;\">\r\n"
-						+ "                <p class=\"text-align\" style=\"color: #000; font-size: 14px;\">Thanks for your interest in Logilab ELN LITE.</p>\r\n"
-						+ "                <p style=\"font-size: 14px; color: #032c67;\"><b><a href=\""+objusermaster.getUserloginlink()+"\" style=\"color: #032c67; text-decoration: underline\"><u>Click here to visit Logilab ELN LITE Login page</u></a></b></p>\r\n"
-						+ "<br /><p style=\"font-size: 14px; color: #000000;\">Registration successful. Your Logilab ELN lite trial "+ Accounttype +" account has been activated successfully. The free trial will expire <b>"+ days +"</b> days from today on <b>"+formattedDate+"</b> </p><br />"
-						+ "                <p style=\"color: #000;font-size: 13px;\"><b>Plase contact our support team by mail at <span style=\"color: #1d75f1;\">support@agaramtech.com</span> for any queries.</b></p>\r\n"
-						+ "            </div>\r\n"
-						+ "            \r\n"
-						+ "            \r\n"
-						+ "        </div>\r\n"
-						+ "        \r\n"
-						+ "        <!-- Footer -->\r\n"
-						+ "        <div class=\"footer\" style=\"padding: 10px; background-color: #cce0fb; color: #000; text-align: center; font-size: 12px;\">\r\n"
-						+ "            <img src=\"cid:image3\" alt=\"Logo 3\" width=\"125px\" style=\"float: left;margin-top: 10px;\"/>\r\n"
-						+ "            <div>\r\n"
-						+ "                <p>Copyrights &copy; 2024 - 2025 Agaram Technology Pvt Ltd.</p>\r\n"
-						+ "                <p style=\"color: #032c67;\"><a href=\"https://www.agaramtech.com/about-us\" style=\"color: #032c67; text-decoration: underline;\"><u>About</u></a> | <a href=\"https://www.agaramtech.com/terms-and-conditions\" style=\"color: #032c67; text-decoration: underline;\"><u>Terms & Conditions</u></a> | <a href=\"https://www.logilabeln.com/contact\" style=\"color: #032c67; text-decoration: underline;\"><u>Contact Us</u></a></p>\r\n"
-						+ "            </div>\r\n"
-						+ "        </div>\r\n"
-						+ "    </div>"						
-						);
-				
-	        }else if(objusermaster.getAutenticatefrom() != null && objusermaster.getAutenticatefrom() == 0 && objusermaster.getIsmultitenant() == 2 && objusermaster.getObjResponse().getInformation().equals("Forget password")) {
+								+ "        <!-- Header -->\r\n"
+								+ "        <div class=\"header\" style=\" padding: 20px; background-color: #ffffff; color: #ffffff;\">\r\n"
+								+ "           <img src=\"cid:image1\" alt=\"Logo 1\" width=\"130px\"/>\r\n"
+								+ "           <img src=\"cid:image2\" alt=\"Logo 2\" width=\"75px\" style=\"float: right;\"/>\r\n"
+								+ "        </div>\r\n" + "        \r\n" + "        <!-- Content -->\r\n"
+								+ "        <div class=\"content\" style=\" padding: 20px; background-color: #cce0fb;\">\r\n"
+								+ "            <p><b>Dear Customer,</b></p>\r\n"
+								+ "            <div class=\"content-text\" style=\"text-align: center;\">\r\n"
+								+ "                <p class=\"text-align\" style=\"color: #000; font-size: 14px;\">Thanks for your interest in Logilab ELN LITE.</p>\r\n"
+								+ "                <p style=\"font-size: 14px; color: #032c67;\"><b><a href=\""
+								+ objusermaster.getUserloginlink()
+								+ "\" style=\"color: #032c67; text-decoration: underline\"><u>Click here to visit Logilab ELN LITE Login page</u></a></b></p>\r\n"
+								+ "<br /><p style=\"font-size: 14px; color: #000000;\">Registration successful. Your Logilab ELN lite trial "
+								+ Accounttype
+								+ " account has been activated successfully. The free trial will expire <b>" + days
+								+ "</b> days from today on <b>" + formattedDate + "</b> </p><br />"
+								+ "                <p style=\"color: #000;font-size: 13px;\"><b>Plase contact our support team by mail at <span style=\"color: #1d75f1;\">support@agaramtech.com</span> for any queries.</b></p>\r\n"
+								+ "            </div>\r\n" + "            \r\n" + "            \r\n"
+								+ "        </div>\r\n" + "        \r\n" + "        <!-- Footer -->\r\n"
+								+ "        <div class=\"footer\" style=\"padding: 10px; background-color: #cce0fb; color: #000; text-align: center; font-size: 12px;\">\r\n"
+								+ "            <img src=\"cid:image3\" alt=\"Logo 3\" width=\"125px\" style=\"float: left;margin-top: 10px;\"/>\r\n"
+								+ "            <div>\r\n"
+								+ "                <p>Copyrights &copy; 2024 - 2025 Agaram Technology Pvt Ltd.</p>\r\n"
+								+ "                <p style=\"color: #032c67;\"><a href=\"https://www.agaramtech.com/about-us\" style=\"color: #032c67; text-decoration: underline;\"><u>About</u></a> | <a href=\"https://www.agaramtech.com/terms-and-conditions\" style=\"color: #032c67; text-decoration: underline;\"><u>Terms & Conditions</u></a> | <a href=\"https://www.logilabeln.com/contact\" style=\"color: #032c67; text-decoration: underline;\"><u>Contact Us</u></a></p>\r\n"
+								+ "            </div>\r\n" + "        </div>\r\n" + "    </div>");
+
+			} else if (objusermaster.getAutenticatefrom() != null && objusermaster.getAutenticatefrom() == 0
+					&& objusermaster.getIsmultitenant() == 2
+					&& objusermaster.getObjResponse().getInformation().equals("Forget password")) {
 				email.setSubject("Reset your Logilab ELN lite Password");
 				email.setMailcontent(
 						"<div class=\"container\" style=\" width: 100%;max-width: 600px; margin: 0 auto;background-color: #ffffff;font-family: Arial, sans-serif;\">\r\n"
-						+ "        <!-- Header -->\r\n"
-						+ "        <div class=\"header\" style=\" padding: 20px; background-color: #ffffff; color: #ffffff;\">\r\n"
-						+ "           <img src=\"cid:image1\" alt=\"Logo 1\" width=\"130px\"/>\r\n"
-						+ "           <img src=\"cid:image2\" alt=\"Logo 2\" width=\"75px\" style=\"float: right;\"/>\r\n"
-						+ "        </div>\r\n"
-						+ "        \r\n"
-						+ "        <!-- Content -->\r\n"
-						+ "        <div class=\"content\" style=\" padding: 20px; background-color: #cce0fb;\">\r\n"
-						+ "            <p><b>Dear Customer,</b></p>\r\n"
-						+ "            <div class=\"content-text\" style=\"text-align: center;\">\r\n"
-						+ "                <p class=\"text-align\" style=\"color: #000; font-size: 14px;\">We received your request to reset your Logilab ELN lite account password</p>\r\n"
-						+ "                <p style=\"font-size: 14px; color: #032c67;\"><b><a href=\""+objusermaster.getUserloginlink()+"\" style=\"color: #032c67; text-decoration: underline\"><u>Click here to Reset your Password</u></a></b></p>\r\n"
-						+ "                <ul style=\"list-style: none; margin-bottom: 25px;\">\r\n"
-						+ "                    <li style=\"padding-bottom: 5px; color: #626367; font-size: 14px;\">1. After logging in, a new password generation screen will appear</li>\r\n"
-						+ "                    <li style=\"color: #626367; font-size: 14px;\">2. Paste the temporary password and proceed.</li>\r\n"
-						+ "                </ul>\r\n"
-						+ "                <div class=\"text-box\" style=\"width: 265px;margin: auto;padding: 8px;background: #fff;border-radius: 6px;margin-bottom: 20px;display: inline-block;\"><b style=\"font-size: 12px;float: left;margin-right: 19px;text-align: left;color: #626367;\">Username</b><span style=\" color: #1d75f1; font-size: 13px;text-align: left;float: left;display: inline-block;\">"+objusermaster.getUsername()+"</span></div>\r\n"
-						+ "                <div class=\"text-box\" style=\"width: 265px;margin: auto;padding: 8px;background: #fff;border-radius: 6px;margin-bottom: 20px;display: inline-block;\"><b style=\"font-size: 12px;float: left;margin-right: 19px;text-align: left;color: #626367;\">Temporary Password</b><span style=\" color: #1d75f1; font-size: 13px;text-align: left;float: left;display: inline-block;\">"+password+"</span></div>\r\n"
-						+ "                <p style=\"font-size: 12px;color: #626367;\">Please note that organization's password policies might apply to your password</p>\r\n"
-						+ "                <p style=\"color: #000;font-size: 13px;\"><b>Plase contact our support team by mail at <span style=\"color: #1d75f1;\">support@agaramtech.com</span> for any queries.</b></p>\r\n"
-						+ "            </div>\r\n"
-						+ "            \r\n"
-						+ "            \r\n"
-						+ "        </div>\r\n"
-						+ "        \r\n"
-						+ "        <!-- Footer -->\r\n"
-						+ "        <div class=\"footer\" style=\"padding: 10px; background-color: #cce0fb; color: #000; text-align: center; font-size: 12px;\">\r\n"
-						+ "            <img src=\"cid:image3\" alt=\"Logo 3\" width=\"125px\" style=\"float: left;margin-top: 10px;\"/>\r\n"
-						+ "            <div>\r\n"
-						+ "                <p>Copyrights &copy; 2024 - 2025 Agaram Technology Pvt Ltd.</p>\r\n"
-						+ "                <p style=\"color: #032c67;\"><a href=\"https://www.agaramtech.com/about-us\" style=\"color: #032c67; text-decoration: underline;\"><u>About</u></a> | <a href=\"https://www.agaramtech.com/terms-and-conditions\" style=\"color: #032c67; text-decoration: underline;\"><u>Terms & Conditions</u></a> | <a href=\"https://www.logilabeln.com/contact\" style=\"color: #032c67; text-decoration: underline;\"><u>Contact Us</u></a></p>\r\n"
-						+ "            </div>\r\n"
-						+ "        </div>\r\n"
-						+ "    </div>"						
-						);
-			}else if(objusermaster.getAutenticatefrom() != null && objusermaster.getAutenticatefrom() == 0 && objusermaster.getIsmultitenant() == 2) {
+								+ "        <!-- Header -->\r\n"
+								+ "        <div class=\"header\" style=\" padding: 20px; background-color: #ffffff; color: #ffffff;\">\r\n"
+								+ "           <img src=\"cid:image1\" alt=\"Logo 1\" width=\"130px\"/>\r\n"
+								+ "           <img src=\"cid:image2\" alt=\"Logo 2\" width=\"75px\" style=\"float: right;\"/>\r\n"
+								+ "        </div>\r\n" + "        \r\n" + "        <!-- Content -->\r\n"
+								+ "        <div class=\"content\" style=\" padding: 20px; background-color: #cce0fb;\">\r\n"
+								+ "            <p><b>Dear Customer,</b></p>\r\n"
+								+ "            <div class=\"content-text\" style=\"text-align: center;\">\r\n"
+								+ "                <p class=\"text-align\" style=\"color: #000; font-size: 14px;\">We received your request to reset your Logilab ELN lite account password</p>\r\n"
+								+ "                <p style=\"font-size: 14px; color: #032c67;\"><b><a href=\""
+								+ objusermaster.getUserloginlink()
+								+ "\" style=\"color: #032c67; text-decoration: underline\"><u>Click here to Reset your Password</u></a></b></p>\r\n"
+								+ "                <ul style=\"list-style: none; margin-bottom: 25px;\">\r\n"
+								+ "                    <li style=\"padding-bottom: 5px; color: #626367; font-size: 14px;\">1. After logging in, a new password generation screen will appear</li>\r\n"
+								+ "                    <li style=\"color: #626367; font-size: 14px;\">2. Paste the temporary password and proceed.</li>\r\n"
+								+ "                </ul>\r\n"
+								+ "                <div class=\"text-box\" style=\"width: 265px;margin: auto;padding: 8px;background: #fff;border-radius: 6px;margin-bottom: 20px;display: inline-block;\"><b style=\"font-size: 12px;float: left;margin-right: 19px;text-align: left;color: #626367;\">Username</b><span style=\" color: #1d75f1; font-size: 13px;text-align: left;float: left;display: inline-block;\">"
+								+ objusermaster.getUsername() + "</span></div>\r\n"
+								+ "                <div class=\"text-box\" style=\"width: 265px;margin: auto;padding: 8px;background: #fff;border-radius: 6px;margin-bottom: 20px;display: inline-block;\"><b style=\"font-size: 12px;float: left;margin-right: 19px;text-align: left;color: #626367;\">Temporary Password</b><span style=\" color: #1d75f1; font-size: 13px;text-align: left;float: left;display: inline-block;\">"
+								+ password + "</span></div>\r\n"
+								+ "                <p style=\"font-size: 12px;color: #626367;\">Please note that organization's password policies might apply to your password</p>\r\n"
+								+ "                <p style=\"color: #000;font-size: 13px;\"><b>Plase contact our support team by mail at <span style=\"color: #1d75f1;\">support@agaramtech.com</span> for any queries.</b></p>\r\n"
+								+ "            </div>\r\n" + "            \r\n" + "            \r\n"
+								+ "        </div>\r\n" + "        \r\n" + "        <!-- Footer -->\r\n"
+								+ "        <div class=\"footer\" style=\"padding: 10px; background-color: #cce0fb; color: #000; text-align: center; font-size: 12px;\">\r\n"
+								+ "            <img src=\"cid:image3\" alt=\"Logo 3\" width=\"125px\" style=\"float: left;margin-top: 10px;\"/>\r\n"
+								+ "            <div>\r\n"
+								+ "                <p>Copyrights &copy; 2024 - 2025 Agaram Technology Pvt Ltd.</p>\r\n"
+								+ "                <p style=\"color: #032c67;\"><a href=\"https://www.agaramtech.com/about-us\" style=\"color: #032c67; text-decoration: underline;\"><u>About</u></a> | <a href=\"https://www.agaramtech.com/terms-and-conditions\" style=\"color: #032c67; text-decoration: underline;\"><u>Terms & Conditions</u></a> | <a href=\"https://www.logilabeln.com/contact\" style=\"color: #032c67; text-decoration: underline;\"><u>Contact Us</u></a></p>\r\n"
+								+ "            </div>\r\n" + "        </div>\r\n" + "    </div>");
+			} else if (objusermaster.getAutenticatefrom() != null && objusermaster.getAutenticatefrom() == 0
+					&& objusermaster.getIsmultitenant() == 2) {
 				email.setSubject("ELN LITE User Credentials");
 				email.setMailcontent(
 						"<div class=\"container\" style=\" width: 100%;max-width: 600px; margin: 0 auto;background-color: #ffffff;font-family: Arial, sans-serif;\">\r\n"
-						+ "        <!-- Header -->\r\n"
-						+ "        <div class=\"header\" style=\" padding: 20px; background-color: #ffffff; color: #ffffff;\">\r\n"
-						+ "           <img src=\"cid:image1\" alt=\"Logo 1\" width=\"130px\"/>\r\n"
-						+ "           <img src=\"cid:image2\" alt=\"Logo 2\" width=\"75px\" style=\"float: right;\"/>\r\n"
-						+ "        </div>\r\n"
-						+ "        \r\n"
-						+ "        <!-- Content -->\r\n"
-						+ "        <div class=\"content\" style=\" padding: 20px; background-color: #cce0fb;\">\r\n"
-						+ "            <p><b>Dear Customer,</b></p>\r\n"
-						+ "            <div class=\"content-text\" style=\"text-align: center;\">\r\n"
-						+ "                <p class=\"text-align\" style=\"color: #000; font-size: 14px;\">Thanks for your interest in Logilab ELN LITE.</p>\r\n"
-						+ "                <p style=\"color: #626367; font-size: 14px;\">we've set up an "+ Accounttype +" account for you. Kindly create a password.</p>\r\n"
-						+ "                <p style=\"font-size: 14px; color: #032c67;\"><b><a href=\""+objusermaster.getUserloginlink()+"\" style=\"color: #032c67; text-decoration: underline\"><u>Click here to visit Logilab ELN LITE Login page</u></a></b></p>\r\n"
-						+ "                <ul style=\"list-style: none; margin-bottom: 25px;\">\r\n"
-						+ "                    <li style=\"padding-bottom: 5px; color: #626367; font-size: 14px;\">1. After logging in, a new password generation screen will appear</li>\r\n"
-						+ "                    <li style=\"color: #626367; font-size: 14px;\">2. Paste the temporary password and proceed.</li>\r\n"
-						+ "                </ul>\r\n"
-						+ "                <div class=\"text-box\" style=\"width: 265px;margin: auto;padding: 8px;background: #fff;border-radius: 6px;margin-bottom: 20px;display: inline-block;\"><b style=\"font-size: 12px;float: left;margin-right: 19px;text-align: left;color: #626367;\">Username</b><span style=\" color: #1d75f1; font-size: 13px;text-align: left;float: left;display: inline-block;\">"+objusermaster.getUsername()+"</span></div>\r\n"
-						+ "                <div class=\"text-box\" style=\"width: 265px;margin: auto;padding: 8px;background: #fff;border-radius: 6px;margin-bottom: 20px;display: inline-block;\"><b style=\"font-size: 12px;float: left;margin-right: 19px;text-align: left;color: #626367;\">Temporary Password</b><span style=\" color: #1d75f1; font-size: 13px;text-align: left;float: left;display: inline-block;\">"+password+"</span></div>\r\n"
-						+ "                <p style=\"font-size: 12px;color: #626367;\">Please note that organization's password policies might apply to your password</p>\r\n"
-						+ "                <p style=\"color: #000;font-size: 13px;\"><b>Plase contact our support team by mail at <span style=\"color: #1d75f1;\">support@agaramtech.com</span> for any queries.</b></p>\r\n"
-						+ "            </div>\r\n"
-						+ "            \r\n"
-						+ "            \r\n"
-						+ "        </div>\r\n"
-						+ "        \r\n"
-						+ "        <!-- Footer -->\r\n"
-						+ "        <div class=\"footer\" style=\"padding: 10px; background-color: #cce0fb; color: #000; text-align: center; font-size: 12px;\">\r\n"
-						+ "            <img src=\"cid:image3\" alt=\"Logo 3\" width=\"125px\" style=\"float: left;margin-top: 10px;\"/>\r\n"
-						+ "            <div>\r\n"
-						+ "                <p>Copyrights &copy; 2024 - 2025 Agaram Technology Pvt Ltd.</p>\r\n"
-						+ "                <p style=\"color: #032c67;\"><a href=\"https://www.agaramtech.com/about-us\" style=\"color: #032c67; text-decoration: underline;\"><u>About</u></a> | <a href=\"https://www.agaramtech.com/terms-and-conditions\" style=\"color: #032c67; text-decoration: underline;\"><u>Terms & Conditions</u></a> | <a href=\"https://www.logilabeln.com/contact\" style=\"color: #032c67; text-decoration: underline;\"><u>Contact Us</u></a></p>\r\n"
-						+ "            </div>\r\n"
-						+ "        </div>\r\n"
-						+ "    </div>"						
-						);
-			}else {
+								+ "        <!-- Header -->\r\n"
+								+ "        <div class=\"header\" style=\" padding: 20px; background-color: #ffffff; color: #ffffff;\">\r\n"
+								+ "           <img src=\"cid:image1\" alt=\"Logo 1\" width=\"130px\"/>\r\n"
+								+ "           <img src=\"cid:image2\" alt=\"Logo 2\" width=\"75px\" style=\"float: right;\"/>\r\n"
+								+ "        </div>\r\n" + "        \r\n" + "        <!-- Content -->\r\n"
+								+ "        <div class=\"content\" style=\" padding: 20px; background-color: #cce0fb;\">\r\n"
+								+ "            <p><b>Dear Customer,</b></p>\r\n"
+								+ "            <div class=\"content-text\" style=\"text-align: center;\">\r\n"
+								+ "                <p class=\"text-align\" style=\"color: #000; font-size: 14px;\">Thanks for your interest in Logilab ELN LITE.</p>\r\n"
+								+ "                <p style=\"color: #626367; font-size: 14px;\">we've set up an "
+								+ Accounttype + " account for you. Kindly create a password.</p>\r\n"
+								+ "                <p style=\"font-size: 14px; color: #032c67;\"><b><a href=\""
+								+ objusermaster.getUserloginlink()
+								+ "\" style=\"color: #032c67; text-decoration: underline\"><u>Click here to visit Logilab ELN LITE Login page</u></a></b></p>\r\n"
+								+ "                <ul style=\"list-style: none; margin-bottom: 25px;\">\r\n"
+								+ "                    <li style=\"padding-bottom: 5px; color: #626367; font-size: 14px;\">1. After logging in, a new password generation screen will appear</li>\r\n"
+								+ "                    <li style=\"color: #626367; font-size: 14px;\">2. Paste the temporary password and proceed.</li>\r\n"
+								+ "                </ul>\r\n"
+								+ "                <div class=\"text-box\" style=\"width: 265px;margin: auto;padding: 8px;background: #fff;border-radius: 6px;margin-bottom: 20px;display: inline-block;\"><b style=\"font-size: 12px;float: left;margin-right: 19px;text-align: left;color: #626367;\">Username</b><span style=\" color: #1d75f1; font-size: 13px;text-align: left;float: left;display: inline-block;\">"
+								+ objusermaster.getUsername() + "</span></div>\r\n"
+								+ "                <div class=\"text-box\" style=\"width: 265px;margin: auto;padding: 8px;background: #fff;border-radius: 6px;margin-bottom: 20px;display: inline-block;\"><b style=\"font-size: 12px;float: left;margin-right: 19px;text-align: left;color: #626367;\">Temporary Password</b><span style=\" color: #1d75f1; font-size: 13px;text-align: left;float: left;display: inline-block;\">"
+								+ password + "</span></div>\r\n"
+								+ "                <p style=\"font-size: 12px;color: #626367;\">Please note that organization's password policies might apply to your password</p>\r\n"
+								+ "                <p style=\"color: #000;font-size: 13px;\"><b>Plase contact our support team by mail at <span style=\"color: #1d75f1;\">support@agaramtech.com</span> for any queries.</b></p>\r\n"
+								+ "            </div>\r\n" + "            \r\n" + "            \r\n"
+								+ "        </div>\r\n" + "        \r\n" + "        <!-- Footer -->\r\n"
+								+ "        <div class=\"footer\" style=\"padding: 10px; background-color: #cce0fb; color: #000; text-align: center; font-size: 12px;\">\r\n"
+								+ "            <img src=\"cid:image3\" alt=\"Logo 3\" width=\"125px\" style=\"float: left;margin-top: 10px;\"/>\r\n"
+								+ "            <div>\r\n"
+								+ "                <p>Copyrights &copy; 2024 - 2025 Agaram Technology Pvt Ltd.</p>\r\n"
+								+ "                <p style=\"color: #032c67;\"><a href=\"https://www.agaramtech.com/about-us\" style=\"color: #032c67; text-decoration: underline;\"><u>About</u></a> | <a href=\"https://www.agaramtech.com/terms-and-conditions\" style=\"color: #032c67; text-decoration: underline;\"><u>Terms & Conditions</u></a> | <a href=\"https://www.logilabeln.com/contact\" style=\"color: #032c67; text-decoration: underline;\"><u>Contact Us</u></a></p>\r\n"
+								+ "            </div>\r\n" + "        </div>\r\n" + "    </div>");
+			} else {
 				email.setSubject("ELN User Credentials");
 				email.setMailcontent(
 						"<b>Dear Customer,</b><br><center><img src=\"cid:image\"  style =width:120px; height:100px border: 3px;'></center><br><br>"
@@ -1595,7 +1595,8 @@ public class UserService {
 								+ "Paste the password in the Old Password Textbox, and then generate your new password.<br><br>"
 								+ "<b style='margin-left: 76px;'>Username:</b>\t\t " + objusermaster.getUsername()
 								+ "<br><br>" + "<b style='margin-left: 76px;'>Password &nbsp;:</b>\t\t" + password
-								+ "<br><br>" + "<b style='margin-left: 76px;'><a href=" + objusermaster.getUserloginlink()
+								+ "<br><br>" + "<b style='margin-left: 76px;'><a href="
+								+ objusermaster.getUserloginlink()
 								+ ">Click here to Logilab ELN Login page</a></b><br><br>"
 								+ "<p>If you have any queries, please contact our support by mail to info@agaramtech.com <br><br><br>"
 								+ "Regards,</p>" + "<b>Agaram Technologies Private Limited</b><br><br>"
@@ -1603,71 +1604,65 @@ public class UserService {
 								+ "<br><br><p>T: +91 44 4208 2005</p><p>T: +91 44 42189406</p>"
 								+ "W:<a href='https://www.agaramtech.com'>https://www.agaramtech.com</a></p>");
 			}
-			
 
-		
-			if(objusermaster.getIsmultitenant() == 2) {
+			if (objusermaster.getIsmultitenant() == 2) {
 				emailService.sendEmailelnLite(email);
-				
-				
-				// mail copy			
-				if(objusermaster.getObjResponse().getInformation() != null && objusermaster.getObjResponse().getInformation() == "User registered successfully"){
-				
-				Integer atype =objusermaster.getLssitemaster().getAccouttype();
-		        
-		       String Actype = atype.toString().equals("3") ? "Academic" : atype.toString().equals("2") ? "Corporate" : "Personal" ;
-		        
-				email.setSubject("New Logilab ELN lite registration received");
-				email.setMailcontent(
-						
-						"<div class=\"container\" style=\" width: 100%;max-width: 600px; margin: 0 auto;background-color: #ffffff;font-family: Arial, sans-serif;\">\r\n"
-						+ "        <!-- Header -->\r\n"
-						+ "        <div class=\"header\" style=\" padding: 20px; background-color: #ffffff; color: #ffffff;\">\r\n"
-						+ "           <img src=\"cid:image1\" alt=\"Logo 1\" width=\"130px\"/>\r\n"
-						+ "           <img src=\"cid:image2\" alt=\"Logo 2\" width=\"75px\" style=\"float: right;\"/>\r\n"
-						+ "        </div>\r\n"
-						+ "        \r\n"
-						+ "        <!-- Content -->\r\n"
-						+ " <div class=\"content\"> "            
-								+ " <div class=\"content-text\">"
-								+ "  <p style=\"color: #000; font-size: 14px;\">Name : "+ objusermaster.getUsername()+"</p>"
-								+ "  <p style=\"color: #000; font-size: 14px;\">Company : "+ objusermaster.getLssitemaster().getOrganisationname()+"</p>"
-								+ " <p style=\"color: #000; font-size: 14px;\">Plan type : "+ Actype +" </p>"
-								+ " <p style=\"color: #000; font-size: 14px;\">Email ID : "+ objusermaster.getEmailid()+"</p>"
-								+ "<p style=\"color: #000; font-size: 14px;\">Designation : "+ objusermaster.getDesignationname()+"</p>"             
-								+ "<p style=\"color: #000; font-size: 14px;\">Country : "+ objusermaster.getLssitemaster().getCountry()+"</p>"
-			            +"</div>"
-			       +" </div>"
-						+ "        <!-- Footer -->\r\n"
-						+ "        <div class=\"footer\" style=\"padding: 10px; background-color: #cce0fb; color: #000; text-align: center; font-size: 12px;\">\r\n"
-						+ "            <img src=\"cid:image3\" alt=\"Logo 3\" width=\"125px\" style=\"float: left;margin-top: 10px;\"/>\r\n"
-						+ "            <div>\r\n"
-						+ "                <p>Copyrights &copy; 2024 - 2025 Agaram Technology Pvt Ltd.</p>\r\n"
-						+ "                <p style=\"color: #032c67;\"><a href=\"https://www.agaramtech.com/about-us\" style=\"color: #032c67; text-decoration: underline;\"><u>About</u></a> | <a href=\"https://www.agaramtech.com/terms-and-conditions\" style=\"color: #032c67; text-decoration: underline;\"><u>Terms & Conditions</u></a> | <a href=\"https://www.logilabeln.com/contact\" style=\"color: #032c67; text-decoration: underline;\"><u>Contact Us</u></a></p>\r\n"
-						+ "            </div>\r\n"
-						+ "        </div>\r\n"
-						+ "    </div>"						
-						);
-				
-	        
-				emailService.sendEmailelnLiteCopy(email);
+
+				// mail copy
+				if (objusermaster.getObjResponse().getInformation() != null
+						&& objusermaster.getObjResponse().getInformation() == "User registered successfully") {
+
+					Integer atype = objusermaster.getLssitemaster().getAccouttype();
+
+					String Actype = atype.toString().equals("3") ? "Academic"
+							: atype.toString().equals("2") ? "Corporate" : "Personal";
+
+					email.setSubject("New Logilab ELN lite registration received");
+					email.setMailcontent(
+
+							"<div class=\"container\" style=\" width: 100%;max-width: 600px; margin: 0 auto;background-color: #ffffff;font-family: Arial, sans-serif;\">\r\n"
+									+ "        <!-- Header -->\r\n"
+									+ "        <div class=\"header\" style=\" padding: 20px; background-color: #ffffff; color: #ffffff;\">\r\n"
+									+ "           <img src=\"cid:image1\" alt=\"Logo 1\" width=\"130px\"/>\r\n"
+									+ "           <img src=\"cid:image2\" alt=\"Logo 2\" width=\"75px\" style=\"float: right;\"/>\r\n"
+									+ "        </div>\r\n" + "        \r\n" + "        <!-- Content -->\r\n"
+									+ " <div class=\"content\"> " + " <div class=\"content-text\">"
+									+ "  <p style=\"color: #000; font-size: 14px;\">Name : "
+									+ objusermaster.getUsername() + "</p>"
+									+ "  <p style=\"color: #000; font-size: 14px;\">Company : "
+									+ objusermaster.getLssitemaster().getOrganisationname() + "</p>"
+									+ " <p style=\"color: #000; font-size: 14px;\">Plan type : " + Actype + " </p>"
+									+ " <p style=\"color: #000; font-size: 14px;\">Email ID : "
+									+ objusermaster.getEmailid() + "</p>"
+									+ "<p style=\"color: #000; font-size: 14px;\">Designation : "
+									+ objusermaster.getDesignationname() + "</p>"
+									+ "<p style=\"color: #000; font-size: 14px;\">Country : "
+									+ objusermaster.getLssitemaster().getCountry() + "</p>" + "</div>" + " </div>"
+									+ "        <!-- Footer -->\r\n"
+									+ "        <div class=\"footer\" style=\"padding: 10px; background-color: #cce0fb; color: #000; text-align: center; font-size: 12px;\">\r\n"
+									+ "            <img src=\"cid:image3\" alt=\"Logo 3\" width=\"125px\" style=\"float: left;margin-top: 10px;\"/>\r\n"
+									+ "            <div>\r\n"
+									+ "                <p>Copyrights &copy; 2024 - 2025 Agaram Technology Pvt Ltd.</p>\r\n"
+									+ "                <p style=\"color: #032c67;\"><a href=\"https://www.agaramtech.com/about-us\" style=\"color: #032c67; text-decoration: underline;\"><u>About</u></a> | <a href=\"https://www.agaramtech.com/terms-and-conditions\" style=\"color: #032c67; text-decoration: underline;\"><u>Terms & Conditions</u></a> | <a href=\"https://www.logilabeln.com/contact\" style=\"color: #032c67; text-decoration: underline;\"><u>Contact Us</u></a></p>\r\n"
+									+ "            </div>\r\n" + "        </div>\r\n" + "    </div>");
+
+					emailService.sendEmailelnLiteCopy(email);
 				}
-			}else {
+			} else {
 				emailService.sendEmail(email);
 			}
-			
-			if(objusermaster.getIsmultitenant() == 2) {
-				lsuserMasterRepository.setpasswordandpasswordstatusandforgetstatusByusercode(objusermaster.getPassword(),
+
+			if (objusermaster.getIsmultitenant() == 2) {
+				lsuserMasterRepository.setpasswordandpasswordstatusandforgetstatusByusercode(
+						objusermaster.getPassword(), objusermaster.getPasswordstatus(), objusermaster.getUsercode());
+			} else {
+				lsuserMasterRepository.setpasswordandpasswordstatusByusercode(objusermaster.getPassword(),
 						objusermaster.getPasswordstatus(), objusermaster.getUsercode());
-				}else {
-					lsuserMasterRepository.setpasswordandpasswordstatusByusercode(objusermaster.getPassword(),
-							objusermaster.getPasswordstatus(), objusermaster.getUsercode());
-				}
+			}
 		}
 
 		return objusermaster;
 
-	
 	}
 
 	public List<LScentralisedUsers> Getallcentraliseduser(LScentralisedUsers objctrluser) {
@@ -1734,25 +1729,23 @@ public class UserService {
 	}
 
 	public Map<String, Object> getMultiUserGroup(LSuserMaster objusermaster) {
-		Map<String, Object> rtnobj=new HashMap<>();		
+		Map<String, Object> rtnobj = new HashMap<>();
 		LSuserMaster usermaster = lsuserMasterRepository.findByusercode(objusermaster.getUsercode());
 		List<LSuserMaster> userobj = Collections.singletonList(usermaster);
 		List<LSMultiusergroup> filteredMultiusergroupcode = userobj.stream()
-			    .flatMap(items -> items.getMultiusergroupcode().stream()
-			        .filter(values -> {
-			            boolean result = values.getLsusergroup().getLssitemaster().equals(objusermaster.getLssitemaster().getSitecode());
-			            System.out.println("Result: " + result); // Add logging here
-			            return result;
-			        })
-			    )
-			    .collect(Collectors.toList());
-
+				.flatMap(items -> items.getMultiusergroupcode().stream().filter(values -> {
+					boolean result = values.getLsusergroup().getLssitemaster()
+							.equals(objusermaster.getLssitemaster().getSitecode());
+					System.out.println("Result: " + result); // Add logging here
+					return result;
+				})).collect(Collectors.toList());
 
 		rtnobj.put("lsmultiusergroup", filteredMultiusergroupcode);
-		List<LSuserMaster> usermastersite =lsuserMasterRepository.findByUsernameIgnoreCaseAndUserretirestatusNot(objusermaster.getUsername(),1);
-		List<Integer> usercode =usermastersite.stream().map(LSuserMaster::getUsercode).collect(Collectors.toList());
-		rtnobj.put("lsmultisites", LSMultisitesRepositery.findByusercodeIn(usercode)) ;
-		rtnobj.put("multiplenames", usermastersite.size()==1?false:usermastersite.size()>1?true:false) ;
+		List<LSuserMaster> usermastersite = lsuserMasterRepository
+				.findByUsernameIgnoreCaseAndUserretirestatusNot(objusermaster.getUsername(), 1);
+		List<Integer> usercode = usermastersite.stream().map(LSuserMaster::getUsercode).collect(Collectors.toList());
+		rtnobj.put("lsmultisites", LSMultisitesRepositery.findByusercodeIn(usercode));
+		rtnobj.put("multiplenames", usermastersite.size() == 1 ? false : usermastersite.size() > 1 ? true : false);
 		return rtnobj;
 	}
 
@@ -1900,7 +1893,7 @@ public class UserService {
 					listofallmaster.getLssitemaster().getSitecode());
 
 			if (lstUnit.isEmpty()) {
-				
+
 				List<Unit> objLst = listofallmaster.getUnit().stream().peek(f -> {
 					try {
 						f.setCreatedate(commonfunction.getCurrentUtcTime());
@@ -1908,7 +1901,7 @@ public class UserService {
 						e.printStackTrace();
 					}
 				}).collect(Collectors.toList());
-				
+
 				unitRepository.save(objLst);
 				listofallmaster.setUnit(listofallmaster.getUnit());
 				listofallmaster.setObjResponse(new Response());
@@ -1932,7 +1925,7 @@ public class UserService {
 					listofallmaster.getLssitemaster().getSitecode());
 
 			if (lstSection.isEmpty()) {
-				
+
 				List<Section> objLst = listofallmaster.getSection().stream().peek(f -> {
 					try {
 						f.setCreatedate(commonfunction.getCurrentUtcTime());
@@ -1940,7 +1933,7 @@ public class UserService {
 						e.printStackTrace();
 					}
 				}).collect(Collectors.toList());
-				
+
 				sectionRepository.save(objLst);
 				listofallmaster.setSection(listofallmaster.getSection());
 				listofallmaster.setObjResponse(new Response());
@@ -1973,8 +1966,7 @@ public class UserService {
 //			if (lstMaterialByName.isEmpty()) {
 
 			/**
-			 * Start 
-			 * Old code
+			 * Start Old code
 			 */
 //			listofallmaster.getMaterial().stream().peek(f -> {
 //				try {
@@ -1991,19 +1983,14 @@ public class UserService {
 //			listofallmaster.getObjResponse().setInformation("IDS_MSG_SUCCESSMSG");
 
 			/**
-			 * end 
-			 * Old code
+			 * end Old code
 			 */
-			
+
 			/**
-			 * Start 
-			 * new code
-			 * Added by sathishkumar chandrasekar, 28-08-2024
-			 * For import multiple materials(master record)
+			 * Start new code Added by sathishkumar chandrasekar, 28-08-2024 For import
+			 * multiple materials(master record)
 			 */
-			
-			
-			
+
 			listofallmaster.getElnmaterial().stream().peek(f -> {
 				try {
 					f.setCreateddate(commonfunction.getCurrentUtcTime());
@@ -2018,8 +2005,7 @@ public class UserService {
 			listofallmaster.getObjResponse().setStatus(true);
 			listofallmaster.getObjResponse().setInformation("IDS_MSG_SUCCESSMSG");
 			/**
-			 * end 
-			 * New code
+			 * end New code
 			 */
 
 			return listofallmaster;
@@ -2058,49 +2044,52 @@ public class UserService {
 	}
 
 	public Map<String, Object> GetSiteWiseUserGrouplist(LSuserMaster objclass) {
-	    Map<String, Object> retobj = new HashMap<>();
-	    List<LSSiteMaster> lsrights = Arrays.asList(objclass.getLstiteMaster());
-	    List<Integer> sitecode = lsrights.stream().map(LSSiteMaster::getSitecode).collect(Collectors.toList());
-	    boolean isnewuser = objclass.getUsercode() == null;
-	    boolean usernameExists = false;
-	    
-	    if(objclass.getUsername()!=null) {
-		    for (LSSiteMaster tempobj : lsrights) {
-		        List<LSMultisites> userocedsites = LSMultisitesRepositery.findByLssiteMaster(tempobj);
-		        List<Integer> usercode = userocedsites.stream().map(LSMultisites::getUsercode).collect(Collectors.toList());
-		        
-		        List<LSuserMaster> existingUsers;
-		        if (isnewuser) {
-		            existingUsers = lsuserMasterRepository.findByUsernameIgnoreCaseAndUsercodeIn(objclass.getUsername(), usercode);
-		        } else {
-		            existingUsers = lsuserMasterRepository.findByUsernameIgnoreCaseAndUsercodeInAndUsercodeNot(objclass.getUsername(), usercode, objclass.getUsercode());
-		        }
-		        
-		        if (!existingUsers.isEmpty()) {
-		            retobj.put("sitemaster",LSSiteMasterRepository.findBysitecode(tempobj.getSitecode()));
-		            retobj.put("username", objclass.getUsername());
+		Map<String, Object> retobj = new HashMap<>();
+		List<LSSiteMaster> lsrights = Arrays.asList(objclass.getLstiteMaster());
+		List<Integer> sitecode = lsrights.stream().map(LSSiteMaster::getSitecode).collect(Collectors.toList());
+		boolean isnewuser = objclass.getUsercode() == null;
+		boolean usernameExists = false;
+
+		if (objclass.getUsername() != null) {
+			for (LSSiteMaster tempobj : lsrights) {
+				List<LSMultisites> userocedsites = LSMultisitesRepositery.findByLssiteMaster(tempobj);
+				List<Integer> usercode = userocedsites.stream().map(LSMultisites::getUsercode)
+						.collect(Collectors.toList());
+
+				List<LSuserMaster> existingUsers;
+				if (isnewuser) {
+					existingUsers = lsuserMasterRepository.findByUsernameIgnoreCaseAndUsercodeIn(objclass.getUsername(),
+							usercode);
+				} else {
+					existingUsers = lsuserMasterRepository.findByUsernameIgnoreCaseAndUsercodeInAndUsercodeNot(
+							objclass.getUsername(), usercode, objclass.getUsercode());
+				}
+
+				if (!existingUsers.isEmpty()) {
+					retobj.put("sitemaster", LSSiteMasterRepository.findBysitecode(tempobj.getSitecode()));
+					retobj.put("username", objclass.getUsername());
 //		            retobj.put("message", "username already exists");
-		            usernameExists = true;
-		            break;
-		        }
-		    }
-		    
-		    retobj.put("usernameExists", usernameExists);
-	    }
-	    if (!usernameExists) {
-	        retobj.put("listofusergroup", lSusergroupRepository.findBylssitemasterInAndUsergroupnameNotOrderByUsergroupcodeDesc(sitecode, ""));
-	    }
-	    
-	    return retobj;
+					usernameExists = true;
+					break;
+				}
+			}
+
+			retobj.put("usernameExists", usernameExists);
+		}
+		if (!usernameExists) {
+			retobj.put("listofusergroup", lSusergroupRepository
+					.findBylssitemasterInAndUsergroupnameNotOrderByUsergroupcodeDesc(sitecode, ""));
+		}
+
+		return retobj;
 	}
 
 	public LSuserMaster getkumum(Map<String, Object> argObj) {
-		LSuserMaster obj =new ObjectMapper().convertValue(argObj.get("usermaster"),
-				new TypeReference<LSuserMaster>() {
-				});
+		LSuserMaster obj = new ObjectMapper().convertValue(argObj.get("usermaster"), new TypeReference<LSuserMaster>() {
+		});
 		return obj;
 	}
-	
+
 	public Map<String, Object> getUsersinglOnCode(LSuserMaster objuser) {
 		LSuserMaster objExitinguser = lsuserMasterRepository.findByusercode(objuser.getUsercode());
 		Map<String, Object> obj = new HashMap<>();
@@ -2113,7 +2102,7 @@ public class UserService {
 		objExitinguser.setEncryptedpassword(Password);
 		objExitinguser.setLssitemaster(objuser.getLsmultisites().get(0).getLssiteMaster());
 		objExitinguser.setLsusergroup(objuser.getLsusergroup());
-		
+
 		String groupstatus = objExitinguser.getLsusergroup().getUsergroupstatus();
 		if (groupstatus.trim().equals("Active")) {
 			if (objExitinguser.getLsusergroup() != null) {
@@ -2133,52 +2122,49 @@ public class UserService {
 		LSuserMaster usermaster = lsuserMasterRepository.findByusercode(objuser.getUsercode());
 		List<LSuserMaster> userobj = Collections.singletonList(usermaster);
 		List<LSusergroup> filteredMultiusergroupcode = userobj.stream()
-			    .flatMap(items -> items.getMultiusergroupcode().stream().peek(itemsva -> {
-		            if (itemsva.getDefaultusergroup() != null) {
-		            	itemsva.getLsusergroup().setDefaultusergroup(itemsva.getDefaultusergroup());
-		            }
-		        }).filter(values ->
+				.flatMap(items -> items.getMultiusergroupcode().stream().peek(itemsva -> {
+					if (itemsva.getDefaultusergroup() != null) {
+						itemsva.getLsusergroup().setDefaultusergroup(itemsva.getDefaultusergroup());
+					}
+				}).filter(values ->
 //			        values.getLsusergroup().getLssitemaster() == objuser.getLssitemaster().getSitecode())
-		        values.getLsusergroup().getLssitemaster().equals(objuser.getLssitemaster().getSitecode()))
-			        .map(LSMultiusergroup::getLsusergroup)
-			    )
-			    .collect(Collectors.toList());
+				values.getLsusergroup().getLssitemaster().equals(objuser.getLssitemaster().getSitecode()))
+						.map(LSMultiusergroup::getLsusergroup))
+				.collect(Collectors.toList());
 		return filteredMultiusergroupcode;
-		
-
 
 	}
 
-	public Map<String, Object> GetTemplateStatus(Map<String, Object>  obj) {
-		
-		String status="";
+	public Map<String, Object> GetTemplateStatus(Map<String, Object> obj) {
+
+		String status = "";
 		String screen = (String) obj.get("screen");
 		String templatename = (String) obj.get("name");
-		if(screen.equals("/protocols")) {
-		 status = LSProtocolMasterRepository.getRetirestatus(templatename);
-		}else if(screen.equals("/sheetcreation")) {
-		 status = LSfileRepository.getRetirestatus(templatename);
-		}else if(screen.equals("/registertask")){
-		 status = LSlogilablimsorderdetailRepository.getRetirestatus(templatename);
-		}else if(screen.equals("/Protocolorder")) {
-		 status = LSlogilabprotocoldetailRepository.getRetirestatus(templatename);
+		if (screen.equals("/protocols")) {
+			status = LSProtocolMasterRepository.getRetirestatus(templatename);
+		} else if (screen.equals("/sheetcreation")) {
+			status = LSfileRepository.getRetirestatus(templatename);
+		} else if (screen.equals("/registertask")) {
+			status = LSlogilablimsorderdetailRepository.getRetirestatus(templatename);
+		} else if (screen.equals("/Protocolorder")) {
+			status = LSlogilabprotocoldetailRepository.getRetirestatus(templatename);
 		}
 		obj.put("status", status);
 		return obj;
 	}
-	
+
 	public Map<String, Object> updateProfileDetails(Map<String, Object> obj) {
-		String status ="";
+		String status = "";
 		String profile_name = (String) obj.get("userFullname");
 		String destination_name = (String) obj.get("designationname");
 		Integer usercode = (Integer) obj.get("usercode");
-		if(profile_name != null) {
-			lsuserMasterRepository.updateProfile(profile_name,usercode);
-			status="1";
+		if (profile_name != null) {
+			lsuserMasterRepository.updateProfile(profile_name, usercode);
+			status = "1";
 		}
-		if(destination_name != null) {
-			lsuserMasterRepository.updateDestination(destination_name,usercode);
-			status="2";
+		if (destination_name != null) {
+			lsuserMasterRepository.updateDestination(destination_name, usercode);
+			status = "2";
 		}
 		obj.put("status", status);
 		return obj;
@@ -2193,7 +2179,148 @@ public class UserService {
 	}
 
 	public LSusershowhidecolumns getShowHideolumn(LSusershowhidecolumns objgroupped) {
-		return lsusershowhidecolumnsRepository.findFirstByUsercodeAndSitecodeAndGridname
-				(objgroupped.getUsercode(),objgroupped.getSitecode(), objgroupped.getGridname());
+		return lsusershowhidecolumnsRepository.findFirstByUsercodeAndSitecodeAndGridname(objgroupped.getUsercode(),
+				objgroupped.getSitecode(), objgroupped.getGridname());
 	}
+
+	public ResponseEntity<List<LSuserMaster>> InsertImportUserMaster(Map<String, Object> mapObjects)
+			throws ParseException {
+		ObjectMapper mapper = new ObjectMapper();
+		Integer siteCode = Integer.parseInt((String) mapObjects.get("sitecode"));
+		Integer ismultitenant=(Integer) mapObjects.get("ismultitenant");
+		Date currentDate = commonfunction.getCurrentUtcTime();
+		List<LSusergroup> userGroupList = mapper.convertValue(mapObjects.get("UserGroupList"),
+				new TypeReference<List<LSusergroup>>() {
+				});
+		List<String> userGroupNameList = mapper.convertValue(mapObjects.get("UserGroupName"),
+				new TypeReference<List<String>>() {
+				});
+		List<LSusergroup> existingUserGroups = lSusergroupRepository
+				.findByLssitemasterAndUsergroupnameIgnoreCaseIn(siteCode, userGroupNameList);
+		Map<String, LSusergroup> userGroupExistMap = existingUserGroups.stream()
+				.collect(Collectors.toMap(LSusergroup::getUsergroupname, Function.identity()));
+		userGroupList = userGroupList.stream().map(item -> {
+			LSusergroup lsusergroup = userGroupExistMap.get(item.getUsergroupname());
+			if (lsusergroup != null) {
+				return lsusergroup;
+			} else {
+				item.setCreatedon(currentDate);
+				item.setModifiedon(currentDate);
+			}
+			return item;
+		}).collect(Collectors.toList());
+		lSusergroupRepository.save(userGroupList); // kumu - user group Save
+		List<String> userNameList = mapper.convertValue(mapObjects.get("UserMasterNameList"),
+				new TypeReference<List<String>>() {
+				});
+		List<LSuserMaster> userMasterList = mapper.convertValue(mapObjects.get("UserMasterList"),
+				new TypeReference<List<LSuserMaster>>() {
+				});
+		Map<String, LSusergroup> updatedUserGroupExistMap = userGroupList.stream()
+				.collect(Collectors.toMap(LSusergroup::getUsergroupname, Function.identity()));
+		List<LSuserMaster> usermasterlist = lsuserMasterRepository.findByusernameIn(userNameList);
+		List<Integer> usercodelist = usermasterlist.stream().map(LSuserMaster::getUsercode)
+				.collect(Collectors.toList());
+		LSSiteMaster sitemaster = new LSSiteMaster();
+		sitemaster.setSitecode(siteCode);
+		List<Integer> multisitebasedusercode = LSMultisitesRepositery
+				.findByusercodeInAndLssiteMaster(usercodelist, sitemaster).stream().map(LSMultisites::getUsercode)
+				.collect(Collectors.toList());
+		List<LSuserMaster> filteredUserMasterExistList = usermasterlist.stream()
+				.filter(user -> multisitebasedusercode.contains(user.getUsercode())).collect(Collectors.toList());
+		Map<String, LSuserMaster> userMasterExistList = filteredUserMasterExistList.stream()
+				.collect(Collectors.toMap(LSuserMaster::getUsername, Function.identity()));
+		List<LSMultiusergroup> multiuserGroupList = new ArrayList<>();
+		List<LSMultisites> multisiteList = new ArrayList<>();
+		for (LSuserMaster item : userMasterList) {
+			LSuserMaster existUser = userMasterExistList.get(item.getUsername());
+			if (existUser == null) {
+				item.setCreateddate(currentDate);
+				item.setModifieddate(currentDate);
+				String unifiedUserId = createUnifiedUserId(item, siteCode);
+				item.setUnifieduserid(unifiedUserId);
+				String password = Generatetenantpassword();
+		        String passwordadmin = AESEncryption.encrypt(password);
+		        item.setPassword(passwordadmin);
+		        if(ismultitenant==1) {
+		        	item.setPasswordstatus(1);
+		        }
+				LSusergroup existingGroup = updatedUserGroupExistMap.get(item.getUsergroupname());
+				if (existingGroup != null) {
+					LSMultiusergroup multiuserGroup = new LSMultiusergroup();
+					multiuserGroup.setLsusergroup(existingGroup);
+					multiuserGroup.setDefaultusergroup(1);
+					multiuserGroupList.add(multiuserGroup);
+					item.setMultiusergroupcode(Collections.singletonList(multiuserGroup));
+				}
+				multisiteList.addAll(item.getLsmultisites());
+			} else {
+				item = existUser;
+			}
+		}
+		LSMultisitesRepositery.save(multisiteList);
+		LSMultiusergroupRepositery.save(multiuserGroupList);
+		lsuserMasterRepository.save(userMasterList);// kumu - user Master Save
+		return new ResponseEntity<>(userMasterList, HttpStatus.OK);
+	}
+
+	private String createUnifiedUserId(LSuserMaster item, Integer siteCode) {
+		return item.getUsername().toLowerCase().replaceAll("[^a-zA-Z0-9]", "") + "u" + item.getUsercode() + "s"
+				+ siteCode + item.getUnifieduserid();
+	}
+
+    public List<LSuserMaster> sendEmailListWithBatch(Map<String, Object> objusermasterlist) { 
+        List<Email> emaillist = new ArrayList<>();
+        List<LSuserMaster> objusermasterlistobj=new ObjectMapper().convertValue(objusermasterlist.get("UserList"), new TypeReference<List<LSuserMaster>>() {
+		});
+//        objusermasterlist.get(0);
+        for (LSuserMaster objusermaster : objusermasterlistobj) {
+            Email email = new Email();
+            email.setMailto(objusermaster.getEmailid());
+            email.setSubject("ELN User Credentials");
+            email.setMailcontent(generateEmailContent(objusermaster, objusermaster.getPassword()));
+            emaillist.add(email);
+        }
+
+        if (emaillist.size() > 0) {
+            sendEmailsInParallel(emaillist);
+        }
+        return objusermasterlistobj;
+    }
+    private String generateEmailContent(LSuserMaster objusermaster, String password) {
+        return "<b>Dear Customer,</b><br><center><img src=\"cid:image\"  style='width:120px; height:100px; border: 3px;'></center><br><br>"
+                + "<p>Thanks for your interest in Logilab ELN.</p>Please use below mentioned Username and Password for your Login in ELN Application.<br><br>"
+                + "Click the URL mentioned below to go to Logilab ELN Login page. <br><br>"
+                + "After entered the username and click the password field, new password generation screen will appear.<br><br>"
+                + "Paste the password in the Old Password Textbox, and then generate your new password.<br><br>"
+                + "<b style='margin-left: 76px;'>Username:</b>\t\t " + objusermaster.getUsername()
+                + "<br><br>" + "<b style='margin-left: 76px;'>Password &nbsp;:</b>\t\t" + password
+                + "<br><br>" + "<b style='margin-left: 76px;'><a href=" + objusermaster.getUserloginlink()
+                + ">Click here to Logilab ELN Login page</a></b><br><br>"
+                + "<p>If you have any queries, please contact our support by mail to info@agaramtech.com <br><br><br>"
+                + "Regards,</p>" + "<b>Agaram Technologies Private Limited</b><br><br>"
+                + "<img src=\"cid:seconimage\"  style='width:120px; height:120px;border: 3px;'"
+                + "<br><br><p>T: +91 44 4208 2005</p><p>T: +91 44 42189406</p>"
+                + "W:<a href='https://www.agaramtech.com'>https://www.agaramtech.com</a></p>";
+    }
+    private void sendEmailsInParallel(List<Email> emaillist) {
+        ExecutorService executorService = Executors.newFixedThreadPool(10);
+        List<Callable<Void>> tasks = new ArrayList<>();
+
+        for (Email email : emaillist) {
+            	try {
+					emailService.sendEmail(email);
+				} catch (MessagingException e) {
+					e.printStackTrace();
+				}
+        }
+
+        try {
+            executorService.invokeAll(tasks);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } finally {
+            executorService.shutdown();
+        }
+    }
 }

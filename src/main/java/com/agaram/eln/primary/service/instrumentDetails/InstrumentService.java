@@ -114,6 +114,7 @@ import com.agaram.eln.primary.model.instrumentDetails.LSsheetfolderfiles;
 import com.agaram.eln.primary.model.instrumentDetails.LsAutoregister;
 import com.agaram.eln.primary.model.instrumentDetails.LsMappedInstruments;
 import com.agaram.eln.primary.model.instrumentDetails.LsMethodFields;
+import com.agaram.eln.primary.model.instrumentDetails.LsOrderLinks;
 import com.agaram.eln.primary.model.instrumentDetails.LsOrderSampleUpdate;
 import com.agaram.eln.primary.model.instrumentDetails.LsOrderattachments;
 import com.agaram.eln.primary.model.instrumentDetails.LsResultlimsOrderrefrence;
@@ -130,6 +131,7 @@ import com.agaram.eln.primary.model.instrumentsetup.InstrumentMaster;
 import com.agaram.eln.primary.model.masters.Lsrepositories;
 import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
 import com.agaram.eln.primary.model.material.Elnmaterial;
+import com.agaram.eln.primary.model.material.MaterialAttachments;
 import com.agaram.eln.primary.model.methodsetup.ELNFileAttachments;
 import com.agaram.eln.primary.model.methodsetup.ELNResultDetails;
 import com.agaram.eln.primary.model.methodsetup.Method;
@@ -198,6 +200,7 @@ import com.agaram.eln.primary.repository.instrumentDetails.Logilablimsorderdetai
 import com.agaram.eln.primary.repository.instrumentDetails.LsAutoregisterRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsMappedInstrumentsRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsMethodFieldsRepository;
+import com.agaram.eln.primary.repository.instrumentDetails.LsOrderLinkRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsOrderSampleUpdateRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LsOrderSampleUpdateRepository.UserProjection;
 import com.agaram.eln.primary.repository.instrumentDetails.LsOrderattachmentsRepository;
@@ -215,6 +218,7 @@ import com.agaram.eln.primary.repository.instrumentDetails.LsresultforordersRepo
 import com.agaram.eln.primary.repository.instrumentsetup.InstMasterRepository;
 import com.agaram.eln.primary.repository.masters.LsrepositoriesdataRepository;
 import com.agaram.eln.primary.repository.material.ElnmaterialRepository;
+import com.agaram.eln.primary.repository.material.MaterialAttachmentsRepository;
 import com.agaram.eln.primary.repository.methodsetup.ELNFileAttachmentsRepository;
 import com.agaram.eln.primary.repository.methodsetup.ELNResultDetailsRepository;
 import com.agaram.eln.primary.repository.methodsetup.MethodRepository;
@@ -574,8 +578,16 @@ public class InstrumentService {
 	
 	@Autowired
 	private SequenceTableTaskRepository sequencetabletaskRepository;
-
+	
 	@Autowired
+	private MaterialAttachmentsRepository materialAttachmentsRepository;
+
+	private final ObjectMapper objectMapper = new ObjectMapper();
+
+
+	private DocumenteditorService documenteditorService;
+
+
 	private SequenceTableOrderTypeRepository sequencetableordertyperepository;
 	
 	@Autowired
@@ -583,6 +595,9 @@ public class InstrumentService {
 	
 	@Autowired
 	private SequenceTableTaskLevelRepository sequencetabletasklevelrepository;
+	
+	@Autowired
+	private LsOrderLinkRepository lsorderlinkrepository;
 	
 	private Map<Integer, TimerTask> scheduledTasks = new HashMap<>();
 
@@ -1343,7 +1358,10 @@ public class InstrumentService {
 		}
 	}
 	
+
+
 	public SequenceTable validateandupdatesheetordersequencenumber(LSlogilablimsorderdetail objorder, SequenceTableProjectLevel objprojectseq, SequenceTableTaskLevel objtaskseq) throws ParseException
+
 	{
 		SequenceTable seqorder= new SequenceTable();
 		int sequence =1;
@@ -1355,10 +1373,9 @@ public class InstrumentService {
 			sequencetableRepository.setinitialapplicationsequence(appcount,sequence);
 			seqorder.setApplicationsequence(appcount);
 		}
-		
 		Date currentdate = commonfunction.getCurrentUtcTime();
 		SimpleDateFormat day = new SimpleDateFormat("dd");
-		SimpleDateFormat month = new SimpleDateFormat("MM");
+		SimpleDateFormat month = new SimpleDateFormat("mm");
 		SimpleDateFormat year = new SimpleDateFormat("yyyy");
 		if(seqorder.getSequenceday() == 0)
 		{
@@ -1488,36 +1505,36 @@ public class InstrumentService {
 			}
 		}
 		
-		if(objorder.getFiletype() != null && sequencetableordertyperepository.findBySequencecodeAndOrdertype(sequence,objorder.getFiletype()) == null)
-		{
-			SequenceTableOrderType objordertype = new SequenceTableOrderType();
-			objordertype.setSequencecode(sequence);
-			objordertype.setOrdertype(objorder.getFiletype());
-			if(objorder.getFiletype() != null)
-			{
-				objordertype.setOrdertypesequence(logilablimsorderdetailsRepository.countByFiletype(objorder.getFiletype()));
-			}
-			else
-			{
-				objordertype.setOrdertypesequence((long)0);
-			}
-			sequencetableordertyperepository.save(objordertype);
-			
-			if(seqorder.getSequencetableordertype() !=null)
-			{
-				seqorder.getSequencetableordertype().add(objordertype);
-			}
-			else
-			{
-				List<SequenceTableOrderType> lstseq= new ArrayList<SequenceTableOrderType>();
-				lstseq.add(objordertype);
-				seqorder.setSequencetableordertype(lstseq);
-			}
-		}
+//		if(objorder.getFiletype() != null && sequencetableordertyperepository.findBySequencecodeAndOrdertype(sequence,objorder.getFiletype()) == null)
+//		{
+//			SequenceTableOrderType objordertype = new SequenceTableOrderType();
+//			objordertype.setSequencecode(sequence);
+//			objordertype.setOrdertype(objorder.getFiletype());
+//			if(objorder.getFiletype() != null)
+//			{
+//				objordertype.setOrdertypesequence(logilablimsorderdetailsRepository.countByFiletype(objorder.getFiletype()));
+//			}
+//			else
+//			{
+//				objordertype.setOrdertypesequence((long)0);
+//			}
+//			sequencetableordertyperepository.save(objordertype);
+//			
+//			if(seqorder.getSequencetableordertype() !=null)
+//			{
+//				seqorder.getSequencetableordertype().add(objordertype);
+//			}
+//			else
+//			{
+//				List<SequenceTableOrderType> lstseq= new ArrayList<SequenceTableOrderType>();
+//				lstseq.add(objordertype);
+//				seqorder.setSequencetableordertype(lstseq);
+//			}
+//		}
 		
 		return seqorder;
 	}
-
+	
 	public LSlogilablimsorderdetail InsertELNOrder(LSlogilablimsorderdetail objorder)
 			throws IOException, ParseException {
 		SequenceTableProjectLevel objprojectseq = new SequenceTableProjectLevel();
@@ -6584,12 +6601,11 @@ public class InstrumentService {
 
 	public ResponseEntity<InputStreamResource> downloadattachmentsNonCloud(String param, String fileid)
 			throws IOException {
-
 		if (param == null) {
 			return null;
 		}
-
 		LsOrderattachments objattach = lsOrderattachmentsRepository.findFirst1ByfileidOrderByAttachmentcodeDesc(fileid);
+
 		HttpHeaders header = new HttpHeaders();
 		header.set("Content-Disposition", "attachment; filename=" + objattach.getFilename());
 
@@ -11322,5 +11338,20 @@ public class InstrumentService {
 
 	}
 
+	public ResponseEntity<Object> insertOrderLink(LsOrderLinks objorder) throws ParseException {
+		objorder.setCreateddate(commonfunction.getCurrentUtcTime());
+		objorder.setNstatus(1);
+		lsorderlinkrepository.save(objorder);
+		return new ResponseEntity<>(lsorderlinkrepository.findByBatchcodeAndNstatus(objorder.getBatchcode(),1), HttpStatus.OK);
+	}
+
+	public ResponseEntity<Object> getLinksOnOrder(LsOrderLinks objorder) {
+		return new ResponseEntity<>(lsorderlinkrepository.findByBatchcodeAndNstatus(objorder.getBatchcode(),1), HttpStatus.OK);
+	}
+
+	public ResponseEntity<Object> deleteLinkforOrder(LsOrderLinks objorder) {
+		lsorderlinkrepository.delete(objorder);
+		return new ResponseEntity<>(lsorderlinkrepository.findByBatchcodeAndNstatus(objorder.getBatchcode(),1), HttpStatus.OK);
+	}
 
 }

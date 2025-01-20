@@ -88,6 +88,33 @@ public class MaterialType implements Serializable {
 	@Column(name = "usageoption", nullable = false)
 	private int usageoption;
 	
+	private transient String mDate;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date modifieddate;
+	
+	@Column(name = "modifiedby")
+	private String modifiedby;
+	
+	public String getmDate() {
+		return mDate;
+	}
+	public void setmDate(String mDate) {
+		this.mDate = mDate;
+	}
+	public String getModifiedby() {
+		return modifiedby;
+	}
+	public void setModifiedby(String modifiedby) {
+		this.modifiedby = modifiedby;
+	}
+	public Date getModifieddate() {
+		return modifieddate;
+	}
+	public void setModifieddate(Date modifieddate) {
+		this.modifieddate = modifieddate;
+	}
+	
 	public Integer getSampletype() {
 		return sampletype;
 	}

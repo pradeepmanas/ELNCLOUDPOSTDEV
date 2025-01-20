@@ -43,6 +43,7 @@ import com.agaram.eln.primary.config.TenantContext;
 import com.agaram.eln.primary.global.Enumeration;
 import com.agaram.eln.primary.global.FileDTO;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
+import com.agaram.eln.primary.model.instrumentDetails.LsOrderLinks;
 import com.agaram.eln.primary.model.instrumentDetails.LsOrderattachments;
 import com.agaram.eln.primary.model.material.Elnmaterial;
 import com.agaram.eln.primary.model.material.ElnmaterialChemDiagRef;
@@ -59,6 +60,7 @@ import com.agaram.eln.primary.model.material.MaterialInventory;
 import com.agaram.eln.primary.model.material.MaterialInventoryTransaction;
 import com.agaram.eln.primary.model.material.MaterialInventoryType;
 import com.agaram.eln.primary.model.material.MaterialType;
+import com.agaram.eln.primary.model.material.MaterilaInventoryLinks;
 import com.agaram.eln.primary.model.material.ResultUsedMaterial;
 import com.agaram.eln.primary.model.material.Section;
 import com.agaram.eln.primary.model.material.Supplier;
@@ -67,6 +69,10 @@ import com.agaram.eln.primary.model.material.Unit;
 import com.agaram.eln.primary.model.samplestoragelocation.SampleStorageLocation;
 import com.agaram.eln.primary.model.samplestoragelocation.SampleStorageVersion;
 import com.agaram.eln.primary.model.samplestoragelocation.SelectedInventoryMapped;
+import com.agaram.eln.primary.model.sequence.SequenceTable;
+import com.agaram.eln.primary.model.sequence.SequenceTableProjectLevel;
+import com.agaram.eln.primary.model.sequence.SequenceTableSite;
+import com.agaram.eln.primary.model.sequence.SequenceTableTaskLevel;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.repository.instrumentDetails.LsOrderattachmentsRepository;
 import com.agaram.eln.primary.repository.material.ElnmaterialChemDiagRefRepository;
@@ -79,6 +85,7 @@ import com.agaram.eln.primary.repository.material.MaterialCategoryRepository;
 import com.agaram.eln.primary.repository.material.MaterialChemicalDiagRepository;
 import com.agaram.eln.primary.repository.material.MaterialConfigRepository;
 import com.agaram.eln.primary.repository.material.MaterialGradeRepository;
+import com.agaram.eln.primary.repository.material.MaterialInventoryLinksRepository;
 import com.agaram.eln.primary.repository.material.MaterialInventoryRepository;
 import com.agaram.eln.primary.repository.material.MaterialInventoryTransactionRepository;
 import com.agaram.eln.primary.repository.material.MaterialInventoryTypeRepository;
@@ -91,6 +98,8 @@ import com.agaram.eln.primary.repository.material.TransactionStatusRepository;
 import com.agaram.eln.primary.repository.samplestoragelocation.SampleStorageLocationRepository;
 import com.agaram.eln.primary.repository.samplestoragelocation.SampleStorageVersionRepository;
 import com.agaram.eln.primary.repository.samplestoragelocation.SelectedInventoryMappedRepository;
+import com.agaram.eln.primary.repository.sequence.SequenceTableRepository;
+import com.agaram.eln.primary.repository.sequence.SequenceTableSiteRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
 import com.agaram.eln.primary.service.cloudFileManip.CloudFileManipulationservice;
 import com.agaram.eln.primary.service.fileManipulation.FileManipulationservice;
@@ -158,6 +167,9 @@ public class MaterialInventoryService {
 	ElnresultUsedMaterialRepository ElnresultUsedMaterialRepository;
 	@Autowired
 	MaterialChemicalDiagRepository MaterialChemicalDiagRepository;
+	@Autowired
+	private MaterialInventoryLinksRepository materialInventoryLinksRepository;
+
 
 	@SuppressWarnings("unchecked")
 	public ResponseEntity<Object> getMaterialInventory(Integer nsiteInteger) throws Exception {
@@ -3089,18 +3101,15 @@ public class MaterialInventoryService {
         }
 	}
 
-//	@SuppressWarnings("unchecked")
+
 	public ResponseEntity<Object> createElnMaterialInventory(Map<String, Object> inputMap) throws Exception {
 
 		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
 		String sformattype = "{yyyy}/{99999}";
 		ObjectMapper objmapper = new ObjectMapper();
-		
-		
         List<ElnmaterialInventory> objInventory = objmapper.convertValue(inputMap.get("selectedInventory"), new TypeReference<List<ElnmaterialInventory>>() {});
         final LScfttransaction cft = objmapper.convertValue(inputMap.get("objsilentaudit"), LScfttransaction.class);
         List<SelectedInventoryMapped> objStorageLocation = objmapper.convertValue(inputMap.get("selectedStorageLocation"), new TypeReference<List<SelectedInventoryMapped>>() {});
-
         
         objInventory.forEach(objInv -> {
             try {
@@ -3246,6 +3255,8 @@ public class MaterialInventoryService {
 		objmap.put("ElnmaterialInventory", objInventory);
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
 	}
+
+
 
 	public void setStorageInventoryStorageOnNode(SelectedInventoryMapped objStorageLocation, ElnmaterialInventory objInventory, List<Integer> lstIntegerInventory) {
 
@@ -4001,5 +4012,21 @@ public class MaterialInventoryService {
 		MaterialChemicalDiagRepository.delete(fileName);
 		ElnmaterialChemDiagRef objChem = ElnmaterialChemDiagRefRepository.findByFileid(fileName);
 		ElnmaterialChemDiagRefRepository.delete(objChem);
+	}
+	
+	public ResponseEntity<Object> insertLinkforInvertory(MaterilaInventoryLinks objInv) throws ParseException {
+		objInv.setCreateddate(commonfunction.getCurrentUtcTime());
+		objInv.setNstatus(1);
+		materialInventoryLinksRepository.save(objInv);
+		return new ResponseEntity<>(materialInventoryLinksRepository.findByNmaterialinventorycodeAndNstatus(objInv.getNmaterialinventorycode(),1), HttpStatus.OK);
+	}
+
+	public ResponseEntity<Object> getLinksforInvertory(MaterilaInventoryLinks objInv) {
+		return new ResponseEntity<>(materialInventoryLinksRepository.findByNmaterialinventorycodeAndNstatus(objInv.getNmaterialinventorycode(),1), HttpStatus.OK);
+	}
+
+	public ResponseEntity<Object> deleteLinkforInvertory(MaterilaInventoryLinks objInv) {
+		materialInventoryLinksRepository.delete(objInv);
+		return new ResponseEntity<>(materialInventoryLinksRepository.findByNmaterialinventorycodeAndNstatus(objInv.getNmaterialinventorycode(),1), HttpStatus.OK);
 	}
 }

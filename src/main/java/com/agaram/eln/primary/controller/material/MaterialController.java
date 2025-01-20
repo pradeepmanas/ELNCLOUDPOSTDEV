@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.agaram.eln.primary.model.material.Elnmaterial;
 import com.agaram.eln.primary.model.material.Material;
+import com.agaram.eln.primary.model.material.MaterialLinks;
 import com.agaram.eln.primary.service.material.MaterialService;
 
 @RestController
@@ -225,10 +226,10 @@ public class MaterialController {
 			@RequestParam("nmaterialcatcode") Integer nmaterialcatcode,
 			@RequestParam("nmaterialcode") Integer nmaterialcode, @RequestParam("filename") String filename,
 			@RequestParam("fileexe") String fileexe, @RequestParam("usercode") Integer usercode,
-			@RequestParam("date") Date currentdate, @RequestParam("isMultitenant") Integer isMultitenant)
+			@RequestParam("date") Date currentdate, @RequestParam("isMultitenant") Integer isMultitenant,@RequestParam("nsitecode") Integer nsitecode)
 			throws IOException {
 		return objMaterialService.materialCloudUploadattachments(file, nmaterialtypecode, nmaterialcatcode,
-				nmaterialcode, filename, fileexe, usercode, currentdate, isMultitenant);
+				nmaterialcode, filename, fileexe, usercode, currentdate, isMultitenant,nsitecode);
 	}
 
 	@RequestMapping(path = "/materialView/{param}/{fileid}", method = RequestMethod.GET)
@@ -247,5 +248,23 @@ public class MaterialController {
 	public ResponseEntity<Object> getAssignedTaskOnMaterial(@RequestBody Map<String, Object> inputMap)throws Exception
 	{
 		return objMaterialService.getAssignedTaskOnMaterial(inputMap);
+	}
+	
+	@PostMapping("/uploadLinkforMaterial")
+	public ResponseEntity<Object> uploadLinkforMaterial(@RequestBody MaterialLinks materiallink)throws Exception
+	{
+		return objMaterialService.uploadLinkforMaterial(materiallink);
+	}
+	
+	@PostMapping("/getLinksOnMaterial")
+	public ResponseEntity<Object> getLinksOnMaterial(@RequestBody MaterialLinks materiallink)throws Exception
+	{
+		return objMaterialService.getLinksOnMaterial(materiallink);
+	}
+	
+	@PostMapping("/deleteLinkforMaterial")
+	public ResponseEntity<Object> deleteLinkforMaterial(@RequestBody MaterialLinks materiallink)throws Exception
+	{
+		return objMaterialService.deleteLinkforMaterial(materiallink);
 	}
 }

@@ -224,4 +224,6 @@ public interface LSuserMasterRepository extends JpaRepository<LSuserMaster, Inte
 
 	public LSuserMaster findTop1ByEmailidIgnoreCaseAndAutenticatefrom(String emailid, int i);
 
+	public List<LSuserMaster> findByusernameIn(List<String> userNameList);
+
 }

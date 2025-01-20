@@ -34,6 +34,13 @@ import com.agaram.eln.primary.model.instrumentsetup.InstrumentType;
 import com.agaram.eln.primary.model.masters.Lslogbooks;
 import com.agaram.eln.primary.model.material.Period;
 import com.agaram.eln.primary.model.protocols.LSlogilabprotocoldetail;
+import com.agaram.eln.primary.model.sequence.SequenceTable;
+import com.agaram.eln.primary.model.sequence.SequenceTableOrderType;
+import com.agaram.eln.primary.model.sequence.SequenceTableProject;
+import com.agaram.eln.primary.model.sequence.SequenceTableProjectLevel;
+import com.agaram.eln.primary.model.sequence.SequenceTableSite;
+import com.agaram.eln.primary.model.sequence.SequenceTableTask;
+import com.agaram.eln.primary.model.sequence.SequenceTableTaskLevel;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.repository.communicationsetting.CommunicationRepository;
 import com.agaram.eln.primary.repository.communicationsetting.ConversionTypeRepository;
@@ -51,6 +58,10 @@ import com.agaram.eln.primary.repository.instrumentsetup.InstTypeRepository;
 import com.agaram.eln.primary.repository.masters.LslogbooksRepository;
 import com.agaram.eln.primary.repository.material.PeriodRepository;
 import com.agaram.eln.primary.repository.protocol.LSlogilabprotocoldetailRepository;
+import com.agaram.eln.primary.repository.sequence.SequenceTableProjectLevelRepository;
+import com.agaram.eln.primary.repository.sequence.SequenceTableRepository;
+import com.agaram.eln.primary.repository.sequence.SequenceTableSiteRepository;
+import com.agaram.eln.primary.repository.sequence.SequenceTableTaskLevelRepository;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -85,11 +96,23 @@ public class EquipmentService {
 	@Autowired
 	LSlogilabprotocoldetailRepository lslogilabprotocoldetailRepository;
 	@Autowired
+	private SequenceTableProjectLevelRepository sequencetableprojectlevelrepository;
+	@Autowired
+	private SequenceTableTaskLevelRepository sequencetabletasklevelrepository;
+	@Autowired
 	ElnresultEquipmentRepository elnresultEquipmentRepository;
 	@Autowired
 	LSlogilablimsorderdetailRepository lslogilablimsorderdetailRepository;
 	@Autowired
 	LslogbooksRepository lslogbooksRepository;
+	
+	@Autowired
+	EquipmentRepository equipmentrepository;
+	@Autowired
+	private SequenceTableRepository sequencetableRepository;
+	
+	@Autowired
+	private SequenceTableSiteRepository sequencetablesiteRepository;
 
 	public ResponseEntity<Object> getEquipment(Map<String, Object> inputMap) throws ParseException {
 		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
@@ -373,18 +396,180 @@ public class EquipmentService {
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
 	}
 
+	public void GetEquipSequence(Equipment objequip,SequenceTable seqequip,SequenceTableProjectLevel objprojectseq,SequenceTableTaskLevel objtaskseq) throws ParseException{
+            
+		SequenceTable sqa = seqequip;
+		
+		if(sqa != null)
+		{
+			objequip.setApplicationsequence(sqa.getApplicationsequence()+1);
+			
+			if(objequip !=null && objequip.getNsitecode() != null && 
+					objequip.getNsitecode()!=null && 
+							objequip.getNsitecode()!=null)
+			{
+				SequenceTableSite sqsite = sqa.getSequencetablesite().stream()
+				        .filter(sq -> sq.getSitecode().equals(objequip.getNsitecode())
+				        && sq.getSequencecode().equals(sqa.getSequencecode())).findFirst().orElse(null);
+//				if(sqsite != null)
+//				{
+//					objequip.setSitesequence(sqsite.getSitesequence()+1);
+//				}
+			}
+			
+			Date currentdate = commonfunction.getCurrentUtcTime();
+			String sequence = objequip.getSequenceid();
+			String sequencetext = sequence;
+			if(sequence.contains("{s&") && sequence.contains("$s}"))
+			{
+				sequencetext = sequence.substring(sequence.indexOf("{s&")+3, sequence.indexOf("$s}"));
+				String replacedseq ="";
+				if(sqa.getSequenceview().equals(2) && objequip.getApplicationsequence()!=null && !sequencetext.equals(""))
+				{
+					replacedseq = String.format("%0"+sequencetext.length()+"d", objequip.getApplicationsequence());
+				}
+				else if(sqa.getSequenceview().equals(3) && objequip.getSitesequence() != null && !sequencetext.equals(""))
+				{
+					replacedseq = String.format("%0"+sequencetext.length()+"d", objequip.getSitesequence());
+					
+				}
+				else if(!sequencetext.equals("") && objequip.getApplicationsequence()!=null)
+				{
+					replacedseq = String.format("%0"+sequencetext.length()+"d", objequip.getApplicationsequence());
+				}
+				
+				if(!sequencetext.equals("") && !replacedseq.equals(""))
+				{
+					sequencetext = sequence.substring(0, sequence.indexOf("{s&"))+replacedseq+sequence.substring(sequence.indexOf("$s}")+3, sequence.length());
+				}
+			}
+			
+			if(sequence.contains("{m&") && sequence.contains("$m}"))
+			{
+				SimpleDateFormat month = new SimpleDateFormat("mm");
+		        String currentMonth = month.format(currentdate);
+		        String namedmonth = sequencetext.substring(sequencetext.indexOf("{m&")+3, sequencetext.indexOf("$m}"));
+		        
+		        if(!namedmonth.equals(""))
+		        {
+					sequencetext = sequencetext.substring(0, sequencetext.indexOf("{m&"))+currentMonth+sequencetext.substring(sequencetext.indexOf("$m}")+3, sequencetext.length());
+		        }
+			}
+			
+			if(sequence.contains("{mm&") && sequence.contains("$mm}"))
+			{
+				SimpleDateFormat month = new SimpleDateFormat("MMM");
+		        String currentMonth = month.format(currentdate);
+		        String namedmonth = sequencetext.substring(sequencetext.indexOf("{mm&")+4, sequencetext.indexOf("$mm}"));
+		        
+		        if(!namedmonth.equals(""))
+		        {
+					sequencetext = sequencetext.substring(0, sequencetext.indexOf("{mm&"))+currentMonth+sequencetext.substring(sequencetext.indexOf("$mm}")+4, sequencetext.length());
+		        }
+			}
+			
+			if(sequence.contains("{dd&") && sequence.contains("$dd}"))
+			{
+				SimpleDateFormat day = new SimpleDateFormat("dd");
+		        String currentMonth = day.format(currentdate);
+		        String namedday = sequencetext.substring(sequencetext.indexOf("{dd&")+4, sequencetext.indexOf("$dd}"));
+		        
+		        if(!namedday.equals(""))
+		        {
+					sequencetext = sequencetext.substring(0, sequencetext.indexOf("{dd&"))+currentMonth+sequencetext.substring(sequencetext.indexOf("$dd}")+4, sequencetext.length());
+		        }
+			}
+			
+			if(sequence.contains("{y&") && sequence.contains("$y}"))
+			{
+				SimpleDateFormat year = new SimpleDateFormat("yy");
+		        String currentMonth = year.format(currentdate);
+		        String namedyear = sequencetext.substring(sequencetext.indexOf("{y&")+3, sequencetext.indexOf("$y}"));
+		        
+		        if(!namedyear.equals(""))
+		        {
+					sequencetext = sequencetext.substring(0, sequencetext.indexOf("{y&"))+currentMonth+sequencetext.substring(sequencetext.indexOf("$y}")+3, sequencetext.length());
+		        }
+			}
+			
+			if(sequence.contains("{yy&") && sequence.contains("$yy}"))
+			{
+				SimpleDateFormat year = new SimpleDateFormat("yyyy");
+		        String currentMonth = year.format(currentdate);
+		        String namedyear = sequencetext.substring(sequencetext.indexOf("{yy&")+4, sequencetext.indexOf("$yy}"));
+		        
+		        if(!namedyear.equals(""))
+		        {
+					sequencetext = sequencetext.substring(0, sequencetext.indexOf("{yy&"))+currentMonth+sequencetext.substring(sequencetext.indexOf("$yy}")+4, sequencetext.length());
+		        }
+			}
+			
+			objequip.setSequenceid(sequencetext);
+		}
+	}
+	public SequenceTable validateandupdateequipmentsequencenumber(Equipment obj, SequenceTableProjectLevel objprojectseq, SequenceTableTaskLevel objtaskseq) throws ParseException
+	{
+		SequenceTable seqorder= new SequenceTable();
+		int sequence =4;
+		seqorder = sequencetableRepository.findOne(sequence);
+		if(seqorder!=null && seqorder.getApplicationsequence()==-1)
+		{
+			long appcount = equipmentrepository.count();
+			sequencetableRepository.setinitialapplicationsequence(appcount,sequence);
+			seqorder.setApplicationsequence(appcount);
+		}
+		Date currentdate = commonfunction.getCurrentUtcTime();
+		SimpleDateFormat day = new SimpleDateFormat("dd");
+		SimpleDateFormat month = new SimpleDateFormat("mm");
+		SimpleDateFormat year = new SimpleDateFormat("yyyy");
+		if(seqorder.getSequenceday() == 0)
+		{
+			seqorder.setSequenceday(Integer.parseInt(day.format(currentdate)));
+		}
+		if(seqorder.getSequencemonth() == 0)
+		{
+			seqorder.setSequencemonth(Integer.parseInt(month.format(currentdate)));
+		}
+		if(seqorder.getSequenceyear() == 0)
+		{
+			seqorder.setSequenceyear(Integer.parseInt(year.format(currentdate)));
+		}
+		if(sequencetablesiteRepository.findBySequencecodeAndSitecode(sequence,obj.getNsitecode()) == null)
+		{
+			SequenceTableSite objsiteseq= new SequenceTableSite();
+			objsiteseq.setSequencecode(sequence);
+			objsiteseq.setSitecode(obj.getNsitecode());
+			sequencetablesiteRepository.save(objsiteseq);
+			if(seqorder.getSequencetablesite() !=null)
+			{
+				seqorder.getSequencetablesite().add(objsiteseq);
+			}
+			else
+			{
+				List<SequenceTableSite> lstseq= new ArrayList<SequenceTableSite>();
+				lstseq.add(objsiteseq);
+				seqorder.setSequencetablesite(lstseq);
+			}
+		}
+		return seqorder;
+	}	
 	public ResponseEntity<Object> createEquipment(Equipment obj) throws Exception {
 		
 		Equipment objEquipment = equipmentRepository.findByNsitecodeAndSequipmentnameAndEquipmentcategoryAndNstatus(obj.getNsitecode(),obj.getSequipmentname(),obj.getEquipmentcategory(),1);
 		
 		obj.setResponse(new Response());
 		String sformattype = "{yyyy}/{99999}";
-
+		SequenceTableProjectLevel objprojectseq = new SequenceTableProjectLevel();
+		SequenceTableTaskLevel objtaskseq = new SequenceTableTaskLevel();
+		SequenceTable seqorder = validateandupdateequipmentsequencenumber(obj, objprojectseq, objtaskseq);
+		boolean isrest = false;
+		seqorder = commonfunction.ResetSequence(seqorder, isrest);
 		if(objEquipment == null) {
 
 			obj.setCreateddate(commonfunction.getCurrentUtcTime());
+			GetEquipSequence(obj,seqorder, objprojectseq, objtaskseq);
 			equipmentRepository.save(obj);
-			
+			updatesequence(4,obj);
 			String stridformat = returnSubstring(obj.getSequipmentname()) + "/" + getfnFormat(obj.getNequipmentcode(), sformattype);
 	
 			obj.setSequipmentid(stridformat);
@@ -413,7 +598,19 @@ public class EquipmentService {
 			return new ResponseEntity<>(obj, HttpStatus.OK);
 		}
 	}
-	
+	public void updatesequence(Integer sequenceno, Equipment objequipment ) {
+		 
+		long sitecodeInt = objequipment.getNsitecode();
+		
+		if (objequipment.getApplicationsequence() != null) {
+			sequencetableRepository.setinitialapplicationsequence(objequipment.getApplicationsequence(), sequenceno);
+		}
+ 
+		if (objequipment.getNsitecode() != null) {
+			sequencetablesiteRepository.setinitialsitesequence(sitecodeInt, sequenceno,
+					objequipment.getNsitecode());
+		}
+	}
 	public ResponseEntity<Object> updateELNEquipment(Equipment obj) {
 		
 		Equipment objElnmaterial = equipmentRepository.findByNsitecodeAndSequipmentnameAndEquipmentcategoryAndNequipmentcodeNotAndNstatus(obj.getNsitecode(),obj.getSequipmentname(),obj.getEquipmentcategory(),obj.getNequipmentcode(),1);

@@ -87,6 +87,21 @@ public class MaterialCategory implements Serializable{
 	private Date createdate;
 
 	private transient String sDate;
+	private transient String mDate;
+
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date modifieddate;
+	
+	@Column(name = "modifiedby")
+	private String modifiedby;
+	
+	public String getmDate() {
+		return mDate;
+	}
+	public void setmDate(String mDate) {
+		this.mDate = mDate;
+	}
 	
 	public String getsDate() {
 		return sDate;
@@ -94,7 +109,18 @@ public class MaterialCategory implements Serializable{
 	public void setsDate(String sDate) {
 		this.sDate = sDate;
 	}
-	
+	public String getModifiedby() {
+		return modifiedby;
+	}
+	public void setModifiedby(String modifiedby) {
+		this.modifiedby = modifiedby;
+	}
+	public Date getModifieddate() {
+		return modifieddate;
+	}
+	public void setModifieddate(Date modifieddate) {
+		this.modifieddate = modifieddate;
+	}
 	public LSuserMaster getCreateby() {
 		return createby;
 	}

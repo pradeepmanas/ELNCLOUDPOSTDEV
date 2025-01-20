@@ -30,11 +30,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.agaram.eln.primary.global.FileDTO;
 import com.agaram.eln.primary.model.fileManipulation.Fileimages;
+import com.agaram.eln.primary.model.instrumentDetails.LsOrderLinks;
 import com.agaram.eln.primary.model.material.Elnmaterial;
 import com.agaram.eln.primary.model.material.ElnmaterialChemDiagRef;
 import com.agaram.eln.primary.model.material.ElnmaterialInventory;
 import com.agaram.eln.primary.model.material.ElnresultUsedMaterial;
 import com.agaram.eln.primary.model.material.MaterialInventory;
+import com.agaram.eln.primary.model.material.MaterilaInventoryLinks;
 import com.agaram.eln.primary.service.material.MaterialInventoryService;
 import com.agaram.eln.primary.service.material.MaterialService;
 
@@ -365,5 +367,19 @@ public class MaterialInventoryController {
 	public void deleteinvimagesSQL(@RequestBody Map<String, Object> inputMap)throws Exception {
 		String fileName = inputMap.get("fileName").toString();
 		materialInventoryService.deleteinvimagesSQL(fileName);
+	}
+	@PostMapping("/insertLinkforInvertory")
+	public ResponseEntity<Object> insertLinkforInvertory(@RequestBody MaterilaInventoryLinks objInv) throws Exception {
+		return materialInventoryService.insertLinkforInvertory(objInv);
+	}
+
+	@PostMapping("/getLinksForInventory")
+	public ResponseEntity<Object> getLinksForInventory(@RequestBody MaterilaInventoryLinks objInv) throws Exception {
+		return materialInventoryService.getLinksforInvertory(objInv);
+	}
+	
+	@PostMapping("/deleteLinkforInventory")
+	public ResponseEntity<Object> deleteLinkforInvertory(@RequestBody MaterilaInventoryLinks objInv) throws Exception {
+		return materialInventoryService.deleteLinkforInvertory(objInv);
 	}
 }

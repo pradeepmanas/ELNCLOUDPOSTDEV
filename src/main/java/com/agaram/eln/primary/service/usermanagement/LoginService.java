@@ -1448,6 +1448,7 @@ public class LoginService {
 					lsUser.setUserstatus("A");
 
 					List<LSMultiusergroup> lstGroup = new ArrayList<LSMultiusergroup>();
+					
 
 					LSMultiusergroup objGroup = new LSMultiusergroup();
 					objGroup.setDefaultusergroup(1);
@@ -1456,9 +1457,20 @@ public class LoginService {
 					lstGroup.add(objGroup);
 
 					lsUser.setMultiusergroupcode(lstGroup);
-
+					
 					LSMultiusergroupRepositery.save(lsUser.getMultiusergroupcode());
 					lsuserMasterRepository.save(lsUser);
+					
+					List<LSMultisites> lstmsiteGroup = new ArrayList<LSMultisites>();
+					
+					LSMultisites objmsiteGroup = new LSMultisites();
+					objmsiteGroup.setDefaultsiteMaster(siteCode);
+					objmsiteGroup.setUsercode(lsUser.getUsercode());
+					objmsiteGroup.setLssiteMaster(sSiteCode);
+					
+					lstmsiteGroup.add(objmsiteGroup);
+					LSMultisitesRepositery.save(lstmsiteGroup);
+					
 
 				} else {
 					if (sRepeatedUser.length() > 0) {
@@ -1470,8 +1482,8 @@ public class LoginService {
 				lstUsers.add(lsUser);
 			}
 			rtnMap.put("sRepeatedUser", sRepeatedUser);
-			if (lstUsers.size() > 0) {
-				lSuserMasterRepository.save(lstUsers);
+			if (lstUsers.size() > 0 ) {
+//				lSuserMasterRepository.save(lstUsers);
 
 				isCompleted = true;
 

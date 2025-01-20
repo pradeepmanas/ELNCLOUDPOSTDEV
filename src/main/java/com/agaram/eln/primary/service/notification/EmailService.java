@@ -1,6 +1,7 @@
 package com.agaram.eln.primary.service.notification;
 
 import java.net.URL;
+import java.util.List;
 import java.util.Random;
 
 import javax.activation.DataHandler;
@@ -14,6 +15,7 @@ import javax.mail.internet.MimeMultipart;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -284,4 +286,5 @@ public class EmailService {
             throw new MessagingException("Failed to attach inline image: " + imagePath, e);
         }
     }
+
 }

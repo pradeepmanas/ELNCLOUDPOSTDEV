@@ -1,6 +1,5 @@
-package com.agaram.eln.primary.model.equipment;
+package com.agaram.eln.primary.model.sample;
 
-import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -17,53 +16,71 @@ import javax.persistence.Transient;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Type;
 
+import com.agaram.eln.primary.model.barcode.BarcodeMaster;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 
 @Entity
-@Table(name = "equipmenttype")
-public class EquipmentType implements Serializable{
-	
-	/**
-	 * 
-	 */
+@Table(name = "sampletype")
+public class SampleType {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@Column(name = "nequipmenttypecode")
+	@Column(name = "nsampletypecode")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer nequipmenttypecode;
+	private Integer nsampletypecode;
 
 	@Type(type = "jsonb")
-	@Column(name = "jsondata", columnDefinition = "jsonb")	private String jsondata;
+	@Column(name = "jsondata", columnDefinition = "jsonb")
+	private String jsondata;
 
 	@ColumnDefault("4")
-	@Column(name = "ndefaultstatus", nullable = false)private Integer ndefaultstatus = 4;
+	@Column(name = "ndefaultstatus", nullable = false)
+	private Integer ndefaultstatus = 4;
 
 	@ColumnDefault("-1")
-	@Column(name = "nsitecode", nullable = false)private Integer nsitecode = -1;
+	@Column(name = "nsitecode", nullable = false)
+	private Integer nsitecode = -1;
 
 	@ColumnDefault("1")
-	@Column(name = "nstatus", nullable = false)	private Integer nstatus = 1;
-	
+	@Column(name = "nstatus", nullable = false)
+	private Integer nstatus = 1;
+
 	@Transient
 	private String displaystatus;
 
 	@Transient
 	private LScfttransaction objsilentaudit;
-	
+
+	@Transient
+	public String info;
+
 	@Transient
 	private LScfttransaction objmanualaudit;
-	
-	private String sequipmenttypename;
-	
+
+	private String ssampletypename;
+	private transient String sdescription;
+	private transient String jsonconfigdata;
+
 	@ManyToOne
 	private LSuserMaster createby;
-	
+
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdate;
 
 	private transient String sDate;
+
+	private Boolean expvalidation;
+	private Boolean quarvalidation;
+	private Integer sampletype;
+
+	@ManyToOne
+	private BarcodeMaster barcode;
+
+	@ColumnDefault("1")
+	@Column(name = "usageoption", nullable = false)
+	private int usageoption;
+	
 	private transient String mDate;
 	
 	@Temporal(TemporalType.TIMESTAMP)
@@ -90,23 +107,14 @@ public class EquipmentType implements Serializable{
 	public void setModifieddate(Date modifieddate) {
 		this.modifieddate = modifieddate;
 	}
-	@Transient
-	public String info;
+	
 
-	public String getInfo() {
-		return info;
+	public Integer getNsampletypecode() {
+		return nsampletypecode;
 	}
 
-	public void setInfo(String info) {
-		this.info = info;
-	}
-
-	public Integer getNequipmenttypecode() {
-		return nequipmenttypecode;
-	}
-
-	public void setNequipmenttypecode(Integer nequipmenttypecode) {
-		this.nequipmenttypecode = nequipmenttypecode;
+	public void setNsampletypecode(Integer nsampletypecode) {
+		this.nsampletypecode = nsampletypecode;
 	}
 
 	public String getJsondata() {
@@ -157,6 +165,14 @@ public class EquipmentType implements Serializable{
 		this.objsilentaudit = objsilentaudit;
 	}
 
+	public String getInfo() {
+		return info;
+	}
+
+	public void setInfo(String info) {
+		this.info = info;
+	}
+
 	public LScfttransaction getObjmanualaudit() {
 		return objmanualaudit;
 	}
@@ -165,12 +181,28 @@ public class EquipmentType implements Serializable{
 		this.objmanualaudit = objmanualaudit;
 	}
 
-	public String getSequipmenttypename() {
-		return sequipmenttypename;
+	public String getSsampletypename() {
+		return ssampletypename;
 	}
 
-	public void setSequipmenttypename(String sequipmenttypename) {
-		this.sequipmenttypename = sequipmenttypename;
+	public void setSsampletypename(String ssampletypename) {
+		this.ssampletypename = ssampletypename;
+	}
+
+	public String getSdescription() {
+		return sdescription;
+	}
+
+	public void setSdescription(String sdescription) {
+		this.sdescription = sdescription;
+	}
+
+	public String getJsonconfigdata() {
+		return jsonconfigdata;
+	}
+
+	public void setJsonconfigdata(String jsonconfigdata) {
+		this.jsonconfigdata = jsonconfigdata;
 	}
 
 	public LSuserMaster getCreateby() {
@@ -197,7 +229,48 @@ public class EquipmentType implements Serializable{
 		this.sDate = sDate;
 	}
 
+	public Boolean getExpvalidation() {
+		return expvalidation;
+	}
+
+	public void setExpvalidation(Boolean expvalidation) {
+		this.expvalidation = expvalidation;
+	}
+
+	public Boolean getQuarvalidation() {
+		return quarvalidation;
+	}
+
+	public void setQuarvalidation(Boolean quarvalidation) {
+		this.quarvalidation = quarvalidation;
+	}
+
+	public Integer getSampletype() {
+		return sampletype;
+	}
+
+	public void setSampletype(Integer sampletype) {
+		this.sampletype = sampletype;
+	}
+
+	public BarcodeMaster getBarcode() {
+		return barcode;
+	}
+
+	public void setBarcode(BarcodeMaster barcode) {
+		this.barcode = barcode;
+	}
+
+	public int getUsageoption() {
+		return usageoption;
+	}
+
+	public void setUsageoption(int usageoption) {
+		this.usageoption = usageoption;
+	}
+
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
-}
+	
+	}

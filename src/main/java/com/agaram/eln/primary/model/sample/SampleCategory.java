@@ -1,15 +1,14 @@
-package com.agaram.eln.primary.model.equipment;
+package com.agaram.eln.primary.model.sample;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
 import java.util.Date;
-import java.util.List;
 
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
@@ -21,21 +20,38 @@ import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 
 @Entity
-@Table(name = "equipmentcategory")
-public class EquipmentCategory {
-
+@Table(name = "samplecategory")
+public class SampleCategory {
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "nequipmentcatcode")
-	private Integer nequipmentcatcode;
+	@Column(name = "nsamplecatcode")
+	private Integer nsamplecatcode;
 
-	@ManyToOne
-	private EquipmentType equipmenttype;
+	@Column(name = "nsampletypecode", nullable = false)
+	private Integer nsampletypecode = -1;
 
-	@Column(name = "sequipmentcatname", length = 100, nullable = false)
-	private String sequipmentcatname;
+	@Column(name = "needSectionwise")
+	private Integer needSectionwise;
+
+	@Column(name = "nuserrolecode", nullable = false)
+	private Integer nuserrolecode;
+
+	@ColumnDefault("-1")
+	@Column(name = "nbarcode", nullable = false)
+	private Integer nbarcode = -1;
+
+	@ColumnDefault("4")
+	@Column(name = "ncategorybasedflow", nullable = false)
+	private Integer ncategorybasedflow = 4;
+
+	@ColumnDefault("1")
+	@Column(name = "nactivestatus", nullable = false)
+	private Integer nactivestatus;
+
+	@Column(name = "ssamplecatname", length = 100, nullable = false)
+	private String ssamplecatname;
 
 	@Column(name = "sdescription", length = 255)
 	private String sdescription;
@@ -55,9 +71,6 @@ public class EquipmentCategory {
 	public String info;
 	
 	@Transient
-	public String displaystatus;
-	
-	@Transient
 	private LScfttransaction objmanualaudit;
 	
 	@Transient
@@ -68,8 +81,13 @@ public class EquipmentCategory {
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdate;
-
-	private transient String sDate;
+	
+	@ColumnDefault("1")
+	@Column(name = "nstatus", nullable = false)
+	private Integer nstatus = 1;
+	
+	private String ssampletypename;
+	
 	private transient String mDate;
 	
 	@Temporal(TemporalType.TIMESTAMP)
@@ -96,49 +114,69 @@ public class EquipmentCategory {
 	public void setModifieddate(Date modifieddate) {
 		this.modifieddate = modifieddate;
 	}
-	
-	@ColumnDefault("1")
-	@Column(name = "nstatus", nullable = false)
-	private Integer nstatus = 1;
 
-	public String getDisplaystatus() {
-		return displaystatus;
+	public Integer getNsamplecatcode() {
+		return nsamplecatcode;
 	}
 
-	public void setDisplaystatus(String displaystatus) {
-		this.displaystatus = displaystatus;
+	public void setNsamplecatcode(Integer nsamplecatcode) {
+		this.nsamplecatcode = nsamplecatcode;
 	}
 
-	public Integer getNstatus() {
-		return nstatus;
+	public Integer getNsampletypecode() {
+		return nsampletypecode;
 	}
 
-	public void setNstatus(Integer nstatus) {
-		this.nstatus = nstatus;
+	public void setNsampletypecode(Integer nsampletypecode) {
+		this.nsampletypecode = nsampletypecode;
 	}
 
-	public Integer getNequipmentcatcode() {
-		return nequipmentcatcode;
+	public Integer getNeedSectionwise() {
+		return needSectionwise;
 	}
 
-	public void setNequipmentcatcode(Integer nequipmentcatcode) {
-		this.nequipmentcatcode = nequipmentcatcode;
+	public void setNeedSectionwise(Integer needSectionwise) {
+		this.needSectionwise = needSectionwise;
 	}
 
-	public EquipmentType getEquipmenttype() {
-		return equipmenttype;
+	public Integer getNuserrolecode() {
+		return nuserrolecode;
 	}
 
-	public void setEquipmenttype(EquipmentType equipmenttype) {
-		this.equipmenttype = equipmenttype;
+	public void setNuserrolecode(Integer nuserrolecode) {
+		this.nuserrolecode = nuserrolecode;
 	}
 
-	public String getSequipmentcatname() {
-		return sequipmentcatname;
+	public Integer getNbarcode() {
+		return nbarcode;
 	}
 
-	public void setSequipmentcatname(String sequipmentcatname) {
-		this.sequipmentcatname = sequipmentcatname;
+	public void setNbarcode(Integer nbarcode) {
+		this.nbarcode = nbarcode;
+	}
+
+	public Integer getNcategorybasedflow() {
+		return ncategorybasedflow;
+	}
+
+	public void setNcategorybasedflow(Integer ncategorybasedflow) {
+		this.ncategorybasedflow = ncategorybasedflow;
+	}
+
+	public Integer getNactivestatus() {
+		return nactivestatus;
+	}
+
+	public void setNactivestatus(Integer nactivestatus) {
+		this.nactivestatus = nactivestatus;
+	}
+
+	public String getSsamplecatname() {
+		return ssamplecatname;
+	}
+
+	public void setSsamplecatname(String ssamplecatname) {
+		this.ssamplecatname = ssamplecatname;
 	}
 
 	public String getSdescription() {
@@ -213,16 +251,25 @@ public class EquipmentCategory {
 		this.createdate = createdate;
 	}
 
-	public String getsDate() {
-		return sDate;
+	public Integer getNstatus() {
+		return nstatus;
 	}
 
-	public void setsDate(String sDate) {
-		this.sDate = sDate;
+	public void setNstatus(Integer nstatus) {
+		this.nstatus = nstatus;
+	}
+
+	public String getSsampletypename() {
+		return ssampletypename;
+	}
+
+	public void setSsampletypename(String ssampletypename) {
+		this.ssampletypename = ssampletypename;
 	}
 
 	public static long getSerialversionuid() {
 		return serialVersionUID;
-	
 	}
+	
+	
 }

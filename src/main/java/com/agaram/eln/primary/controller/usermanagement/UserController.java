@@ -2,8 +2,10 @@ package com.agaram.eln.primary.controller.usermanagement;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -35,6 +37,7 @@ import com.agaram.eln.primary.model.cloudFileManip.CloudUserSignature;
 import com.agaram.eln.primary.model.fileManipulation.ProfilePicture;
 import com.agaram.eln.primary.model.fileManipulation.UserSignature;
 import com.agaram.eln.primary.model.general.Response;
+import com.agaram.eln.primary.model.notification.Email;
 import com.agaram.eln.primary.model.usermanagement.LSPasswordPolicy;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSactiveUser;
@@ -702,6 +705,18 @@ public class UserController {
 	public LSusershowhidecolumns getShowHideolumn(@RequestBody LSusershowhidecolumns objgroupped)throws Exception
 	{
 		return userService.getShowHideolumn(objgroupped);
+	}
+	
+	@PostMapping("/InsertImportUserMaster")
+	public ResponseEntity<List<LSuserMaster>> InsertImportUserMaster(@RequestBody Map<String, Object> mapObjects) throws ParseException{
+		return userService.InsertImportUserMaster(mapObjects);
+	}
+	
+	@PostMapping("/sendEmailListWithBatch")
+	public List<LSuserMaster> sendEmailListWithBatch(@RequestBody Map<String, Object> objusermaster) throws MessagingException
+	{
+		return userService.sendEmailListWithBatch(objusermaster);
+		
 	}
 }
 

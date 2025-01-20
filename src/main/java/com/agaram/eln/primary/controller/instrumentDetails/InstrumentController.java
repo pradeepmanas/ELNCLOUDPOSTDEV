@@ -42,6 +42,7 @@ import com.agaram.eln.primary.model.instrumentDetails.LSSheetOrderStructure;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 import com.agaram.eln.primary.model.instrumentDetails.LSprotocolfolderfiles;
 import com.agaram.eln.primary.model.instrumentDetails.LSsheetfolderfiles;
+import com.agaram.eln.primary.model.instrumentDetails.LsOrderLinks;
 import com.agaram.eln.primary.model.instrumentDetails.LsOrderSampleUpdate;
 import com.agaram.eln.primary.model.instrumentDetails.LsOrderattachments;
 import com.agaram.eln.primary.model.instrumentDetails.LsSheetorderlimsrefrence;
@@ -50,6 +51,7 @@ import com.agaram.eln.primary.model.instrumentDetails.Lsordershareto;
 import com.agaram.eln.primary.model.instrumentDetails.Lsprotocolorderstructure;
 import com.agaram.eln.primary.model.instrumentDetails.Lsresultfororders;
 import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
+import com.agaram.eln.primary.model.material.MaterialLinks;
 import com.agaram.eln.primary.model.methodsetup.CloudParserFile;
 import com.agaram.eln.primary.model.methodsetup.ELNFileAttachments;
 import com.agaram.eln.primary.model.methodsetup.Method;
@@ -1419,5 +1421,20 @@ public class InstrumentController {
 		}catch (Exception e) {
 			return new ResponseEntity<>(null,HttpStatus.INTERNAL_SERVER_ERROR);
 		}
+	}
+
+	@PostMapping("/insertOrderLink")
+	public ResponseEntity<Object> insertOrderLink(@RequestBody LsOrderLinks objorder) throws Exception {
+		return instrumentService.insertOrderLink(objorder);
+	}
+
+	@PostMapping("/getLinksOnOrder")
+	public ResponseEntity<Object> getLinksOnOrder(@RequestBody LsOrderLinks objorder) throws Exception {
+		return instrumentService.getLinksOnOrder(objorder);
+	}
+	
+	@PostMapping("/deleteLinkforOrder")
+	public ResponseEntity<Object> deleteLinkforOrder(@RequestBody LsOrderLinks objorder) throws Exception {
+		return instrumentService.deleteLinkforOrder(objorder);
 	}
 }

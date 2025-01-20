@@ -13,6 +13,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.hibernate.annotations.Type;
@@ -116,6 +118,55 @@ public class Elnmaterial implements Serializable{
 	private String displaystatus;
 	
 	private Integer samplecode;
+	
+	private transient String mDate;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date modifieddate;
+	
+	@Column(name = "modifiedby")
+	private String modifiedby;
+	
+	public String getmDate() {
+		return mDate;
+	}
+	public void setmDate(String mDate) {
+		this.mDate = mDate;
+	}
+	public String getModifiedby() {
+		return modifiedby;
+	}
+	public void setModifiedby(String modifiedby) {
+		this.modifiedby = modifiedby;
+	}
+	public Date getModifieddate() {
+		return modifieddate;
+	}
+	public void setModifieddate(Date modifieddate) {
+		this.modifieddate = modifieddate;
+	}
+	
+	@Column(name = "applicationsequence")
+	private Long applicationsequence;
+	
+	@Column(name = "sequenceid")
+	private String sequenceid;
+	
+	public Long getApplicationsequence() {
+		return applicationsequence;
+	}
+
+	public void setApplicationsequence(Long applicationsequence) {
+		this.applicationsequence = applicationsequence;
+	}
+
+	public String getSequenceid() {
+		return sequenceid;
+	}
+
+	public void setSequenceid(String sequenceid) {
+		this.sequenceid = sequenceid;
+	}
 	
 	@Column(columnDefinition = "TEXT")
 	private String assignedtasks;

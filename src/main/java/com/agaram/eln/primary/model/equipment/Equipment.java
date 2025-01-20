@@ -13,6 +13,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.hibernate.annotations.Type;
@@ -20,6 +22,7 @@ import org.hibernate.annotations.Type;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.communicationsetting.CommunicationSetting;
 import com.agaram.eln.primary.model.general.Response;
+import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 
 @Entity
@@ -117,6 +120,37 @@ public class Equipment implements Serializable{
 	private Date lastcallibrated;
 	private Date lastmaintained;
 	
+	private Long applicationsequence;
+	private Long sitesequence;
+	private String sequenceid;
+	
+	private transient String mDDate;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date modifieddate;
+	
+	@Column(name = "modifiedby")
+	private String modifiedby;
+	
+	public String getmDDate() {
+		return mDDate;
+	}
+	public void setmDDate(String mDDate) {
+		this.mDDate = mDDate;
+	}
+	public String getModifiedby() {
+		return modifiedby;
+	}
+	public void setModifiedby(String modifiedby) {
+		this.modifiedby = modifiedby;
+	}
+	public Date getModifieddate() {
+		return modifieddate;
+	}
+	public void setModifieddate(Date modifieddate) {
+		this.modifieddate = modifieddate;
+	}
+	
 	public Boolean getReqcalibration() {
 		return reqcalibration;
 	}
@@ -190,6 +224,9 @@ public class Equipment implements Serializable{
 	}
 
 	private String remarks;
+
+//	@ManyToOne
+//	private LSuserMaster lsuserMaster;
 	
 	public String getRemarks() {
 		return remarks;
@@ -394,4 +431,28 @@ public class Equipment implements Serializable{
 	public void setSequipmentelectrodeno(String sequipmentelectrodeno) {
 		this.sequipmentelectrodeno = sequipmentelectrodeno;
 	}
+
+	public Long getApplicationsequence() {
+		return applicationsequence;
+	}
+ 
+	public void setApplicationsequence(Long applicationsequence) {
+		this.applicationsequence = applicationsequence;
+	}
+ 
+	public Long getSitesequence() {
+		return sitesequence;
+	}
+ 
+	public void setSitesequence(Long sitesequence) {
+		this.sitesequence = sitesequence;
+	}
+	public String getSequenceid() {
+		return sequenceid;
+	}
+ 
+	public void setSequenceid(String sequenceid) {
+		this.sequenceid = sequenceid;
+	}
+
 }
