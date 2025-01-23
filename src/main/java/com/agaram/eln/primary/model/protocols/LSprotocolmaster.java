@@ -81,6 +81,9 @@ public class LSprotocolmaster implements Comparable<LSprotocolmaster> {
 	private String category;
 	
 	private Integer viewoption;
+	
+	private String modifiedby;
+
 
 	public Integer getViewoption() {
 		return viewoption;
@@ -132,6 +135,13 @@ public class LSprotocolmaster implements Comparable<LSprotocolmaster> {
 	@Type(type = "jsonb")
     @Column(columnDefinition = "jsonb")
 	public String protocoldatainfo;
+	
+	public String getModifiedby() {
+		return modifiedby;
+	}
+	public void setModifiedby(String modifiedby) {
+		this.modifiedby = modifiedby;
+	}
 	
 	public String getProtocoldatainfo() {
 		return protocoldatainfo;

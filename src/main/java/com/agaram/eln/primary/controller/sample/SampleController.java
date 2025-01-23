@@ -1,5 +1,7 @@
 package com.agaram.eln.primary.controller.sample;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,5 +39,10 @@ public class SampleController {
 	public ResponseEntity<Object> updateSample(@RequestBody Sample obj) throws Exception {
 
 		return objSampleService.updateSample(obj);
+	}
+	
+	@RequestMapping(value = "/getchildsample", method = RequestMethod.POST)
+	public ResponseEntity<Object> getchildsample(@RequestBody Sample[] obj) throws Exception {
+		return objSampleService.getchildsample(Arrays.asList(obj));
 	}
 }

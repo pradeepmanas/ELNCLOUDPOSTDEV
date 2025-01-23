@@ -690,7 +690,7 @@ public class FreeUserService {
 						protocol.put("protocoldatainfo", protocol.get("protocoldatainfo"));
 						try {
 							ProtocolMasterService.addProtocolMaster(protocol);
-						} catch (java.io.IOException e) {
+						} catch (java.io.IOException | ParseException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}

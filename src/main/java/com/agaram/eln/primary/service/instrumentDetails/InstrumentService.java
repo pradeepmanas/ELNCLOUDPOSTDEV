@@ -587,7 +587,7 @@ public class InstrumentService {
 
 	private DocumenteditorService documenteditorService;
 
-
+	@Autowired
 	private SequenceTableOrderTypeRepository sequencetableordertyperepository;
 	
 	@Autowired

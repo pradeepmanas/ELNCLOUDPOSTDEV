@@ -310,18 +310,13 @@ public class FileService {
 			}
 
 			Isnew = false;
-			try {
-				objfile.setModifieddate(commonfunction.getCurrentUtcTime());
-			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			objfile.setModifieddate(objfile.getModifieddate());
 		} else {
 
 			Isnew = true;
 			try {
 				objfile.setCreatedate(commonfunction.getCurrentUtcTime());
-				objfile.setModifieddate(commonfunction.getCurrentUtcTime());
+				objfile.setModifieddate(objfile.getModifieddate());
 			} catch (ParseException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -1923,6 +1918,7 @@ public class FileService {
 				fileByName.setModifiedby(objfile.getModifiedby());
 				fileByName.setModifieddate(objfile.getModifieddate());
 				fileByName.setViewoption(objfile.getViewoption());
+				fileByName.setModifiedbyuser(objfile.getModifiedbyuser());
 				
 				if(objfile !=null && objfile.getLstest() != null && objfile.getLstest().size()>0)
 				{

@@ -80,6 +80,16 @@ public class LSfile {
 	@Transient
 	private String resultvalues;
 	
+	@Column(name = "modifiedbyuser")
+	private String modifiedbyuser;
+	
+	public String getModifiedbyuser() {
+		return modifiedbyuser;
+	}
+	public void setModifiedbyuser(String modifiedbyuser) {
+		this.modifiedbyuser = modifiedbyuser;
+	}
+	
 	public String getResultvalues() {
 		return resultvalues;
 	}

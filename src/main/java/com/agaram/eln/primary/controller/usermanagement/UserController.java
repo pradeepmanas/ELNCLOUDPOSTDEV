@@ -718,5 +718,10 @@ public class UserController {
 		return userService.sendEmailListWithBatch(objusermaster);
 		
 	}
+	
+	@PostMapping("/insertImportUserGroup")
+	public List<LSusergroup> insertImportUserGroup (@RequestBody Map<String, Object> objusergroup) throws ParseException{
+		return userService.insertImportUserGroup(objusergroup);
+	}
 }
 

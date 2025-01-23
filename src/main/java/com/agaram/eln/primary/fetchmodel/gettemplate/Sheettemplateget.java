@@ -2,7 +2,6 @@ package com.agaram.eln.primary.fetchmodel.gettemplate;
 
 
 import java.util.Date;
-
 import com.agaram.eln.primary.model.sheetManipulation.LSsheetworkflow;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 
@@ -24,11 +23,14 @@ public class Sheettemplateget {
 	private String lssheetworkflowname;
 	private String viewoptionstr;
 	private Integer retirestatus;
+	private Date modifieddate;
+	private String modifiedbyuser;
 //	private List<LSfileversion> lstfileversion;
 //	private LSfileversion lsfileversion;
 
 	public Sheettemplateget(Integer filecode, String filenameuser, Date createdate, LSuserMaster createby,
-			LSuserMaster modifiedby, Integer approved, Integer rejected,Integer retirestatus, Integer versionno,String category,LSsheetworkflow lssheetworkflow,Integer viewoption
+			LSuserMaster modifiedby, Integer approved, Integer rejected,Integer retirestatus, Integer versionno,String category,LSsheetworkflow lssheetworkflow,
+			Integer viewoption,Date modifieddate,String modifiedbyuser
 //			,LSfileversion lsfileversion
 			) {
 		
@@ -60,6 +62,8 @@ public class Sheettemplateget {
 		this.viewoption =viewoption;
 		this.viewoptionstr =viewoption==1?"Site":viewoption==2?"Only me":"Project Team";
 		this.lssheetworkflowname=lssheetworkflow!=null?lssheetworkflow.getWorkflowname():null;
+		this.modifieddate=modifieddate;
+		this.modifiedbyuser=modifiedbyuser;
 //		this.lsfileversion = lsfileversion;
 	}
 
@@ -85,7 +89,22 @@ public class Sheettemplateget {
 //		}
 //		this.lsfileversion = null;
 //	}
+	
+	
+	public Date getModifieddate() {
+		return modifieddate;
+	}
 
+	public void setModifieddate(Date modifieddate) {
+		this.modifieddate = modifieddate;
+	}
+	
+	public String getModifiedbyuser() {
+		return modifiedbyuser;
+	}
+	public void setModifiedbyuser(String modifiedbyuser) {
+		this.modifiedbyuser = modifiedbyuser;
+	}
 	public long getVersioncout() {
 		return versioncout;
 	}

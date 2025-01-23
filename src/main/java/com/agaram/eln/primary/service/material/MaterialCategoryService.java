@@ -269,7 +269,7 @@ public class MaterialCategoryService {
 //				}
 //				if (unitmaterialcategory != null && unitmaterialcategory.getNmaterialcatcode() != null) {
 //					itemsv.setMaterialcategory(unitmaterialcategory);
-					if (itemsv.getUnit().getSunitname() != null && !unitfinalmap.isEmpty()) {
+					if (itemsv.getUnit()!=null && itemsv.getUnit().getSunitname() != null && !unitfinalmap.isEmpty()) {
 						itemsv.setUnit(unitfinalmap.get(itemsv.getUnit().getSunitname()));
 					}
 //				}
@@ -300,7 +300,7 @@ public class MaterialCategoryService {
 					String materialName = objInv.getMaterial().getSmaterialname();
 //					String materialCategoryName = objInv.getMaterialcategory().getSmaterialcatname();
 //					String materialTypeName = objInv.getMaterialtype().getSmaterialtypename();
-					String unitname = objInv.getUnit().getSunitname();
+					String unitname =objInv.getUnit()!=null? objInv.getUnit().getSunitname():null;
 					boolean isExpiry = objInv.getMaterial().getExpirytype() != null
 							&& objInv.getMaterial().getExpirytype() == 1;
 					Integer ntransStatus = (objInv.getMaterial().getQuarantine() != null

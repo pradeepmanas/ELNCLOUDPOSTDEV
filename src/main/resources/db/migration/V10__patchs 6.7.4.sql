@@ -651,6 +651,11 @@ ALTER TABLE IF Exists Lslogbooks ADD COLUMN IF NOT EXISTS modifiedby character v
 
 UPDATE tbladssettings SET groupname='Domain Guests' WHERE groupname='1234';
 
+ALTER TABLE IF Exists LSfile ADD COLUMN IF NOT EXISTS modifiedbyuser character varying(255);
+
+ALTER TABLE IF Exists LSprotocolmaster ADD COLUMN IF NOT EXISTS modifiedby character varying(255);
+
+
 CREATE SEQUENCE IF NOT EXISTS sample_samplecode_seq
     START WITH 1
     INCREMENT BY 1
@@ -727,7 +732,4 @@ TABLESPACE pg_default;
 
 ALTER TABLE IF EXISTS public.derivedsamples
     OWNER to postgres;
-
-
-
 

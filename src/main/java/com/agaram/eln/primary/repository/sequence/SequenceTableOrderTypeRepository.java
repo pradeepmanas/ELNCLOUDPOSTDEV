@@ -13,6 +13,6 @@ public interface SequenceTableOrderTypeRepository extends JpaRepository<Sequence
 	
 	@Transactional
 	@Modifying
-	@Query("update SequenceTableOrderType s set s.ordertypesequence = ?1 where s.sequencecode = ?2 and s.ordertype= ?3")
+	@Query(value ="update sequencetableordertype set ordertypesequence = ?1 where sequencecode = ?2 and ordertype= ?3",nativeQuery = true)
 	void setinitialordertypesequence(Long ordertypesequence, Integer sequencecode, Integer ordertype);
 }

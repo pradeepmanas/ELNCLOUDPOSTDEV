@@ -226,7 +226,6 @@ public class UserService {
 		} else if (objusergroup.getUsergroupcode() == null) {
 			try {
 				objusergroup.setCreatedon(commonfunction.getCurrentUtcTime());
-				objusergroup.setModifiedon(commonfunction.getCurrentUtcTime());
 			} catch (ParseException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -437,7 +436,6 @@ public class UserService {
 			objusermaster.setCreateddate(updateUser.getCreateddate());
 			try {
 				updateUser.setModifieddate(commonfunction.getCurrentUtcTime());
-				objusermaster.setModifieddate(commonfunction.getCurrentUtcTime());
 			} catch (ParseException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -469,7 +467,6 @@ public class UserService {
 			objusermaster.setUnifieduserid(unifieduser);
 			try {
 				objusermaster.setCreateddate(commonfunction.getCurrentUtcTime());
-				objusermaster.setModifieddate(commonfunction.getCurrentUtcTime());
 			} catch (ParseException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -2187,7 +2184,7 @@ public class UserService {
 			throws ParseException {
 		ObjectMapper mapper = new ObjectMapper();
 		Integer siteCode = Integer.parseInt((String) mapObjects.get("sitecode"));
-		Integer ismultitenant=(Integer) mapObjects.get("ismultitenant");
+		Integer ismultitenant = (Integer) mapObjects.get("ismultitenant");
 		Date currentDate = commonfunction.getCurrentUtcTime();
 		List<LSusergroup> userGroupList = mapper.convertValue(mapObjects.get("UserGroupList"),
 				new TypeReference<List<LSusergroup>>() {
@@ -2240,11 +2237,11 @@ public class UserService {
 				String unifiedUserId = createUnifiedUserId(item, siteCode);
 				item.setUnifieduserid(unifiedUserId);
 				String password = Generatetenantpassword();
-		        String passwordadmin = AESEncryption.encrypt(password);
-		        item.setPassword(passwordadmin);
-		        if(ismultitenant==1) {
-		        	item.setPasswordstatus(1);
-		        }
+				String passwordadmin = AESEncryption.encrypt(password);
+				item.setPassword(passwordadmin);
+				if (ismultitenant == 1) {
+					item.setPasswordstatus(1);
+				}
 				LSusergroup existingGroup = updatedUserGroupExistMap.get(item.getUsergroupname());
 				if (existingGroup != null) {
 					LSMultiusergroup multiuserGroup = new LSMultiusergroup();
@@ -2269,58 +2266,91 @@ public class UserService {
 				+ siteCode + item.getUnifieduserid();
 	}
 
-    public List<LSuserMaster> sendEmailListWithBatch(Map<String, Object> objusermasterlist) { 
-        List<Email> emaillist = new ArrayList<>();
-        List<LSuserMaster> objusermasterlistobj=new ObjectMapper().convertValue(objusermasterlist.get("UserList"), new TypeReference<List<LSuserMaster>>() {
-		});
-//        objusermasterlist.get(0);
-        for (LSuserMaster objusermaster : objusermasterlistobj) {
-            Email email = new Email();
-            email.setMailto(objusermaster.getEmailid());
-            email.setSubject("ELN User Credentials");
-            email.setMailcontent(generateEmailContent(objusermaster, objusermaster.getPassword()));
-            emaillist.add(email);
-        }
+	public List<LSuserMaster> sendEmailListWithBatch(Map<String, Object> objusermasterlist) {
+		List<Email> emaillist = new ArrayList<>();
+		List<LSuserMaster> objusermasterlistobj = new ObjectMapper().convertValue(objusermasterlist.get("UserList"),
+				new TypeReference<List<LSuserMaster>>() {
+				});
+		for (LSuserMaster objusermaster : objusermasterlistobj) {
+			if (objusermaster.getPassword() != null) {
+				Email email = new Email();
+				email.setMailto(objusermaster.getEmailid());
+				email.setSubject("ELN User Credentials");
+				email.setMailcontent(generateEmailContent(objusermaster, objusermaster.getPassword()));
+				emaillist.add(email);
+			}
+		}
+		if (emaillist.size() > 0) {
+			sendEmailsInParallel(emaillist);
+		}
+		return objusermasterlistobj;
+	}
 
-        if (emaillist.size() > 0) {
-            sendEmailsInParallel(emaillist);
-        }
-        return objusermasterlistobj;
-    }
-    private String generateEmailContent(LSuserMaster objusermaster, String password) {
-        return "<b>Dear Customer,</b><br><center><img src=\"cid:image\"  style='width:120px; height:100px; border: 3px;'></center><br><br>"
-                + "<p>Thanks for your interest in Logilab ELN.</p>Please use below mentioned Username and Password for your Login in ELN Application.<br><br>"
-                + "Click the URL mentioned below to go to Logilab ELN Login page. <br><br>"
-                + "After entered the username and click the password field, new password generation screen will appear.<br><br>"
-                + "Paste the password in the Old Password Textbox, and then generate your new password.<br><br>"
-                + "<b style='margin-left: 76px;'>Username:</b>\t\t " + objusermaster.getUsername()
-                + "<br><br>" + "<b style='margin-left: 76px;'>Password &nbsp;:</b>\t\t" + password
-                + "<br><br>" + "<b style='margin-left: 76px;'><a href=" + objusermaster.getUserloginlink()
-                + ">Click here to Logilab ELN Login page</a></b><br><br>"
-                + "<p>If you have any queries, please contact our support by mail to info@agaramtech.com <br><br><br>"
-                + "Regards,</p>" + "<b>Agaram Technologies Private Limited</b><br><br>"
-                + "<img src=\"cid:seconimage\"  style='width:120px; height:120px;border: 3px;'"
-                + "<br><br><p>T: +91 44 4208 2005</p><p>T: +91 44 42189406</p>"
-                + "W:<a href='https://www.agaramtech.com'>https://www.agaramtech.com</a></p>";
-    }
-    private void sendEmailsInParallel(List<Email> emaillist) {
-        ExecutorService executorService = Executors.newFixedThreadPool(10);
-        List<Callable<Void>> tasks = new ArrayList<>();
+	private String generateEmailContent(LSuserMaster objusermaster, String password) {
+		return "<b>Dear Customer,</b><br><center><img src=\"cid:image\"  style='width:120px; height:100px; border: 3px;'></center><br><br>"
+				+ "<p>Thanks for your interest in Logilab ELN.</p>Please use below mentioned Username and Password for your Login in ELN Application.<br><br>"
+				+ "Click the URL mentioned below to go to Logilab ELN Login page. <br><br>"
+				+ "After entered the username and click the password field, new password generation screen will appear.<br><br>"
+				+ "Paste the password in the Old Password Textbox, and then generate your new password.<br><br>"
+				+ "<b style='margin-left: 76px;'>Username:</b>\t\t " + objusermaster.getUsername() + "<br><br>"
+				+ "<b style='margin-left: 76px;'>Password &nbsp;:</b>\t\t" + password + "<br><br>"
+				+ "<b style='margin-left: 76px;'><a href=" + objusermaster.getUserloginlink()
+				+ ">Click here to Logilab ELN Login page</a></b><br><br>"
+				+ "<p>If you have any queries, please contact our support by mail to info@agaramtech.com <br><br><br>"
+				+ "Regards,</p>" + "<b>Agaram Technologies Private Limited</b><br><br>"
+				+ "<img src=\"cid:seconimage\"  style='width:120px; height:120px;border: 3px;'"
+				+ "<br><br><p>T: +91 44 4208 2005</p><p>T: +91 44 42189406</p>"
+				+ "W:<a href='https://www.agaramtech.com'>https://www.agaramtech.com</a></p>";
+	}
 
-        for (Email email : emaillist) {
-            	try {
-					emailService.sendEmail(email);
-				} catch (MessagingException e) {
-					e.printStackTrace();
-				}
-        }
+	private void sendEmailsInParallel(List<Email> emaillist) {
+		ExecutorService executorService = Executors.newFixedThreadPool(10);
+		List<Callable<Void>> tasks = new ArrayList<>();
 
-        try {
-            executorService.invokeAll(tasks);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } finally {
-            executorService.shutdown();
-        }
-    }
+		for (Email email : emaillist) {
+			try {
+				emailService.sendEmail(email);
+			} catch (MessagingException e) {
+				e.printStackTrace();
+			}
+		}
+
+		try {
+			executorService.invokeAll(tasks);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} finally {
+			executorService.shutdown();
+		}
+	}
+
+	public List<LSusergroup> insertImportUserGroup(Map<String, Object> objusergroup) throws ParseException {
+		Integer siteCode = Integer.parseInt((String) objusergroup.get("sitecode"));
+		Date currentDate = commonfunction.getCurrentUtcTime();
+		ObjectMapper mapper = new ObjectMapper();
+		List<LSusergroup> userGroupList = mapper.convertValue(objusergroup.get("UserGroupList"),
+				new TypeReference<List<LSusergroup>>() {
+				});
+		List<String> userGroupNameList = mapper.convertValue(objusergroup.get("UserGroupName"),
+				new TypeReference<List<String>>() {
+				});
+
+		List<LSusergroup> existingUserGroups = lSusergroupRepository
+				.findByLssitemasterAndUsergroupnameIgnoreCaseIn(siteCode, userGroupNameList);
+		Map<String, LSusergroup> userGroupExistMap = existingUserGroups.stream()
+				.collect(Collectors.toMap(LSusergroup::getUsergroupname, Function.identity()));
+		userGroupList = userGroupList.stream().map(item -> {
+			LSusergroup lsusergroup = userGroupExistMap.get(item.getUsergroupname());
+			if (lsusergroup != null) {
+				return lsusergroup;
+			} else {
+				item.setCreatedon(currentDate);
+				item.setModifiedon(currentDate);
+			}
+			return item;
+		}).collect(Collectors.toList());
+		lSusergroupRepository.save(userGroupList); // kumu - user group Save
+
+		return userGroupList;
+	}
 }

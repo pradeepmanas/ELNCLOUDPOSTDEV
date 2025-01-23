@@ -1580,7 +1580,7 @@ public class ProtocolService {
 	}
 
 	@SuppressWarnings({ "unchecked", "unused" })
-	public Map<String, Object> addProtocolMaster(Map<String, Object> argObj) throws IOException {
+	public Map<String, Object> addProtocolMaster(Map<String, Object> argObj) throws IOException, ParseException {
 		Map<String, Object> mapObj = new HashMap<String, Object>();
 
 		LScfttransaction LScfttransactionobj = new LScfttransaction();
@@ -1617,6 +1617,8 @@ public class ProtocolService {
 				newProtocolMasterObj.setViewoption((Integer) argObj.get("viewoption"));
 				newProtocolMasterObj.setIsmultitenant((Integer) argObj.get("ismultitenant"));
 				newProtocolMasterObj.setCategory((String) argObj.get("category"));
+				newProtocolMasterObj.setLastmodified(commonfunction.getCurrentUtcTime());
+				newProtocolMasterObj.setModifiedby((String) argObj.get("modifiedby"));
 				Object LSprotocolupdates = new LSprotocolupdates();
 				Map<String, Object> argObj1 = new HashMap<String, Object>();
 				argObj1 = (Map<String, Object>) argObj.get("LSprotocolupdates");
