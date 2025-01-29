@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -12,6 +13,7 @@ import com.agaram.eln.primary.model.material.Elnmaterial;
 import com.agaram.eln.primary.model.material.ElnmaterialInventory;
 import com.agaram.eln.primary.model.material.MaterialCategory;
 import com.agaram.eln.primary.model.material.MaterialType;
+import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 
 public interface ElnmaterialInventoryRepository extends JpaRepository<ElnmaterialInventory, Integer>{
 
@@ -122,5 +124,10 @@ public interface ElnmaterialInventoryRepository extends JpaRepository<Elnmateria
 	List<ElnmaterialInventory> findByNsitecodeAndMaterialInAndMaterialtypeAndMaterialcategoryOrderByNmaterialinventorycodeDesc(
 			Integer nsiteInteger, List<Elnmaterial> objlstElnmaterial, MaterialType objMaterialType,
 			MaterialCategory objMaterialCategory);
+
+	List<ElnmaterialInventory> findByNsitecodeOrderByNmaterialinventorycodeDesc(Integer nsiteInteger,
+			Pageable pageable);
+
+	long countByNsitecode(Integer integer);
 
 }

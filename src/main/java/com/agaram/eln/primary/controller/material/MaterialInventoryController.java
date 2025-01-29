@@ -37,6 +37,7 @@ import com.agaram.eln.primary.model.material.ElnmaterialInventory;
 import com.agaram.eln.primary.model.material.ElnresultUsedMaterial;
 import com.agaram.eln.primary.model.material.MaterialInventory;
 import com.agaram.eln.primary.model.material.MaterilaInventoryLinks;
+import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.service.material.MaterialInventoryService;
 import com.agaram.eln.primary.service.material.MaterialService;
 
@@ -381,5 +382,11 @@ public class MaterialInventoryController {
 	@PostMapping("/deleteLinkforInventory")
 	public ResponseEntity<Object> deleteLinkforInvertory(@RequestBody MaterilaInventoryLinks objInv) throws Exception {
 		return materialInventoryService.deleteLinkforInvertory(objInv);
+	}
+	
+	@RequestMapping(value = "/getElnMaterialInventoryCount", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public long getElnMaterialInventoryCount(@RequestBody LSSiteMaster inputMap) throws Exception {
+		
+		return  materialInventoryService.getElnMaterialInventoryCount(inputMap);
 	}
 }

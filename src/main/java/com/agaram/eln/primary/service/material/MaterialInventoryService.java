@@ -31,6 +31,8 @@ import org.bson.types.Binary;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -73,6 +75,7 @@ import com.agaram.eln.primary.model.sequence.SequenceTable;
 import com.agaram.eln.primary.model.sequence.SequenceTableProjectLevel;
 import com.agaram.eln.primary.model.sequence.SequenceTableSite;
 import com.agaram.eln.primary.model.sequence.SequenceTableTaskLevel;
+import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.repository.instrumentDetails.LsOrderattachmentsRepository;
 import com.agaram.eln.primary.repository.material.ElnmaterialChemDiagRefRepository;
@@ -3299,7 +3302,11 @@ public class MaterialInventoryService {
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 		simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 		Integer nsiteInteger = (Integer) inputMap.get("nsitecode");
-//		MaterialCategory objmat = (MaterialCategory) inputMap.get("materialcategory");
+		int page =(int) inputMap.get("page");
+		int size =(int) inputMap.get("size");
+		Pageable pageable =new PageRequest(page, size);
+		
+	//		MaterialCategory objmat = (MaterialCategory) inputMap.get("materialcategory");
 //		MaterialType objmattype = (MaterialType) inputMap.get("materialtype");
 		
 		
@@ -3309,7 +3316,7 @@ public class MaterialInventoryService {
 //		List<ElnmaterialInventory> lstElnInventories = elnmaterialInventoryReppository
 //				.findByNsitecodeAndCreateddateBetweenOrderByNmaterialinventorycodeDesc(nsiteInteger, fromDate, toDate);
 		
-		List<ElnmaterialInventory> lstElnInventories = elnmaterialInventoryReppository.findByNsitecodeOrderByNmaterialinventorycodeDesc(nsiteInteger);
+		List<ElnmaterialInventory> lstElnInventories = elnmaterialInventoryReppository.findByNsitecodeOrderByNmaterialinventorycodeDesc(nsiteInteger,pageable);
 
 		objmap.put("lstMaterialInventory", lstElnInventories);
 
@@ -4028,5 +4035,10 @@ public class MaterialInventoryService {
 	public ResponseEntity<Object> deleteLinkforInvertory(MaterilaInventoryLinks objInv) {
 		materialInventoryLinksRepository.delete(objInv);
 		return new ResponseEntity<>(materialInventoryLinksRepository.findByNmaterialinventorycodeAndNstatus(objInv.getNmaterialinventorycode(),1), HttpStatus.OK);
+	}
+
+	public long getElnMaterialInventoryCount(LSSiteMaster inputMap) {
+		long InventoryCount = elnmaterialInventoryReppository.countByNsitecode(inputMap.getSitecode());
+		return InventoryCount;
 	}
 }
