@@ -53,6 +53,7 @@ public class LogilabOrdermastersh implements Comparable<LogilabOrdermastersh> {
 	private Long tse;
 	private Long ose;
 	private String sid;
+	private Boolean ts;
 
 	public LogilabOrdermastersh(Long batchcode, String batchid, LSworkflow lsworkflow, String testname, LSfile lsfile,
 			LSsamplemaster lssamplemaster, LSprojectmaster lsprojectmaster, Integer filetype, String orderflag,
@@ -61,7 +62,7 @@ public class LogilabOrdermastersh implements Comparable<LogilabOrdermastersh> {
 			Integer testcode, Integer approvelstatus, LSOrdernotification lsordernotification, Integer ordersaved,
 			Boolean repeat, LsAutoregister lsautoregisterorders, Boolean sentforapprovel, String approvelaccept,
 			Integer autoregistercount, Elnmaterial elnmaterial, String lockedusername, Long applicationsequence,
-			Long sitesequence, Long projectsequence, Long tasksequence, Long ordertypesequence,String sequenceid) {
+			Long sitesequence, Long projectsequence, Long tasksequence, Long ordertypesequence,String sequenceid,Boolean teamselected) {
 		this.bc = batchcode;
 		this.bi = batchid;
 		this.wc = lsworkflow != null ? lsworkflow.getWorkflowcode() : null;
@@ -98,6 +99,7 @@ public class LogilabOrdermastersh implements Comparable<LogilabOrdermastersh> {
 		this.tse = tasksequence;
 		this.ose = ordertypesequence;
 		this.sid = sequenceid;
+		this.ts = teamselected;
 	}
 
 	public String getLoc() {
@@ -433,4 +435,13 @@ public class LogilabOrdermastersh implements Comparable<LogilabOrdermastersh> {
 	public int compareTo(LogilabOrdermastersh o) {
 		return this.getBc().compareTo(o.getBc());
 	}
+
+	public Boolean getTs() {
+		return ts;
+	}
+
+	public void setTs(Boolean ts) {
+		this.ts = ts;
+	}
+	
 }

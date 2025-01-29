@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.instrumentDetails.LSOrdernotification;
+import com.agaram.eln.primary.model.instrumentDetails.LSSelectedTeam;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorder;
 import com.agaram.eln.primary.model.instrumentDetails.LsAutoregister;
 import com.agaram.eln.primary.model.instrumentDetails.LsOrderattachments;
@@ -46,9 +47,7 @@ public class LogilabOrderDetails extends Logilaborders {
 	private List<Lsbatchdetails> lsbatchdetails;
 	private List<LsOrderattachments> lsOrderattachments;
     private List<ELNFileAttachments> elnfileAttachments;
-
-	
-
+ 
 	public LogilabOrderDetails(Long batchcode, String batchid, String orderflag, Integer approvelstatus,
 			Integer lockeduser, Integer testcode, String testname, LSsamplemaster lssamplemaster,
 			LSprojectmaster lsprojectmaster, LSfile lsfile, Integer filetype, LSuserMaster lsuserMaster,
@@ -58,7 +57,7 @@ public class LogilabOrderDetails extends Logilaborders {
 			Integer viewoption, Elnmaterial elnmaterial, MaterialInventory materialinventory, String lockedusername,
 			Integer activeuser, Integer approved,LSOrdernotification lsordernotification, 
 			Integer ordersaved,Boolean repeat,LsAutoregister lsautoregisterorders,Boolean sentforapprovel,
-			String approvelaccept,Integer autoregistercount,String sequenceid
+			String approvelaccept,Integer autoregistercount,String sequenceid,Boolean teamselected
 //			,
 //			List<Lsorderworkflowhistory> lsorderworkflowhistory
 	) {
@@ -66,7 +65,7 @@ public class LogilabOrderDetails extends Logilaborders {
 				lsprojectmaster, lsfile, filetype, lsuserMaster, assignedto, lssamplefile, lsworkflow, createdtimestamp,
 				completedtimestamp, lsrepositoriesdata, lsrepositories, keyword, directorycode, lstestmasterlocal,
 				ordercancell, viewoption, elnmaterial, materialinventory, approved, lsordernotification, ordersaved,
-				repeat, lsautoregisterorders, sentforapprovel, approvelaccept, autoregistercount,sequenceid);
+				repeat, lsautoregisterorders, sentforapprovel, approvelaccept, autoregistercount,sequenceid,teamselected);
 
 		this.lockedusername = lockedusername;
 		this.activeuser = activeuser;
@@ -75,6 +74,7 @@ public class LogilabOrderDetails extends Logilaborders {
 		this.lssamplefile = lssamplefile;
 		this.lstestmasterlocal = lstestmasterlocal;
 		this.lsworkflow =lsworkflow ;
+		
 //		this.lsorderworkflowhistory.addAll(lsorderworkflowhistory);
 	}
 

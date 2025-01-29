@@ -748,3 +748,189 @@ ALTER TABLE IF EXISTS public.derivedsamples
     
 ALTER TABLE IF Exists Sample ADD COLUMN IF NOT EXISTS sitesequence bigint;
 
+DO
+$do$
+DECLARE
+   _kind "char";
+BEGIN
+   SELECT relkind
+   FROM   pg_class
+   WHERE  relname = 'lsselectedteam_selectionid_seq' 
+   INTO  _kind;
+   IF NOT FOUND THEN CREATE SEQUENCE lsselectedteam_selectionid_seq;
+   ELSIF _kind = 'S' THEN  
+   ELSE                  
+   END IF;
+END
+$do$;
+CREATE TABLE IF NOT EXISTS public.lsselectedteam
+(
+    selectionid integer NOT NULL DEFAULT nextval('lsselectedteam_selectionid_seq'::regclass),
+    batchcode numeric(17,0),
+    sitemaster_sitecode integer,
+    userteam_teamcode integer,
+    directorycode bigint,
+    elnmaterial_nmaterialcode integer,
+    CONSTRAINT lsselectedteam_pkey PRIMARY KEY (selectionid),
+    CONSTRAINT fkd2kuxw0q5yttgb4chda2q62yg FOREIGN KEY (sitemaster_sitecode)
+        REFERENCES public.lssitemaster (sitecode) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT fklvidarfbjvkm9wpcwu6p778rr FOREIGN KEY (batchcode)
+        REFERENCES public.lslogilablimsorderdetail (batchcode) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT fkqcgy27rx7mm4cupi6bmnjo4ty FOREIGN KEY (elnmaterial_nmaterialcode)
+        REFERENCES public.elnmaterial (nmaterialcode) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT fkt8rj35qbybc1c6xyjq4gokj20 FOREIGN KEY (userteam_teamcode)
+        REFERENCES public.lsusersteam (teamcode) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+ 
+TABLESPACE pg_default;
+ 
+ALTER TABLE IF EXISTS public.lsselectedteam
+    OWNER to postgres;
+ 
+DO $$
+BEGIN
+    -- Attempt to insert the new record
+    INSERT INTO lsusergrouprightsmaster(orderno, displaytopic, modulename, screenname, sallow, screate, sdelete, sedit, status, sequenceorder) VALUES (194, 'IDS_TSK_PROJECTTEAM', 'IDS_MDL_ORDERS', 'IDS_SCN_SHEETORDERS', '0', 'NA', 'NA', 'NA', '0,0,0', 2) ON CONFLICT (orderno) DO NOTHING;
+ 
+    -- Check if the record was inserted
+    IF FOUND THEN
+        -- If the insert was successful, update the sequenceorder of other records
+        UPDATE lsusergrouprightsmaster SET sequenceorder = sequenceorder + 1 WHERE sequenceorder >= 2 AND orderno <> 194;
+    END IF;
+END $$;
+ 
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname) SELECT 'IDS_TSK_PROJECTTEAM', 'IDS_MDL_ORDERS', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_SHEETORDERS'  WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_PROJECTTEAM' and screenname='IDS_SCN_SHEETORDERS' and usergroupid_usergroupcode = 1);
+UPDATE lsusergrouprightsmaster SET sequenceorder = CASE
+    WHEN screenname = 'IDS_SCN_DASHBOARD' THEN 1
+ 
+    WHEN screenname = 'IDS_SCN_SHEETORDERS' THEN 2
+    WHEN screenname = 'IDS_SCN_PROTOCOLORDERS' THEN 3
+    WHEN screenname = 'IDS_SCN_UNLOCKORDERS' THEN 4
+ 
+    WHEN screenname = 'IDS_SCN_SHEETTEMPLATE' THEN 5
+    WHEN screenname = 'IDS_SCN_PROTOCOLTEMPLATE' THEN 6
+    WHEN screenname = 'IDS_SCN_TEMPLATEMAPPING' THEN 7
+ 
+    WHEN screenname = 'IDS_SCN_USERGROUP' THEN 8
+    WHEN screenname = 'IDS_SCN_SITEMASTER' THEN 9
+    WHEN screenname = 'IDS_SCN_ACTIVEUSER' THEN 9
+    WHEN screenname = 'IDS_SCN_USERMASTER' THEN 10
+    WHEN screenname = 'IDS_SCN_USERRIGHTS' THEN 11
+    WHEN screenname = 'IDS_SCN_PROJECTMASTER' THEN 12
+    WHEN screenname = 'IDS_SCN_PROJECTTEAM' THEN 13
+    WHEN screenname = 'IDS_SCN_TASKMASTER' THEN 14
+    WHEN screenname = 'IDS_SCN_ORDERWORKLOW' THEN 15
+    WHEN screenname = 'IDS_SCN_TEMPLATEWORKFLOW' THEN 16
+    WHEN screenname = 'IDS_SCN_DOMAIN' THEN 17
+    WHEN screenname = 'IDS_SCN_PASSWORDPOLICY' THEN 18
+    WHEN screenname = 'IDS_SCN_BARCODEMASTER' THEN 18
+ 
+    WHEN screenname = 'IDS_SCN_PARSER' THEN 19
+    WHEN screenname = 'IDS_SCN_DELIMITER' THEN 19
+    WHEN screenname = 'IDS_SCN_INSTRUMENTCATEGORY' THEN 20
+    WHEN screenname = 'IDS_SCN_INSTRUMENTMASTER' THEN 21
+    WHEN screenname = 'IDS_SCN_METHODDELIMITER' THEN 22
+    WHEN screenname = 'IDS_SCN_METHODMASTER' THEN 23
+ 
+    WHEN screenname = 'IDS_SCN_AUDITTRAILHIS' THEN 24
+    WHEN screenname = 'IDS_SCN_CFRSETTINGS' THEN 25
+    WHEN screenname = 'IDS_SCN_AUDITTRAILCONFIG' THEN 26
+ 
+    WHEN screenname = 'IDS_SCN_REPORTS' THEN 27
+    WHEN screenname = 'IDS_SCN_REPORTVIEVER' THEN 28
+    WHEN screenname = 'IDS_SCN_REPORTMAPPER' THEN 29
+ 
+    WHEN screenname = 'IDS_SCN_MATERIAL' THEN 30
+    WHEN screenname = 'IDS_SCN_MATERIALINVENTORY' THEN 31
+    WHEN screenname = 'IDS_SCN_MATERIALTYPEPARAMS' THEN 32
+    WHEN screenname = 'IDS_SCN_MATERIALCATEGORY' THEN 33
+    WHEN screenname = 'IDS_SCN_GRADEMASTER' THEN 34
+    WHEN screenname = 'IDS_SCN_SUPPLIER' THEN 35
+    WHEN screenname = 'IDS_SCN_STORAGELOCATION' THEN 36
+    WHEN screenname = 'IDS_SCN_SECTIONMASTER' THEN 37
+    WHEN screenname = 'IDS_SCN_MANUFACTURER' THEN 38
+    WHEN screenname = 'IDS_SCN_UNITMASTER' THEN 39
+    WHEN screenname = 'IDS_SCN_MATERIAL' THEN 40
+    WHEN screenname = 'IDS_SCN_MATERIALINVENTORY' THEN 41
+ 
+    WHEN screenname = 'IDS_SCN_EQUIPMENT' THEN 42
+    WHEN screenname = 'IDS_SCN_EQUIPMENTMASTER' THEN 43
+    WHEN screenname = 'IDS_TSK_EQUIPMENTMASTER' THEN 44
+ 
+    WHEN screenname = 'IDS_SCN_LOGBOOK' THEN 45
+    ELSE sequenceorder -- Retain the current value if no match
+END;
+ 
+UPDATE lsusergrouprights SET sequenceorder = CASE
+    WHEN screenname = 'IDS_SCN_DASHBOARD' THEN 1
+ 
+    WHEN screenname = 'IDS_SCN_SHEETORDERS' THEN 2
+    WHEN screenname = 'IDS_SCN_PROTOCOLORDERS' THEN 3
+    WHEN screenname = 'IDS_SCN_UNLOCKORDERS' THEN 4
+ 
+    WHEN screenname = 'IDS_SCN_SHEETTEMPLATE' THEN 5
+    WHEN screenname = 'IDS_SCN_PROTOCOLTEMPLATE' THEN 6
+    WHEN screenname = 'IDS_SCN_TEMPLATEMAPPING' THEN 7
+ 
+    WHEN screenname = 'IDS_SCN_USERGROUP' THEN 8
+    WHEN screenname = 'IDS_SCN_SITEMASTER' THEN 9
+    WHEN screenname = 'IDS_SCN_ACTIVEUSER' THEN 9
+    WHEN screenname = 'IDS_SCN_USERMASTER' THEN 10
+    WHEN screenname = 'IDS_SCN_USERRIGHTS' THEN 11
+    WHEN screenname = 'IDS_SCN_PROJECTMASTER' THEN 12
+    WHEN screenname = 'IDS_SCN_PROJECTTEAM' THEN 13
+    WHEN screenname = 'IDS_SCN_TASKMASTER' THEN 14
+    WHEN screenname = 'IDS_SCN_ORDERWORKLOW' THEN 15
+    WHEN screenname = 'IDS_SCN_TEMPLATEWORKFLOW' THEN 16
+    WHEN screenname = 'IDS_SCN_DOMAIN' THEN 17
+    WHEN screenname = 'IDS_SCN_PASSWORDPOLICY' THEN 18
+    WHEN screenname = 'IDS_SCN_BARCODEMASTER' THEN 18
+ 
+    WHEN screenname = 'IDS_SCN_PARSER' THEN 19
+    WHEN screenname = 'IDS_SCN_DELIMITER' THEN 19
+    WHEN screenname = 'IDS_SCN_INSTRUMENTCATEGORY' THEN 20
+    WHEN screenname = 'IDS_SCN_INSTRUMENTMASTER' THEN 21
+    WHEN screenname = 'IDS_SCN_METHODDELIMITER' THEN 22
+    WHEN screenname = 'IDS_SCN_METHODMASTER' THEN 23
+ 
+    WHEN screenname = 'IDS_SCN_AUDITTRAILHIS' THEN 24
+    WHEN screenname = 'IDS_SCN_CFRSETTINGS' THEN 25
+    WHEN screenname = 'IDS_SCN_AUDITTRAILCONFIG' THEN 26
+ 
+    WHEN screenname = 'IDS_SCN_REPORTS' THEN 27
+    WHEN screenname = 'IDS_SCN_REPORTVIEVER' THEN 28
+    WHEN screenname = 'IDS_SCN_REPORTMAPPER' THEN 29
+ 
+    WHEN screenname = 'IDS_SCN_MATERIAL' THEN 30
+    WHEN screenname = 'IDS_SCN_MATERIALINVENTORY' THEN 31
+    WHEN screenname = 'IDS_SCN_MATERIALTYPEPARAMS' THEN 32
+    WHEN screenname = 'IDS_SCN_MATERIALCATEGORY' THEN 33
+    WHEN screenname = 'IDS_SCN_GRADEMASTER' THEN 34
+    WHEN screenname = 'IDS_SCN_SUPPLIER' THEN 35
+    WHEN screenname = 'IDS_SCN_STORAGELOCATION' THEN 36
+    WHEN screenname = 'IDS_SCN_SECTIONMASTER' THEN 37
+    WHEN screenname = 'IDS_SCN_MANUFACTURER' THEN 38
+    WHEN screenname = 'IDS_SCN_UNITMASTER' THEN 39
+    WHEN screenname = 'IDS_SCN_MATERIAL' THEN 40
+    WHEN screenname = 'IDS_SCN_MATERIALINVENTORY' THEN 41
+ 
+    WHEN screenname = 'IDS_SCN_EQUIPMENT' THEN 42
+    WHEN screenname = 'IDS_SCN_EQUIPMENTMASTER' THEN 43
+    WHEN screenname = 'IDS_TSK_EQUIPMENTMASTER' THEN 44
+ 
+    WHEN screenname = 'IDS_SCN_LOGBOOK' THEN 45
+    ELSE sequenceorder -- Retain the current value if no match
+END;
+ 
+ALTER TABLE IF EXISTS lslogilablimsorderdetail ADD COLUMN IF NOT EXISTS teamselected BOOLEAN DEFAULT false;
+
+ALTER TABLE IF EXISTS lsselectedteam add column IF NOT EXISTS createdtimestamp TIMESTAMP;
+

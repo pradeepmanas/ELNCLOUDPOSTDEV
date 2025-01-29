@@ -30,5 +30,6 @@ public interface LSusersteamRepository  extends JpaRepository<LSusersteam, Integ
 	public List<LSusersteam> findByLsuserteammappingInAndStatusAndLssitemaster(
 			List<LSuserteammapping> findBylsuserMaster, int i, LSSiteMaster lssitemaster);
 	public LSusersteam findByTeamnameAndLssitemaster(String team_name, LSSiteMaster site);
+	public List<LSusersteam> findByLsuserteammappingIn(List<LSuserteammapping> teammapping);
 
 }

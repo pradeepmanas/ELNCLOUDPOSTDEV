@@ -38,6 +38,7 @@ import com.agaram.eln.primary.model.cfr.LSactivity;
 import com.agaram.eln.primary.model.fileManipulation.Fileimages;
 import com.agaram.eln.primary.model.fileManipulation.Fileimagestemp;
 import com.agaram.eln.primary.model.general.Response;
+import com.agaram.eln.primary.model.instrumentDetails.LSSelectedTeam;
 import com.agaram.eln.primary.model.instrumentDetails.LSSheetOrderStructure;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 import com.agaram.eln.primary.model.instrumentDetails.LSprotocolfolderfiles;
@@ -66,6 +67,7 @@ import com.agaram.eln.primary.repository.methodsetup.CloudParserFileRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSsamplefileRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSprojectmasterRepository.ProjectOrTaskOrMaterialView;
 import com.agaram.eln.primary.service.instrumentDetails.InstrumentService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.gridfs.GridFSDBFile;
 
 @RestController
@@ -88,7 +90,7 @@ public class InstrumentController {
 
 	@PostMapping("/InsertELNOrder")
 	public LSlogilablimsorderdetail InsertELNOrder(@RequestBody LSlogilablimsorderdetail objorder)throws Exception {
-
+		
 		return instrumentService.InsertELNOrder(objorder);
 	}
 	
@@ -1437,4 +1439,14 @@ public class InstrumentController {
 	public ResponseEntity<Object> deleteLinkforOrder(@RequestBody LsOrderLinks objorder) throws Exception {
 		return instrumentService.deleteLinkforOrder(objorder);
 	}
+	
+	@RequestMapping("/Getselectedteam")
+	public List<LSSelectedTeam> Getselectedteam(@RequestBody Map<String, Object> mapObject)throws Exception
+	{
+		final ObjectMapper mapper = new ObjectMapper();
+		final Long batchcode = mapper.convertValue(mapObject.get("batchcode"), Long.class);
+
+		return instrumentService.Getselectedteam(batchcode);
+	}
+	
 }

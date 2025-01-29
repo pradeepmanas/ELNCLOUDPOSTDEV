@@ -47,6 +47,7 @@ public class Logilaborderssh extends LogilabOrdermastersh {
 	private Boolean sfa;
 	private String ac;
 	private Integer arc;
+	private Boolean ts;
 	
 	public Logilaborderssh(Long batchcode, String batchid, String orderflag, Integer approvelstatus,
 			Integer lockeduser, Integer testcode, String testname, LSsamplemaster lssamplemaster,
@@ -55,11 +56,11 @@ public class Logilaborderssh extends LogilabOrdermastersh {
 			Lsrepositoriesdata lsrepositoriesdata,Lsrepositories lsrepositories,String keyword, Long directorycode,LStestmasterlocal lstestmasterlocal,
 			Integer ordercancell,Integer viewoption,Elnmaterial elnmaterial,MaterialInventory materialinventory,Integer approved,LSOrdernotification lsordernotification, 
 			Integer ordersaved,Boolean repeat,LsAutoregister lsautoregisterorders,Boolean sentforapprovel,String approvelaccept,Integer autoregistercount, String lockedusername, Long applicationsequence,
-			Long sitesequence, Long projectsequence, Long tasksequence, Long ordertypesequence, String sequenceid) {
+			Long sitesequence, Long projectsequence, Long tasksequence, Long ordertypesequence, String sequenceid,Boolean teamselected) {
 		
 		super(batchcode, batchid, lsworkflow, testname, lsfile, lssamplemaster, lsprojectmaster, filetype, orderflag,assignedto, createdtimestamp,completedtimestamp,keyword,
 				lstestmasterlocal, ordercancell,viewoption,lsuserMaster,testcode, approvelstatus,lsordernotification, ordersaved,repeat,lsautoregisterorders,sentforapprovel,
-				approvelaccept,autoregistercount, elnmaterial,lockedusername,applicationsequence,sitesequence,projectsequence,tasksequence,ordertypesequence,sequenceid);
+				approvelaccept,autoregistercount, elnmaterial,lockedusername,applicationsequence,sitesequence,projectsequence,tasksequence,ordertypesequence,sequenceid,teamselected);
 		 
 		if(lssamplefile != null)
 		{
@@ -98,6 +99,7 @@ public class Logilaborderssh extends LogilabOrdermastersh {
         this.sfa=sentforapprovel!=null?sentforapprovel:null;
         this.ac=approvelaccept!=null?approvelaccept:null;
         this.arc = autoregistercount != null ? autoregistercount:null;
+        this.ts = teamselected;
 	}
 
 	public String getOf() {
@@ -337,6 +339,14 @@ public class Logilaborderssh extends LogilabOrdermastersh {
 
 	public void setArc(Integer arc) {
 		this.arc = arc;
+	}
+
+	public Boolean getTs() {
+		return ts;
+	}
+
+	public void setTs(Boolean ts) {
+		this.ts = ts;
 	}
 	
 	

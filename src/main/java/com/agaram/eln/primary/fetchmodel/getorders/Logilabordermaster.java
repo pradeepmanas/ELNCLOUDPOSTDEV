@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.agaram.eln.primary.model.instrumentDetails.LSOrdernotification;
+import com.agaram.eln.primary.model.instrumentDetails.LSSelectedTeam;
 import com.agaram.eln.primary.model.instrumentDetails.LsAutoregister;
 import com.agaram.eln.primary.model.material.Elnmaterial;
 import com.agaram.eln.primary.model.sheetManipulation.LSfile;
@@ -47,6 +48,8 @@ public class Logilabordermaster implements Comparable<Logilabordermaster> {
 	private Integer autoregistercount;
 	private String materialname;
 	private String sequenceid;
+	private Boolean teamselected;
+
 
 	public Logilabordermaster(Long batchcode, String batchid, LSworkflow lsworkflow, String testname, LSfile lsfile,
 			LSsamplemaster lssamplemaster, LSprojectmaster lsprojectmaster, Integer filetype, String orderflag,
@@ -54,7 +57,8 @@ public class Logilabordermaster implements Comparable<Logilabordermaster> {
 			LStestmasterlocal lstestmasterlocal, Integer ordercancell, Integer viewoption, LSuserMaster lsuserMaster,
 			Integer testcode, Integer approvelstatus, LSOrdernotification lsordernotification, Integer ordersaved,
 			Boolean repeat, LsAutoregister lsautoregisterorders, Boolean sentforapprovel, String approvelaccept,
-			Integer autoregistercount, Elnmaterial elnmaterial,String sequenceid) {
+			Integer autoregistercount, Elnmaterial elnmaterial,String sequenceid,Boolean teamselected) {
+		
 		this.batchcode = batchcode;
 		this.batchid = batchid;
 		this.workflowcode = lsworkflow != null ? lsworkflow.getWorkflowcode() : null;
@@ -86,6 +90,7 @@ public class Logilabordermaster implements Comparable<Logilabordermaster> {
 		this.autoregistercount = autoregistercount;
 		this.materialname = elnmaterial != null ? elnmaterial.getSmaterialname() : null;
 		this.sequenceid = sequenceid;
+		this.teamselected = teamselected;
 	}
 
 	public String getMaterialname() {
@@ -395,6 +400,14 @@ public class Logilabordermaster implements Comparable<Logilabordermaster> {
 
 	public void setSequenceid(String sequenceid) {
 		this.sequenceid = sequenceid;
+	}
+
+	public Boolean getTeamselected() {
+		return teamselected;
+	}
+
+	public void setTeamselected(Boolean teamselected) {
+		this.teamselected = teamselected;
 	}
 
 }

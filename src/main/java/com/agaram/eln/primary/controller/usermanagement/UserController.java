@@ -143,11 +143,22 @@ public class UserController {
 		return userService.GetSiteWiseActiveUserGroup(Objclass);
 	}
 	
+	@PostMapping("/GetLoggedUsersTeamSitewise")
+	public List<LSusersteam> GetLoggedUsersTeamSitewise(@RequestBody Map<String, Object> mapObject)throws Exception {
+		final ObjectMapper mapper = new ObjectMapper();
+		final LSuserMaster userobj = mapper.convertValue(mapObject.get("lsusermaster"), LSuserMaster.class);
+		final LSSiteMaster site = mapper.convertValue(mapObject.get("lssitemaster"), LSSiteMaster.class);
+
+		return userService.GetLoggedUsersTeamSitewise(site,userobj);
+	}
+	
 	@PostMapping("/GetUserGroupSiteWise")
 	public List<LSusergroup> GetUserGroupSiteWise(@RequestBody LSSiteMaster objclass)throws Exception
 	{
 	  return userService.GetUserGroupSiteWise(objclass);
 	}
+		
+	
 //	@PostMapping("/ActDeactUserGroup")
 //	public LSusergroup ActDeactUserGroup(@RequestBody LSusergroup objusergroup)
 //	{

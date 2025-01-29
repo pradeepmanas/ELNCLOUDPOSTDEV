@@ -1146,6 +1146,15 @@ public class UserService {
 		return lstusergroup;
 	}
 
+	public List<LSusersteam> GetLoggedUsersTeamSitewise(LSSiteMaster site , LSuserMaster userobj) {
+
+		List<LSuserteammapping> lstteammap = lsuserteammappingRepository.findBylsuserMaster(userobj);
+		List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(lstteammap,
+				site);
+		
+		return lstteam;
+	}
+	
 	public List<LSusergroup> GetUserGroupSiteWise(LSSiteMaster Objclass) {
 
 		if (Objclass.getObjsilentaudit() != null) {

@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.Set;
@@ -104,6 +105,7 @@ import com.agaram.eln.primary.model.general.SearchCriteria;
 import com.agaram.eln.primary.model.general.SheetCreation;
 import com.agaram.eln.primary.model.instrumentDetails.LSOrderElnMethod;
 import com.agaram.eln.primary.model.instrumentDetails.LSOrdernotification;
+import com.agaram.eln.primary.model.instrumentDetails.LSSelectedTeam;
 import com.agaram.eln.primary.model.instrumentDetails.LSSheetOrderStructure;
 import com.agaram.eln.primary.model.instrumentDetails.LSfields;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorder;
@@ -188,6 +190,7 @@ import com.agaram.eln.primary.repository.fileManipulation.FileimagesRepository;
 import com.agaram.eln.primary.repository.fileManipulation.FileimagestempRepository;
 import com.agaram.eln.primary.repository.fileManipulation.LSfileimagesRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSOrderElnMethodRepository;
+import com.agaram.eln.primary.repository.instrumentDetails.LSSelectedTeamRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSSheetOrderStructureRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSfieldsRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSlogilablimsorderRepository;
@@ -323,6 +326,9 @@ public class InstrumentService {
 	private LSfileparameterRepository lsFileparameterRepository;
 	@Autowired
 	private LSlogilablimsorderdetailRepository lslogilablimsorderdetailRepository;
+	
+	@Autowired
+	private LogilablimsorderdetailsRepository LogilablimsorderdetailsRepository;
 //	@Autowired
 //	private LsresulttagsRepository lsresulttagsRepository;
 	@Autowired
@@ -346,6 +352,9 @@ public class InstrumentService {
 	@Autowired
 	private LSsampleresultRepository lssampleresultRepository;
 
+	@Autowired
+	private LSSelectedTeamRepository LSSelectedTeamRepository;
+	
 	@Autowired
 	private LSparsedparametersRespository lsparsedparametersRespository;
 
@@ -1646,6 +1655,24 @@ public class InstrumentService {
 			e.printStackTrace();
 		}
 		GetSequences(objorder, seqorder, objprojectseq, objtaskseq);
+		
+		if(!objorder.getLsselectedTeam().isEmpty()) {
+			objorder.getLsselectedTeam().forEach(item -> {
+			    item.setDirectorycode(objorder.getDirectorycode());
+			    try {
+					item.setCreatedtimestamp(commonfunction.getCurrentUtcTime());
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			});
+				if(objorder.getElnmaterial() != null) {
+					objorder.getLsselectedTeam().forEach(item -> item.setElnmaterial(objorder.getElnmaterial()));
+				}
+			
+			LSSelectedTeamRepository.save(objorder.getLsselectedTeam());
+		}
+		
 		lslogilablimsorderdetailRepository.save(objorder);
 		updatesequence(1,objorder);
 		long milliseconds = 0;
@@ -5065,6 +5092,10 @@ public class InstrumentService {
 		lsorderworkflowhistoryRepositroy.save(objLstLsorderworkflowhistories);
 
 		objorder.setLsorderworkflowhistory(objLstLsorderworkflowhistories);
+		
+		List<LSSelectedTeam> teamobj = LSSelectedTeamRepository.findByBatchcode(objorder.getBatchcode());
+		objorder.setLsselectedTeam(teamobj);
+		
 		lslogilablimsorderdetailRepository.save(objorder);
 
 //		if (objorder.getLssamplefile() != null) {
@@ -7836,6 +7867,7 @@ public class InstrumentService {
 
 	public List<Logilaborders> Getordersondirectory(LSSheetOrderStructure objdir) {
 		List<Logilaborders> lstorder = new ArrayList<Logilaborders>();
+		List<Logilaborders> unfilteredlstorder = new ArrayList<Logilaborders>();
 
 //		LSSheetOrderStructure lstorderstr = new LSSheetOrderStructure();
 		List<Logilaborders> lstorderstrcarray = new ArrayList<Logilaborders>();
@@ -7844,11 +7876,20 @@ public class InstrumentService {
 		Date todate = objdir.getObjuser().getTodate();
 		Integer filetype = objdir.getFiletype();
 
+		List<LSusersteam> userteams = objdir.getLsusersteam();
+		List<LSSelectedTeam> selectedteamorders  = LSSelectedTeamRepository.findByUserteamIn(userteams);
+	
+		List<Long> selectedteambatchCodeList = selectedteamorders.stream()
+			    .map(LSSelectedTeam::getBatchcode)
+			    .filter(Objects::nonNull) // Omit null batch codes
+			    .distinct()
+			    .collect(Collectors.toList());
+		
 		if (filetype != null && filetype == -1) {
 			if (objdir.getLstuserMaster() == null) {
 
 				if (objdir.getDirectorycode() == -3L || objdir.getDirectorycode() == -22L) {
-//					
+					
 					lstorder = lslogilablimsorderdetailRepository
 							.findByDirectorycodeAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterOrderByBatchcodeDesc(
 									objdir.getDirectorycode(), 1, fromdate, todate, objdir.getCreatedby());
@@ -7874,11 +7915,17 @@ public class InstrumentService {
 									objdir.getDirectorycode(), 1, fromdate, todate);
 
 				}
-				lstorder.addAll(lslogilablimsorderdetailRepository
-						.findByDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterInOrderByBatchcodeDesc(
-								objdir.getDirectorycode(), 2, objdir.getCreatedby(), fromdate, todate,
-								objdir.getDirectorycode(), 3, fromdate, todate, objdir.getLstuserMaster()));
+				/** existing **/
+//				lstorder.addAll(lslogilablimsorderdetailRepository
+//						.findByDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterInOrderByBatchcodeDesc(
+//								objdir.getDirectorycode(), 2, objdir.getCreatedby(), fromdate, todate,
+//								objdir.getDirectorycode(), 3, fromdate, todate, objdir.getLstuserMaster()));
 
+				/**Changed for selection of needed project team feature**/
+				lstorder.addAll(logilablimsorderdetailsRepository.findByDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterInAndLsselectedTeamIsNullOrDirectorycodeAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterInAndLsselectedTeamIsNotNullAndBatchcodeInOrderByBatchcodeDesc(
+					    objdir.getDirectorycode(), 2, objdir.getCreatedby(), fromdate, todate,
+					    objdir.getDirectorycode(), 3, fromdate, todate, objdir.getLstuserMaster(),
+					    objdir.getDirectorycode(), 3, fromdate, todate, objdir.getLstuserMaster(), selectedteambatchCodeList));
 			}
 		} else {
 			if (objdir.getLstuserMaster() == null) {
@@ -7891,10 +7938,18 @@ public class InstrumentService {
 							.findByDirectorycodeAndViewoptionAndFiletypeAndCreatedtimestampBetweenOrderByBatchcodeDesc(
 									objdir.getDirectorycode(), 1, filetype, fromdate, todate);
 				}
-				lstorder.addAll(lslogilablimsorderdetailRepository
-						.findByDirectorycodeAndViewoptionAndLsuserMasterAndFiletypeAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndLsuserMasterAndFiletypeAndCreatedtimestampBetweenOrderByBatchcodeDesc(
-								objdir.getDirectorycode(), 2, objdir.getCreatedby(), filetype, fromdate, todate,
-								objdir.getDirectorycode(), 3, objdir.getCreatedby(), filetype, fromdate, todate));
+				/**existing **/
+//				lstorder.addAll(lslogilablimsorderdetailRepository
+//						.findByDirectorycodeAndViewoptionAndLsuserMasterAndFiletypeAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndLsuserMasterAndFiletypeAndCreatedtimestampBetweenOrderByBatchcodeDesc(
+//								objdir.getDirectorycode(), 2, objdir.getCreatedby(), filetype, fromdate, todate,
+//								objdir.getDirectorycode(), 3, objdir.getCreatedby(), filetype, fromdate, todate));
+				
+				/**Changed for selection of needed project team feature**/
+				lstorder.addAll(logilablimsorderdetailsRepository
+				.findByDirectorycodeAndViewoptionAndLsuserMasterAndFiletypeAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndLsuserMasterAndFiletypeAndCreatedtimestampBetweenAndLsselectedTeamIsNullOrDirectorycodeAndViewoptionAndLsuserMasterAndFiletypeAndCreatedtimestampBetweenAndLsselectedTeamIsNotNullAndBatchcodeInOrderByBatchcodeDesc(
+						objdir.getDirectorycode(), 2, objdir.getCreatedby(), filetype, fromdate, todate,
+						objdir.getDirectorycode(), 3, objdir.getCreatedby(), filetype, fromdate, todate,
+						objdir.getDirectorycode(), 3, objdir.getCreatedby(), filetype, fromdate, todate,selectedteambatchCodeList));
 
 			} else {
 				if (objdir.getDirectorycode() == -3L || objdir.getDirectorycode() == -22L) {
@@ -7906,10 +7961,18 @@ public class InstrumentService {
 							.findByDirectorycodeAndViewoptionAndFiletypeAndCreatedtimestampBetweenOrderByBatchcodeDesc(
 									objdir.getDirectorycode(), 1, filetype, fromdate, todate);
 				}
-				lstorder.addAll(lslogilablimsorderdetailRepository
-						.findByDirectorycodeAndViewoptionAndLsuserMasterAndFiletypeAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndFiletypeAndCreatedtimestampBetweenAndLsuserMasterInOrderByBatchcodeDesc(
+				/** existing **/
+//				lstorder.addAll(lslogilablimsorderdetailRepository
+//						.findByDirectorycodeAndViewoptionAndLsuserMasterAndFiletypeAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndFiletypeAndCreatedtimestampBetweenAndLsuserMasterInOrderByBatchcodeDesc(
+//								objdir.getDirectorycode(), 2, objdir.getCreatedby(), filetype, fromdate, todate,
+//								objdir.getDirectorycode(), 3, filetype, fromdate, todate, objdir.getLstuserMaster()));
+				
+				/** Changed for selection of needed project team feature**/
+				lstorder.addAll(logilablimsorderdetailsRepository
+						.findByDirectorycodeAndViewoptionAndLsuserMasterAndFiletypeAndCreatedtimestampBetweenOrDirectorycodeAndViewoptionAndFiletypeAndCreatedtimestampBetweenAndLsuserMasterInAndLsselectedTeamIsNullOrDirectorycodeAndViewoptionAndFiletypeAndCreatedtimestampBetweenAndLsuserMasterInAndLsselectedTeamIsNotNullAndBatchcodeInOrderByBatchcodeDesc(
 								objdir.getDirectorycode(), 2, objdir.getCreatedby(), filetype, fromdate, todate,
-								objdir.getDirectorycode(), 3, filetype, fromdate, todate, objdir.getLstuserMaster()));
+								objdir.getDirectorycode(), 3, filetype, fromdate, todate, objdir.getLstuserMaster(),
+								objdir.getDirectorycode(), 3, filetype, fromdate, todate, objdir.getLstuserMaster(),selectedteambatchCodeList));
 
 			}
 		}
@@ -8734,11 +8797,13 @@ public class InstrumentService {
 	}
 
 	public Map<String, Object> Getorderbyflaganduser(LSlogilablimsorderdetail objorder) {
+		
 		Map<String, Object> rtn_object = new HashMap<>();
 		List<LSuserteammapping> lstteammap = lsuserteammappingRepository.findBylsuserMaster(objorder.getLsuserMaster());
 		List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(lstteammap,
 				objorder.getLsuserMaster().getLssitemaster());
 		List<LSprojectmaster> lstproject = lsprojectmasterRepository.findByLsusersteamIn(lstteam);
+		
 		List<Elnmaterial> nmaterialcode = elnmaterialRepository
 				.findByNsitecode(objorder.getLsuserMaster().getLssitemaster().getSitecode());
 		List<Logilaborderssh> lstorder = new ArrayList<Logilaborderssh>();
@@ -8746,24 +8811,17 @@ public class InstrumentService {
 		Date todate = objorder.getTodate();
 		Integer testcode = objorder.getTestcode();
 		Integer filetype = objorder.getFiletype();
-//		Notification notobj = new Notification();
-//		List<LSSheetOrderStructure> lstdir;
-//		long Directorycode_Not = -3L;
-//		if (objorder.getLstuserMaster() == null) {
-//			lstdir = lsSheetOrderStructureRepository
-//					.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrCreatedbyAndViewoptionAndDirectorycodeNotOrderByDirectorycode(
-//							objorder.getLsuserMaster().getLssitemaster(), 1, objorder.getLsuserMaster(), 2,
-//							objorder.getLsuserMaster(), 3, Directorycode_Not);
-//		} else {
-//			lstdir = lsSheetOrderStructureRepository
-//					.findBySitemasterAndViewoptionOrCreatedbyAndViewoptionOrSitemasterAndViewoptionAndCreatedbyInAndDirectorycodeNotOrderByDirectorycode(
-//							objorder.getLsuserMaster().getLssitemaster(), 1, objorder.getLsuserMaster(), 2,
-//							objorder.getLsuserMaster().getLssitemaster(), 3, objorder.getLstuserMaster(),
-//							Directorycode_Not);
-//		}
 
-//		List<Long> Directory_Code = lstdir.stream().map(LSSheetOrderStructure::getDirectorycode)
-//				.filter(code -> code > 0).collect(Collectors.toList());
+		List<LSSelectedTeam> selectedteamorders = LSSelectedTeamRepository.findByUserteamInAndCreatedtimestampBetween(lstteam,fromdate,todate);
+
+		List<Long> selectedteambatchCodeList = (selectedteamorders != null && !selectedteamorders.isEmpty())
+			    ? selectedteamorders.stream()
+			        .map(LSSelectedTeam::getBatchcode)
+			        .filter(Objects::nonNull)
+			        .distinct()
+			        .collect(Collectors.toList())
+			    : Collections.singletonList(-1L);
+
 
 		List<Long> Directory_Code = objorder.getLstdirectorycode() != null ? objorder.getLstdirectorycode()
 				: new ArrayList<Long>();
@@ -8816,19 +8874,36 @@ public class InstrumentService {
 			lstorder.addAll(lstorderobj);
 
 			if (objorder.getLstuserMaster() != null) {
-				lstorder.addAll(lslogilablimsorderdetailRepository
-						.findByDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndOrdercancellIsNullOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndOrdercancellIsNullOrDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterInAndLsprojectmasterIsNullAndOrderflagAndOrdercancellIsNullOrderByBatchcodeDesc(
-								Directory_Code, 1, fromdate, todate, objorder.getOrderflag(), Directory_Code, 2,
-								objorder.getLsuserMaster(), fromdate, todate, objorder.getOrderflag(), Directory_Code,
-								3, fromdate, todate, objorder.getLstuserMaster(), objorder.getOrderflag()));
+				/** existing **/
+//				lstorder.addAll(lslogilablimsorderdetailRepository
+//						.findByDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndOrdercancellIsNullOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndOrdercancellIsNullOrDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterInAndLsprojectmasterIsNullAndOrderflagAndOrdercancellIsNullOrderByBatchcodeDesc(
+//								Directory_Code, 1, fromdate, todate, objorder.getOrderflag(), Directory_Code, 2,
+//								objorder.getLsuserMaster(), fromdate, todate, objorder.getOrderflag(), Directory_Code,
+//								3, fromdate, todate, objorder.getLstuserMaster(), objorder.getOrderflag()));
+				
+				/** changed for project team selection **/
+				lstorder.addAll(logilablimsorderdetailsRepository
+						.findByDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndOrdercancellIsNullOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndOrdercancellIsNullOrDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterInAndLsprojectmasterIsNullAndOrderflagAndOrdercancellIsNullAndTeamselectedOrTeamselectedAndBatchcodeInAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterInAndLsprojectmasterIsNullAndOrderflagAndOrdercancellIsNullOrderByBatchcodeDesc(
+								Directory_Code, 1, fromdate, todate, objorder.getOrderflag(), 
+								Directory_Code, 2,objorder.getLsuserMaster(), fromdate, todate, objorder.getOrderflag(),
+								Directory_Code, 3, fromdate, todate, objorder.getLstuserMaster(), objorder.getOrderflag(),false,
+								true , selectedteambatchCodeList , Directory_Code, 3, fromdate, todate, objorder.getLstuserMaster(), objorder.getOrderflag()));
 
 			} else {
-
-				lstorder.addAll(lslogilablimsorderdetailRepository
-						.findByDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndOrdercancellIsNullOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndOrdercancellIsNullOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndOrdercancellIsNullOrderByBatchcodeDesc(
-								Directory_Code, 1, fromdate, todate, objorder.getOrderflag(), Directory_Code, 2,
-								objorder.getLsuserMaster(), fromdate, todate, objorder.getOrderflag(), Directory_Code,
-								3, objorder.getLsuserMaster(), fromdate, todate, objorder.getOrderflag()));
+				/** existing **/
+//				lstorder.addAll(lslogilablimsorderdetailRepository
+//						.findByDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndOrdercancellIsNullOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndOrdercancellIsNullOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndOrdercancellIsNullOrderByBatchcodeDesc(
+//								Directory_Code, 1, fromdate, todate, objorder.getOrderflag(), Directory_Code, 2,
+//								objorder.getLsuserMaster(), fromdate, todate, objorder.getOrderflag(), Directory_Code,
+//								3, objorder.getLsuserMaster(), fromdate, todate, objorder.getOrderflag()));
+				
+				/** changed for project team selection **/
+				lstorder.addAll(logilablimsorderdetailsRepository
+						.findByDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndOrdercancellIsNullOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndOrdercancellIsNullOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndOrdercancellIsNullAndTeamselectedOrTeamselectedAndBatchcodeInAndDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndOrdercancellIsNullOrderByBatchcodeDesc(
+								Directory_Code, 1, fromdate, todate, objorder.getOrderflag(), 
+								Directory_Code, 2,objorder.getLsuserMaster(), fromdate, todate, objorder.getOrderflag(),
+								Directory_Code,3, objorder.getLsuserMaster(), fromdate, todate, objorder.getOrderflag(),false,
+								true,selectedteambatchCodeList,Directory_Code,3, objorder.getLsuserMaster(), fromdate, todate, objorder.getOrderflag()));
 
 			}
 		} else if (objorder.getOrderflag() != null && objorder.getApprovelstatus() != null
@@ -8859,23 +8934,31 @@ public class InstrumentService {
 					}).flatMap(List::stream).collect(Collectors.toList()); // kumu
 			lstorder.addAll(lstorderobj);
 			if (objorder.getLstuserMaster() != null) {
-				lstorder.addAll(lslogilablimsorderdetailRepository
-						.findByDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndApprovelstatusAndOrdercancellIsNullOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndApprovelstatusAndOrdercancellIsNullOrDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterInAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndApprovelstatusAndOrdercancellIsNullOrderByBatchcodeDesc(
-								Directory_Code, 1, fromdate, todate, objorder.getOrderflag(), filetype,
-								objorder.getApprovelstatus(), Directory_Code, 2, objorder.getLsuserMaster(), fromdate,
-								todate, objorder.getOrderflag(), filetype, objorder.getApprovelstatus(), Directory_Code,
-								3, fromdate, todate, objorder.getLstuserMaster(), objorder.getOrderflag(), filetype,
-								objorder.getApprovelstatus()));
-
+				/** existing **/
+//				lstorder.addAll(lslogilablimsorderdetailRepository
+//						.findByDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndApprovelstatusAndOrdercancellIsNullOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndApprovelstatusAndOrdercancellIsNullOrDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterInAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndApprovelstatusAndOrdercancellIsNullOrderByBatchcodeDesc(
+//								Directory_Code, 1, fromdate, todate, objorder.getOrderflag(), filetype,
+//								objorder.getApprovelstatus(), Directory_Code, 2, objorder.getLsuserMaster(), fromdate,
+//								todate, objorder.getOrderflag(), filetype, objorder.getApprovelstatus(), Directory_Code,
+//								3, fromdate, todate, objorder.getLstuserMaster(), objorder.getOrderflag(), filetype,
+//								objorder.getApprovelstatus()));
+				
+				/** changed for project team selection **/
+				lstorder.addAll(logilablimsorderdetailsRepository
+						.findByDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndApprovelstatusAndOrdercancellIsNullOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndApprovelstatusAndOrdercancellIsNullOrDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterInAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndApprovelstatusAndOrdercancellIsNullAndTeamselectedOrTeamselectedAndBatchcodeInAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterInAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndApprovelstatusAndOrdercancellIsNullOrderByBatchcodeDesc(
+								Directory_Code, 1, fromdate, todate, objorder.getOrderflag(), filetype,objorder.getApprovelstatus(), 
+								Directory_Code, 2, objorder.getLsuserMaster(), fromdate,todate, objorder.getOrderflag(), filetype, objorder.getApprovelstatus(),
+								Directory_Code,3, fromdate, todate, objorder.getLstuserMaster(), objorder.getOrderflag(), filetype,objorder.getApprovelstatus(),false,
+								true,selectedteambatchCodeList,Directory_Code,3, fromdate, todate, objorder.getLstuserMaster(), objorder.getOrderflag(), filetype,objorder.getApprovelstatus()));
+								
 			} else {
 
-				lstorder.addAll(lslogilablimsorderdetailRepository
-						.findByDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndApprovelstatusAndOrdercancellIsNullOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndApprovelstatusAndOrdercancellIsNullOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndApprovelstatusAndOrdercancellIsNullOrderByBatchcodeDesc(
-								Directory_Code, 1, fromdate, todate, objorder.getOrderflag(), filetype,
-								objorder.getApprovelstatus(), Directory_Code, 2, objorder.getLsuserMaster(), fromdate,
-								todate, objorder.getOrderflag(), filetype, objorder.getApprovelstatus(), Directory_Code,
-								3, objorder.getLsuserMaster(), fromdate, todate, objorder.getOrderflag(), filetype,
-								objorder.getApprovelstatus()));
+				lstorder.addAll(logilablimsorderdetailsRepository
+						.findByDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndApprovelstatusAndOrdercancellIsNullOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndApprovelstatusAndOrdercancellIsNullOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndApprovelstatusAndOrdercancellIsNullAndTeamselectedOrTeamselectedAndBatchcodeInAndDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndApprovelstatusAndOrdercancellIsNullOrderByBatchcodeDesc(
+								Directory_Code, 1, fromdate, todate, objorder.getOrderflag(), filetype,objorder.getApprovelstatus(),
+								Directory_Code, 2, objorder.getLsuserMaster(), fromdate,todate, objorder.getOrderflag(), filetype, objorder.getApprovelstatus(),
+								Directory_Code,3, objorder.getLsuserMaster(), fromdate, todate, objorder.getOrderflag(), filetype,objorder.getApprovelstatus(),false,
+								true,selectedteambatchCodeList,Directory_Code,3, objorder.getLsuserMaster(), fromdate, todate, objorder.getOrderflag(), filetype,objorder.getApprovelstatus()));
 
 			}
 
@@ -8908,23 +8991,39 @@ public class InstrumentService {
 			lstorder.addAll(lstorderobj);
 
 			if (objorder.getLstuserMaster() != null) {
-				lstorder.addAll(lslogilablimsorderdetailRepository
-						.findByDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndApprovelstatusAndOrdercancellIsNullOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndApprovelstatusAndOrdercancellIsNullOrDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterInAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndApprovelstatusAndOrdercancellIsNullOrderByBatchcodeDesc(
-								Directory_Code, 1, fromdate, todate, objorder.getOrderflag(), filetype,
-								objorder.getApprovelstatus(), Directory_Code, 2, objorder.getLsuserMaster(), fromdate,
-								todate, objorder.getOrderflag(), filetype, objorder.getApprovelstatus(), Directory_Code,
-								3, fromdate, todate, objorder.getLstuserMaster(), objorder.getOrderflag(), filetype,
-								objorder.getApprovelstatus()));
+				/** existing **/
+//				lstorder.addAll(lslogilablimsorderdetailRepository
+//						.findByDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndApprovelstatusAndOrdercancellIsNullOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndApprovelstatusAndOrdercancellIsNullOrDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterInAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndApprovelstatusAndOrdercancellIsNullOrderByBatchcodeDesc(
+//								Directory_Code, 1, fromdate, todate, objorder.getOrderflag(), filetype,
+//								objorder.getApprovelstatus(), Directory_Code, 2, objorder.getLsuserMaster(), fromdate,
+//								todate, objorder.getOrderflag(), filetype, objorder.getApprovelstatus(), Directory_Code,
+//								3, fromdate, todate, objorder.getLstuserMaster(), objorder.getOrderflag(), filetype,
+//								objorder.getApprovelstatus()));
+				/** changed for p.team selection **/
+				lstorder.addAll(logilablimsorderdetailsRepository
+				.findByDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndApprovelstatusAndOrdercancellIsNullOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndApprovelstatusAndOrdercancellIsNullOrDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterInAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndApprovelstatusAndOrdercancellIsNullAndTeamselectedOrTeamselectedAndBatchcodeInAndDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndApprovelstatusAndOrdercancellIsNullOrderByBatchcodeDesc(
+						Directory_Code, 1, fromdate, todate, objorder.getOrderflag(), filetype,objorder.getApprovelstatus(),
+						Directory_Code, 2, objorder.getLsuserMaster(), fromdate,todate, objorder.getOrderflag(), filetype, objorder.getApprovelstatus(),
+						Directory_Code,3, fromdate, todate, objorder.getLstuserMaster(), objorder.getOrderflag(), filetype,objorder.getApprovelstatus(),false,
+						true,selectedteambatchCodeList,Directory_Code,3, fromdate, todate, objorder.getLstuserMaster(), objorder.getOrderflag(), filetype,objorder.getApprovelstatus()));
 
 			} else {
-
-				lstorder.addAll(lslogilablimsorderdetailRepository
-						.findByDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndApprovelstatusAndOrdercancellIsNullOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndApprovelstatusAndOrdercancellIsNullOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndApprovelstatusAndOrdercancellIsNullOrderByBatchcodeDesc(
-								Directory_Code, 1, fromdate, todate, objorder.getOrderflag(), filetype,
-								objorder.getApprovelstatus(), Directory_Code, 2, objorder.getLsuserMaster(), fromdate,
-								todate, objorder.getOrderflag(), filetype, objorder.getApprovelstatus(), Directory_Code,
-								3, objorder.getLsuserMaster(), fromdate, todate, objorder.getOrderflag(), filetype,
-								objorder.getApprovelstatus()));
+				/** existing **/
+//				lstorder.addAll(lslogilablimsorderdetailRepository
+//						.findByDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndApprovelstatusAndOrdercancellIsNullOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndApprovelstatusAndOrdercancellIsNullOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndApprovelstatusAndOrdercancellIsNullOrderByBatchcodeDesc(
+//								Directory_Code, 1, fromdate, todate, objorder.getOrderflag(), filetype,
+//								objorder.getApprovelstatus(), Directory_Code, 2, objorder.getLsuserMaster(), fromdate,
+//								todate, objorder.getOrderflag(), filetype, objorder.getApprovelstatus(), Directory_Code,
+//								3, objorder.getLsuserMaster(), fromdate, todate, objorder.getOrderflag(), filetype,
+//								objorder.getApprovelstatus()));
+				
+				/** changed for p.team selection **/
+				lstorder.addAll(logilablimsorderdetailsRepository
+				.findByDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndApprovelstatusAndOrdercancellIsNullOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndApprovelstatusAndOrdercancellIsNullOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndApprovelstatusAndOrdercancellIsNullAndTeamselectedOrTeamselectedAndBatchcodeInAndDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndApprovelstatusAndOrdercancellIsNullOrderByBatchcodeDesc(
+						Directory_Code, 1, fromdate, todate, objorder.getOrderflag(), filetype,objorder.getApprovelstatus(), 
+						Directory_Code, 2, objorder.getLsuserMaster(), fromdate,todate, objorder.getOrderflag(), filetype, objorder.getApprovelstatus(), 
+						Directory_Code,3, objorder.getLsuserMaster(), fromdate, todate, objorder.getOrderflag(), filetype,objorder.getApprovelstatus(),true,
+						true,selectedteambatchCodeList,Directory_Code,3, objorder.getLsuserMaster(), fromdate, todate, objorder.getOrderflag(), filetype,objorder.getApprovelstatus()));
 
 			}
 
@@ -8954,23 +9053,41 @@ public class InstrumentService {
 			lstorder.addAll(lstorderobj);
 
 			if (objorder.getLstuserMaster() != null) {
-				lstorder.addAll(lslogilablimsorderdetailRepository
-						.findByDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndTestcodeOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndTestcodeOrDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterInAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndTestcodeOrderByBatchcodeDesc(
-								Directory_Code, 1, fromdate, todate, objorder.getOrderflag(), filetype, testcode,
-								Directory_Code, 2, objorder.getLsuserMaster(), fromdate, todate,
-								objorder.getOrderflag(), filetype, testcode, Directory_Code, 3, fromdate, todate,
-								objorder.getLstuserMaster(), objorder.getOrderflag(), filetype, testcode));
+//				lstorder.addAll(lslogilablimsorderdetailRepository
+//						.findByDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndTestcodeOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndTestcodeOrDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterInAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndTestcodeOrderByBatchcodeDesc(
+//								Directory_Code, 1, fromdate, todate, objorder.getOrderflag(), filetype, testcode,
+//								Directory_Code, 2, objorder.getLsuserMaster(), fromdate, todate,
+//								objorder.getOrderflag(), filetype, testcode, Directory_Code, 3, fromdate, todate,
+//								objorder.getLstuserMaster(), objorder.getOrderflag(), filetype, testcode));
+
+				/**changed for p.team selection **/
+				lstorder.addAll(logilablimsorderdetailsRepository
+				.findByDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndTestcodeOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndTestcodeOrDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterInAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndTestcodeAndTeamselectedOrTeamselectedAndBatchcodeInAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterInAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndTestcodeOrderByBatchcodeDesc(
+						Directory_Code, 1, fromdate, todate, objorder.getOrderflag(), filetype, testcode,
+						Directory_Code, 2, objorder.getLsuserMaster(), fromdate, todate,objorder.getOrderflag(), filetype, testcode,
+						Directory_Code, 3, fromdate, todate,objorder.getLstuserMaster(), objorder.getOrderflag(), filetype, testcode,false,
+						true,selectedteambatchCodeList,Directory_Code, 3, fromdate, todate,objorder.getLstuserMaster(), objorder.getOrderflag(), filetype, testcode));
 
 			} else {
 
-				lstorder.addAll(lslogilablimsorderdetailRepository
-						.findByDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndTestcodeOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndTestcodeOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndTestcodeOrderByBatchcodeDesc(
-								Directory_Code, 1, fromdate, todate, objorder.getOrderflag(), filetype, testcode,
-								Directory_Code, 2, objorder.getLsuserMaster(), fromdate, todate,
-								objorder.getOrderflag(), filetype, testcode, Directory_Code, 3,
-								objorder.getLsuserMaster(), fromdate, todate, objorder.getOrderflag(), filetype,
-								testcode));
+//				lstorder.addAll(lslogilablimsorderdetailRepository
+//						.findByDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndTestcodeOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndTestcodeOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndTestcodeOrderByBatchcodeDesc(
+//								Directory_Code, 1, fromdate, todate, objorder.getOrderflag(), filetype, testcode,
+//								Directory_Code, 2, objorder.getLsuserMaster(), fromdate, todate,
+//								objorder.getOrderflag(), filetype, testcode, Directory_Code, 3,
+//								objorder.getLsuserMaster(), fromdate, todate, objorder.getOrderflag(), filetype,
+//								testcode));
+				
+				
+				/**change for p.team selection **/
 
+				lstorder.addAll(logilablimsorderdetailsRepository
+				.findByDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndTestcodeOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndTestcodeOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndTestcodeAndTeamselectedOrTeamselectedAndBatchcodeInAndDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndTestcodeOrderByBatchcodeDesc(
+						Directory_Code, 1, fromdate, todate, objorder.getOrderflag(), filetype, testcode,
+						Directory_Code, 2, objorder.getLsuserMaster(), fromdate, todate,objorder.getOrderflag(), filetype, testcode,
+						Directory_Code, 3,objorder.getLsuserMaster(), fromdate, todate, objorder.getOrderflag(), filetype,testcode,false,
+						true,selectedteambatchCodeList,Directory_Code, 3,objorder.getLsuserMaster(), fromdate, todate, objorder.getOrderflag(), filetype,testcode));
+					
 			}
 
 		} else if (objorder.getLsprojectmaster() != null && objorder.getLsprojectmaster().getProjectcode() != -1
@@ -9003,7 +9120,7 @@ public class InstrumentService {
 			lstorder.addAll(lstorderobj);
 
 		} else if (objorder.getLsprojectmaster() != null && objorder.getLsprojectmaster().getProjectcode() != -1) {
-			lstorder = lslogilablimsorderdetailRepository
+			lstorder = LogilablimsorderdetailsRepository
 					.findByOrderflagAndFiletypeAndLsprojectmasterAndCreatedtimestampBetweenAndAssignedtoIsNull(
 							objorder.getOrderflag(), filetype, objorder.getLsprojectmaster(), fromdate, todate);
 		} else if (filetype == 0 && objorder.getOrderflag() != null) {
@@ -9017,10 +9134,6 @@ public class InstrumentService {
 				lstorder = lslogilablimsorderdetailRepository
 						.findByOrderflagAndLsprojectmasterInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndOrdercancellIsNullOrderByBatchcodeDesc(
 								objorder.getOrderflag(), lstproject, filetype, fromdate, todate);
-
-//				lstorder = lslogilablimsorderdetailRepository
-//						.findByOrderflagAndLsprojectmasterInAndFiletypeAndCreatedtimestampBetweenOrderByBatchcodeDesc(
-//								objorder.getOrderflag(), lstproject, filetype, fromdate, todate);
 
 				int chunkSize = Integer.parseInt(env.getProperty("lssamplecount"));
 				int totalSamples = nmaterialcode.size();
@@ -9042,27 +9155,56 @@ public class InstrumentService {
 									.findByOrderflagAndLsprojectmasterIsNullAndDirectorycodeIsNullAndElnmaterialInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndOrdercancellIsNull(
 											objorder.getOrderflag(), currentChunk, filetype, fromdate, todate, 1));
 
-							orderChunk.addAll(lslogilablimsorderdetailRepository
-									.findByOrderflagAndLsprojectmasterIsNullAndDirectorycodeIsNullAndElnmaterialInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullOrderByBatchcodeDesc(
-											objorder.getOrderflag(), currentChunk, filetype, fromdate, todate, 3,
-											objorder.getLsuserMaster()));
+							/**existing**/
+//							orderChunk.addAll(lslogilablimsorderdetailRepository
+//									.findByOrderflagAndLsprojectmasterIsNullAndDirectorycodeIsNullAndElnmaterialInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullOrderByBatchcodeDesc(
+//											objorder.getOrderflag(), currentChunk, filetype, fromdate, todate, 3,
+//											objorder.getLsuserMaster()));
+							
+							/**change for p.team selection**/
+							orderChunk.addAll(logilablimsorderdetailsRepository
+									.findByOrderflagAndLsprojectmasterIsNullAndDirectorycodeIsNullAndElnmaterialInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterInAndOrdercancellIsNullAndTeamselectedOrTeamselectedAndBatchcodeInAndOrderflagAndLsprojectmasterIsNullAndDirectorycodeIsNullAndElnmaterialInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterInAndOrdercancellIsNullOrderByBatchcodeDesc(
+											objorder.getOrderflag(), currentChunk, filetype, fromdate, todate, 3,objorder.getLstuserMaster(),false,
+											true , selectedteambatchCodeList,objorder.getOrderflag(), currentChunk, filetype, fromdate, todate, 3,objorder.getLstuserMaster() ));
 
 							return orderChunk;
 						}).flatMap(List::stream).collect(Collectors.toList());
 
 				lstorder.addAll(lstorderobj);
 
-				if (Directory_Code != null) {
-					lstorder.addAll(lslogilablimsorderdetailRepository
-							.findByDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndAssignedtoIsNullAndOrdercancellIsNullOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndAssignedtoIsNullAndOrdercancellIsNullOrDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterInAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndAssignedtoIsNullAndOrdercancellIsNullOrderByBatchcodeDesc(
+				if (Directory_Code != null) { //change now
+					/** existing**/
+//					lstorder.addAll(lslogilablimsorderdetailRepository
+//							.findByDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndAssignedtoIsNullAndOrdercancellIsNullOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndAssignedtoIsNullAndOrdercancellIsNullOrDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterInAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndAssignedtoIsNullAndOrdercancellIsNullOrderByBatchcodeDesc(
+//									Directory_Code, 1, fromdate, todate, objorder.getOrderflag(), filetype,
+//									Directory_Code, 2, objorder.getLsuserMaster(), fromdate, todate,objorder.getOrderflag(), filetype,
+//									Directory_Code, 3, fromdate, todate,objorder.getLstuserMaster(), objorder.getOrderflag(), filetype));
+					/** Changed for p.team selection **/
+					
+					lstorder.addAll(logilablimsorderdetailsRepository
+							.findByDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndAssignedtoIsNullAndOrdercancellIsNullOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndAssignedtoIsNullAndOrdercancellIsNullOrDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterInAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndTeamselectedAndAssignedtoIsNullAndOrdercancellIsNullOrderByBatchcodeDesc(
 									Directory_Code, 1, fromdate, todate, objorder.getOrderflag(), filetype,
-									Directory_Code, 2, objorder.getLsuserMaster(), fromdate, todate,
-									objorder.getOrderflag(), filetype, Directory_Code, 3, fromdate, todate,
-									objorder.getLstuserMaster(), objorder.getOrderflag(), filetype));
-
+									Directory_Code, 2, objorder.getLsuserMaster(), fromdate, todate,objorder.getOrderflag(), filetype,
+								    Directory_Code, 3, fromdate, todate,objorder.getLstuserMaster(), objorder.getOrderflag(), filetype,false));
+									//true,selectedteambatchCodeList,Directory_Code, 3, fromdate, todate,objorder.getLstuserMaster(), objorder.getOrderflag(), filetype));
+				
+					lstorder.addAll(logilablimsorderdetailsRepository
+							.findByTeamselectedAndBatchcodeInAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterInAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndAssignedtoIsNullAndOrdercancellIsNullOrderByBatchcodeDesc(
+									true,selectedteambatchCodeList,Directory_Code, 3, fromdate, todate,objorder.getLstuserMaster(), objorder.getOrderflag(), filetype));
+				
+					
+//					lstorder.addAll(logilablimsorderdetailsRepository
+//							.findByDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndAssignedtoIsNullAndOrdercancellIsNullOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndAssignedtoIsNullAndOrdercancellIsNullOrDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterInAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndAssignedtoIsNullAndOrdercancellIsNullAndTeamselectedOrTeamselectedAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterInAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndAssignedtoIsNullAndOrdercancellIsNullOrderByBatchcodeDesc(
+//									Directory_Code, 1, fromdate, todate, objorder.getOrderflag(), filetype,
+//									Directory_Code, 2, objorder.getLsuserMaster(), fromdate, todate,objorder.getOrderflag(), filetype,
+//								    Directory_Code, 3, fromdate, todate,objorder.getLstuserMaster(), objorder.getOrderflag(), filetype,false,
+//									true,Directory_Code, 3, fromdate, todate,distinctLsuserMasters, objorder.getOrderflag(), filetype));
+					
 				}
 
 				lstorder.forEach(objorderDetail -> objorderDetail.setLw(objorder.getLstworkflow()));
+				
+				lstorder.stream().map(Logilaborderssh::getBc).collect(Collectors.toList());
 
 			} else {
 				lstorder = lslogilablimsorderdetailRepository
@@ -9078,18 +9220,34 @@ public class InstrumentService {
 						.findByOrderflagAndLsprojectmasterIsNullAndDirectorycodeIsNullAndElnmaterialInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndOrdercancellIsNull(
 								objorder.getOrderflag(), nmaterialcode, filetype, fromdate, todate, 1));
 
-				lstorder.addAll(lslogilablimsorderdetailRepository
-						.findByOrderflagAndLsprojectmasterIsNullAndDirectorycodeIsNullAndElnmaterialInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullOrderByBatchcodeDesc(
-								objorder.getOrderflag(), nmaterialcode, filetype, fromdate, todate, 3,
-								objorder.getLsuserMaster()));
+				/**existing **/
+//				lstorder.addAll(lslogilablimsorderdetailRepository
+//						.findByOrderflagAndLsprojectmasterIsNullAndDirectorycodeIsNullAndElnmaterialInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullOrderByBatchcodeDesc(
+//								objorder.getOrderflag(), nmaterialcode, filetype, fromdate, todate, 3,
+//								objorder.getLsuserMaster()));
 
+				/**changed for p.team selection **/
+				lstorder.addAll(logilablimsorderdetailsRepository
+						.findByOrderflagAndLsprojectmasterIsNullAndDirectorycodeIsNullAndElnmaterialInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterInAndOrdercancellIsNullAndTeamselectedOrTeamselectedAndBatchcodeInAndOrderflagAndLsprojectmasterIsNullAndDirectorycodeIsNullAndElnmaterialInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterInAndOrdercancellIsNullOrderByBatchcodeDesc(
+								objorder.getOrderflag(), nmaterialcode, filetype, fromdate, todate, 3,objorder.getLstuserMaster(),false,
+								true,selectedteambatchCodeList,objorder.getOrderflag(), nmaterialcode, filetype, fromdate, todate, 3,objorder.getLstuserMaster()));
+				
 				if (Directory_Code != null) {
-					lstorder.addAll(lslogilablimsorderdetailRepository
-							.findByDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndAssignedtoIsNullOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndAssignedtoIsNullOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndAssignedtoIsNullOrderByBatchcodeDesc(
+					/**existing**/
+//					lstorder.addAll(lslogilablimsorderdetailRepository
+//							.findByDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndAssignedtoIsNullOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndAssignedtoIsNullOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndAssignedtoIsNullOrderByBatchcodeDesc(
+//									Directory_Code, 1, fromdate, todate, objorder.getOrderflag(), filetype,
+//									Directory_Code, 2, objorder.getLsuserMaster(), fromdate, todate,
+//									objorder.getOrderflag(), filetype, Directory_Code, 3, objorder.getLsuserMaster(),
+//									fromdate, todate, objorder.getOrderflag(), filetype));
+					/**changed for p.team selection **/
+					lstorder.addAll(logilablimsorderdetailsRepository
+							.findByDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndAssignedtoIsNullOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndAssignedtoIsNullOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndAssignedtoIsNullAndTeamselectedOrTeamselectedAndBatchcodeInAndDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndAssignedtoIsNullOrderByBatchcodeDesc(
 									Directory_Code, 1, fromdate, todate, objorder.getOrderflag(), filetype,
-									Directory_Code, 2, objorder.getLsuserMaster(), fromdate, todate,
-									objorder.getOrderflag(), filetype, Directory_Code, 3, objorder.getLsuserMaster(),
-									fromdate, todate, objorder.getOrderflag(), filetype));
+									Directory_Code, 2, objorder.getLsuserMaster(), fromdate, todate,objorder.getOrderflag(), filetype,
+									Directory_Code, 3, objorder.getLsuserMaster(), fromdate, todate,objorder.getOrderflag(), filetype,false,
+									true ,selectedteambatchCodeList, Directory_Code, 3, objorder.getLsuserMaster(),fromdate, todate, objorder.getOrderflag(), filetype));
+
 				}
 
 			}
@@ -10895,6 +11053,95 @@ public class InstrumentService {
 		return retuobjts;
 	}
 
+//	public List<Logilaborderssh> Getcancelledordes(LSlogilablimsorderdetail objdir) {
+//		List<Logilaborderssh> lstorders = new ArrayList<Logilaborderssh>();
+////		List<Logilaborders> lstorderstrcarray = new ArrayList<Logilaborders>();
+//		Date fromdate = objdir.getFromdate();
+//		Date todate = objdir.getTodate();
+//		Integer filetype = objdir.getFiletype();
+//		String orderflag = objdir.getOrderflag();
+//		Integer rejected = objdir.getRejected();
+//		List<LSprojectmaster> lstproject = objdir.getLstproject();
+//
+//		if (filetype == -1 && orderflag == null && rejected == null) {
+//			lstorders = lslogilablimsorderdetailRepository
+//					.findByOrdercancellAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterIsNullAndAssignedtoIsNullOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndOrdercancellOrAssignedtoAndCreatedtimestampBetweenAndOrdercancell(
+//							1, lstproject, fromdate, todate, 1, objdir.getLsuserMaster(), fromdate, todate, 1, 2,
+//							objdir.getLsuserMaster(), fromdate, todate, 1, 3, objdir.getLsuserMaster(), fromdate,
+//							todate, 1, objdir.getLsuserMaster(), objdir.getLsuserMaster(), fromdate, todate, 1,
+//							objdir.getLsuserMaster(), fromdate, todate, 1);
+//
+//		} else if (filetype != -1 && orderflag == null && rejected == null) {
+//			lstorders = lslogilablimsorderdetailRepository
+//					.findByOrdercancellAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullAndFiletypeOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullAndFiletypeOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullAndFiletypeOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterIsNullAndAssignedtoIsNullAndFiletypeOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndOrdercancellAndFiletypeOrAssignedtoAndCreatedtimestampBetweenAndOrdercancellAndFiletype(
+//							1, lstproject, fromdate, todate, filetype, 1, objdir.getLsuserMaster(), fromdate, todate, 1,
+//							filetype, 2, objdir.getLsuserMaster(), fromdate, todate, 1, filetype, 3,
+//							objdir.getLsuserMaster(), fromdate, todate, 1, filetype, objdir.getLsuserMaster(),
+//							objdir.getLsuserMaster(), fromdate, todate, 1, filetype, objdir.getLsuserMaster(), fromdate,
+//							todate, 1, filetype);
+//		} else if (filetype != -1 && orderflag != null && rejected == null) {
+//			lstorders = lslogilablimsorderdetailRepository
+//					.findByOrdercancellAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullAndFiletypeAndOrderflagOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullAndFiletypeAndOrderflagOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullAndFiletypeAndOrderflagOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterIsNullAndAssignedtoIsNullAndFiletypeAndOrderflagOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndOrdercancellAndFiletypeAndOrderflagOrAssignedtoAndCreatedtimestampBetweenAndOrdercancellAndFiletypeAndOrderflag(
+//							1, lstproject, fromdate, todate, filetype, orderflag, 1, objdir.getLsuserMaster(), fromdate,
+//							todate, 1, filetype, orderflag, 2, objdir.getLsuserMaster(), fromdate, todate, 1, filetype,
+//							orderflag, 3, objdir.getLsuserMaster(), fromdate, todate, 1, filetype, orderflag,
+//							objdir.getLsuserMaster(), objdir.getLsuserMaster(), fromdate, todate, 1, filetype,
+//							orderflag, objdir.getLsuserMaster(), fromdate, todate, 1, filetype, orderflag);
+//		} else if (filetype != -1 && orderflag == null && rejected != null) {
+//			lstorders = lslogilablimsorderdetailRepository
+//					.findByOrdercancellAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullAndFiletypeAndApprovelstatusOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullAndFiletypeAndApprovelstatusOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullAndFiletypeAndApprovelstatusOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterIsNullAndAssignedtoIsNullAndFiletypeAndApprovelstatusOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndOrdercancellAndFiletypeAndApprovelstatusOrAssignedtoAndCreatedtimestampBetweenAndOrdercancellAndFiletypeAndApprovelstatus(
+//							1, lstproject, fromdate, todate, filetype, 3, 1, objdir.getLsuserMaster(), fromdate, todate,
+//							1, filetype, 3, 2, objdir.getLsuserMaster(), fromdate, todate, 1, filetype, 3, 3,
+//							objdir.getLsuserMaster(), fromdate, todate, 1, filetype, 3, objdir.getLsuserMaster(),
+//							objdir.getLsuserMaster(), fromdate, todate, 1, filetype, 3, objdir.getLsuserMaster(),
+//							fromdate, todate, 1, filetype, 3);
+//		} else if (filetype == -1 && orderflag != null && rejected == null) {
+//			lstorders = lslogilablimsorderdetailRepository
+//					.findByOrdercancellAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullAndOrderflagOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullAndOrderflagOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullAndOrderflagOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterIsNullAndAssignedtoIsNullAndOrderflagOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndOrdercancellAndOrderflagOrAssignedtoAndCreatedtimestampBetweenAndOrdercancellAndOrderflag(
+//							1, lstproject, fromdate, todate, orderflag, 1, objdir.getLsuserMaster(), fromdate, todate,
+//							1, orderflag, 2, objdir.getLsuserMaster(), fromdate, todate, 1, orderflag, 3,
+//							objdir.getLsuserMaster(), fromdate, todate, 1, orderflag, objdir.getLsuserMaster(),
+//							objdir.getLsuserMaster(), fromdate, todate, 1, orderflag, objdir.getLsuserMaster(),
+//							fromdate, todate, 1, orderflag);
+//		} else if (filetype == -1 && orderflag != null && rejected != null) {
+//			lstorders = lslogilablimsorderdetailRepository
+//					.findByOrdercancellAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullAndOrderflagAndApprovelstatusOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullAndOrderflagAndApprovelstatusOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullAndOrderflagAndApprovelstatusOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterIsNullAndAssignedtoIsNullAndOrderflagAndApprovelstatusOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndOrdercancellAndOrderflagAndApprovelstatusOrAssignedtoAndCreatedtimestampBetweenAndOrdercancellAndOrderflagAndApprovelstatus(
+//							1, lstproject, fromdate, todate, orderflag, 3, 1, objdir.getLsuserMaster(), fromdate,
+//							todate, 1, orderflag, 3, 2, objdir.getLsuserMaster(), fromdate, todate, 1, orderflag, 3, 3,
+//							objdir.getLsuserMaster(), fromdate, todate, 1, orderflag, 3, objdir.getLsuserMaster(),
+//							objdir.getLsuserMaster(), fromdate, todate, 1, orderflag, 3, objdir.getLsuserMaster(),
+//							fromdate, todate, 1, orderflag, 3);
+//		} else if (filetype == -1 && orderflag == null && rejected != null) {
+//			lstorders = lslogilablimsorderdetailRepository
+//					.findByOrdercancellAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullAndApprovelstatusOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullAndApprovelstatusOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullAndApprovelstatusOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterIsNullAndAssignedtoIsNullAndApprovelstatusOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndOrdercancellAndApprovelstatusOrAssignedtoAndCreatedtimestampBetweenAndOrdercancellAndApprovelstatus(
+//							1, lstproject, fromdate, todate, 3, 1, objdir.getLsuserMaster(), fromdate, todate, 1, 3, 2,
+//							objdir.getLsuserMaster(), fromdate, todate, 1, 3, 3, objdir.getLsuserMaster(), fromdate,
+//							todate, 1, 3, objdir.getLsuserMaster(), objdir.getLsuserMaster(), fromdate, todate, 1, 3,
+//							objdir.getLsuserMaster(), fromdate, todate, 1, 3);
+//		} else {
+//			lstorders = lslogilablimsorderdetailRepository
+//					.findByOrdercancellAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullAndFiletypeAndOrderflagAndApprovelstatusOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullAndFiletypeAndOrderflagAndApprovelstatusOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullAndFiletypeAndOrderflagAndApprovelstatusOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterIsNullAndAssignedtoIsNullAndFiletypeAndOrderflagAndApprovelstatusOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndOrdercancellAndFiletypeAndOrderflagAndApprovelstatusOrAssignedtoAndCreatedtimestampBetweenAndOrdercancellAndFiletypeAndOrderflagAndApprovelstatus(
+//							1, lstproject, fromdate, todate, filetype, orderflag, 3, 1, objdir.getLsuserMaster(),
+//							fromdate, todate, 1, filetype, orderflag, 3, 2, objdir.getLsuserMaster(), fromdate, todate,
+//							1, filetype, orderflag, 3, 3, objdir.getLsuserMaster(), fromdate, todate, 1, filetype,
+//							orderflag, 3, objdir.getLsuserMaster(), objdir.getLsuserMaster(), fromdate, todate, 1,
+//							filetype, orderflag, 3, objdir.getLsuserMaster(), fromdate, todate, 1, filetype, orderflag,
+//							3);
+//		}
+//		if (objdir.getSearchCriteria() != null && objdir.getSearchCriteria().getContentsearchtype() != null
+//				&& objdir.getSearchCriteria().getContentsearch() != null) {
+//
+//			lstorders = GetmyordersonFilter(objdir, lstorders, orderflag);
+//
+//			lstorders.forEach(objorderDetail -> objorderDetail.setLw(objdir.getLstworkflow()));
+//			return lstorders;
+//		} else {
+//
+//			lstorders.forEach(objorderDetail -> objorderDetail.setLw(objdir.getLstworkflow()));
+//			return lstorders;
+//		}
+//	}
+	
 	public List<Logilaborderssh> Getcancelledordes(LSlogilablimsorderdetail objdir) {
 		List<Logilaborderssh> lstorders = new ArrayList<Logilaborderssh>();
 //		List<Logilaborders> lstorderstrcarray = new ArrayList<Logilaborders>();
@@ -10905,70 +11152,102 @@ public class InstrumentService {
 		Integer rejected = objdir.getRejected();
 		List<LSprojectmaster> lstproject = objdir.getLstproject();
 
+		List<LSuserteammapping> lstteammap = lsuserteammappingRepository.findBylsuserMaster(objdir.getLsuserMaster());
+		List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(lstteammap,
+				objdir.getLsuserMaster().getLssitemaster());
+		List<LSSelectedTeam> selectedteamorders = LSSelectedTeamRepository.findByUserteamInAndCreatedtimestampBetween(lstteam,fromdate,todate);
+		List<Long> selectedteambatchCodeList = (selectedteamorders != null && !selectedteamorders.isEmpty())
+			    ? selectedteamorders.stream()
+			        .map(LSSelectedTeam::getBatchcode)
+			        .filter(Objects::nonNull)
+			        .distinct()
+			        .collect(Collectors.toList())
+			    : Collections.singletonList(-1L);
+		
 		if (filetype == -1 && orderflag == null && rejected == null) {
 			lstorders = lslogilablimsorderdetailRepository
-					.findByOrdercancellAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterIsNullAndAssignedtoIsNullOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndOrdercancellOrAssignedtoAndCreatedtimestampBetweenAndOrdercancell(
-							1, lstproject, fromdate, todate, 1, objdir.getLsuserMaster(), fromdate, todate, 1, 2,
-							objdir.getLsuserMaster(), fromdate, todate, 1, 3, objdir.getLsuserMaster(), fromdate,
-							todate, 1, objdir.getLsuserMaster(), objdir.getLsuserMaster(), fromdate, todate, 1,
+					.findByOrdercancellAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterInAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterIsNullAndAssignedtoIsNullAndTeamselectedOrLsprojectmasterIsNullAndViewoptionAndTeamselectedAndBatchcodeInAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterIsNullAndAssignedtoIsNullOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndOrdercancellOrAssignedtoAndCreatedtimestampBetweenAndOrdercancell(
+							1, lstproject, fromdate, todate,
+							1, objdir.getLsuserMaster(), fromdate, todate, 1,
+							2,objdir.getLsuserMaster(), fromdate, todate, 1,
+							3, objdir.getLstuserMaster(), fromdate,todate, 1,false,
+							3,true,selectedteambatchCodeList, fromdate,todate, 1,
+							objdir.getLsuserMaster(), objdir.getLsuserMaster(), fromdate, todate, 1,
 							objdir.getLsuserMaster(), fromdate, todate, 1);
-
+			
+			
 		} else if (filetype != -1 && orderflag == null && rejected == null) {
 			lstorders = lslogilablimsorderdetailRepository
-					.findByOrdercancellAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullAndFiletypeOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullAndFiletypeOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullAndFiletypeOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterIsNullAndAssignedtoIsNullAndFiletypeOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndOrdercancellAndFiletypeOrAssignedtoAndCreatedtimestampBetweenAndOrdercancellAndFiletype(
-							1, lstproject, fromdate, todate, filetype, 1, objdir.getLsuserMaster(), fromdate, todate, 1,
-							filetype, 2, objdir.getLsuserMaster(), fromdate, todate, 1, filetype, 3,
-							objdir.getLsuserMaster(), fromdate, todate, 1, filetype, objdir.getLsuserMaster(),
-							objdir.getLsuserMaster(), fromdate, todate, 1, filetype, objdir.getLsuserMaster(), fromdate,
-							todate, 1, filetype);
+					.findByOrdercancellAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullAndFiletypeOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullAndFiletypeOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullAndFiletypeOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterInAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterIsNullAndAssignedtoIsNullAndFiletypeAndTeamselectedOrLsprojectmasterIsNullAndViewoptionAndTeamselectedAndBatchcodeInAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterIsNullAndAssignedtoIsNullAndFiletypeOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndOrdercancellAndFiletypeOrAssignedtoAndCreatedtimestampBetweenAndOrdercancellAndFiletype(
+							1, lstproject, fromdate, todate, filetype,
+							1, objdir.getLsuserMaster(), fromdate, todate, 1,filetype,
+							2, objdir.getLsuserMaster(), fromdate, todate, 1, filetype,
+							3,objdir.getLstuserMaster(), fromdate, todate, 1, filetype,false,
+							3,true,selectedteambatchCodeList, fromdate, todate, 1, filetype, 
+							objdir.getLsuserMaster(),objdir.getLsuserMaster(), fromdate, todate, 1, filetype,
+							objdir.getLsuserMaster(), fromdate,todate, 1, filetype);
+			
 		} else if (filetype != -1 && orderflag != null && rejected == null) {
 			lstorders = lslogilablimsorderdetailRepository
-					.findByOrdercancellAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullAndFiletypeAndOrderflagOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullAndFiletypeAndOrderflagOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullAndFiletypeAndOrderflagOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterIsNullAndAssignedtoIsNullAndFiletypeAndOrderflagOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndOrdercancellAndFiletypeAndOrderflagOrAssignedtoAndCreatedtimestampBetweenAndOrdercancellAndFiletypeAndOrderflag(
-							1, lstproject, fromdate, todate, filetype, orderflag, 1, objdir.getLsuserMaster(), fromdate,
-							todate, 1, filetype, orderflag, 2, objdir.getLsuserMaster(), fromdate, todate, 1, filetype,
-							orderflag, 3, objdir.getLsuserMaster(), fromdate, todate, 1, filetype, orderflag,
-							objdir.getLsuserMaster(), objdir.getLsuserMaster(), fromdate, todate, 1, filetype,
-							orderflag, objdir.getLsuserMaster(), fromdate, todate, 1, filetype, orderflag);
+					.findByOrdercancellAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullAndFiletypeAndOrderflagOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullAndFiletypeAndOrderflagOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullAndFiletypeAndOrderflagOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterInAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterIsNullAndAssignedtoIsNullAndFiletypeAndOrderflagAndTeamselectedOrLsprojectmasterIsNullAndViewoptionAndTeamselectedAndBatchcodeInAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterIsNullAndAssignedtoIsNullAndFiletypeAndOrderflagOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndOrdercancellAndFiletypeAndOrderflagOrAssignedtoAndCreatedtimestampBetweenAndOrdercancellAndFiletypeAndOrderflag(
+							1, lstproject, fromdate, todate, filetype, orderflag,
+							1, objdir.getLsuserMaster(), fromdate,todate, 1, filetype, orderflag,
+							2, objdir.getLsuserMaster(), fromdate, todate, 1, filetype,orderflag,
+							3, objdir.getLstuserMaster(), fromdate, todate, 1, filetype, orderflag,false,
+							3, true,selectedteambatchCodeList, fromdate, todate, 1, filetype, orderflag,
+							objdir.getLsuserMaster(), objdir.getLsuserMaster(), fromdate, todate, 1, filetype,orderflag,
+							objdir.getLsuserMaster(), fromdate, todate, 1, filetype, orderflag);
 		} else if (filetype != -1 && orderflag == null && rejected != null) {
 			lstorders = lslogilablimsorderdetailRepository
-					.findByOrdercancellAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullAndFiletypeAndApprovelstatusOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullAndFiletypeAndApprovelstatusOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullAndFiletypeAndApprovelstatusOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterIsNullAndAssignedtoIsNullAndFiletypeAndApprovelstatusOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndOrdercancellAndFiletypeAndApprovelstatusOrAssignedtoAndCreatedtimestampBetweenAndOrdercancellAndFiletypeAndApprovelstatus(
-							1, lstproject, fromdate, todate, filetype, 3, 1, objdir.getLsuserMaster(), fromdate, todate,
-							1, filetype, 3, 2, objdir.getLsuserMaster(), fromdate, todate, 1, filetype, 3, 3,
-							objdir.getLsuserMaster(), fromdate, todate, 1, filetype, 3, objdir.getLsuserMaster(),
-							objdir.getLsuserMaster(), fromdate, todate, 1, filetype, 3, objdir.getLsuserMaster(),
-							fromdate, todate, 1, filetype, 3);
+					.findByOrdercancellAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullAndFiletypeAndApprovelstatusOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullAndFiletypeAndApprovelstatusOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullAndFiletypeAndApprovelstatusOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterInAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterIsNullAndAssignedtoIsNullAndFiletypeAndApprovelstatusAndTeamselectedOrLsprojectmasterIsNullAndViewoptionAndTeamselectedAndBatchcodeInAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterIsNullAndAssignedtoIsNullAndFiletypeAndApprovelstatusOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndOrdercancellAndFiletypeAndApprovelstatusOrAssignedtoAndCreatedtimestampBetweenAndOrdercancellAndFiletypeAndApprovelstatus(
+							1, lstproject, fromdate, todate, filetype, 3,
+							1, objdir.getLsuserMaster(), fromdate, todate,1, filetype, 3,
+							2, objdir.getLsuserMaster(), fromdate, todate, 1, filetype, 3, 
+							3,objdir.getLstuserMaster(), fromdate, todate, 1, filetype, 3,false,
+							3,true,selectedteambatchCodeList, fromdate, todate, 1, filetype, 3,
+							objdir.getLsuserMaster(),objdir.getLsuserMaster(), fromdate, todate, 1, filetype, 3,
+							objdir.getLsuserMaster(),fromdate, todate, 1, filetype, 3);
+			
 		} else if (filetype == -1 && orderflag != null && rejected == null) {
 			lstorders = lslogilablimsorderdetailRepository
-					.findByOrdercancellAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullAndOrderflagOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullAndOrderflagOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullAndOrderflagOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterIsNullAndAssignedtoIsNullAndOrderflagOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndOrdercancellAndOrderflagOrAssignedtoAndCreatedtimestampBetweenAndOrdercancellAndOrderflag(
-							1, lstproject, fromdate, todate, orderflag, 1, objdir.getLsuserMaster(), fromdate, todate,
-							1, orderflag, 2, objdir.getLsuserMaster(), fromdate, todate, 1, orderflag, 3,
-							objdir.getLsuserMaster(), fromdate, todate, 1, orderflag, objdir.getLsuserMaster(),
-							objdir.getLsuserMaster(), fromdate, todate, 1, orderflag, objdir.getLsuserMaster(),
-							fromdate, todate, 1, orderflag);
+					.findByOrdercancellAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullAndOrderflagOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullAndOrderflagOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullAndOrderflagOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterInAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterIsNullAndAssignedtoIsNullAndOrderflagAndTeamselectedOrLsprojectmasterIsNullAndViewoptionAndTeamselectedAndBatchcodeInAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterIsNullAndAssignedtoIsNullAndOrderflagOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndOrdercancellAndOrderflagOrAssignedtoAndCreatedtimestampBetweenAndOrdercancellAndOrderflag(
+							1, lstproject, fromdate, todate, orderflag, 
+							1, objdir.getLsuserMaster(), fromdate, todate,
+							1, orderflag, 2, objdir.getLsuserMaster(), fromdate, todate, 1, orderflag,
+							3,objdir.getLstuserMaster(), fromdate, todate, 1, orderflag,false,
+							3,true,selectedteambatchCodeList, fromdate, todate, 1, orderflag,
+							objdir.getLsuserMaster(),objdir.getLsuserMaster(), fromdate, todate, 1, orderflag,
+							objdir.getLsuserMaster(),fromdate, todate, 1, orderflag);
 		} else if (filetype == -1 && orderflag != null && rejected != null) {
 			lstorders = lslogilablimsorderdetailRepository
-					.findByOrdercancellAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullAndOrderflagAndApprovelstatusOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullAndOrderflagAndApprovelstatusOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullAndOrderflagAndApprovelstatusOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterIsNullAndAssignedtoIsNullAndOrderflagAndApprovelstatusOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndOrdercancellAndOrderflagAndApprovelstatusOrAssignedtoAndCreatedtimestampBetweenAndOrdercancellAndOrderflagAndApprovelstatus(
-							1, lstproject, fromdate, todate, orderflag, 3, 1, objdir.getLsuserMaster(), fromdate,
-							todate, 1, orderflag, 3, 2, objdir.getLsuserMaster(), fromdate, todate, 1, orderflag, 3, 3,
-							objdir.getLsuserMaster(), fromdate, todate, 1, orderflag, 3, objdir.getLsuserMaster(),
-							objdir.getLsuserMaster(), fromdate, todate, 1, orderflag, 3, objdir.getLsuserMaster(),
-							fromdate, todate, 1, orderflag, 3);
+					.findByOrdercancellAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullAndOrderflagAndApprovelstatusOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullAndOrderflagAndApprovelstatusOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullAndOrderflagAndApprovelstatusOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterInAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterIsNullAndAssignedtoIsNullAndOrderflagAndApprovelstatusAndTeamselectedOrLsprojectmasterIsNullAndViewoptionAndTeamselectedAndBatchcodeInAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterIsNullAndAssignedtoIsNullAndOrderflagAndApprovelstatusOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndOrdercancellAndOrderflagAndApprovelstatusOrAssignedtoAndCreatedtimestampBetweenAndOrdercancellAndOrderflagAndApprovelstatus(
+							1, lstproject, fromdate, todate, orderflag, 3,
+							1, objdir.getLsuserMaster(), fromdate,todate, 1, orderflag, 3,
+							2, objdir.getLsuserMaster(), fromdate, todate, 1, orderflag, 3,
+							3,objdir.getLstuserMaster(), fromdate, todate, 1, orderflag, 3,false, 
+							3,true,selectedteambatchCodeList, fromdate, todate, 1, orderflag, 3, 
+							objdir.getLsuserMaster(),objdir.getLsuserMaster(), fromdate, todate, 1, orderflag, 3,
+							objdir.getLsuserMaster(),fromdate, todate, 1, orderflag, 3);
 		} else if (filetype == -1 && orderflag == null && rejected != null) {
 			lstorders = lslogilablimsorderdetailRepository
-					.findByOrdercancellAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullAndApprovelstatusOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullAndApprovelstatusOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullAndApprovelstatusOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterIsNullAndAssignedtoIsNullAndApprovelstatusOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndOrdercancellAndApprovelstatusOrAssignedtoAndCreatedtimestampBetweenAndOrdercancellAndApprovelstatus(
-							1, lstproject, fromdate, todate, 3, 1, objdir.getLsuserMaster(), fromdate, todate, 1, 3, 2,
-							objdir.getLsuserMaster(), fromdate, todate, 1, 3, 3, objdir.getLsuserMaster(), fromdate,
-							todate, 1, 3, objdir.getLsuserMaster(), objdir.getLsuserMaster(), fromdate, todate, 1, 3,
+					.findByOrdercancellAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullAndApprovelstatusOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullAndApprovelstatusOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullAndApprovelstatusOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterInAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterIsNullAndAssignedtoIsNullAndApprovelstatusAndTeamselectedOrLsprojectmasterIsNullAndViewoptionAndTeamselectedAndBatchcodeInAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterIsNullAndAssignedtoIsNullAndApprovelstatusOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndOrdercancellAndApprovelstatusOrAssignedtoAndCreatedtimestampBetweenAndOrdercancellAndApprovelstatus(
+							1, lstproject, fromdate, todate, 3, 
+							1, objdir.getLsuserMaster(), fromdate, todate, 1, 3, 
+							2,objdir.getLsuserMaster(), fromdate, todate, 1, 3,
+							3, objdir.getLstuserMaster(), fromdate,todate, 1, 3,false,
+							3, true,selectedteambatchCodeList, fromdate,todate, 1, 3,
+							objdir.getLsuserMaster(), objdir.getLsuserMaster(), fromdate, todate, 1, 3,
 							objdir.getLsuserMaster(), fromdate, todate, 1, 3);
 		} else {
 			lstorders = lslogilablimsorderdetailRepository
-					.findByOrdercancellAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullAndFiletypeAndOrderflagAndApprovelstatusOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullAndFiletypeAndOrderflagAndApprovelstatusOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullAndFiletypeAndOrderflagAndApprovelstatusOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterIsNullAndAssignedtoIsNullAndFiletypeAndOrderflagAndApprovelstatusOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndOrdercancellAndFiletypeAndOrderflagAndApprovelstatusOrAssignedtoAndCreatedtimestampBetweenAndOrdercancellAndFiletypeAndOrderflagAndApprovelstatus(
-							1, lstproject, fromdate, todate, filetype, orderflag, 3, 1, objdir.getLsuserMaster(),
-							fromdate, todate, 1, filetype, orderflag, 3, 2, objdir.getLsuserMaster(), fromdate, todate,
-							1, filetype, orderflag, 3, 3, objdir.getLsuserMaster(), fromdate, todate, 1, filetype,
-							orderflag, 3, objdir.getLsuserMaster(), objdir.getLsuserMaster(), fromdate, todate, 1,
-							filetype, orderflag, 3, objdir.getLsuserMaster(), fromdate, todate, 1, filetype, orderflag,
-							3);
+					.findByOrdercancellAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullAndFiletypeAndOrderflagAndApprovelstatusOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullAndFiletypeAndOrderflagAndApprovelstatusOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullAndFiletypeAndOrderflagAndApprovelstatusOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterInAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterIsNullAndAssignedtoIsNullAndFiletypeAndOrderflagAndApprovelstatusAndTeamselectedOrLsprojectmasterIsNullAndViewoptionAndTeamselectedAndBatchcodeInAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterIsNullAndAssignedtoIsNullAndFiletypeAndOrderflagAndApprovelstatusOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndOrdercancellAndFiletypeAndOrderflagAndApprovelstatusOrAssignedtoAndCreatedtimestampBetweenAndOrdercancellAndFiletypeAndOrderflagAndApprovelstatus(
+							1, lstproject, fromdate, todate, filetype, orderflag, 3,
+							1, objdir.getLsuserMaster(),fromdate, todate, 1, filetype, orderflag, 3, 
+							2, objdir.getLsuserMaster(), fromdate, todate,1, filetype, orderflag, 3,
+							3, objdir.getLstuserMaster(), fromdate, todate, 1, filetype,orderflag, 3,false, 
+							3, true,selectedteambatchCodeList, fromdate, todate, 1, filetype,orderflag, 3, 
+							objdir.getLsuserMaster(), objdir.getLsuserMaster(), fromdate, todate, 1,filetype, orderflag, 3, 
+							objdir.getLsuserMaster(), fromdate, todate, 1, filetype, orderflag,3);
 		}
 		if (objdir.getSearchCriteria() != null && objdir.getSearchCriteria().getContentsearchtype() != null
 				&& objdir.getSearchCriteria().getContentsearch() != null) {
@@ -11354,6 +11633,13 @@ public class InstrumentService {
 	public ResponseEntity<Object> deleteLinkforOrder(LsOrderLinks objorder) {
 		lsorderlinkrepository.delete(objorder);
 		return new ResponseEntity<>(lsorderlinkrepository.findByBatchcodeAndNstatus(objorder.getBatchcode(),1), HttpStatus.OK);
+	}
+
+	public List<LSSelectedTeam> Getselectedteam(Long batchcode) {
+
+		List<LSSelectedTeam> selectedteam = LSSelectedTeamRepository.findByBatchcode(batchcode);
+		
+		return selectedteam;
 	}
 
 }

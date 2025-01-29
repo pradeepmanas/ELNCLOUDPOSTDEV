@@ -145,7 +145,18 @@ public class LSlogilablimsorderdetail {
 	
 	private Boolean repeat;
 	
-    private Integer autoregistercount;
+	private Boolean teamselected = false;
+	
+	
+    public Boolean getTeamselected() {
+		return teamselected;
+	}
+
+	public void setTeamselected(Boolean teamselected) {
+		this.teamselected = teamselected;
+	}
+
+	private Integer autoregistercount;
     
 	@ManyToOne
 	private LSOrdernotification lsordernotification;
@@ -213,6 +224,10 @@ public class LSlogilablimsorderdetail {
 	@Transient
 	private List<LSlogilablimsorder> lsLSlogilablimsorder;
 
+	@OneToMany
+	@JoinColumn(name="batchcode")
+	private List<LSSelectedTeam> lsselectedTeam;
+	
 	@Transient
 	private String projectname;
 
@@ -328,7 +343,7 @@ public class LSlogilablimsorderdetail {
 	private Long tasklevelsequence;
 	
 	private String sequenceid;
-
+	
 	public LSlogilablimsorderdetail() {
 
 	}
@@ -1254,6 +1269,14 @@ public class LSlogilablimsorderdetail {
 
 		public void setTasklevelsequence(Long tasklevelsequence) {
 			this.tasklevelsequence = tasklevelsequence;
+		}
+
+		public List<LSSelectedTeam> getLsselectedTeam() {
+			return lsselectedTeam;
+		}
+
+		public void setLsselectedTeam(List<LSSelectedTeam> lsselectedTeam) {
+			this.lsselectedTeam = lsselectedTeam;
 		}
 		
 		

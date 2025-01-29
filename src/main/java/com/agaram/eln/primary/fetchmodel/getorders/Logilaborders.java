@@ -1,8 +1,11 @@
 package com.agaram.eln.primary.fetchmodel.getorders;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import com.agaram.eln.primary.model.instrumentDetails.LSOrdernotification;
+import com.agaram.eln.primary.model.instrumentDetails.LSSelectedTeam;
 import com.agaram.eln.primary.model.instrumentDetails.LsAutoregister;
 import com.agaram.eln.primary.model.masters.Lsrepositories;
 import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
@@ -47,18 +50,20 @@ public class Logilaborders extends Logilabordermaster {
 	private Boolean sentforapprovel;
 	private String approvelaccept;
 	private Integer autoregistercount;
-	
+	private Boolean teamselected;
+ 
 	public Logilaborders(Long batchcode, String batchid, String orderflag, Integer approvelstatus,
 			Integer lockeduser, Integer testcode, String testname, LSsamplemaster lssamplemaster,
 			LSprojectmaster lsprojectmaster, LSfile lsfile, Integer filetype, LSuserMaster lsuserMaster,LSuserMaster assignedto,
 			LSsamplefile lssamplefile, LSworkflow lsworkflow, Date createdtimestamp,Date completedtimestamp,
 			Lsrepositoriesdata lsrepositoriesdata,Lsrepositories lsrepositories,String keyword, Long directorycode,LStestmasterlocal lstestmasterlocal,
 			Integer ordercancell,Integer viewoption,Elnmaterial elnmaterial,MaterialInventory materialinventory,Integer approved,LSOrdernotification lsordernotification, 
-			Integer ordersaved,Boolean repeat,LsAutoregister lsautoregisterorders,Boolean sentforapprovel,String approvelaccept,Integer autoregistercount,String sequenceid) {
+			Integer ordersaved,Boolean repeat,LsAutoregister lsautoregisterorders,Boolean sentforapprovel,String approvelaccept,Integer autoregistercount,
+			String sequenceid,Boolean teamselected) {
 		
 		super(batchcode, batchid, lsworkflow, testname, lsfile, lssamplemaster, lsprojectmaster, filetype, orderflag,assignedto, createdtimestamp,completedtimestamp,keyword,
 				lstestmasterlocal, ordercancell,viewoption,lsuserMaster,testcode, approvelstatus,lsordernotification, ordersaved,repeat,
-				lsautoregisterorders,sentforapprovel,approvelaccept,autoregistercount, elnmaterial,sequenceid);
+				lsautoregisterorders,sentforapprovel,approvelaccept,autoregistercount, elnmaterial,sequenceid,teamselected);
 		 
 		if(lssamplefile != null)
 		{
@@ -97,6 +102,7 @@ public class Logilaborders extends Logilabordermaster {
         this.sentforapprovel=sentforapprovel!=null?sentforapprovel:null;
         this.approvelaccept=approvelaccept!=null?approvelaccept:null;
         this.autoregistercount = autoregistercount != null ? autoregistercount:null;
+        this.teamselected=teamselected;
 	}
 	
 	
@@ -355,10 +361,8 @@ public class Logilaborders extends Logilabordermaster {
 		return autoregistercount;
 	}
 
-
 	public void setAutoregistercount(Integer autoregistercount) {
 		this.autoregistercount = autoregistercount;
 	}
-
 	
 }

@@ -19,6 +19,7 @@ import com.agaram.eln.primary.model.general.SearchCriteria;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
+import com.agaram.eln.primary.model.usermanagement.LSusersteam;
 import com.agaram.eln.primary.model.usermanagement.LoggedUser;
 
 @Entity
@@ -128,6 +129,9 @@ public class LSSheetOrderStructure {
 
 	@Transient
 	private List<LSuserMaster> lstuserMaster;
+	
+	@Transient
+	private List<LSusersteam> lsusersteam; 
 
 	@Transient
 	private Integer ismultitenant;
@@ -362,6 +366,14 @@ public class LSSheetOrderStructure {
 
 	public void setSearchCriteria(SearchCriteria searchCriteria) {
 		this.searchCriteria = searchCriteria;
+	}
+
+	public List<LSusersteam> getLsusersteam() {
+		return lsusersteam;
+	}
+
+	public void setLsusersteam(List<LSusersteam> lsusersteam) {
+		this.lsusersteam = lsusersteam;
 	}
 
 }
