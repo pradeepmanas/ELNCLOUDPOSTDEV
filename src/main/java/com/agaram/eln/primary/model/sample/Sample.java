@@ -52,6 +52,7 @@ public class Sample implements Serializable{
 	private Date createddate;
 	
 	private Integer nsitecode;
+	private Long sitesequence;
 	
 	@Type(type = "jsonb")
 	@Column(name = "jsondata", columnDefinition = "jsonb")
@@ -189,7 +190,13 @@ public class Sample implements Serializable{
 	public void setSequenceid(String sequenceid) {
 		this.sequenceid = sequenceid;
 	}
-
+	public Long getSitesequence() {
+		return sitesequence;
+	}
+ 
+	public void setSitesequence(Long sitesequence) {
+		this.sitesequence = sitesequence;
+	}
 	public List<DerivedSamples> getParentsamples() {
 		return parentsamples;
 	}

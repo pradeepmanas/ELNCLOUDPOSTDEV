@@ -655,6 +655,19 @@ ALTER TABLE IF Exists LSfile ADD COLUMN IF NOT EXISTS modifiedbyuser character v
 
 ALTER TABLE IF Exists LSprotocolmaster ADD COLUMN IF NOT EXISTS modifiedby character varying(255);
 
+ALTER TABLE IF Exists LSprojectmaster ADD COLUMN IF NOT EXISTS modifieddate timestamp without time zone;
+
+ALTER TABLE IF Exists LSprojectmaster ADD COLUMN IF NOT EXISTS modifiedbyuser character varying(255);
+
+ALTER TABLE IF Exists LStestmasterlocal ADD COLUMN IF NOT EXISTS modifieddate timestamp without time zone;
+
+ALTER TABLE IF Exists LStestmasterlocal ADD COLUMN IF NOT EXISTS modifiedbyuser character varying(255);
+
+ALTER TABLE IF Exists BarcodeMaster ADD COLUMN IF NOT EXISTS modifiedby character varying(255);
+
+ALTER TABLE IF Exists BarcodeMaster ADD COLUMN IF NOT EXISTS modifieddate timestamp without time zone;
+
+
 
 CREATE SEQUENCE IF NOT EXISTS sample_samplecode_seq
     START WITH 1
@@ -732,4 +745,6 @@ TABLESPACE pg_default;
 
 ALTER TABLE IF EXISTS public.derivedsamples
     OWNER to postgres;
+    
+ALTER TABLE IF Exists Sample ADD COLUMN IF NOT EXISTS sitesequence bigint;
 

@@ -78,6 +78,25 @@ public class LSprojectmaster {
 	
 	@Transient
 	private Integer usercode;
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date modifieddate;
+	
+	@Column(name = "modifiedbyuser")
+	private String modifiedbyuser;
+	
+	
+	public String getModifiedbyuser() {
+		return modifiedbyuser;
+	}
+	public void setModifiedbyuser(String modifiedbyuser) {
+		this.modifiedbyuser = modifiedbyuser;
+	}
+	public Date getModifieddate() {
+		return modifieddate;
+	}
+	public void setModifieddate(Date modifieddate) {
+		this.modifieddate = modifieddate;
+	}
 
 	public Integer getUsercode() {
 		return usercode;

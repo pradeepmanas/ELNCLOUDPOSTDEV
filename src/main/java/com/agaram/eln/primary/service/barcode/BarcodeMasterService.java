@@ -116,6 +116,8 @@ public class BarcodeMasterService {
 	                barcodeobj.setBarcodename(barcode.getBarcodename());
 	                barcodeobj.setBarcodefilename(filename);
 	                barcodeobj.setBarcodefileid(barcodeobj.getBarcodefileid());
+	                barcodeobj.setModifiedby(barcode.getModifiedby());
+	                barcodeobj.setModifieddate(barcode.getModifieddate());
 	                barcodemasterrepository.save(barcodeobj);
 	                
 	                response.setStatus(true);
@@ -184,7 +186,8 @@ public class BarcodeMasterService {
 	}
 
 	public ResponseEntity<InputStreamResource> getbarcodefileoncode(String barcodeid, String ismultitenant,
-			String tenant, String screen, String primarykey, String path, String username)
+			String tenant, String screen, String primarykey, String path, String username,
+			String density,String height,String width)
 			throws JsonParseException, JsonMappingException, IOException, NumberFormatException, ParseException {
 
 		BarcodeMaster barcode = barcodemasterrepository.findOne(Integer.parseInt(barcodeid));
@@ -219,7 +222,7 @@ public class BarcodeMasterService {
 
 //		data = data.replace("$BarcodeId$", barcode.getBarcodename());
 		RestTemplate restTemplate = new RestTemplate();
-		String uri = "http://api.labelary.com/v1/printers/8dpmm/labels/4x6/0/" + data;
+		String uri = "http://api.labelary.com/v1/printers/"+density+"/labels/"+height+"x"+width+"/0/" + data;
 		HttpHeaders headers = new HttpHeaders();
 
 		HttpEntity<String> entity = new HttpEntity<String>(headers);
@@ -537,7 +540,8 @@ public class BarcodeMasterService {
 	}
 
 	public ResponseEntity<InputStreamResource> GetbarcodefilecodeonOrderscreen(String barcodeid, String ismultitenant,
-			String tenant, String screen, String username, List<Map<String, Object>> barcodedata)
+			String tenant, String screen, String username, List<Map<String, Object>> barcodedata,
+			String density,String height,String width)
 			throws IOException, NumberFormatException, ParseException {
 
 		BarcodeMaster barcode = barcodemasterrepository.findOne(Integer.parseInt(barcodeid));
@@ -571,7 +575,7 @@ public class BarcodeMasterService {
 		}
 
 		RestTemplate restTemplate = new RestTemplate();
-		String uri = "http://api.labelary.com/v1/printers/8dpmm/labels/4x6/0/" + data;
+		String uri = "http://api.labelary.com/v1/printers/"+density+"/labels/"+height+"x"+width+"/0/" + data;
 		HttpHeaders headers = new HttpHeaders();
 
 		HttpEntity<String> entity = new HttpEntity<String>(headers);

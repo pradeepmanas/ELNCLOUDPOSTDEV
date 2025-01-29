@@ -13,8 +13,11 @@ public class Testmaster {
 	private String description;
 	private Integer status;
 	private String teststatus;
+	private Date modifieddate;
+	private String modifiedbyuser;
+
 	
-	public Testmaster(Integer testcode, String testname,String taskcategory,Date createdate,LSuserMaster createby, String description, Integer status, String teststatus)
+	public Testmaster(Integer testcode, String testname,String taskcategory,Date createdate,LSuserMaster createby, String description, Integer status, String teststatus,Date modifieddate,String modifiedbyuser)
 	{
 		this.testcode = testcode;
 		this.testname = testname;
@@ -24,6 +27,8 @@ public class Testmaster {
 		this.description=description;
 		this.status = status;
 		this.teststatus = teststatus;
+		this.modifieddate = modifieddate;
+		this.modifiedbyuser = modifiedbyuser;
 	}
 	
 	public String getTeststatus() {
@@ -93,6 +98,20 @@ public class Testmaster {
 	public void setTestname(String testname) {
 		this.testname = testname;
 	}
+	public Date getModifieddate() {
+		return modifieddate;
+	}
+
+	public void setModifieddate(Date modifieddate) {
+		this.modifieddate = modifieddate;
+	}
 	
+	public String getModifiedbyuser() {
+		return modifiedbyuser;
+	}
+
+	public void setModifiedbyuser(String modifiedbyuser) {
+		this.modifiedbyuser = modifiedbyuser;
+	}
 	
 }

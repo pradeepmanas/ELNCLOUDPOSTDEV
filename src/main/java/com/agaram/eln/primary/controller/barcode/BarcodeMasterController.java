@@ -46,13 +46,14 @@ public class BarcodeMasterController {
 		return barcodemasterservice.GetBarcodemaster(objuser);
 	}
 
-	@RequestMapping(value = "/Getbarcodefileoncode/{barcode}/{ismultitenant}/{tenant}/{screen}/{primarykey}/{path}/{username}", method = RequestMethod.GET)
+	@RequestMapping(value = "/Getbarcodefileoncode/{barcode}/{ismultitenant}/{tenant}/{screen}/{primarykey}/{path}/{username}/{density}/{height}/{width}", method = RequestMethod.GET)
 	public ResponseEntity<InputStreamResource> Getbarcodefileoncode(@PathVariable String barcode,
 			@PathVariable String ismultitenant, @PathVariable String tenant, @PathVariable String screen,
-			@PathVariable String primarykey, @PathVariable String path, @PathVariable String username)
+			@PathVariable String primarykey, @PathVariable String path, @PathVariable String username,
+			@PathVariable String density, @PathVariable String height, @PathVariable String width)
 			throws ParseException, IOException {
 		return barcodemasterservice.getbarcodefileoncode(barcode, ismultitenant, tenant, screen, primarykey, path,
-				username);
+				username,density,height,width);
 	}
 
 	@PostMapping(value = "/getbarcodeContent")
@@ -112,15 +113,18 @@ public class BarcodeMasterController {
 	@RequestMapping(value = "/GetbarcodefilecodeonOrderscreen", method = RequestMethod.POST)
 	public ResponseEntity<InputStreamResource> GetbarcodefilecodeonOrderscreen(
 	    @RequestBody Map<String, Object> requestBody) throws ParseException, IOException {
-	    
+
 	    String barcode =requestBody.get("barcode").toString();
 	    String ismultitenant =requestBody.get("ismultitenant").toString();
 	    String tenant =  requestBody.get("tenant").toString();
 	    String screen = requestBody.get("screen").toString();
 	    String username =requestBody.get("username").toString();
+	    String density =  requestBody.get("density").toString();
+	    String height = requestBody.get("height").toString();
+	    String width =requestBody.get("width").toString();
 	    List<Map<String, Object>> barcodedata = (List<Map<String, Object>>) requestBody.get("barcodedata");
 
-	    return barcodemasterservice.GetbarcodefilecodeonOrderscreen(barcode, ismultitenant, tenant, screen, username, barcodedata);
+	    return barcodemasterservice.GetbarcodefilecodeonOrderscreen(barcode, ismultitenant, tenant, screen, username, barcodedata,density,height,width);
 	}
 	
 	@RequestMapping(value = "/PrintBarcodeorders", method = RequestMethod.POST)
