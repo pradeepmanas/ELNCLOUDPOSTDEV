@@ -32,6 +32,4 @@ public interface LSMultisitesRepositery extends JpaRepository<LSMultisites, Inte
 	LSMultisites findTop1Byusercode(Integer usercode);
 
 	List<LSMultisites> findByusercodeInAndLssiteMaster(List<Integer> usermasterlist, LSSiteMaster sitemaster);
-
-	List<LSMultisites> findByusercode(Integer usercode);
 }
