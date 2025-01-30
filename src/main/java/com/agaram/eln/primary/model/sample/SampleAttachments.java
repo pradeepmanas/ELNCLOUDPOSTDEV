@@ -1,6 +1,8 @@
-package com.agaram.eln.primary.model.material;
+package com.agaram.eln.primary.model.sample;
 
 import java.util.Date;
+import java.util.List;
+
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,43 +14,42 @@ import javax.persistence.Table;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 
 @Entity
-@Table(name = "materialattachments")
-public class MaterialAttachments {
-	
+@Table(name = "sampleattachments")
+public class SampleAttachments {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Basic(optional = false)
-	@Column(name = "nmaterialattachcode")
-	private Integer nmaterialattachcode;
-	
-	@Column(name = "nmaterialcode")
-	private Integer nmaterialcode;
+	@Column(name = "nsampleattachcode")
+	private Integer nsampleattachcode;
 
-	@Column(name = "nmaterialcatcode")
-	private Integer nmaterialcatcode; 
-	
-	@Column(name = "nmaterialtypecode")
-	private Integer nmaterialtypecode;
-	
+	@Column(name = "samplecode")
+	private Integer samplecode;
+
+	@Column(name = "nsamplecatcode")
+	private Integer nsamplecatcode;
+
+	@Column(name = "nsampletypecode")
+	private Integer nsampletypecode;
+
 	@Column(name = "nstatus")
 	private Integer nstatus;
-	
-	@ManyToOne 
+
+	@ManyToOne
 	private LSuserMaster createby;
-	
+
 	private Date createddate;
-	
+
 	private Integer nsitecode;
-	
+
 	@Column(columnDefinition = "varchar(250)", name = "filename")
 	private String filename;
-	
+
 	@Column(columnDefinition = "varchar(10)", name = "fileextension")
 	private String fileextension;
-	
+
 	@Column(columnDefinition = "varchar(250)", name = "fileid")
 	private String fileid;
-	
 
 	public LSuserMaster getCreateby() {
 		return createby;
@@ -57,7 +58,7 @@ public class MaterialAttachments {
 	public void setCreateby(LSuserMaster createby) {
 		this.createby = createby;
 	}
-	
+
 	public String getFilename() {
 		return filename;
 	}
@@ -85,6 +86,7 @@ public class MaterialAttachments {
 	public Date getCreateddate() {
 		return createddate;
 	}
+
 	public void setCreateddate(Date createddate) {
 		this.createddate = createddate;
 	}
@@ -92,37 +94,47 @@ public class MaterialAttachments {
 	public Integer getNsitecode() {
 		return nsitecode;
 	}
+
 	public void setNsitecode(Integer nsitecode) {
 		this.nsitecode = nsitecode;
 	}
-	public Integer getNmaterialattachcode() {
-		return nmaterialattachcode;
+
+	public Integer getNsampleattachcode() {
+		return nsampleattachcode;
 	}
-	public void setNmaterialattachcode(Integer nmaterialattachcode) {
-		this.nmaterialattachcode = nmaterialattachcode;
+
+	public void setNsampleattachcode(Integer nsampleattachcode) {
+		this.nsampleattachcode = nsampleattachcode;
 	}
-	
-	public Integer getNmaterialtypecode() {
-		return nmaterialtypecode;
+
+	public Integer getNsampletypecode() {
+		return nsampletypecode;
 	}
-	public void setNmaterialtypecode(Integer nmaterialtypecode) {
-		this.nmaterialtypecode = nmaterialtypecode;
+
+	public void setNsampletypecode(Integer nsampletypecode) {
+		this.nsampletypecode = nsampletypecode;
 	}
-	public Integer getNmaterialcatcode() {
-		return nmaterialcatcode;
+
+	public Integer getNsamplecatcode() {
+		return nsamplecatcode;
 	}
-	public void setNmaterialcatcode(Integer nmaterialcatcode) {
-		this.nmaterialcatcode = nmaterialcatcode;
+
+	public void setNsamplecatcode(Integer nsamplecatcode) {
+		this.nsamplecatcode = nsamplecatcode;
 	}
-	public Integer getNmaterialcode() {
-		return nmaterialcode;
+
+	public Integer getSamplecode() {
+		return samplecode;
 	}
-	public void setNmaterialcode(Integer nmaterialcode) {
-		this.nmaterialcode = nmaterialcode;
+
+	public void setSamplecode(Integer samplecode) {
+		this.samplecode = samplecode;
 	}
+
 	public Integer getNstatus() {
 		return nstatus;
 	}
+
 	public void setNstatus(Integer nstatus) {
 		this.nstatus = nstatus;
 	}

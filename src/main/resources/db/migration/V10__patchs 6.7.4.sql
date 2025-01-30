@@ -747,6 +747,7 @@ ALTER TABLE IF EXISTS public.derivedsamples
     OWNER to postgres;
     
 ALTER TABLE IF Exists Sample ADD COLUMN IF NOT EXISTS sitesequence bigint;
+--ALTER TABLE IF Exists lssitemaster ADD COLUMN IF NOT EXISTS createby_usercode Integer;
 
 DO
 $do$
@@ -934,3 +935,52 @@ ALTER TABLE IF EXISTS lslogilablimsorderdetail ADD COLUMN IF NOT EXISTS teamsele
 
 ALTER TABLE IF EXISTS lsselectedteam add column IF NOT EXISTS createdtimestamp TIMESTAMP;
 
+CREATE TABLE IF NOT EXISTS public.sampleattachments
+(
+    nsampleattachcode integer NOT NULL,
+    createddate timestamp without time zone,
+    fileextension character varying(10) COLLATE pg_catalog."default",
+    fileid character varying(250) COLLATE pg_catalog."default",
+    filename character varying(250) COLLATE pg_catalog."default",
+    nsamplecatcode integer,
+    samplecode integer,
+    nsampletypecode integer,
+    nsitecode integer,
+    nstatus integer,
+    createby_usercode integer,
+    CONSTRAINT sampleattachments_pkey PRIMARY KEY (nsampleattachcode),
+    CONSTRAINT fk104rf6u97ehcp6ec71k7s4gfn FOREIGN KEY (createby_usercode)
+        REFERENCES public.lsusermaster (usercode) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.sampleattachments
+    OWNER to postgres;
+
+CREATE TABLE IF NOT EXISTS public.samplelinks
+(
+    nsamplelinkcode integer NOT NULL,
+    createddate timestamp without time zone,
+    link character varying(500) COLLATE pg_catalog."default",
+    nsamplecatcode integer,
+    nsamplecode integer,
+    nsampletypecode integer,
+    nsitecode integer,
+    nstatus integer,
+    createby_usercode integer,
+    CONSTRAINT samplelinks_pkey PRIMARY KEY (nsamplelinkcode),
+    CONSTRAINT fke2qcs6cxk5mjuaq16xygii3e0 FOREIGN KEY (createby_usercode)
+        REFERENCES public.lsusermaster (usercode) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.samplelinks
+    OWNER to postgres;
+
+ALTER TABLE IF EXISTS sample ADD COLUMN IF NOT EXISTS assignedproject TEXT;

@@ -17,4 +17,6 @@ public interface LSSiteMasterRepository extends JpaRepository<LSSiteMaster, Inte
 	public List<LSSiteMaster> findByIstatus(Integer status);
 	public List<LSSiteMaster> findByOrderBySitecodeDesc();
 	public List<LSSiteMaster> findBySitenameIgnoreCaseAndIstatus(String sitename, Integer status);
+//	@Query(value = "select * from lssitemaster where istatus = 1 and createby_usercode= ?1 Or sitecode in (select lssitemaster_sitecode from LSMultisites where usercode= ?1 );", nativeQuery = true)
+//	public List<LSSiteMaster> getLoadCreatedBySite(Integer usercode);
 }
