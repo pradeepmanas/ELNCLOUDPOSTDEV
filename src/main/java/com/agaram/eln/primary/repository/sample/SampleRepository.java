@@ -12,4 +12,5 @@ public interface SampleRepository  extends JpaRepository<Sample,Integer>{
 	List<Sample> findBySamplecategoryAndNsitecodeOrderBySamplecodeDesc(SampleCategory objsamplecat,Integer nsiteInteger);
 	
 	List<Sample> findBysamplecodeInOrderBySamplecodeDesc(List<Integer> samplelist);
+
 }
