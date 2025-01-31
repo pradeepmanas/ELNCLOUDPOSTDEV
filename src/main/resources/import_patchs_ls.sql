@@ -50,5 +50,33 @@ update LSaudittrailconfigmaster set ordersequnce= 64 where serialno=65;
 --END
 --$do$;
 
-ALTER TABLE IF Exists Helptittle ADD COLUMN IF NOT EXISTS page varying(255);
+ALTER TABLE IF Exists Helptittle ADD COLUMN IF NOT EXISTS page character varying(100);
 
+delete from lsusergrouprightsmaster where modulename = 'Register Task Orders & Execute' and displaytopic in ('Assigned Orders','My Orders');
+
+delete from lsusergrouprights where modulename = 'Register Task Orders & Execute' and displaytopic in ('Assigned Orders','My Orders');
+
+INSERT INTO lsmultisites (usercode, lssitemaster_sitecode, defaultsiteMaster) SELECT lsusermaster.usercode, lssitemaster.sitecode, 1 FROM lsusermaster JOIN lssitemaster ON lsusermaster.lssitemaster_sitecode = lssitemaster.sitecode WHERE (SELECT COUNT(*) FROM lsmultisites) = 0;
+
+
+-- INSERT INTO Elnprotocolworkflow SELECT * FROM LSworkflow WHERE (SELECT COUNT(*) FROM Elnprotocolworkflow) = 0 AND (SELECT COUNT(*) FROM LSworkflow) != 0;
+
+-- INSERT INTO elnprotocolworkflowgroupmap SELECT * FROM LSworkflowgroupmapping WHERE (SELECT COUNT(*) FROM elnprotocolworkflowgroupmap) = 0  AND (SELECT COUNT(*) FROM LSworkflowgroupmapping) != 0 AND workflowcode IS NOT NULL AND lsusergroup_usergroupcode IS NOT NULL;
+
+UPDATE lslogilabprotocoldetail SET elnprotocolworkflow_workflowcode = lsworkflow_workflowcode WHERE (SELECT COUNT(*) FROM lslogilabprotocoldetail WHERE elnprotocolworkflow_workflowcode IS NOT NULL) = 0;
+
+-- INSERT INTO ElnprotocolTemplateworkflow (workflowcode, status, workflowname, lssitemaster_sitecode)SELECT workflowcode, status, workflowname, lssitemaster_sitecode FROM LSsheetworkflow WHERE (SELECT COUNT(*) FROM ElnprotocolTemplateworkflow) = 0AND (SELECT COUNT(*)FROM LSsheetworkflow) != 0;
+
+-- INSERT INTO ElnprotocolTemplateworkflowgroupmap SELECT * FROM LSsheetworkflowgroupmap WHERE (SELECT COUNT(*) FROM ElnprotocolTemplateworkflowgroupmap) = 0 AND (SELECT COUNT(*) FROM LSsheetworkflowgroupmap WHERE workflowcode IS NOT NULL AND lsusergroup_usergroupcode IS NOT NULL ) != 0;
+
+UPDATE LSprotocolorderworkflowhistory SET elnprotocolworkflow_workflowcode = lsworkflow_workflowcode WHERE elnprotocolworkflow_workflowcode IS NULL OR elnprotocolworkflow_workflowcode = 0;
+
+INSERT INTO ElnprotocolTemplateworkflow (workflowcode, status, workflowname, lssitemaster_sitecode) SELECT workflowcode, status, workflowname, lssitemaster_sitecode FROM LSsheetworkflow WHERE (SELECT COUNT(*) FROM ElnprotocolTemplateworkflow) = 0 AND (SELECT COUNT(*) FROM LSsheetworkflow) != 0;
+
+-- INSERT INTO ElnprotocolTemplateworkflowgroupmap SELECT * FROM LSsheetworkflowgroupmap WHERE workflowcode IS NOT NULL AND lsusergroup_usergroupcode IS NOT NULL AND (SELECT COUNT(*) FROM ElnprotocolTemplateworkflowgroupmap) = 0 AND (SELECT COUNT(*) FROM LSsheetworkflowgroupmap) != 0 AND (SELECT COUNT(*) FROM ElnprotocolTemplateworkflow) != 0;
+
+UPDATE lsprotocolworkflowhistory SET elnprotocoltemplateworkflow_workflowcode = lssheetworkflow_workflowcode WHERE ( SELECT COUNT(*) FROM lsprotocolworkflowhistory WHERE elnprotocoltemplateworkflow_workflowcode IS NOT NULL) = 0;
+
+UPDATE lsprotocolmaster SET elnprotocoltemplateworkflow_workflowcode = lssheetworkflow_workflowcode WHERE ( SELECT COUNT(*) FROM lsprotocolmaster WHERE elnprotocoltemplateworkflow_workflowcode IS NOT NULL ) = 0;
+
+update lsusergrouprights set screate = '1', sedit = '1' where modulename = 'IDS_MDL_INVENTORY' and screenname = 'IDS_SCN_MATERIALTYPEPARAMS' and displaytopic = 'IDS_SCN_MATERIALTYPEPARAMS' and screate='NA' and sedit='NA';
