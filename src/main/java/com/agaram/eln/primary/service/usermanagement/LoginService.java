@@ -2947,7 +2947,7 @@ public class LoginService {
 //		return objsite;
 //	}
 
-	public List<LSuserMaster> ValidateuserAndPassword(LoggedUser objuser) throws ParseException {
+	public List<LSuserMaster> ValidateuserAndPassword(LoggedUser objuser) {
 		List<LSuserMaster> objExitinguser = new ArrayList<LSuserMaster>();
 //		String username = objuser.getsUsername();
 		String userPassword = objuser.getsPassword();
@@ -2981,7 +2981,6 @@ public class LoginService {
 
 				objExitinguser.get(0).getObjResponse().setInformation("Valid user and password");
 				objExitinguser.get(0).getObjResponse().setStatus(true);
-				objExitinguser.get(0).getObjResponse().setCurrentutcdate(commonfunction.getCurrentUtcTime());
 				return objExitinguser;
 
 			}
@@ -2991,11 +2990,9 @@ public class LoginService {
 			if (Password.equals(userPassword)) {
 				objExitinguser.get(0).getObjResponse().setInformation("Valid user and password");
 				objExitinguser.get(0).getObjResponse().setStatus(true);
-				objExitinguser.get(0).getObjResponse().setCurrentutcdate(commonfunction.getCurrentUtcTime());
 			} else {
 				objExitinguser.get(0).getObjResponse().setInformation("invalid password");
 				objExitinguser.get(0).getObjResponse().setStatus(false);
-				objExitinguser.get(0).getObjResponse().setCurrentutcdate(commonfunction.getCurrentUtcTime());
 			}
 		} else {
 			LSuserMaster objExitinguser1 = new LSuserMaster();
@@ -3179,10 +3176,4 @@ public class LoginService {
 				.collect(Collectors.toList());
 
 	}
-
-//	public List<LSSiteMaster> LoadCreatedBySite(LSuserMaster objsite) {
-//		List<LSSiteMaster> lstsite = lSSiteMasterRepository.getLoadCreatedBySite(objsite.getUsercode());
-//		
-//		return lstsite;
-//	}
 }

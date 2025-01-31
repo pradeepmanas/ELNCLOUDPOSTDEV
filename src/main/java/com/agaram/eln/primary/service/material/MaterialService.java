@@ -1084,7 +1084,6 @@ public class MaterialService {
 		if (sequencetablesiteRepository.findBySequencecodeAndSitecode(sequence, objInv.getNsitecode()) == null) {
 			SequenceTableSite objsiteseq = new SequenceTableSite();
 			objsiteseq.setSequencecode(sequence);
-			objsiteseq.setSitesequence((long) 0);
 			objsiteseq.setSitecode(objInv.getNsitecode());
 			sequencetablesiteRepository.save(objsiteseq);
 
@@ -1101,64 +1100,48 @@ public class MaterialService {
 	}
 
 	public void GetSequences(Elnmaterial objInv, SequenceTable seqorder, SequenceTableProjectLevel objprojectseq,
-			SequenceTableTaskLevel objtaskseq) throws ParseException {
+			SequenceTableTaskLevel objtaskseq) {
 		SequenceTable sqa = seqorder;
 
-		if(sqa != null)
-		{
-				objInv.setApplicationsequence(sqa.getApplicationsequence()+1);
-			
-			if(objInv !=null && objInv.getNsitecode() != null)
-			{
-				SequenceTableSite sqsite = sqa.getSequencetablesite().stream()
-				        .filter(sq -> sq.getSitecode().equals(objInv.getNsitecode())
-				        && sq.getSequencecode().equals(sqa.getSequencecode())).findFirst().orElse(null);
-				if(sqsite != null)
-				{
-					objInv.setSitesequence(sqsite.getSitesequence()+1);
-				}
-			}
-			
+		if (sqa != null) {
+			objInv.setApplicationsequence(sqa.getApplicationsequence() + 1);
+
 			String sequence = objInv.getSequenceid();
 			String sequencetext = sequence;
-			if(sequence.contains("{s&") && sequence.contains("$s}"))
-			{
-				sequencetext = sequence.substring(sequence.indexOf("{s&")+3, sequence.indexOf("$s}"));
-				String replacedseq ="";
-				if(sqa.getSequenceview().equals(2) && objInv.getApplicationsequence()!=null && !sequencetext.equals(""))
-				{
-					replacedseq = String.format("%0"+sequencetext.length()+"d", objInv.getApplicationsequence());
+			if (sequence.contains("{s&") && sequence.contains("$s}")) {
+				sequencetext = sequence.substring(sequence.indexOf("{s&") + 3, sequence.indexOf("$s}"));
+				String replacedseq = "";
+				if (sqa.getSequenceview().equals(2) && objInv.getApplicationsequence() != null
+						&& !sequencetext.equals("")) {
+					replacedseq = String.format("%0" + sequencetext.length() + "d", objInv.getApplicationsequence());
+				} else if (sqa.getSequenceview().equals(3) && objInv.getNsitecode() != null
+						&& !sequencetext.equals("")) {
+					replacedseq = String.format("%0" + sequencetext.length() + "d", objInv.getNsitecode());
+
+				} else if (!sequencetext.equals("") && objInv.getApplicationsequence() != null) {
+					replacedseq = String.format("%0" + sequencetext.length() + "d", objInv.getApplicationsequence());
 				}
-				else if(sqa.getSequenceview().equals(3) && objInv.getSitesequence() != null && !sequencetext.equals(""))
-				{
-					replacedseq = String.format("%0"+sequencetext.length()+"d", objInv.getSitesequence());
-					
-				}
-				else if(!sequencetext.equals("") && objInv.getApplicationsequence()!=null)
-				{
-					replacedseq = String.format("%0"+sequencetext.length()+"d", objInv.getApplicationsequence());
-				}
-				
-				if(!sequencetext.equals("") && !replacedseq.equals(""))
-				{
-					sequencetext = sequence.substring(0, sequence.indexOf("{s&"))+replacedseq+sequence.substring(sequence.indexOf("$s}")+3, sequence.length());
+
+				if (!sequencetext.equals("") && !replacedseq.equals("")) {
+					sequencetext = sequence.substring(0, sequence.indexOf("{s&")) + replacedseq
+							+ sequence.substring(sequence.indexOf("$s}") + 3, sequence.length());
 				}
 			}
-			
-			sequencetext = commonfunction.Updatedatesinsequence(sequence, sequencetext);
-			
+
 			objInv.setSequenceid(sequencetext);
 		}
 	}
 
 	public void updatesequence(Integer sequenceno, Elnmaterial objInv) {
 
+		long sitecodeInt = objInv.getNsitecode();
+
 		if (objInv.getApplicationsequence() != null) {
 			sequencetableRepository.setinitialapplicationsequence(objInv.getApplicationsequence(), sequenceno);
 		}
 
-		if (objInv.getSitesequence() != null) {
-			sequencetablesiteRepository.setinitialsitesequence(objInv.getSitesequence(), sequenceno, objInv.getNsitecode());
+		if (objInv.getNsitecode() != null) {
+			sequencetablesiteRepository.setinitialsitesequence(sitecodeInt, sequenceno, objInv.getNsitecode());
 		}
 	}
 
