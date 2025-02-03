@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -83,6 +84,9 @@ public class Sample implements Serializable{
 	private List<SampleAttachments> lssampleAttachments;
 	
 	private Integer derivedtype;
+	
+	@OneToOne
+	private SampleStorageMapping samplestoragemapping;
 
 	public List<SampleAttachments> getlsSampleAttachments() {
 		return lssampleAttachments;
@@ -239,6 +243,22 @@ public class Sample implements Serializable{
 
 	public void setDerivedtype(Integer derivedtype) {
 		this.derivedtype = derivedtype;
+	}
+
+	public List<SampleAttachments> getLssampleAttachments() {
+		return lssampleAttachments;
+	}
+
+	public void setLssampleAttachments(List<SampleAttachments> lssampleAttachments) {
+		this.lssampleAttachments = lssampleAttachments;
+	}
+
+	public SampleStorageMapping getSamplestoragemapping() {
+		return samplestoragemapping;
+	}
+
+	public void setSamplestoragemapping(SampleStorageMapping samplestoragemapping) {
+		this.samplestoragemapping = samplestoragemapping;
 	}
 
 }

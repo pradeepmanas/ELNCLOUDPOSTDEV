@@ -984,3 +984,39 @@ ALTER TABLE IF EXISTS public.samplelinks
     OWNER to postgres;
 
 ALTER TABLE IF EXISTS sample ADD COLUMN IF NOT EXISTS assignedproject TEXT;
+
+CREATE TABLE IF NOT EXISTS public.samplestoragemapping
+(
+    mappedid integer NOT NULL,
+    id character varying(255) COLLATE pg_catalog."default",
+    storagepath character varying(255) COLLATE pg_catalog."default",
+    sample_samplecode integer,
+    samplestoragelocationkey integer,
+    CONSTRAINT samplestoragemapping_pkey PRIMARY KEY (mappedid),
+    CONSTRAINT fk2xmft63w0kkqxm6udrblrqaan FOREIGN KEY (sample_samplecode)
+        REFERENCES public.sample (samplecode) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT fkcibpmobm6ygw8lr061vnaelw5 FOREIGN KEY (samplestoragelocationkey)
+        REFERENCES public.samplestoragelocation (samplestoragelocationkey) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.samplestoragemapping
+    OWNER to postgres;
+
+	ALTER TABLE IF EXISTS sample add column IF NOT EXISTS samplestoragemapping_mappedid integer;
+
+	ALTER TABLE IF EXISTS samplestoragemapping add column IF NOT EXISTS sample_samplecode integer;
+
+	ALTER TABLE sample DROP CONSTRAINT IF EXISTS fk1h4922la59g0xmro8qdynvllg ;
+ALTER TABLE sample ADD CONSTRAINT fk1h4922la59g0xmro8qdynvllg FOREIGN KEY (samplestoragemapping_mappedid)
+        REFERENCES public.samplestoragemapping (mappedid) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION;
+
+ALTER TABLE IF Exists LSprojectmaster ADD COLUMN IF NOT EXISTS projectid character varying(255);
+

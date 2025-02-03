@@ -35,6 +35,12 @@ public class SampleController {
 		return (ResponseEntity<Object>) objSampleService.getSampleonCategory(objsamplecat);
 	}
 	
+	@RequestMapping(value = "/getSampleonSite", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> getSampleonSite(@RequestBody Sample objsample) throws Exception {
+
+		return (ResponseEntity<Object>) objSampleService.getSampleonSite(objsample);
+	}
+	
 	@RequestMapping(value = "/createSample", method = RequestMethod.POST)
 	public ResponseEntity<Object> createSample(@RequestBody Sample obj) throws Exception {
 

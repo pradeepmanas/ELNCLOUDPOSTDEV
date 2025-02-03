@@ -593,7 +593,7 @@ public class InstrumentService {
 
 	private final ObjectMapper objectMapper = new ObjectMapper();
 
-
+	@Autowired
 	private DocumenteditorService documenteditorService;
 
 	@Autowired
@@ -10012,6 +10012,22 @@ public class InstrumentService {
 			header.setContentLength(gridFsFile.getLength());
 			return new ResponseEntity<>(new InputStreamResource(gridFsFile.getInputStream()), header, HttpStatus.OK);
 		}
+	}
+
+	public Map<String, Object> downloadsheetfilefordocx(Integer multitenant, String tenant, String fileid)
+			throws Exception {
+		Map<String, Object> mapObj = new HashMap<>();
+
+		if (multitenant == 1) {
+			String containerName = tenant + "sheetfolderfiles";
+			byte[] documentBytes = objCloudFileManipulationservice.retrieveCloudReportFile(containerName,
+					fileid);
+			MockMultipartFile mockMultipartFile = new MockMultipartFile("tempFileName", documentBytes);
+			Map<String, String> mapObj1 = documenteditorService.importFile(mockMultipartFile);
+			mapObj.put("templatecontent", mapObj1);
+			mapObj.put("status", true);
+		}
+		return mapObj;
 	}
 
 	public List<LSsheetfolderfiles> Getaddedfilesforfolder(List<String> lstuuid) {

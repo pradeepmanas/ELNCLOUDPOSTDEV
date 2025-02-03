@@ -43,6 +43,8 @@ import com.agaram.eln.primary.model.barcode.Printer;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.material.ElnmaterialInventory;
 import com.agaram.eln.primary.model.material.MaterialCategory;
+import com.agaram.eln.primary.model.sample.Sample;
+import com.agaram.eln.primary.model.sample.SampleCategory;
 import com.agaram.eln.primary.model.sheetManipulation.LSfile;
 import com.agaram.eln.primary.model.sheetManipulation.LsfilemapBarcode;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
@@ -50,6 +52,7 @@ import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.model.usermanagement.LoggedUser;
 import com.agaram.eln.primary.repository.barcode.BarcodeMasterRepository;
 import com.agaram.eln.primary.repository.material.ElnmaterialInventoryRepository;
+import com.agaram.eln.primary.repository.sample.SampleRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LsfilemapBarcodeRepository;
 import com.agaram.eln.primary.service.cloudFileManip.CloudFileManipulationservice;
 import com.agaram.eln.primary.service.fileManipulation.FileManipulationservice;
@@ -77,6 +80,9 @@ public class BarcodeMasterService {
 
 	@Autowired
 	private ElnmaterialInventoryRepository elnmaterialInventoryReppository;
+	
+	@Autowired
+	private SampleRepository sampleRepository;
 
 	@Autowired
 	private LsfilemapBarcodeRepository lsfilemapBarcodeRepository;
@@ -218,6 +224,9 @@ public class BarcodeMasterService {
 		case "1":
 			data = updatematerialcontent(data, Integer.parseInt(primarykey), path, username);
 			break;
+		case "3":
+			data = updatesamplecontent(data, Integer.parseInt(primarykey), path, username);
+			break;
 		}
 
 //		data = data.replace("$BarcodeId$", barcode.getBarcodename());
@@ -322,6 +331,21 @@ public class BarcodeMasterService {
 		}
 		return data;
 	}
+	
+	private String updatesamplecontent(String data, Integer samplecode, String path, String username)
+			throws ParseException {
+		Sample sampleObj = sampleRepository.findOne(samplecode);
+		if (sampleObj != null) {
+			Date currentdata = commonfunction.getCurrentUtcTime();
+			DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd ");
+			data = data.replace("$sampleid$", sampleObj.getSequenceid())
+					.replace("$samplename$", sampleObj.getSamplename())
+					.replace("$storagepath$", path)
+					.replace("$generatedby$", username).replace("$generateddate$", dateFormat.format(currentdata));
+		}
+		return data;
+	}
+
 
 	private String readFromInputStream(InputStream inputStream) throws IOException {
 		StringBuilder resultStringBuilder = new StringBuilder();

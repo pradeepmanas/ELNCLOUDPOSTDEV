@@ -35,6 +35,7 @@ import com.agaram.eln.primary.repository.sample.DerivedSamplesRepository;
 import com.agaram.eln.primary.repository.sample.SampleAttachementsRepository;
 import com.agaram.eln.primary.repository.sample.SampleLinkRepository;
 import com.agaram.eln.primary.repository.sample.SampleRepository;
+import com.agaram.eln.primary.repository.sample.SampleStorageMappingRepository;
 import com.agaram.eln.primary.repository.sequence.SequenceTableProjectLevelRepository;
 import com.agaram.eln.primary.repository.sequence.SequenceTableRepository;
 import com.agaram.eln.primary.repository.sequence.SequenceTableSiteRepository;
@@ -68,11 +69,17 @@ public class SampleService<ParentSample>{
 	private SequenceTableRepository sequencetableRepository;
 	@Autowired
 	private SequenceTableSiteRepository sequencetablesiteRepository;
+	@Autowired
+	private SampleStorageMappingRepository samplestoragemappingrepository;
 
-	public ResponseEntity<Object> getSampleonCategory(SampleCategory objsamplecat){
-			
+	public ResponseEntity<Object> getSampleonCategory(SampleCategory objsamplecat){			
 			List<Sample> lstsample = samplerepository.findBySamplecategoryAndNsitecodeOrderBySamplecodeDesc(objsamplecat,objsamplecat.getNsitecode());
 			return new ResponseEntity<>(lstsample, HttpStatus.OK);
+	}
+	
+	public ResponseEntity<Object> getSampleonSite(Sample objsample){	
+		List<Sample> lstsample = samplerepository.findByNsitecodeOrderBySamplecodeDesc(objsample.getNsitecode());
+		return new ResponseEntity<>(lstsample, HttpStatus.OK);
 	}
 	
 	public void GetSampleSequence(Sample objsampl,SequenceTable seqsampl,SequenceTableProjectLevel objprojectseq,SequenceTableTaskLevel objtaskseq) throws ParseException{
@@ -271,6 +278,12 @@ public class SampleService<ParentSample>{
 			
 			e.printStackTrace();
 		}
+		
+		if(sample.getSamplestoragemapping()!=null)
+		{
+			samplestoragemappingrepository.save(sample.getSamplestoragemapping());
+		}
+		
 		samplerepository.save(sample);
 		updatesequence(5,sample);
 		return new ResponseEntity<>(sample, HttpStatus.OK);
@@ -301,7 +314,10 @@ public class SampleService<ParentSample>{
 	}
 
 	public ResponseEntity<Object> getLinksOnSample(SampleLinks sampleLinks) {
-		return new ResponseEntity<>(sampleLinkRepository.findAll(), HttpStatus.OK);
+		Map<String, Object> objMap = new HashMap<>();
+		List<SampleLinks> objFilels = sampleLinkRepository.findByNsamplecodeOrderByNsamplelinkcodeDesc(sampleLinks.getNsamplecode());
+		objMap.put("lsSampleLinks", objFilels);
+		return new ResponseEntity<>(objMap, HttpStatus.OK);
 	}
 
 	public Sample sampleCloudUploadattachments(MultipartFile file, Integer nsampletypecode, Integer nsamplecatcode,
