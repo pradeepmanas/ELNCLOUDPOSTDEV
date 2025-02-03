@@ -149,6 +149,9 @@ public class Elnmaterial implements Serializable{
 	@Column(name = "applicationsequence")
 	private Long applicationsequence;
 	
+	@Transient
+	private Long sitesequence;
+	
 	@Column(name = "sequenceid")
 	private String sequenceid;
 	
@@ -174,6 +177,13 @@ public class Elnmaterial implements Serializable{
 	@Column(columnDefinition = "TEXT")
 	private String assignedproject;
 	
+	public Long getSitesequence() {
+		return sitesequence;
+	}
+
+	public void setSitesequence(Long sitesequence) {
+		this.sitesequence = sitesequence;
+	}
 	public String getAssignedproject() {
 		return assignedproject;
 	}

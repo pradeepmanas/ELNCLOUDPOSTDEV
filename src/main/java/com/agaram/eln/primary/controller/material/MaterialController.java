@@ -267,4 +267,9 @@ public class MaterialController {
 	{
 		return objMaterialService.deleteLinkforMaterial(materiallink);
 	}
+	
+	@RequestMapping(value = "/geSampleList", method = RequestMethod.POST)
+	public ResponseEntity<Object> geSampleList(@RequestBody Map<String, Object> inputMap) throws Exception {
+		return objMaterialService.geSampleList(inputMap);
+	}
 }
