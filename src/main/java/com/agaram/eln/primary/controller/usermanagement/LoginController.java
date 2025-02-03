@@ -391,10 +391,5 @@ public class LoginController {
         ResponseEntity<String> responseEntity = new RestTemplate().postForEntity(url, null, String.class);
         return ResponseEntity.ok(responseEntity.getBody());
     }
-	
-//	@PostMapping("/LoadCreatedBySite")
-//	public List<LSSiteMaster> LoadCreatedBySite(@RequestBody LSuserMaster objsite) throws Exception {
-//		return loginService.LoadCreatedBySite(objsite);
-//	}
 
 }

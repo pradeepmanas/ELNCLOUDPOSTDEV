@@ -52,7 +52,6 @@ public class LSSiteMaster {
 	private String organisationname;
 	private String country;
 	private Date expirydate;
-//	private Integer createby_usercode;
 
 	@Transient
 	LScfttransaction objsilentaudit;
@@ -280,14 +279,6 @@ public class LSSiteMaster {
 
 	public void setExpirydate(Date expirydate) {
 		this.expirydate = expirydate;
-	}
-
-//	public Integer getCreateby_usercode() {
-//		return createby_usercode;
-//	}
-//
-//	public void setCreateby_usercode(Integer createby_usercode) {
-//		this.createby_usercode = createby_usercode;
-//	}	
+	}	
 	
 }

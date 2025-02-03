@@ -130,6 +130,4 @@ public interface ElnmaterialInventoryRepository extends JpaRepository<Elnmateria
 
 	long countByNsitecode(Integer integer);
 
-	List<ElnmaterialInventory> findByNsitecodeAndNstatusOrderByNmaterialinventorycodeAsc(Integer nsitecode, int i);
-
 }

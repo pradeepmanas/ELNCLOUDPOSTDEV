@@ -2021,99 +2021,87 @@ public class LoginService {
 		return objuser;
 	}
 
-	@SuppressWarnings("unused")
 	public ResponseEntity<?> azureusertokengenrate(LSuserMaster objuser) throws Exception {
 
 		if (objuser.getUsername() == null)
 			return null;
-		
-		Map<String, Object> obj = new HashMap<>();
+
 		LSuserMaster userDetails = lsuserMasterRepository.findTop1ByUsernameIgnoreCaseAndLoginfromAndLssitemaster(
 				objuser.getUsername(), "1", objuser.getLssitemaster());
 
-		if(userDetails != null)
-		{
-			LSPasswordPolicy policydays = LSPasswordPolicyRepository.findTopByAndLssitemasterOrderByPolicycodeDesc(objuser.getLssitemaster());
-			if (policydays == null) {
-				LSSiteMaster lssitemaster = new LSSiteMaster();
-				lssitemaster.setSitecode(1);
-				LSPasswordPolicy lspasswordPolicy = LSPasswordPolicyRepository.findFirst1ByLssitemaster(lssitemaster);
-	
-				LSPasswordPolicy objPassword = new LSPasswordPolicy();
-				objPassword.setComplexpasswrd(lspasswordPolicy.getComplexpasswrd());
-				objPassword.setLockpolicy(lspasswordPolicy.getLockpolicy());
-				objPassword.setMaxpasswrdlength(lspasswordPolicy.getMaxpasswrdlength());
-				objPassword.setMincapitalchar(lspasswordPolicy.getMincapitalchar());
-				objPassword.setMinspecialchar(lspasswordPolicy.getMinspecialchar());
-				objPassword.setMinnumericchar(lspasswordPolicy.getMinnumericchar());
-				objPassword.setMinpasswrdlength(lspasswordPolicy.getMinpasswrdlength());
-				objPassword.setMinsmallchar(lspasswordPolicy.getMinsmallchar());
-				objPassword.setPasswordexpiry(lspasswordPolicy.getPasswordexpiry());
-				objPassword.setPasswordhistory(lspasswordPolicy.getPasswordhistory());
-				objPassword.setLssitemaster(objuser.getLssitemaster());
-				LSPasswordPolicyRepository.save(objPassword);
-				policydays = LSPasswordPolicyRepository.findByLssitemaster(objuser.getLssitemaster());
-			}
-			Calendar c = Calendar.getInstance();
-			c.add(Calendar.DATE, policydays.getPasswordexpiry());
-	
-			if (userDetails == null) {
-	
-				LSusergroup objaadsgroup = LSusergroupRepository.findByusergroupnameAndLssitemaster("Azure aads",
-						objuser.getLssitemaster().getSitecode());
-				LSusergroup objgroup = new LSusergroup();
-				if (objaadsgroup == null) {
-	
-					objgroup.setUsergroupname("Azure aads");
-					objgroup.setLssitemaster(objuser.getLssitemaster().getSitecode());
-					objgroup.setCreatedby(objuser.getUsername());
-					objgroup.setModifiedby(objuser.getUsername());
-					objgroup.setCreatedon(objuser.getCreateddate());
-					objgroup.setModifiedon(objuser.getCreateddate());
-					objgroup.setUsergroupstatus("A");
-	
-					LSusergroupRepository.save(objgroup);
-	
-					objuser.setLsusergroup(objgroup);
-				} else {
-					objuser.setLsusergroup(objaadsgroup);
-				}
-	
-				objuser.setCreatedby(objuser.getUsername());
-				objuser.setModifiedby(objuser.getUsername());
-				objuser.setUserstatus("A");
-				objuser.setLockcount(0);
-				objuser.setUserretirestatus(0);
-				objuser.setPassword(objuser.getToken());
-				objuser.setPasswordexpirydate(c.getTime());
-	
-				objuser.setLoginfrom("1");
-				lsuserMasterRepository.save(objuser);
+		LSPasswordPolicy policydays = LSPasswordPolicyRepository.findTopByAndLssitemasterOrderByPolicycodeDesc(objuser.getLssitemaster());
+		if (policydays == null) {
+			LSSiteMaster lssitemaster = new LSSiteMaster();
+			lssitemaster.setSitecode(1);
+			LSPasswordPolicy lspasswordPolicy = LSPasswordPolicyRepository.findFirst1ByLssitemaster(lssitemaster);
+
+			LSPasswordPolicy objPassword = new LSPasswordPolicy();
+			objPassword.setComplexpasswrd(lspasswordPolicy.getComplexpasswrd());
+			objPassword.setLockpolicy(lspasswordPolicy.getLockpolicy());
+			objPassword.setMaxpasswrdlength(lspasswordPolicy.getMaxpasswrdlength());
+			objPassword.setMincapitalchar(lspasswordPolicy.getMincapitalchar());
+			objPassword.setMinspecialchar(lspasswordPolicy.getMinspecialchar());
+			objPassword.setMinnumericchar(lspasswordPolicy.getMinnumericchar());
+			objPassword.setMinpasswrdlength(lspasswordPolicy.getMinpasswrdlength());
+			objPassword.setMinsmallchar(lspasswordPolicy.getMinsmallchar());
+			objPassword.setPasswordexpiry(lspasswordPolicy.getPasswordexpiry());
+			objPassword.setPasswordhistory(lspasswordPolicy.getPasswordhistory());
+			objPassword.setLssitemaster(objuser.getLssitemaster());
+			LSPasswordPolicyRepository.save(objPassword);
+			policydays = LSPasswordPolicyRepository.findByLssitemaster(objuser.getLssitemaster());
+		}
+		Calendar c = Calendar.getInstance();
+		c.add(Calendar.DATE, policydays.getPasswordexpiry());
+
+		if (userDetails == null) {
+
+			LSusergroup objaadsgroup = LSusergroupRepository.findByusergroupnameAndLssitemaster("Azure aads",
+					objuser.getLssitemaster().getSitecode());
+			LSusergroup objgroup = new LSusergroup();
+			if (objaadsgroup == null) {
+
+				objgroup.setUsergroupname("Azure aads");
+				objgroup.setLssitemaster(objuser.getLssitemaster().getSitecode());
+				objgroup.setCreatedby(objuser.getUsername());
+				objgroup.setModifiedby(objuser.getUsername());
+				objgroup.setCreatedon(objuser.getCreateddate());
+				objgroup.setModifiedon(objuser.getCreateddate());
+				objgroup.setUsergroupstatus("A");
+
+				LSusergroupRepository.save(objgroup);
+
+				objuser.setLsusergroup(objgroup);
 			} else {
-				objuser.setPassword(objuser.getToken());
-				userDetails.setPassword(objuser.getToken());
-				objuser.setPasswordexpirydate(
-						userDetails.getPasswordexpirydate() == null ? c.getTime() : userDetails.getPasswordexpirydate());
-				userDetails.setPasswordexpirydate(
-						userDetails.getPasswordexpirydate() == null ? c.getTime() : userDetails.getPasswordexpirydate());
-				lsuserMasterRepository.save(userDetails);
+				objuser.setLsusergroup(objaadsgroup);
 			}
-	
-			String Tokenuser = objuser.getUsername() + "[" + objuser.getLssitemaster().getSitecode() + "]";
-	
-			final UserDetails userDetailstoken = userDetailsService.loadUserByUsername(Tokenuser);
-	
-			final String token = jwtTokenUtil.generateToken(userDetailstoken);
-			
-			return ResponseEntity.ok(new JwtResponse(token));
+
+			objuser.setCreatedby(objuser.getUsername());
+			objuser.setModifiedby(objuser.getUsername());
+			objuser.setUserstatus("A");
+			objuser.setLockcount(0);
+			objuser.setUserretirestatus(0);
+			objuser.setPassword(objuser.getToken());
+			objuser.setPasswordexpirydate(c.getTime());
+
+			objuser.setLoginfrom("1");
+			lsuserMasterRepository.save(objuser);
+		} else {
+			objuser.setPassword(objuser.getToken());
+			userDetails.setPassword(objuser.getToken());
+			objuser.setPasswordexpirydate(
+					userDetails.getPasswordexpirydate() == null ? c.getTime() : userDetails.getPasswordexpirydate());
+			userDetails.setPasswordexpirydate(
+					userDetails.getPasswordexpirydate() == null ? c.getTime() : userDetails.getPasswordexpirydate());
+			lsuserMasterRepository.save(userDetails);
 		}
-		else
-		{
-			Response res = new Response();
-			res.setStatus(false);
-			res.setInformation("User not registered in the selected site.");
-			return ResponseEntity.ok(res);
-		}
+
+		String Tokenuser = objuser.getUsername() + "[" + objuser.getLssitemaster().getSitecode() + "]";
+
+		final UserDetails userDetailstoken = userDetailsService.loadUserByUsername(Tokenuser);
+
+		final String token = jwtTokenUtil.generateToken(userDetailstoken);
+
+		return ResponseEntity.ok(new JwtResponse(token));
 	}
 
 	public ResponseEntity<?> createAuthenticationToken(LSuserMaster objuser) throws Exception {
@@ -2959,7 +2947,7 @@ public class LoginService {
 //		return objsite;
 //	}
 
-	public List<LSuserMaster> ValidateuserAndPassword(LoggedUser objuser) throws ParseException {
+	public List<LSuserMaster> ValidateuserAndPassword(LoggedUser objuser) {
 		List<LSuserMaster> objExitinguser = new ArrayList<LSuserMaster>();
 //		String username = objuser.getsUsername();
 		String userPassword = objuser.getsPassword();
@@ -2993,7 +2981,6 @@ public class LoginService {
 
 				objExitinguser.get(0).getObjResponse().setInformation("Valid user and password");
 				objExitinguser.get(0).getObjResponse().setStatus(true);
-				objExitinguser.get(0).getObjResponse().setCurrentutcdate(commonfunction.getCurrentUtcTime());
 				return objExitinguser;
 
 			}
@@ -3003,11 +2990,9 @@ public class LoginService {
 			if (Password.equals(userPassword)) {
 				objExitinguser.get(0).getObjResponse().setInformation("Valid user and password");
 				objExitinguser.get(0).getObjResponse().setStatus(true);
-				objExitinguser.get(0).getObjResponse().setCurrentutcdate(commonfunction.getCurrentUtcTime());
 			} else {
 				objExitinguser.get(0).getObjResponse().setInformation("invalid password");
 				objExitinguser.get(0).getObjResponse().setStatus(false);
-				objExitinguser.get(0).getObjResponse().setCurrentutcdate(commonfunction.getCurrentUtcTime());
 			}
 		} else {
 			LSuserMaster objExitinguser1 = new LSuserMaster();
@@ -3191,10 +3176,4 @@ public class LoginService {
 				.collect(Collectors.toList());
 
 	}
-
-//	public List<LSSiteMaster> LoadCreatedBySite(LSuserMaster objsite) {
-//		List<LSSiteMaster> lstsite = lSSiteMasterRepository.getLoadCreatedBySite(objsite.getUsercode());
-//		
-//		return lstsite;
-//	}
 }

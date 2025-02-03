@@ -28,9 +28,6 @@ public class LSprojectmaster {
 
 	@Column(columnDefinition = "varchar(100)")
 	private String projectname;
-	
-	private String projectid;
-	
 	private Integer status;
 	@Column(columnDefinition = "varchar(100)")
 	private String createdby;
@@ -267,14 +264,6 @@ public class LSprojectmaster {
 
 	public void setEnddate(Date enddate) {
 		this.enddate = enddate;
-	}
-
-	public String getProjectid() {
-		return projectid;
-	}
-
-	public void setProjectid(String projectid) {
-		this.projectid = projectid;
 	}
 
 }

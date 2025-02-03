@@ -49,10 +49,12 @@ import com.agaram.eln.primary.model.material.MaterialType;
 import com.agaram.eln.primary.model.material.Period;
 import com.agaram.eln.primary.model.material.Section;
 import com.agaram.eln.primary.model.material.Unit;
-import com.agaram.eln.primary.model.sample.Sample;
 import com.agaram.eln.primary.model.sequence.SequenceTable;
+import com.agaram.eln.primary.model.sequence.SequenceTableOrderType;
+import com.agaram.eln.primary.model.sequence.SequenceTableProject;
 import com.agaram.eln.primary.model.sequence.SequenceTableProjectLevel;
 import com.agaram.eln.primary.model.sequence.SequenceTableSite;
+import com.agaram.eln.primary.model.sequence.SequenceTableTask;
 import com.agaram.eln.primary.model.sequence.SequenceTableTaskLevel;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.repository.cloudFileManip.CloudOrderAttachmentRepository;
@@ -71,7 +73,6 @@ import com.agaram.eln.primary.repository.material.MaterialTypeRepository;
 import com.agaram.eln.primary.repository.material.PeriodRepository;
 import com.agaram.eln.primary.repository.material.SectionRepository;
 import com.agaram.eln.primary.repository.material.UnitRepository;
-import com.agaram.eln.primary.repository.sample.SampleRepository;
 import com.agaram.eln.primary.repository.sequence.SequenceTableRepository;
 import com.agaram.eln.primary.repository.sequence.SequenceTableSiteRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
@@ -129,8 +130,6 @@ public class MaterialService {
 	private SequenceTableSiteRepository sequencetablesiteRepository;
 	@Autowired
 	private MaterialLinksRepository materiallinksrepository;
-	@Autowired
-	private SampleRepository SampleRepository;
 
 	public ResponseEntity<Object> getMaterialcombo(Integer nmaterialtypecode, Integer nsitecode) {
 
@@ -1085,7 +1084,6 @@ public class MaterialService {
 		if (sequencetablesiteRepository.findBySequencecodeAndSitecode(sequence, objInv.getNsitecode()) == null) {
 			SequenceTableSite objsiteseq = new SequenceTableSite();
 			objsiteseq.setSequencecode(sequence);
-			objsiteseq.setSitesequence((long) 0);
 			objsiteseq.setSitecode(objInv.getNsitecode());
 			sequencetablesiteRepository.save(objsiteseq);
 
@@ -1102,64 +1100,48 @@ public class MaterialService {
 	}
 
 	public void GetSequences(Elnmaterial objInv, SequenceTable seqorder, SequenceTableProjectLevel objprojectseq,
-			SequenceTableTaskLevel objtaskseq) throws ParseException {
+			SequenceTableTaskLevel objtaskseq) {
 		SequenceTable sqa = seqorder;
 
-		if(sqa != null)
-		{
-				objInv.setApplicationsequence(sqa.getApplicationsequence()+1);
-			
-			if(objInv !=null && objInv.getNsitecode() != null)
-			{
-				SequenceTableSite sqsite = sqa.getSequencetablesite().stream()
-				        .filter(sq -> sq.getSitecode().equals(objInv.getNsitecode())
-				        && sq.getSequencecode().equals(sqa.getSequencecode())).findFirst().orElse(null);
-				if(sqsite != null)
-				{
-					objInv.setSitesequence(sqsite.getSitesequence()+1);
-				}
-			}
-			
+		if (sqa != null) {
+			objInv.setApplicationsequence(sqa.getApplicationsequence() + 1);
+
 			String sequence = objInv.getSequenceid();
 			String sequencetext = sequence;
-			if(sequence.contains("{s&") && sequence.contains("$s}"))
-			{
-				sequencetext = sequence.substring(sequence.indexOf("{s&")+3, sequence.indexOf("$s}"));
-				String replacedseq ="";
-				if(sqa.getSequenceview().equals(2) && objInv.getApplicationsequence()!=null && !sequencetext.equals(""))
-				{
-					replacedseq = String.format("%0"+sequencetext.length()+"d", objInv.getApplicationsequence());
+			if (sequence.contains("{s&") && sequence.contains("$s}")) {
+				sequencetext = sequence.substring(sequence.indexOf("{s&") + 3, sequence.indexOf("$s}"));
+				String replacedseq = "";
+				if (sqa.getSequenceview().equals(2) && objInv.getApplicationsequence() != null
+						&& !sequencetext.equals("")) {
+					replacedseq = String.format("%0" + sequencetext.length() + "d", objInv.getApplicationsequence());
+				} else if (sqa.getSequenceview().equals(3) && objInv.getNsitecode() != null
+						&& !sequencetext.equals("")) {
+					replacedseq = String.format("%0" + sequencetext.length() + "d", objInv.getNsitecode());
+
+				} else if (!sequencetext.equals("") && objInv.getApplicationsequence() != null) {
+					replacedseq = String.format("%0" + sequencetext.length() + "d", objInv.getApplicationsequence());
 				}
-				else if(sqa.getSequenceview().equals(3) && objInv.getSitesequence() != null && !sequencetext.equals(""))
-				{
-					replacedseq = String.format("%0"+sequencetext.length()+"d", objInv.getSitesequence());
-					
-				}
-				else if(!sequencetext.equals("") && objInv.getApplicationsequence()!=null)
-				{
-					replacedseq = String.format("%0"+sequencetext.length()+"d", objInv.getApplicationsequence());
-				}
-				
-				if(!sequencetext.equals("") && !replacedseq.equals(""))
-				{
-					sequencetext = sequence.substring(0, sequence.indexOf("{s&"))+replacedseq+sequence.substring(sequence.indexOf("$s}")+3, sequence.length());
+
+				if (!sequencetext.equals("") && !replacedseq.equals("")) {
+					sequencetext = sequence.substring(0, sequence.indexOf("{s&")) + replacedseq
+							+ sequence.substring(sequence.indexOf("$s}") + 3, sequence.length());
 				}
 			}
-			
-			sequencetext = commonfunction.Updatedatesinsequence(sequence, sequencetext);
-			
+
 			objInv.setSequenceid(sequencetext);
 		}
 	}
 
 	public void updatesequence(Integer sequenceno, Elnmaterial objInv) {
 
+		long sitecodeInt = objInv.getNsitecode();
+
 		if (objInv.getApplicationsequence() != null) {
 			sequencetableRepository.setinitialapplicationsequence(objInv.getApplicationsequence(), sequenceno);
 		}
 
-		if (objInv.getSitesequence() != null) {
-			sequencetablesiteRepository.setinitialsitesequence(objInv.getSitesequence(), sequenceno, objInv.getNsitecode());
+		if (objInv.getNsitecode() != null) {
+			sequencetablesiteRepository.setinitialsitesequence(sitecodeInt, sequenceno, objInv.getNsitecode());
 		}
 	}
 
@@ -2065,16 +2047,5 @@ public class MaterialService {
 	{
 		materiallinksrepository.delete(materiallink);
 		return new ResponseEntity<>(materiallink, HttpStatus.OK);
-	}
-	
-	public ResponseEntity<Object> geSampleList(Map<String, Object> inputMap) throws ParseException {
-		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-		Date fromDate = sdf.parse(inputMap.get("fromdate").toString());
-		Date toDate = sdf.parse(inputMap.get("todate").toString());
-		Integer nsiteInteger = (Integer) inputMap.get("nsitecode");
-	    List<Sample> lstSample = SampleRepository.findByNsitecodeAndCreateddateBetweenOrderBySamplecodeDesc(nsiteInteger,fromDate,toDate);
-		objmap.put("lstSample", lstSample);		
-		return new ResponseEntity<>(objmap, HttpStatus.OK);
 	}
 }

@@ -403,18 +403,20 @@ public class EquipmentService {
 		if(sqa != null)
 		{
 			objequip.setApplicationsequence(sqa.getApplicationsequence()+1);
-			if(objequip !=null && objequip.getNsitecode() != null&&
+			
+			if(objequip !=null && objequip.getNsitecode() != null && 
 					objequip.getNsitecode()!=null && 
 							objequip.getNsitecode()!=null)
 			{
 				SequenceTableSite sqsite = sqa.getSequencetablesite().stream()
 				        .filter(sq -> sq.getSitecode().equals(objequip.getNsitecode())
 				        && sq.getSequencecode().equals(sqa.getSequencecode())).findFirst().orElse(null);
-				if( sqsite!= null)
-				{
-					objequip.setSitesequence(sqsite.getSitesequence()+1);
-				}
+//				if(sqsite != null)
+//				{
+//					objequip.setSitesequence(sqsite.getSitesequence()+1);
+//				}
 			}
+			
 			Date currentdate = commonfunction.getCurrentUtcTime();
 			String sequence = objequip.getSequenceid();
 			String sequencetext = sequence;
@@ -536,7 +538,6 @@ public class EquipmentService {
 		{
 			SequenceTableSite objsiteseq= new SequenceTableSite();
 			objsiteseq.setSequencecode(sequence);
-			objsiteseq.setSitesequence((long)0);
 			objsiteseq.setSitecode(obj.getNsitecode());
 			sequencetablesiteRepository.save(objsiteseq);
 			if(seqorder.getSequencetablesite() !=null)
@@ -599,14 +600,14 @@ public class EquipmentService {
 	}
 	public void updatesequence(Integer sequenceno, Equipment objequipment ) {
 		 
-		//long sitecodeInt = objequipment.getNsitecode();
+		long sitecodeInt = objequipment.getNsitecode();
 		
 		if (objequipment.getApplicationsequence() != null) {
 			sequencetableRepository.setinitialapplicationsequence(objequipment.getApplicationsequence(), sequenceno);
 		}
  
-		if (objequipment.getSitesequence() != null) {
-			sequencetablesiteRepository.setinitialsitesequence(objequipment.getSitesequence(), sequenceno,
+		if (objequipment.getNsitecode() != null) {
+			sequencetablesiteRepository.setinitialsitesequence(sitecodeInt, sequenceno,
 					objequipment.getNsitecode());
 		}
 	}

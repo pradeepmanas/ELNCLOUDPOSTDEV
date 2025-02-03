@@ -1172,14 +1172,6 @@ public class InstrumentController {
 		return instrumentService.downloadsheetfileforfolder(multitenant,tenant,fileid);
 	}
 	
-	@RequestMapping("/downloadsheetfilefordocx")
-	public Map<String, Object> downloadsheetfilefordocx(@RequestBody Map<String, Object> obj) throws Exception {
-		int multitenant = (int) obj.get("multitenant");
-		String tenant = (String) obj.get("tenant");
-		String fileid = (String) obj.get("fileid");
-		return instrumentService.downloadsheetfilefordocx(multitenant,tenant,fileid);
-	}
-	
 	@RequestMapping("/deletefilesforfolder/{directorycode}/{filefor}/{tenantid}/{ismultitenant}/{usercode}/{sitecode}/{createddate}/{fileviewfor}")
 	public Map<String, Object> deletefilesforfolder(@RequestBody LSsheetfolderfiles objfiles,@PathVariable Long directorycode, @PathVariable String filefor, @PathVariable String tenantid
 			,@PathVariable Integer ismultitenant, @PathVariable Integer usercode, @PathVariable Integer sitecode

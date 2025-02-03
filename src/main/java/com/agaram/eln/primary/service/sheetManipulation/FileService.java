@@ -48,7 +48,6 @@ import com.agaram.eln.primary.model.general.SheetVersion;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
 import com.agaram.eln.primary.model.instrumentDetails.LsSheetorderlimsrefrence;
 import com.agaram.eln.primary.model.masters.Lsrepositories;
-import com.agaram.eln.primary.model.material.ElnmaterialInventory;
 import com.agaram.eln.primary.model.protocols.ElnprotocolTemplateworkflow;
 import com.agaram.eln.primary.model.protocols.ElnprotocolTemplateworkflowgroupmap;
 import com.agaram.eln.primary.model.protocols.Elnprotocolworkflow;
@@ -119,7 +118,6 @@ import com.agaram.eln.primary.service.basemaster.BaseMasterService;
 import com.agaram.eln.primary.service.cloudFileManip.CloudFileManipulationservice;
 import com.agaram.eln.primary.service.fileManipulation.FileManipulationservice;
 import com.agaram.eln.primary.service.masters.MasterService;
-import com.agaram.eln.primary.service.material.MaterialInventoryService;
 import com.agaram.eln.primary.service.material.TransactionService;
 import com.agaram.eln.primary.service.protocol.Commonservice;
 //import com.agaram.eln.primary.service.protocol.ProtocolService;
@@ -259,9 +257,6 @@ public class FileService {
 	
 	@Autowired
 	private LogilablimsorderdetailsRepository logilablimsorderdetailsRepository;
-	
-	@Autowired
-	private MaterialInventoryService materialInventoryService;
 	
 //	@Autowired
 //	private BarcodeMasterRepository barcodeMasterRepository;
@@ -725,18 +720,14 @@ public class FileService {
 				LSusersteamRepository.findByLsuserteammappingInAndStatusAndLssitemaster(lsuserteammappingRepository.findBylsuserMaster(objuser), 1,objuser.getLssitemaster())
 				, 1,objuser.getLssitemaster());
 		mapOrders.put("project", prolist);
-//		Lsrepositories lsrepositories = new Lsrepositories();
-//		lsrepositories.setSitecode(objuser.getLssitemaster().getSitecode());
-//		mapOrders.put("inventories", inventoryservice.Getallrepositories(lsrepositories));
+		Lsrepositories lsrepositories = new Lsrepositories();
+		lsrepositories.setSitecode(objuser.getLssitemaster().getSitecode());
+		mapOrders.put("inventories", inventoryservice.Getallrepositories(lsrepositories));
 //		mapOrders.put("sheets", GetApprovedSheets(0, objuser));
-		ElnmaterialInventory lsinventories = new ElnmaterialInventory();
-		lsinventories.setNsitecode(objuser.getLssitemaster().getSitecode());
-		mapOrders.put("inventories", materialInventoryService.GetAllInventories(lsinventories));
 		mapReq4Material.put("sitecode", objuser.getLssitemaster().getSitecode());
 		mapOrders.put("limsInventory", transactionService.getMaterialLst4DashBoard(mapReq4Material));
-		mapOrders.put("material", transactionService.getMaterials(objuser));
-//		lsrepositories = null;
-		lsinventories = null;
+//		mapOrders.put("material", transactionService.getMaterials(objuser));
+		lsrepositories = null;
 		return mapOrders;
 	}
 

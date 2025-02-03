@@ -2966,10 +2966,6 @@ public class MaterialInventoryService {
 		}
 		return str;
 	}
-	
-	public List<ElnmaterialInventory> GetAllInventories(ElnmaterialInventory inventory) {
-		return elnmaterialInventoryReppository.findByNsitecodeAndNstatusOrderByNmaterialinventorycodeAsc(inventory.getNsitecode(), 1);
-	}
 
 	@SuppressWarnings("unchecked")
 	public ResponseEntity<Object> getMaterialInventorytransDetails(Map<String, Object> inputMap) {
