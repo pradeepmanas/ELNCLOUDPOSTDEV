@@ -83,11 +83,6 @@ public class MaterialType implements Serializable {
 	@ManyToOne
 	private BarcodeMaster barcode;
 	
-
-	@ColumnDefault("1")
-	@Column(name = "usageoption", nullable = false)
-	private int usageoption;
-	
 	private transient String mDate;
 	
 	@Temporal(TemporalType.TIMESTAMP)
@@ -231,13 +226,5 @@ public class MaterialType implements Serializable {
 	public void setBarcode(BarcodeMaster barcode) {
 		this.barcode = barcode;
 	}
-	public int getUsageoption() {
-		return usageoption;
-	}
-	public void setUsageoption(int usageoption) {
-		this.usageoption = usageoption;
-	}
-	
-	
 }
 

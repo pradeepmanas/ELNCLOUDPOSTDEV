@@ -14,6 +14,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Type;
 
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
@@ -69,6 +70,10 @@ public class Material implements Serializable{
 	private Boolean nextvalidation;
 	private String nextvalidationvalue;
 	private String nextvalidationperiod;
+	
+	@ColumnDefault("1")
+	@Column(name = "usageoption", nullable = false)
+	private int usageoption;
 
 	public Boolean isExpirypolicy() {
 		return expirypolicy;
@@ -270,6 +275,12 @@ public class Material implements Serializable{
 	}
 	public void setSmaterialname(String smaterialname) {
 		this.smaterialname = smaterialname;
+	}
+	public int getUsageoption() {
+		return usageoption;
+	}
+	public void setUsageoption(int usageoption) {
+		this.usageoption = usageoption;
 	}
 	
 }

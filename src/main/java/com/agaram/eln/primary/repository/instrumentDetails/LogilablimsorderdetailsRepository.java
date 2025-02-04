@@ -466,14 +466,6 @@ public interface LogilablimsorderdetailsRepository extends JpaRepository<LSlogil
 			List<Long> selectedteambatchCodeList2, List<Long> directory_Code2, int j, Date fromdate2, Date todate2,
 			List<LSuserMaster> lstuserMaster2, String orderflag2, Integer filetype2);
 
-	Collection<? extends Logilaborderssh> findByDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndAssignedtoIsNullAndOrdercancellIsNullOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndAssignedtoIsNullAndOrdercancellIsNullOrDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterInAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndAssignedtoIsNullAndOrdercancellIsNullAndTeamselectedOrTeamselectedAndBatchcodeInAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterInAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndAssignedtoIsNullAndOrdercancellIsNullOrderByBatchcodeDesc(
-			List<Long> directory_Code, int i, Date fromdate, Date todate, String orderflag, Integer filetype,
-			List<Long> directory_Code2, int j, LSuserMaster lsuserMaster, Date fromdate2, Date todate2,
-			String orderflag2, Integer filetype2, List<Long> directory_Code3, int k, Date fromdate3, Date todate3,
-			List<LSuserMaster> lstuserMaster, String orderflag3, Integer filetype3, boolean b, boolean c,
-			List<Long> selectedteambatchCodeList, List<Long> directory_Code4, int l, Date fromdate4, Date todate4,
-			List<LSuserMaster> lstuserMaster2, String orderflag4, Integer filetype4);
-
 	Collection<? extends Logilaborderssh> findByDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndAssignedtoIsNullAndOrdercancellIsNullOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndAssignedtoIsNullAndOrdercancellIsNullOrDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterInAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndAssignedtoIsNullAndOrdercancellIsNullAndTeamselectedOrTeamselectedAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterInAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndAssignedtoIsNullAndOrdercancellIsNullOrderByBatchcodeDesc(
 			List<Long> directory_Code, int i, Date fromdate, Date todate, String orderflag, Integer filetype,
 			List<Long> directory_Code2, int j, LSuserMaster lsuserMaster, Date fromdate2, Date todate2,
@@ -811,7 +803,64 @@ public interface LogilablimsorderdetailsRepository extends JpaRepository<LSlogil
 	List<Logilaborderssh> findByOrderflagAndFiletypeAndLsprojectmasterAndCreatedtimestampBetweenAndAssignedtoIsNull(
 			String orderflag, Integer filetype, LSprojectmaster lsprojectmaster, Date fromdate, Date todate);
 
-	
+	List<LogilabOrdermastersh> findByTeamselectedAndBatchcodeInAndLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterOrderByBatchcodeDesc(
+			boolean b, List<Long> selectedteambatchCodeList, List<Long> directorycode, int i, Date fromdate,
+			Date todate, LSuserMaster objuser, Pageable pageable);
 
+	List<LogilabOrdermastersh> findByViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndTeamselectedAndOrdercancellIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndOrdercancellIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndOrdercancellIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndTeamselectedAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndOrdercancellIsNullOrViewoptionAndTeamselectedAndBatchcodeInAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndOrdercancellIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndTeamselectedAndBatchcodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndOrdercancellIsNullOrderByBatchcodeDesc(
+			int i, Date fromdate, Date todate, LSuserMaster objuser, String string, boolean b, List<Long> directorycode,
+			int j, Date fromdate2, Date todate2, String string2, List<Long> directorycode2, int k, Date fromdate3,
+			Date todate3, LSuserMaster objuser2, String string3, List<Long> directorycode3, boolean c, int l,
+			Date fromdate4, Date todate4, LSuserMaster objuser3, String string4, int m, boolean d,
+			List<Long> selectedteambatchCodeList, Date fromdate5, Date todate5, LSuserMaster objuser4, String string5,
+			List<Long> directorycode4, boolean e, List<Long> selectedteambatchCodeList2, int n, Date fromdate6,
+			Date todate6, LSuserMaster objuser5, String string6, Pageable pageable);
+
+	List<LogilabOrdermastersh> findByViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndTestcodeAndTeamselectedOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndTestcodeOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndTestcodeOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndTestcodeAndTeamselectedOrViewoptionAndTeamselectedAndBatchcodeInAndCreatedtimestampBetweenAndLsuserMasterAndTestcodeOrLsprojectmasterIsNullAndDirectorycodeInAndTeamselectedAndBatchcodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndTestcodeOrderByBatchcodeDesc(
+			int i, Date fromdate, Date todate, LSuserMaster objuser, Integer testcode, boolean b,
+			List<Long> directorycode, int j, Date fromdate2, Date todate2, Integer testcode2, List<Long> directorycode2,
+			int k, Date fromdate3, Date todate3, LSuserMaster objuser2, Integer testcode3, List<Long> directorycode3,
+			int l, Date fromdate4, Date todate4, LSuserMaster objuser3, Integer testcode4, boolean c, int m, boolean d,
+			List<Long> selectedteambatchCodeList, Date fromdate5, Date todate5, LSuserMaster objuser4,
+			Integer testcode5, List<Long> directorycode4, boolean e, List<Long> selectedteambatchCodeList2, int n,
+			Date fromdate6, Date todate6, LSuserMaster objuser5, Integer testcode6, Pageable pageable);
+
+	List<LogilabOrdermastersh> findByViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndTeamselectedOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndTeamselectedOrViewoptionAndTeamselectedAndBatchcodeInAndCreatedtimestampBetweenAndLsuserMasterOrLsprojectmasterIsNullAndDirectorycodeInAndTeamselectedAndBatchcodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterOrderByBatchcodeDesc(
+			int i, Date fromdate, Date todate, LSuserMaster objuser, boolean b, List<Long> directorycode, int j,
+			Date fromdate2, Date todate2, List<Long> directorycode2, int k, Date fromdate3, Date todate3,
+			LSuserMaster objuser2, List<Long> directorycode3, int l, Date fromdate4, Date todate4,
+			LSuserMaster objuser3, boolean c, int m, boolean d, List<Long> selectedteambatchCodeList, Date fromdate5,
+			Date todate5, LSuserMaster objuser4, List<Long> directorycode4, boolean e,
+			List<Long> selectedteambatchCodeList2, int n, Date fromdate6, Date todate6, LSuserMaster objuser5,
+			Pageable pageable);
+
+	long countByViewoptionAndTeamselectedAndBatchcodeInAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndApprovelstatusIsNullAndOrdercancellIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndTeamselectedAndBatchcodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndApprovelstatusIsNullAndOrdercancellIsNull(
+			int i, boolean b, List<Long> selectedteambatchCodeList, Date fromdate, Date todate, LSuserMaster objuser,
+			String string, List<Long> directorycode, boolean c, List<Long> selectedteambatchCodeList2, int j,
+			Date fromdate2, Date todate2, LSuserMaster objuser2, String string2);
+
+	long countByViewoptionAndTeamselectedAndBatchcodeInAndCreatedtimestampBetweenAndLsuserMasterAndOrdercancellOrLsprojectmasterIsNullAndDirectorycodeInAndTeamselectedAndBatchcodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrdercancellOrderByBatchcodeDesc(
+			int i, boolean b, List<Long> selectedteambatchCodeList, Date fromdate, Date todate, LSuserMaster objuser,
+			int j, List<Long> directorycode, boolean c, List<Long> selectedteambatchCodeList2, int k, Date fromdate2,
+			Date todate2, LSuserMaster objuser2, int l);
+
+	Collection<? extends Logilaborderssh> findByOrderflagAndLsprojectmasterIsNullAndElnmaterialInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterInAndOrdercancellIsNullAndTeamselectedOrTeamselectedAndBatchcodeInAndOrderflagAndLsprojectmasterIsNullAndElnmaterialInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterInAndOrdercancellIsNullOrderByBatchcodeDesc(
+			String orderflag, List<Elnmaterial> currentChunk, Integer filetype, Date fromdate, Date todate, int i,
+			List<LSuserMaster> lstuserMaster, boolean b, boolean c, List<Long> selectedteambatchCodeList,
+			String orderflag2, List<Elnmaterial> currentChunk2, Integer filetype2, Date fromdate2, Date todate2, int j,
+			List<LSuserMaster> lstuserMaster2);
+
+	Collection<? extends Logilaborderssh> findByDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndAssignedtoIsNullAndOrdercancellIsNullOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndAssignedtoIsNullAndOrdercancellIsNullOrTeamselectedAndBatchcodeInAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterInAndLsprojectmasterIsNullAndElnmaterialIsNullAndOrderflagAndFiletypeAndAssignedtoIsNullAndOrdercancellIsNullOrDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterInAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndTeamselectedAndAssignedtoIsNullAndElnmaterialIsNullAndOrdercancellIsNullOrderByBatchcodeDesc(
+			List<Long> directory_Code, int i, Date fromdate, Date todate, String orderflag, Integer filetype,
+			List<Long> directory_Code2, int j, LSuserMaster lsuserMaster, Date fromdate2, Date todate2,
+			String orderflag2, Integer filetype2, boolean b, List<Long> selectedteambatchCodeList,
+			List<Long> directory_Code3, int k, Date fromdate3, Date todate3, List<LSuserMaster> lstuserMaster,
+			String orderflag3, Integer filetype3, List<Long> directory_Code4, int l, Date fromdate4, Date todate4,
+			List<LSuserMaster> lstuserMaster2, String orderflag4, Integer filetype4, boolean c);
+
+	Collection<? extends Logilaborderssh> findByOrderflagAndLsprojectmasterIsNullAndElnmaterialInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndOrdercancellIsNullAndTeamselectedOrTeamselectedAndBatchcodeInAndOrderflagAndLsprojectmasterIsNullAndElnmaterialInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndOrdercancellIsNullOrderByBatchcodeDesc(
+			String orderflag, List<Elnmaterial> currentChunk, Integer filetype, Date fromdate, Date todate, int i,
+			boolean b, boolean c, List<Long> selectedteambatchCodeList, String orderflag2,
+			List<Elnmaterial> currentChunk2, Integer filetype2, Date fromdate2, Date todate2, int j);
 
 }

@@ -17,6 +17,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Type;
 
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
@@ -126,6 +127,10 @@ public class Elnmaterial implements Serializable{
 	
 	@Column(name = "modifiedby")
 	private String modifiedby;
+	
+	@ColumnDefault("1")
+	@Column(name = "usageoption", nullable = false)
+	private int usageoption;
 	
 	public String getmDate() {
 		return mDate;
@@ -483,4 +488,12 @@ public class Elnmaterial implements Serializable{
 	public void setBarcodetype(Integer barcodetype) {
 		this.barcodetype = barcodetype;
 	}
+	public int getUsageoption() {
+		return usageoption;
+	}
+	public void setUsageoption(int usageoption) {
+		this.usageoption = usageoption;
+	}
+	
+	
 }

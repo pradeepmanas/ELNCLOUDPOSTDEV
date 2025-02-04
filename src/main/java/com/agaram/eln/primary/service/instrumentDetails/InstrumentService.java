@@ -143,6 +143,7 @@ import com.agaram.eln.primary.model.methodsetup.SubParserField;
 import com.agaram.eln.primary.model.notification.Email;
 import com.agaram.eln.primary.model.protocols.Elnprotocolworkflow;
 import com.agaram.eln.primary.model.protocols.LSlogilabprotocoldetail;
+import com.agaram.eln.primary.model.protocols.LSprotocolselectedteam;
 import com.agaram.eln.primary.model.reports.lsreportfile;
 import com.agaram.eln.primary.model.reports.reportdesigner.Reporttemplate;
 import com.agaram.eln.primary.model.reports.reportviewer.Reports;
@@ -232,6 +233,7 @@ import com.agaram.eln.primary.repository.notification.EmailRepository;
 import com.agaram.eln.primary.repository.protocol.ElnprotocolworkflowRepository;
 import com.agaram.eln.primary.repository.protocol.ElnprotocolworkflowgroupmapRepository;
 import com.agaram.eln.primary.repository.protocol.LSlogilabprotocoldetailRepository;
+import com.agaram.eln.primary.repository.protocol.LSprotocolselectedteamRepository;
 import com.agaram.eln.primary.repository.reports.ReportfileRepository;
 import com.agaram.eln.primary.repository.sequence.SequenceTableOrderTypeRepository;
 import com.agaram.eln.primary.repository.sequence.SequenceTableProjectLevelRepository;
@@ -554,6 +556,9 @@ public class InstrumentService {
 	@Autowired
 	private ElnprotocolworkflowgroupmapRepository elnprotocolworkflowgroupmapRepository;
 
+	@Autowired
+	private LSprotocolselectedteamRepository lsprotoselectedteamRepo;
+	
 	@Autowired
 	@Qualifier("entityManagerFactory")
 	private EntityManager entityManager;
@@ -8470,130 +8475,223 @@ public class InstrumentService {
 		Integer protocoltype = objdir.getProtocoltype();
 		List<LSlogilabprotocoldetail> retuobj = new ArrayList<LSlogilabprotocoldetail>();
 
+		List<LSuserteammapping> lstteammap = lsuserteammappingRepository.findBylsuserMaster(objdir.getLsuserMaster());
+		List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(lstteammap,
+				objdir.getLsuserMaster().getLssitemaster());
+		
+		List<LSprotocolselectedteam> selectedteamorders = lsprotoselectedteamRepo.findByUserteamInAndCreatedtimestampBetween(lstteam,fromdate,todate);
+
+		List<Long> selectedteamprotcolorderList = (selectedteamorders != null && !selectedteamorders.isEmpty())
+			    ? selectedteamorders.stream()
+			        .map(LSprotocolselectedteam::getProtocolordercode)
+			        .filter(Objects::nonNull)
+			        .distinct()
+			        .collect(Collectors.toList())
+			    : Collections.singletonList(-1L);
+		
 		if (protocoltype == -1 && objdir.getOrderflag() == null) {
 			System.out.print(objdir);
 			if ((objdir.getLstuserMaster() == null) || objdir.getLstuserMaster().length == 0) {
-				retuobj = LSlogilabprotocoldetailRepository
-						.findByDirectorycodeAndViewoptionAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrderByProtocolordercodeDesc(
+//				retuobj = LSlogilabprotocoldetailRepository
+//						.findByDirectorycodeAndViewoptionAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrderByProtocolordercodeDesc(
+//								objdir.getDirectorycode(), 1, fromdate, todate, objdir.getSitemaster().getSitecode(),
+//								objdir.getDirectorycode(), 2, objdir.getCreatedby(), fromdate, todate,
+//								objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 3,
+//								objdir.getCreatedby(), fromdate, todate, objdir.getSitemaster().getSitecode());
+				
+				retuobj = LSlogilabprotocoldetailRepository.findByDirectorycodeAndViewoptionAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeAndTeamselectedOrTeamselectedAndProtocolordercodeInAndDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrderByProtocolordercodeDesc(
 								objdir.getDirectorycode(), 1, fromdate, todate, objdir.getSitemaster().getSitecode(),
-								objdir.getDirectorycode(), 2, objdir.getCreatedby(), fromdate, todate,
-								objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 3,
-								objdir.getCreatedby(), fromdate, todate, objdir.getSitemaster().getSitecode());
+								objdir.getDirectorycode(), 2, objdir.getCreatedby(), fromdate, todate,objdir.getSitemaster().getSitecode(),
+								objdir.getDirectorycode(), 3,objdir.getCreatedby(), fromdate, todate, objdir.getSitemaster().getSitecode(),false,
+								true,selectedteamprotcolorderList,objdir.getDirectorycode(), 3,objdir.getCreatedby(), fromdate, todate, objdir.getSitemaster().getSitecode());
 
 			} else {
-				retuobj = LSlogilabprotocoldetailRepository
-						.findByDirectorycodeAndViewoptionAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndSitecodeOrderByProtocolordercodeDesc(
-								objdir.getDirectorycode(), 1, fromdate, todate, objdir.getSitemaster().getSitecode(),
-								objdir.getDirectorycode(), 2, objdir.getCreatedby(), fromdate, todate,
-								objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 3, fromdate, todate,
-								objdir.getLstuserMaster(), objdir.getSitemaster().getSitecode());
+//				retuobj = LSlogilabprotocoldetailRepository
+//						.findByDirectorycodeAndViewoptionAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndSitecodeOrderByProtocolordercodeDesc(
+//								objdir.getDirectorycode(), 1, fromdate, todate, objdir.getSitemaster().getSitecode(),
+//								objdir.getDirectorycode(), 2, objdir.getCreatedby(), fromdate, todate,
+//								objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 3, fromdate, todate,
+//								objdir.getLstuserMaster(), objdir.getSitemaster().getSitecode());
 
+				retuobj = LSlogilabprotocoldetailRepository
+						.findByDirectorycodeAndViewoptionAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndSitecodeAndTeamselectedOrTeamselectedAndProtocolordercodeInAndDirectorycodeAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndSitecodeOrderByProtocolordercodeDesc(
+								objdir.getDirectorycode(), 1, fromdate, todate, objdir.getSitemaster().getSitecode(),
+								objdir.getDirectorycode(), 2, objdir.getCreatedby(), fromdate, todate,objdir.getSitemaster().getSitecode(), 
+								objdir.getDirectorycode(), 3, fromdate, todate,objdir.getLstuserMaster(), objdir.getSitemaster().getSitecode(),false,
+								true,selectedteamprotcolorderList,objdir.getDirectorycode(), 3, fromdate, todate,objdir.getLstuserMaster(), objdir.getSitemaster().getSitecode());
 			}
 
 		} else if (protocoltype != -1 && objdir.getOrderflag() != null) {
 			if (objdir.getLstuserMaster().length == 0) {
 				if (objdir.getRejected() != null) {
 
+//					retuobj = LSlogilabprotocoldetailRepository
+//							.findByDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndRejectedAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndRejectedAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndRejectedAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrderByProtocolordercodeDesc(
+//									objdir.getDirectorycode(), 1, protocoltype, objdir.getOrderflag(), 1, fromdate,
+//									todate, objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 2,
+//									protocoltype, objdir.getOrderflag(), 1, objdir.getCreatedby(), fromdate, todate,
+//									objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 3, protocoltype,
+//									objdir.getOrderflag(), 1, objdir.getCreatedby(), fromdate, todate,
+//									objdir.getSitemaster().getSitecode());
+					
 					retuobj = LSlogilabprotocoldetailRepository
-							.findByDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndRejectedAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndRejectedAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndRejectedAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrderByProtocolordercodeDesc(
-									objdir.getDirectorycode(), 1, protocoltype, objdir.getOrderflag(), 1, fromdate,
-									todate, objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 2,
-									protocoltype, objdir.getOrderflag(), 1, objdir.getCreatedby(), fromdate, todate,
-									objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 3, protocoltype,
-									objdir.getOrderflag(), 1, objdir.getCreatedby(), fromdate, todate,
-									objdir.getSitemaster().getSitecode());
+							.findByDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndRejectedAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndRejectedAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndRejectedAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeAndTeamselectedOrTeamselectedAndProtocolordercodeInAndDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndRejectedAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrderByProtocolordercodeDesc(
+									objdir.getDirectorycode(), 1, protocoltype, objdir.getOrderflag(), 1, fromdate,todate, objdir.getSitemaster().getSitecode(), 
+									objdir.getDirectorycode(), 2,protocoltype, objdir.getOrderflag(), 1, objdir.getCreatedby(), fromdate, todate,objdir.getSitemaster().getSitecode(),
+									objdir.getDirectorycode(), 3, protocoltype,objdir.getOrderflag(), 1, objdir.getCreatedby(), fromdate, todate,objdir.getSitemaster().getSitecode(),false,
+									true,selectedteamprotcolorderList,objdir.getDirectorycode(), 3, protocoltype,objdir.getOrderflag(), 1, objdir.getCreatedby(), fromdate, todate,objdir.getSitemaster().getSitecode());
 				} else {
+//					retuobj = LSlogilabprotocoldetailRepository
+//							.findByDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrderByProtocolordercodeDesc(
+//									objdir.getDirectorycode(), 1, protocoltype, objdir.getOrderflag(), fromdate, todate,
+//									objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 2, protocoltype,
+//									objdir.getOrderflag(), objdir.getCreatedby(), fromdate, todate,
+//									objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 3, protocoltype,
+//									objdir.getOrderflag(), objdir.getCreatedby(), fromdate, todate,
+//									objdir.getSitemaster().getSitecode());
+					
 					retuobj = LSlogilabprotocoldetailRepository
-							.findByDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrderByProtocolordercodeDesc(
-									objdir.getDirectorycode(), 1, protocoltype, objdir.getOrderflag(), fromdate, todate,
-									objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 2, protocoltype,
-									objdir.getOrderflag(), objdir.getCreatedby(), fromdate, todate,
-									objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 3, protocoltype,
-									objdir.getOrderflag(), objdir.getCreatedby(), fromdate, todate,
-									objdir.getSitemaster().getSitecode());
+							.findByDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeAndTeamselectedOrTeamselectedAndProtocolordercodeInAndDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrderByProtocolordercodeDesc(
+									objdir.getDirectorycode(), 1, protocoltype, objdir.getOrderflag(), fromdate, todate,objdir.getSitemaster().getSitecode(),
+									objdir.getDirectorycode(), 2, protocoltype,objdir.getOrderflag(), objdir.getCreatedby(), fromdate, todate,objdir.getSitemaster().getSitecode(),
+									objdir.getDirectorycode(), 3, protocoltype,objdir.getOrderflag(), objdir.getCreatedby(), fromdate, todate,objdir.getSitemaster().getSitecode(),false,
+									true,selectedteamprotcolorderList,objdir.getDirectorycode(), 3, protocoltype,objdir.getOrderflag(), objdir.getCreatedby(), fromdate, todate,objdir.getSitemaster().getSitecode());
 				}
 			} else {
 				if (objdir.getRejected() != null) {
 
+//					retuobj = LSlogilabprotocoldetailRepository
+//							.findByDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndRejectedAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndRejectedAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndRejectedAndCreatedtimestampBetweenAndCreatebyInAndSitecodeOrderByProtocolordercodeDesc(
+//									objdir.getDirectorycode(), 1, protocoltype, objdir.getOrderflag(), 1, fromdate,
+//									todate, objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 2,
+//									protocoltype, objdir.getOrderflag(), 1, objdir.getCreatedby(), fromdate, todate,
+//									objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 3, protocoltype,
+//									objdir.getOrderflag(), 1, fromdate, todate, objdir.getLstuserMaster(),
+//									objdir.getSitemaster().getSitecode());
+					
 					retuobj = LSlogilabprotocoldetailRepository
-							.findByDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndRejectedAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndRejectedAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndRejectedAndCreatedtimestampBetweenAndCreatebyInAndSitecodeOrderByProtocolordercodeDesc(
-									objdir.getDirectorycode(), 1, protocoltype, objdir.getOrderflag(), 1, fromdate,
-									todate, objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 2,
-									protocoltype, objdir.getOrderflag(), 1, objdir.getCreatedby(), fromdate, todate,
-									objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 3, protocoltype,
-									objdir.getOrderflag(), 1, fromdate, todate, objdir.getLstuserMaster(),
-									objdir.getSitemaster().getSitecode());
+							.findByDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndRejectedAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndRejectedAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndRejectedAndCreatedtimestampBetweenAndCreatebyInAndSitecodeAndTeamselectedOrTeamselectedAndProtocolordercodeInAndDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndRejectedAndCreatedtimestampBetweenAndCreatebyInAndSitecodeOrderByProtocolordercodeDesc(
+									objdir.getDirectorycode(), 1, protocoltype, objdir.getOrderflag(), 1, fromdate,todate, objdir.getSitemaster().getSitecode(),
+									objdir.getDirectorycode(), 2,protocoltype, objdir.getOrderflag(), 1, objdir.getCreatedby(), fromdate, todate,objdir.getSitemaster().getSitecode(),
+									objdir.getDirectorycode(), 3, protocoltype,objdir.getOrderflag(), 1, fromdate, todate, objdir.getLstuserMaster(),objdir.getSitemaster().getSitecode(),false,
+									true,selectedteamprotcolorderList,objdir.getDirectorycode(), 3, protocoltype,objdir.getOrderflag(), 1, fromdate, todate, objdir.getLstuserMaster(),objdir.getSitemaster().getSitecode());
 				} else {
+//					retuobj = LSlogilabprotocoldetailRepository
+//							.findByDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndCreatedtimestampBetweenAndCreatebyInAndSitecodeOrderByProtocolordercodeDesc(
+//									objdir.getDirectorycode(), 1, protocoltype, objdir.getOrderflag(), fromdate, todate,
+//									objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 2, protocoltype,
+//									objdir.getOrderflag(), objdir.getCreatedby(), fromdate, todate,
+//									objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 3, protocoltype,
+//									objdir.getOrderflag(), fromdate, todate, objdir.getLstuserMaster(),
+//									objdir.getSitemaster().getSitecode());
+					
 					retuobj = LSlogilabprotocoldetailRepository
-							.findByDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndCreatedtimestampBetweenAndCreatebyInAndSitecodeOrderByProtocolordercodeDesc(
-									objdir.getDirectorycode(), 1, protocoltype, objdir.getOrderflag(), fromdate, todate,
-									objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 2, protocoltype,
-									objdir.getOrderflag(), objdir.getCreatedby(), fromdate, todate,
-									objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 3, protocoltype,
-									objdir.getOrderflag(), fromdate, todate, objdir.getLstuserMaster(),
-									objdir.getSitemaster().getSitecode());
+							.findByDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndCreatedtimestampBetweenAndCreatebyInAndSitecodeAndTeamselectedOrTeamselectedAndProtocolordercodeInAndDirectorycodeAndViewoptionAndProtocoltypeAndOrderflagAndCreatedtimestampBetweenAndCreatebyInAndSitecodeOrderByProtocolordercodeDesc(
+									objdir.getDirectorycode(), 1, protocoltype, objdir.getOrderflag(), fromdate, todate,objdir.getSitemaster().getSitecode(),
+									objdir.getDirectorycode(), 2, protocoltype,objdir.getOrderflag(), objdir.getCreatedby(), fromdate, todate,objdir.getSitemaster().getSitecode(),
+									objdir.getDirectorycode(), 3, protocoltype,objdir.getOrderflag(), fromdate, todate, objdir.getLstuserMaster(),objdir.getSitemaster().getSitecode(),false,
+									true,selectedteamprotcolorderList,objdir.getDirectorycode(), 3, protocoltype,objdir.getOrderflag(), fromdate, todate, objdir.getLstuserMaster(),objdir.getSitemaster().getSitecode());
 				}
 			}
 		} else if (protocoltype == -1 && objdir.getOrderflag() != null) {
 			if (objdir.getLstuserMaster().length == 0) {
 				if (objdir.getRejected() != null) {
+//					retuobj = LSlogilabprotocoldetailRepository
+//							.findByDirectorycodeAndViewoptionAndOrderflagAndRejectedAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndOrderflagAndRejectedAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndOrderflagAndRejectedAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrderByProtocolordercodeDesc(
+//									objdir.getDirectorycode(), 1, objdir.getOrderflag(), 1, fromdate, todate,
+//									objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 2,
+//									objdir.getOrderflag(), 1, objdir.getCreatedby(), fromdate, todate,
+//									objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 3,
+//									objdir.getOrderflag(), 1, objdir.getCreatedby(), fromdate, todate,
+//									objdir.getSitemaster().getSitecode());
+					
 					retuobj = LSlogilabprotocoldetailRepository
-							.findByDirectorycodeAndViewoptionAndOrderflagAndRejectedAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndOrderflagAndRejectedAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndOrderflagAndRejectedAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrderByProtocolordercodeDesc(
-									objdir.getDirectorycode(), 1, objdir.getOrderflag(), 1, fromdate, todate,
-									objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 2,
-									objdir.getOrderflag(), 1, objdir.getCreatedby(), fromdate, todate,
-									objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 3,
-									objdir.getOrderflag(), 1, objdir.getCreatedby(), fromdate, todate,
-									objdir.getSitemaster().getSitecode());
+							.findByDirectorycodeAndViewoptionAndOrderflagAndRejectedAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndOrderflagAndRejectedAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndOrderflagAndRejectedAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeAndTeamselectedOrTeamselectedAndProtocolordercodeInAndDirectorycodeAndViewoptionAndOrderflagAndRejectedAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrderByProtocolordercodeDesc(
+									objdir.getDirectorycode(), 1, objdir.getOrderflag(), 1, fromdate, todate,objdir.getSitemaster().getSitecode(),
+									objdir.getDirectorycode(), 2,objdir.getOrderflag(), 1, objdir.getCreatedby(), fromdate, todate,objdir.getSitemaster().getSitecode(), 
+									objdir.getDirectorycode(), 3,objdir.getOrderflag(), 1, objdir.getCreatedby(), fromdate, todate,objdir.getSitemaster().getSitecode(),false,
+									true,selectedteamprotcolorderList,objdir.getDirectorycode(), 3,objdir.getOrderflag(), 1, objdir.getCreatedby(), fromdate, todate,objdir.getSitemaster().getSitecode());
+					
 				} else {
+//					retuobj = LSlogilabprotocoldetailRepository
+//							.findByDirectorycodeAndViewoptionAndOrderflagAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndOrderflagAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndOrderflagAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrderByProtocolordercodeDesc(
+//									objdir.getDirectorycode(), 1, objdir.getOrderflag(), fromdate, todate,
+//									objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 2,
+//									objdir.getOrderflag(), objdir.getCreatedby(), fromdate, todate,
+//									objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 3,
+//									objdir.getOrderflag(), objdir.getCreatedby(), fromdate, todate,
+//									objdir.getSitemaster().getSitecode());
 					retuobj = LSlogilabprotocoldetailRepository
-							.findByDirectorycodeAndViewoptionAndOrderflagAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndOrderflagAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndOrderflagAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrderByProtocolordercodeDesc(
-									objdir.getDirectorycode(), 1, objdir.getOrderflag(), fromdate, todate,
-									objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 2,
-									objdir.getOrderflag(), objdir.getCreatedby(), fromdate, todate,
-									objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 3,
-									objdir.getOrderflag(), objdir.getCreatedby(), fromdate, todate,
-									objdir.getSitemaster().getSitecode());
+							.findByDirectorycodeAndViewoptionAndOrderflagAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndOrderflagAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndOrderflagAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeAndTeamselectedOrTeamselectedAndProtocolordercodeInAndDirectorycodeAndViewoptionAndOrderflagAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrderByProtocolordercodeDesc(
+									objdir.getDirectorycode(), 1, objdir.getOrderflag(), fromdate, todate,objdir.getSitemaster().getSitecode(),
+									objdir.getDirectorycode(), 2,objdir.getOrderflag(), objdir.getCreatedby(), fromdate, todate,objdir.getSitemaster().getSitecode(), 
+									objdir.getDirectorycode(), 3,objdir.getOrderflag(), objdir.getCreatedby(), fromdate, todate,objdir.getSitemaster().getSitecode(),false,
+									true,selectedteamprotcolorderList,objdir.getDirectorycode(), 3,objdir.getOrderflag(), objdir.getCreatedby(), fromdate, todate,objdir.getSitemaster().getSitecode());
 				}
 			} else {
 				if (objdir.getRejected() != null) {
+//					retuobj = LSlogilabprotocoldetailRepository
+//							.findByDirectorycodeAndViewoptionAndOrderflagAndRejectedAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndOrderflagAndRejectedAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndOrderflagAndRejectedAndCreatedtimestampBetweenAndCreatebyInAndSitecodeOrderByProtocolordercodeDesc(
+//									objdir.getDirectorycode(), 1, objdir.getOrderflag(), 1, fromdate, todate,
+//									objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 2,
+//									objdir.getOrderflag(), 1, objdir.getCreatedby(), fromdate, todate,
+//									objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 3,
+//									objdir.getOrderflag(), 1, fromdate, todate, objdir.getLstuserMaster(),
+//									objdir.getSitemaster().getSitecode());
 					retuobj = LSlogilabprotocoldetailRepository
-							.findByDirectorycodeAndViewoptionAndOrderflagAndRejectedAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndOrderflagAndRejectedAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndOrderflagAndRejectedAndCreatedtimestampBetweenAndCreatebyInAndSitecodeOrderByProtocolordercodeDesc(
-									objdir.getDirectorycode(), 1, objdir.getOrderflag(), 1, fromdate, todate,
-									objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 2,
-									objdir.getOrderflag(), 1, objdir.getCreatedby(), fromdate, todate,
-									objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 3,
-									objdir.getOrderflag(), 1, fromdate, todate, objdir.getLstuserMaster(),
-									objdir.getSitemaster().getSitecode());
+							.findByDirectorycodeAndViewoptionAndOrderflagAndRejectedAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndOrderflagAndRejectedAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndOrderflagAndRejectedAndCreatedtimestampBetweenAndCreatebyInAndSitecodeAndTeamselectedOrTeamselectedAndProtocolordercodeInAndDirectorycodeAndViewoptionAndOrderflagAndRejectedAndCreatedtimestampBetweenAndCreatebyInAndSitecodeOrderByProtocolordercodeDesc(
+									objdir.getDirectorycode(), 1, objdir.getOrderflag(), 1, fromdate, todate,objdir.getSitemaster().getSitecode(), 
+									objdir.getDirectorycode(), 2,objdir.getOrderflag(), 1, objdir.getCreatedby(), fromdate, todate,objdir.getSitemaster().getSitecode(), 
+									objdir.getDirectorycode(), 3,objdir.getOrderflag(), 1, fromdate, todate, objdir.getLstuserMaster(),objdir.getSitemaster().getSitecode(),false,
+									true,selectedteamprotcolorderList,objdir.getDirectorycode(), 3,objdir.getOrderflag(), 1, fromdate, todate, objdir.getLstuserMaster(),objdir.getSitemaster().getSitecode());
 				} else {
+//					retuobj = LSlogilabprotocoldetailRepository
+//							.findByDirectorycodeAndViewoptionAndOrderflagAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndOrderflagAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndOrderflagAndCreatedtimestampBetweenAndCreatebyInAndSitecodeOrderByProtocolordercodeDesc(
+//									objdir.getDirectorycode(), 1, objdir.getOrderflag(), fromdate, todate,
+//									objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 2,
+//									objdir.getOrderflag(), objdir.getCreatedby(), fromdate, todate,
+//									objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 3,
+//									objdir.getOrderflag(), fromdate, todate, objdir.getLstuserMaster(),
+//									objdir.getSitemaster().getSitecode());
 					retuobj = LSlogilabprotocoldetailRepository
-							.findByDirectorycodeAndViewoptionAndOrderflagAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndOrderflagAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndOrderflagAndCreatedtimestampBetweenAndCreatebyInAndSitecodeOrderByProtocolordercodeDesc(
-									objdir.getDirectorycode(), 1, objdir.getOrderflag(), fromdate, todate,
-									objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 2,
-									objdir.getOrderflag(), objdir.getCreatedby(), fromdate, todate,
-									objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 3,
-									objdir.getOrderflag(), fromdate, todate, objdir.getLstuserMaster(),
-									objdir.getSitemaster().getSitecode());
+							.findByDirectorycodeAndViewoptionAndOrderflagAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndOrderflagAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndOrderflagAndCreatedtimestampBetweenAndCreatebyInAndSitecodeAndTeamselectedOrTeamselectedAndProtocolordercodeInAndDirectorycodeAndViewoptionAndOrderflagAndCreatedtimestampBetweenAndCreatebyInAndSitecodeOrderByProtocolordercodeDesc(
+									objdir.getDirectorycode(), 1, objdir.getOrderflag(), fromdate, todate,objdir.getSitemaster().getSitecode(), 
+									objdir.getDirectorycode(), 2,objdir.getOrderflag(), objdir.getCreatedby(), fromdate, todate,objdir.getSitemaster().getSitecode(),
+									objdir.getDirectorycode(), 3,objdir.getOrderflag(), fromdate, todate, objdir.getLstuserMaster(),objdir.getSitemaster().getSitecode(),false,
+									true,selectedteamprotcolorderList,objdir.getDirectorycode(), 3,objdir.getOrderflag(), fromdate, todate, objdir.getLstuserMaster(),objdir.getSitemaster().getSitecode());
 				}
 
 			}
 		} else if (protocoltype != -1 && objdir.getOrderflag() == null) {
 			if (objdir.getLstuserMaster().length == 0) {
+//				retuobj = LSlogilabprotocoldetailRepository
+//						.findByDirectorycodeAndViewoptionAndProtocoltypeAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndProtocoltypeAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndProtocoltypeAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrderByProtocolordercodeDesc(
+//								objdir.getDirectorycode(), 1, protocoltype, fromdate, todate,
+//								objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 2, protocoltype,
+//								objdir.getCreatedby(), fromdate, todate, objdir.getSitemaster().getSitecode(),
+//								objdir.getDirectorycode(), 3, protocoltype, objdir.getCreatedby(), fromdate, todate,
+//								objdir.getSitemaster().getSitecode());
+				
 				retuobj = LSlogilabprotocoldetailRepository
-						.findByDirectorycodeAndViewoptionAndProtocoltypeAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndProtocoltypeAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndProtocoltypeAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrderByProtocolordercodeDesc(
-								objdir.getDirectorycode(), 1, protocoltype, fromdate, todate,
-								objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 2, protocoltype,
-								objdir.getCreatedby(), fromdate, todate, objdir.getSitemaster().getSitecode(),
-								objdir.getDirectorycode(), 3, protocoltype, objdir.getCreatedby(), fromdate, todate,
-								objdir.getSitemaster().getSitecode());
+						.findByDirectorycodeAndViewoptionAndProtocoltypeAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndProtocoltypeAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndProtocoltypeAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeAndTeamselectedOrTeamselectedAndProtocolordercodeInAndDirectorycodeAndViewoptionAndProtocoltypeAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrderByProtocolordercodeDesc(
+								objdir.getDirectorycode(), 1, protocoltype, fromdate, todate,objdir.getSitemaster().getSitecode(), 
+								objdir.getDirectorycode(), 2, protocoltype,objdir.getCreatedby(), fromdate, todate, objdir.getSitemaster().getSitecode(),
+								objdir.getDirectorycode(), 3, protocoltype, objdir.getCreatedby(), fromdate, todate,objdir.getSitemaster().getSitecode(),false,
+								true,selectedteamprotcolorderList,objdir.getDirectorycode(), 3, protocoltype, objdir.getCreatedby(), fromdate, todate,objdir.getSitemaster().getSitecode());
 			} else {
+//				retuobj = LSlogilabprotocoldetailRepository
+//						.findByDirectorycodeAndViewoptionAndProtocoltypeAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndProtocoltypeAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndProtocoltypeAndCreatedtimestampBetweenAndCreatebyInAndSitecodeOrderByProtocolordercodeDesc(
+//								objdir.getDirectorycode(), 1, protocoltype, fromdate, todate,
+//								objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 2, protocoltype,
+//								objdir.getCreatedby(), fromdate, todate, objdir.getSitemaster().getSitecode(),
+//								objdir.getDirectorycode(), 3, protocoltype, fromdate, todate, objdir.getLstuserMaster(),
+//								objdir.getSitemaster().getSitecode());
 				retuobj = LSlogilabprotocoldetailRepository
-						.findByDirectorycodeAndViewoptionAndProtocoltypeAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndProtocoltypeAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndProtocoltypeAndCreatedtimestampBetweenAndCreatebyInAndSitecodeOrderByProtocolordercodeDesc(
-								objdir.getDirectorycode(), 1, protocoltype, fromdate, todate,
-								objdir.getSitemaster().getSitecode(), objdir.getDirectorycode(), 2, protocoltype,
-								objdir.getCreatedby(), fromdate, todate, objdir.getSitemaster().getSitecode(),
-								objdir.getDirectorycode(), 3, protocoltype, fromdate, todate, objdir.getLstuserMaster(),
-								objdir.getSitemaster().getSitecode());
+						.findByDirectorycodeAndViewoptionAndProtocoltypeAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndProtocoltypeAndLsuserMasterAndCreatedtimestampBetweenAndSitecodeOrDirectorycodeAndViewoptionAndProtocoltypeAndCreatedtimestampBetweenAndCreatebyInAndSitecodeAndTeamselectedOrTeamselectedAndProtocolordercodeInAndDirectorycodeAndViewoptionAndProtocoltypeAndCreatedtimestampBetweenAndCreatebyInAndSitecodeOrderByProtocolordercodeDesc(
+								objdir.getDirectorycode(), 1, protocoltype, fromdate, todate,objdir.getSitemaster().getSitecode(), 
+								objdir.getDirectorycode(), 2, protocoltype,objdir.getCreatedby(), fromdate, todate, objdir.getSitemaster().getSitecode(),
+								objdir.getDirectorycode(), 3, protocoltype, fromdate, todate, objdir.getLstuserMaster(),objdir.getSitemaster().getSitecode(),false,
+								true,selectedteamprotcolorderList,objdir.getDirectorycode(), 3, protocoltype, fromdate, todate, objdir.getLstuserMaster(),objdir.getSitemaster().getSitecode());
 			}
 
 		}
@@ -9160,12 +9258,12 @@ public class InstrumentService {
 //									.findByOrderflagAndLsprojectmasterIsNullAndDirectorycodeIsNullAndElnmaterialInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterAndOrdercancellIsNullOrderByBatchcodeDesc(
 //											objorder.getOrderflag(), currentChunk, filetype, fromdate, todate, 3,
 //											objorder.getLsuserMaster()));
-							
+						
 							/**change for p.team selection**/
 							orderChunk.addAll(logilablimsorderdetailsRepository
-									.findByOrderflagAndLsprojectmasterIsNullAndDirectorycodeIsNullAndElnmaterialInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterInAndOrdercancellIsNullAndTeamselectedOrTeamselectedAndBatchcodeInAndOrderflagAndLsprojectmasterIsNullAndDirectorycodeIsNullAndElnmaterialInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterInAndOrdercancellIsNullOrderByBatchcodeDesc(
-											objorder.getOrderflag(), currentChunk, filetype, fromdate, todate, 3,objorder.getLstuserMaster(),false,
-											true , selectedteambatchCodeList,objorder.getOrderflag(), currentChunk, filetype, fromdate, todate, 3,objorder.getLstuserMaster() ));
+									.findByOrderflagAndLsprojectmasterIsNullAndElnmaterialInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndOrdercancellIsNullAndTeamselectedOrTeamselectedAndBatchcodeInAndOrderflagAndLsprojectmasterIsNullAndElnmaterialInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndOrdercancellIsNullOrderByBatchcodeDesc(
+											objorder.getOrderflag(), currentChunk, filetype, fromdate, todate, 3,false,
+											true , selectedteambatchCodeList,objorder.getOrderflag(), currentChunk, filetype, fromdate, todate, 3 ));
 
 							return orderChunk;
 						}).flatMap(List::stream).collect(Collectors.toList());
@@ -9182,24 +9280,12 @@ public class InstrumentService {
 					/** Changed for p.team selection **/
 					
 					lstorder.addAll(logilablimsorderdetailsRepository
-							.findByDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndAssignedtoIsNullAndOrdercancellIsNullOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndAssignedtoIsNullAndOrdercancellIsNullOrDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterInAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndTeamselectedAndAssignedtoIsNullAndOrdercancellIsNullOrderByBatchcodeDesc(
+							.findByDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndAssignedtoIsNullAndOrdercancellIsNullOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndAssignedtoIsNullAndOrdercancellIsNullOrTeamselectedAndBatchcodeInAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterInAndLsprojectmasterIsNullAndElnmaterialIsNullAndOrderflagAndFiletypeAndAssignedtoIsNullAndOrdercancellIsNullOrDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterInAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndTeamselectedAndAssignedtoIsNullAndElnmaterialIsNullAndOrdercancellIsNullOrderByBatchcodeDesc(		
 									Directory_Code, 1, fromdate, todate, objorder.getOrderflag(), filetype,
 									Directory_Code, 2, objorder.getLsuserMaster(), fromdate, todate,objorder.getOrderflag(), filetype,
-								    Directory_Code, 3, fromdate, todate,objorder.getLstuserMaster(), objorder.getOrderflag(), filetype,false));
-									//true,selectedteambatchCodeList,Directory_Code, 3, fromdate, todate,objorder.getLstuserMaster(), objorder.getOrderflag(), filetype));
-				
-					lstorder.addAll(logilablimsorderdetailsRepository
-							.findByTeamselectedAndBatchcodeInAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterInAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndAssignedtoIsNullAndOrdercancellIsNullOrderByBatchcodeDesc(
-									true,selectedteambatchCodeList,Directory_Code, 3, fromdate, todate,objorder.getLstuserMaster(), objorder.getOrderflag(), filetype));
-				
-					
-//					lstorder.addAll(logilablimsorderdetailsRepository
-//							.findByDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndAssignedtoIsNullAndOrdercancellIsNullOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndAssignedtoIsNullAndOrdercancellIsNullOrDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterInAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndAssignedtoIsNullAndOrdercancellIsNullAndTeamselectedOrTeamselectedAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterInAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndAssignedtoIsNullAndOrdercancellIsNullOrderByBatchcodeDesc(
-//									Directory_Code, 1, fromdate, todate, objorder.getOrderflag(), filetype,
-//									Directory_Code, 2, objorder.getLsuserMaster(), fromdate, todate,objorder.getOrderflag(), filetype,
-//								    Directory_Code, 3, fromdate, todate,objorder.getLstuserMaster(), objorder.getOrderflag(), filetype,false,
-//									true,Directory_Code, 3, fromdate, todate,distinctLsuserMasters, objorder.getOrderflag(), filetype));
-					
+									true,selectedteambatchCodeList,Directory_Code, 3, fromdate, todate,objorder.getLstuserMaster(), objorder.getOrderflag(), filetype,
+								    Directory_Code, 3, fromdate, todate,objorder.getLstuserMaster(), objorder.getOrderflag(), filetype,false
+									));
 				}
 
 				lstorder.forEach(objorderDetail -> objorderDetail.setLw(objorder.getLstworkflow()));
@@ -9616,6 +9702,18 @@ public class InstrumentService {
 		Date fromdate = objorder.getFromdate();
 		Date todate = objorder.getTodate();
 		Integer protocoltype = objorder.getProtocoltype();
+
+		
+		List<LSprotocolselectedteam> selectedteamorders = lsprotoselectedteamRepo.findByUserteamInAndCreatedtimestampBetween(lstteam,fromdate,todate);
+
+		List<Long> selectedteamprotcolorderList = (selectedteamorders != null && !selectedteamorders.isEmpty())
+			    ? selectedteamorders.stream()
+			        .map(LSprotocolselectedteam::getProtocolordercode)
+			        .filter(Objects::nonNull)
+			        .distinct()
+			        .collect(Collectors.toList())
+			    : Collections.singletonList(-1L);
+			        
 //		List<LSlogilabprotocoldetail> retuobj = new ArrayList<LSlogilabprotocoldetail>();
 //		List<LSsamplemaster> lstsample = lssamplemasterrepository.findSamplecodeAndSamplenameBystatusAndLssitemaster(1,
 //				objorder.getLsuserMaster().getLssitemaster());
@@ -9670,28 +9768,52 @@ public class InstrumentService {
 								.findByOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndElnmaterialInAndViewoptionAndCreatebyAndOrdercancellIsNull(
 										objorder.getOrderflag(), protocoltype, fromdate, todate, currentChunk, 2,
 										objorder.getLsuserMaster().getUsercode()));
+						/*existing */
+//						orderChunk.addAll(LSlogilabprotocoldetailRepository
+//								.findByOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndElnmaterialInAndViewoptionAndCreatebyInAndOrdercancellIsNullOrderByProtocolordercodeDesc(
+//										objorder.getOrderflag(), protocoltype, fromdate, todate, currentChunk, 3,
+//										userlist));
+						
 						orderChunk.addAll(LSlogilabprotocoldetailRepository
-								.findByOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndElnmaterialInAndViewoptionAndCreatebyInAndOrdercancellIsNullOrderByProtocolordercodeDesc(
-										objorder.getOrderflag(), protocoltype, fromdate, todate, currentChunk, 3,
-										userlist));
+								.findByOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndElnmaterialInAndViewoptionAndCreatebyInAndTeamselectedAndOrdercancellIsNullOrTeamselectedAndProtocolordercodeInAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndElnmaterialInAndViewoptionAndCreatebyInAndOrdercancellIsNullOrderByProtocolordercodeDesc(
+										objorder.getOrderflag(), protocoltype, fromdate, todate, currentChunk, 3,userlist,false,
+										true , selectedteamprotcolorderList,objorder.getOrderflag(), protocoltype, fromdate, todate, currentChunk, 3,userlist));
+						
 						return orderChunk;
 					}).flatMap(List::stream).collect(Collectors.toList());
 			lstorder.addAll(lstorderobj);
 
 			if (objorder.getLstuserMaster() == null || objorder.getLstuserMaster().size() == 0) {
+/** existing*/
+//				lstorder.addAll(LSlogilabprotocoldetailRepository
+//						.findByDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndAssignedtoIsNullAndOrdercancellIsNullOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndAssignedtoIsNullAndOrdercancellIsNullOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndAssignedtoIsNullAndOrdercancellIsNullOrderByProtocolordercodeDesc(
+//								Directory_Code, 1, fromdate, todate, objorder.getOrderflag(), protocoltype,
+//								Directory_Code, 2, objorder.getLsuserMaster(), fromdate, todate,
+//								objorder.getOrderflag(), protocoltype, Directory_Code, 3, objorder.getLsuserMaster(),
+//								fromdate, todate, objorder.getOrderflag(), protocoltype));
+				
 				lstorder.addAll(LSlogilabprotocoldetailRepository
-						.findByDirectorycodeAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndAssignedtoIsNullAndOrdercancellIsNullOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndAssignedtoIsNullAndOrdercancellIsNullOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndAssignedtoIsNullAndOrdercancellIsNullOrderByProtocolordercodeDesc(
+						.findByDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndElnmaterialIsNullAndProtocoltypeAndAssignedtoIsNullAndOrdercancellIsNullOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndElnmaterialIsNullAndProtocoltypeAndAssignedtoIsNullAndOrdercancellIsNullOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndElnmaterialIsNullAndProtocoltypeAndAssignedtoIsNullAndOrdercancellIsNullAndTeamselectedOrTeamselectedAndProtocolordercodeInAndDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndElnmaterialIsNullAndProtocoltypeAndAssignedtoIsNullAndOrdercancellIsNullOrderByProtocolordercodeDesc(
 								Directory_Code, 1, fromdate, todate, objorder.getOrderflag(), protocoltype,
-								Directory_Code, 2, objorder.getLsuserMaster(), fromdate, todate,
-								objorder.getOrderflag(), protocoltype, Directory_Code, 3, objorder.getLsuserMaster(),
-								fromdate, todate, objorder.getOrderflag(), protocoltype));
+								Directory_Code, 2, objorder.getLsuserMaster(), fromdate, todate,objorder.getOrderflag(), protocoltype,
+								Directory_Code, 3, objorder.getLsuserMaster(),fromdate, todate, objorder.getOrderflag(), protocoltype,false,
+								true , selectedteamprotcolorderList ,Directory_Code, 3, objorder.getLsuserMaster(),fromdate, todate, objorder.getOrderflag(), protocoltype));
+				
 			} else {
+				/*existing*/
+//				lstorder.addAll(LSlogilabprotocoldetailRepository
+//						.findByDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndElnmaterialIsNullAndProtocoltypeAndAssignedtoIsNullAndOrdercancellIsNullOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndElnmaterialIsNullAndProtocoltypeAndAssignedtoIsNullAndOrdercancellIsNullOrDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndOrderflagAndLsprojectmasterIsNullAndElnmaterialIsNullAndProtocoltypeAndAssignedtoIsNullAndOrdercancellIsNullOrderByProtocolordercodeDesc(
+//								Directory_Code, 1, fromdate, todate, objorder.getOrderflag(), protocoltype,
+//								Directory_Code, 2, objorder.getLsuserMaster(), fromdate, todate,
+//								objorder.getOrderflag(), protocoltype, Directory_Code, 3, fromdate, todate, userlist,
+//								objorder.getOrderflag(), protocoltype));
+				/*change for p.team selection in VO=3*/
 				lstorder.addAll(LSlogilabprotocoldetailRepository
-						.findByDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndAssignedtoIsNullAndOrdercancellIsNullOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndAssignedtoIsNullAndOrdercancellIsNullOrDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndAssignedtoIsNullAndOrdercancellIsNullOrderByProtocolordercodeDesc(
+						.findByDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndElnmaterialIsNullAndProtocoltypeAndAssignedtoIsNullAndOrdercancellIsNullOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndElnmaterialIsNullAndProtocoltypeAndAssignedtoIsNullAndOrdercancellIsNullOrDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndAssignedtoIsNullAndElnmaterialIsNullAndOrdercancellIsNullAndTeamselectedOrTeamselectedAndProtocolordercodeInAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndOrderflagAndLsprojectmasterIsNullAndElnmaterialIsNullAndProtocoltypeAndAssignedtoIsNullAndOrdercancellIsNullOrderByProtocolordercodeDesc(
 								Directory_Code, 1, fromdate, todate, objorder.getOrderflag(), protocoltype,
-								Directory_Code, 2, objorder.getLsuserMaster(), fromdate, todate,
-								objorder.getOrderflag(), protocoltype, Directory_Code, 3, fromdate, todate, userlist,
-								objorder.getOrderflag(), protocoltype));
+								Directory_Code, 2, objorder.getLsuserMaster(), fromdate, todate,objorder.getOrderflag(), protocoltype, 
+								Directory_Code, 3, fromdate, todate, userlist,objorder.getOrderflag(), protocoltype,false,
+								true,selectedteamprotcolorderList,Directory_Code, 3, fromdate, todate, userlist,objorder.getOrderflag(), protocoltype));
 
 			}
 
@@ -9713,19 +9835,27 @@ public class InstrumentService {
 			lstorder.addAll(lstorderobj);
 
 			if (objorder.getLstuserMaster().size() == 0) {
+				/** existing */
+//				lstorder.addAll(LSlogilabprotocoldetailRepository
+//						.findByDirectorycodeAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedOrderByProtocolordercodeDesc(
+//								Directory_Code, 1, fromdate, todate, objorder.getOrderflag(), protocoltype, 1,
+//								Directory_Code, 2, objorder.getLsuserMaster(), fromdate, todate,
+//								objorder.getOrderflag(), protocoltype, 1, Directory_Code, 3, objorder.getLsuserMaster(),
+//								fromdate, todate, objorder.getOrderflag(), protocoltype, 1));
+				
 				lstorder.addAll(LSlogilabprotocoldetailRepository
-						.findByDirectorycodeAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedOrderByProtocolordercodeDesc(
+						.findByDirectorycodeAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedAndTeamselectedOrTeamselectedAndProtocolordercodeInAndDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedOrderByProtocolordercodeDesc(
 								Directory_Code, 1, fromdate, todate, objorder.getOrderflag(), protocoltype, 1,
-								Directory_Code, 2, objorder.getLsuserMaster(), fromdate, todate,
-								objorder.getOrderflag(), protocoltype, 1, Directory_Code, 3, objorder.getLsuserMaster(),
-								fromdate, todate, objorder.getOrderflag(), protocoltype, 1));
+								Directory_Code, 2, objorder.getLsuserMaster(), fromdate, todate,objorder.getOrderflag(), protocoltype, 1,
+								Directory_Code, 3, objorder.getLsuserMaster(),fromdate, todate, objorder.getOrderflag(), protocoltype, 1,false,
+								true ,selectedteamprotcolorderList ,Directory_Code, 3, objorder.getLsuserMaster(),fromdate, todate, objorder.getOrderflag(), protocoltype, 1));
 			} else {
 				lstorder.addAll(LSlogilabprotocoldetailRepository
-						.findByDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedOrDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedOrderByProtocolordercodeDesc(
+						.findByDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedOrDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedAndTeamselectedOrTeamselectedAndProtocolordercodeInAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedOrderByProtocolordercodeDesc(
 								Directory_Code, 1, fromdate, todate, objorder.getOrderflag(), protocoltype, 1,
-								Directory_Code, 2, objorder.getLsuserMaster(), fromdate, todate,
-								objorder.getOrderflag(), protocoltype, 1, Directory_Code, 3, fromdate, todate, userlist,
-								objorder.getOrderflag(), protocoltype, 1));
+								Directory_Code, 2, objorder.getLsuserMaster(), fromdate, todate,objorder.getOrderflag(), protocoltype, 1, 
+								Directory_Code, 3, fromdate, todate, userlist,objorder.getOrderflag(), protocoltype, 1,false,
+								true ,selectedteamprotcolorderList ,Directory_Code, 3, fromdate, todate, userlist,objorder.getOrderflag(), protocoltype, 1));
 
 			}
 
@@ -9765,21 +9895,38 @@ public class InstrumentService {
 			lstorder.addAll(lstorderobj);
 
 			if (objorder.getLstuserMaster().size() == 0) {
+				/** existing */
+//				lstorder.addAll(LSlogilabprotocoldetailRepository
+//						.findByDirectorycodeAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndTestcodeOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndTestcodeOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndTestcodeOrderByProtocolordercodeDesc(
+//								Directory_Code, 1, fromdate, todate, objorder.getOrderflag(), protocoltype,
+//								objorder.getTestcode(), Directory_Code, 2, objorder.getLsuserMaster(), fromdate, todate,
+//								objorder.getOrderflag(), protocoltype, objorder.getTestcode(), Directory_Code, 3,
+//								objorder.getLsuserMaster(), fromdate, todate, objorder.getOrderflag(), protocoltype,
+//								objorder.getTestcode()));
+				/** change for p.team selection in vo*/
+				
 				lstorder.addAll(LSlogilabprotocoldetailRepository
-						.findByDirectorycodeAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndTestcodeOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndTestcodeOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndTestcodeOrderByProtocolordercodeDesc(
-								Directory_Code, 1, fromdate, todate, objorder.getOrderflag(), protocoltype,
-								objorder.getTestcode(), Directory_Code, 2, objorder.getLsuserMaster(), fromdate, todate,
-								objorder.getOrderflag(), protocoltype, objorder.getTestcode(), Directory_Code, 3,
-								objorder.getLsuserMaster(), fromdate, todate, objorder.getOrderflag(), protocoltype,
-								objorder.getTestcode()));
+						.findByDirectorycodeAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndTestcodeOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndTestcodeOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndTestcodeAndTeamselectedOrTeamselectedAndProtocolordercodeInAndDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndTestcodeOrderByProtocolordercodeDesc(
+								Directory_Code, 1, fromdate, todate, objorder.getOrderflag(), protocoltype,objorder.getTestcode(), 
+								Directory_Code, 2, objorder.getLsuserMaster(), fromdate, todate,objorder.getOrderflag(), protocoltype, objorder.getTestcode(), 
+								Directory_Code, 3,objorder.getLsuserMaster(), fromdate, todate, objorder.getOrderflag(), protocoltype,objorder.getTestcode(),false,
+								true , selectedteamprotcolorderList ,Directory_Code, 3,objorder.getLsuserMaster(), fromdate, todate, objorder.getOrderflag(), protocoltype,objorder.getTestcode()));
 			} else {
+				/** existing*/
+//				lstorder.addAll(LSlogilabprotocoldetailRepository
+//						.findByDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndTestcodeOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndTestcodeOrDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndTestcodeOrderByProtocolordercodeDesc(
+//								Directory_Code, 1, fromdate, todate, objorder.getOrderflag(), protocoltype,
+//								objorder.getTestcode(), Directory_Code, 2, objorder.getLsuserMaster(), fromdate, todate,
+//								objorder.getOrderflag(), protocoltype, objorder.getTestcode(), Directory_Code, 3,
+//								fromdate, todate, userlist, objorder.getOrderflag(), protocoltype,
+//								objorder.getTestcode()));
+				/**change for p.team selection in vo*/
 				lstorder.addAll(LSlogilabprotocoldetailRepository
-						.findByDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndTestcodeOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndTestcodeOrDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndTestcodeOrderByProtocolordercodeDesc(
-								Directory_Code, 1, fromdate, todate, objorder.getOrderflag(), protocoltype,
-								objorder.getTestcode(), Directory_Code, 2, objorder.getLsuserMaster(), fromdate, todate,
-								objorder.getOrderflag(), protocoltype, objorder.getTestcode(), Directory_Code, 3,
-								fromdate, todate, userlist, objorder.getOrderflag(), protocoltype,
-								objorder.getTestcode()));
+						.findByDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndTestcodeOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndTestcodeOrDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndTestcodeAndTeamselectedOrTeamselectedAndProtocolordercodeInAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndTestcodeOrderByProtocolordercodeDesc(
+								Directory_Code, 1, fromdate, todate, objorder.getOrderflag(), protocoltype,objorder.getTestcode(), 
+								Directory_Code, 2, objorder.getLsuserMaster(), fromdate, todate,objorder.getOrderflag(), protocoltype, objorder.getTestcode(),
+								Directory_Code, 3,fromdate, todate, userlist, objorder.getOrderflag(), protocoltype,objorder.getTestcode(),false,
+								true , selectedteamprotcolorderList ,Directory_Code, 3,fromdate, todate, userlist, objorder.getOrderflag(), protocoltype,objorder.getTestcode()));
 
 			}
 
@@ -9820,21 +9967,37 @@ public class InstrumentService {
 			lstorder.addAll(lstorderobj);
 
 			if (objorder.getLstuserMaster() == null || objorder.getLstuserMaster().size() == 0) {
+				/**existing*/
+//				lstorder.addAll(LSlogilabprotocoldetailRepository
+//						.findByDirectorycodeAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedAndTestcodeOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedAndTestcodeOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedAndTestcodeOrderByProtocolordercodeDesc(
+//								Directory_Code, 1, fromdate, todate, objorder.getOrderflag(), protocoltype, 1,
+//								objorder.getTestcode(), Directory_Code, 2, objorder.getLsuserMaster(), fromdate, todate,
+//								objorder.getOrderflag(), protocoltype, 1, objorder.getTestcode(), Directory_Code, 3,
+//								objorder.getLsuserMaster(), fromdate, todate, objorder.getOrderflag(), protocoltype, 1,
+//								objorder.getTestcode()));
+				/**change for p.team selection in vo*/
 				lstorder.addAll(LSlogilabprotocoldetailRepository
-						.findByDirectorycodeAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedAndTestcodeOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedAndTestcodeOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedAndTestcodeOrderByProtocolordercodeDesc(
-								Directory_Code, 1, fromdate, todate, objorder.getOrderflag(), protocoltype, 1,
-								objorder.getTestcode(), Directory_Code, 2, objorder.getLsuserMaster(), fromdate, todate,
-								objorder.getOrderflag(), protocoltype, 1, objorder.getTestcode(), Directory_Code, 3,
-								objorder.getLsuserMaster(), fromdate, todate, objorder.getOrderflag(), protocoltype, 1,
-								objorder.getTestcode()));
+						.findByDirectorycodeAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedAndTestcodeOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedAndTestcodeOrDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedAndTestcodeAndTeamselectedOrTeamselectedAndProtocolordercodeInAndDirectorycodeAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedAndTestcodeOrderByProtocolordercodeDesc(
+								Directory_Code, 1, fromdate, todate, objorder.getOrderflag(), protocoltype, 1,objorder.getTestcode(), 
+								Directory_Code, 2, objorder.getLsuserMaster(), fromdate, todate,objorder.getOrderflag(), protocoltype, 1, objorder.getTestcode(),
+								Directory_Code, 3,objorder.getLsuserMaster(), fromdate, todate, objorder.getOrderflag(), protocoltype, 1,objorder.getTestcode(),false,
+								true ,selectedteamprotcolorderList ,Directory_Code, 3,objorder.getLsuserMaster(), fromdate, todate, objorder.getOrderflag(), protocoltype, 1,objorder.getTestcode()));
 			} else {
+				/**existing*/
+//				lstorder.addAll(LSlogilabprotocoldetailRepository
+//						.findByDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedAndTestcodeOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedAndTestcodeOrDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedAndTestcodeOrderByProtocolordercodeDesc(
+//								Directory_Code, 1, fromdate, todate, objorder.getOrderflag(), protocoltype, 1,
+//								Directory_Code, objorder.getTestcode(), 2, objorder.getLsuserMaster(), fromdate, todate,
+//								objorder.getOrderflag(), protocoltype, 1, objorder.getTestcode(), Directory_Code, 3,
+//								fromdate, todate, userlist, objorder.getOrderflag(), protocoltype, 1,
+//								objorder.getTestcode()));
+				/**change for p.team selection in vo*/
 				lstorder.addAll(LSlogilabprotocoldetailRepository
-						.findByDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedAndTestcodeOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedAndTestcodeOrDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedAndTestcodeOrderByProtocolordercodeDesc(
+						.findByDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedAndTestcodeOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedAndTestcodeOrDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedAndTestcodeAndTeamselectedOrTeamselectedAndProtocolordercodeInAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndOrderflagAndLsprojectmasterIsNullAndProtocoltypeAndRejectedAndTestcodeOrderByProtocolordercodeDesc(
 								Directory_Code, 1, fromdate, todate, objorder.getOrderflag(), protocoltype, 1,
-								Directory_Code, objorder.getTestcode(), 2, objorder.getLsuserMaster(), fromdate, todate,
-								objorder.getOrderflag(), protocoltype, 1, objorder.getTestcode(), Directory_Code, 3,
-								fromdate, todate, userlist, objorder.getOrderflag(), protocoltype, 1,
-								objorder.getTestcode()));
+								Directory_Code, objorder.getTestcode(), 2, objorder.getLsuserMaster(), fromdate, todate,objorder.getOrderflag(), protocoltype, 1, objorder.getTestcode(), 
+								Directory_Code, 3,fromdate, todate, userlist, objorder.getOrderflag(), protocoltype, 1,objorder.getTestcode(),false,
+								true ,selectedteamprotcolorderList ,Directory_Code, 3,fromdate, todate, userlist, objorder.getOrderflag(), protocoltype, 1,objorder.getTestcode()));
 
 			}
 
@@ -11657,5 +11820,11 @@ public class InstrumentService {
 		
 		return selectedteam;
 	}
+	
+	public List<LSprotocolselectedteam> Getprotoselectedteam(Long protocolordercode) {
 
+		List<LSprotocolselectedteam> selectedteam = lsprotoselectedteamRepo.findByProtocolordercode(protocolordercode);
+		
+		return selectedteam;
+	}
 }

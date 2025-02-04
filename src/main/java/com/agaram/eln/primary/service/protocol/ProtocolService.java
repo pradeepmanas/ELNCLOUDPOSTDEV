@@ -26,6 +26,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -115,6 +116,7 @@ import com.agaram.eln.primary.model.protocols.LSprotocolorderversionstepInfo;
 import com.agaram.eln.primary.model.protocols.LSprotocolordervideos;
 import com.agaram.eln.primary.model.protocols.LSprotocolorderworkflowhistory;
 import com.agaram.eln.primary.model.protocols.LSprotocolsampleupdates;
+import com.agaram.eln.primary.model.protocols.LSprotocolselectedteam;
 import com.agaram.eln.primary.model.protocols.LSprotocolstep;
 import com.agaram.eln.primary.model.protocols.LSprotocolstepInfo;
 import com.agaram.eln.primary.model.protocols.LSprotocolstepversion;
@@ -204,6 +206,7 @@ import com.agaram.eln.primary.repository.protocol.LSprotocolorderversionReposito
 import com.agaram.eln.primary.repository.protocol.LSprotocolordervideosRepository;
 import com.agaram.eln.primary.repository.protocol.LSprotocolorderworkflowhistoryRepository;
 import com.agaram.eln.primary.repository.protocol.LSprotocolsampleupdatesRepository;
+import com.agaram.eln.primary.repository.protocol.LSprotocolselectedteamRepository;
 import com.agaram.eln.primary.repository.protocol.LSprotocolstepversionRepository;
 import com.agaram.eln.primary.repository.protocol.LSprotocolupdatesRepository;
 import com.agaram.eln.primary.repository.protocol.LSprotocolversionRepository;
@@ -505,6 +508,8 @@ public class ProtocolService {
 //	private ElnprotocolTemplateworkflowgroupmapRepository elnprotocolTemplateworkflowgroupmapRepository;
 
 	@Autowired
+	private LSuserteammappingRepository lsuserteammappingRepository;
+	@Autowired
 	private LSordernotificationRepository lsordernotificationrepo;
 
 	@Autowired
@@ -536,6 +541,9 @@ public class ProtocolService {
 	
 	@Autowired
 	private LogilablimsorderdetailsRepository logilablimsorderdetailsRepository;
+	
+	@Autowired
+	private LSprotocolselectedteamRepository lsprotoselectedteamRepo;
 	
 	private static Map<String, Timer> timerMapPro = new HashMap<>();
 	private static Map<String, Boolean> timerStatusMapPro = new HashMap<>();
@@ -3882,6 +3890,23 @@ public class ProtocolService {
 
 			}
 			GetSequences(lSlogilabprotocoldetail, seqorder, objprojectseq, objtaskseq);
+			
+			if(!lSlogilabprotocoldetail.getLsprotocolselectedTeam().isEmpty()) {
+				lSlogilabprotocoldetail.getLsprotocolselectedTeam().forEach(item -> {
+				    item.setDirectorycode(lSlogilabprotocoldetail.getDirectorycode());
+				    try {
+						item.setCreatedtimestamp(commonfunction.getCurrentUtcTime());
+					} catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				});
+					if(lSlogilabprotocoldetail.getElnmaterial() != null) {
+						lSlogilabprotocoldetail.getLsprotocolselectedTeam().forEach(item -> item.setElnmaterial(lSlogilabprotocoldetail.getElnmaterial()));
+					}
+					lsprotoselectedteamRepo.save(lSlogilabprotocoldetail.getLsprotocolselectedTeam());
+			}
+			
 			LSlogilabprotocoldetailRepository.save(lSlogilabprotocoldetail);
 			updatesequence(2,lSlogilabprotocoldetail);
 			
@@ -9765,149 +9790,303 @@ public class ProtocolService {
 		}
 
 	}
+	
+//	public Map<String, Object> Getprotocolcancelledorders(LSlogilabprotocoldetail objorder) {
+//		Map<String, Object> retuobjts = new HashMap<>();
+//		Integer protocoltype = objorder.getProtocoltype();
+//		String Orderflag = null;
+//		if (objorder.getOrderflag() != null) {
+//			Orderflag = objorder.getOrderflag();
+//		}
+//		Integer reject = null;
+//		if (objorder.getRejected() != null) {
+//			reject = objorder.getRejected();
+//		}
+//		List<Logilabprotocolorders> lstorders = new ArrayList<Logilabprotocolorders>();
+//		List<Integer> userlist = objorder.getLsuserMaster().getUsernotify() != null ? objorder.getLsuserMaster()
+//				.getUsernotify().stream().map(LSuserMaster::getUsercode).collect(Collectors.toList())
+//				: new ArrayList<Integer>();
+//		if (protocoltype == -1 && Orderflag == null && reject == null) {
+//			lstorders = LSlogilabprotocoldetailRepository
+//					.findByOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndCreatebyInOrderByProtocolordercodeDesc(
+//							1, objorder.getLsuserMaster().getLssitemaster().getSitecode(), 1, objorder.getFromdate(),
+//							objorder.getTodate(), 1, objorder.getLsuserMaster().getLssitemaster().getSitecode(), 2,
+//							objorder.getLsuserMaster().getUsercode(), objorder.getFromdate(), objorder.getTodate(), 1,
+//							objorder.getLsuserMaster().getLssitemaster().getSitecode(), 3, objorder.getFromdate(),
+//							objorder.getTodate(), userlist);
+//
+//			lstorders.addAll(LSlogilabprotocoldetailRepository
+//					.findByOrdercancellAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterInOrderByProtocolordercodeDesc(
+//							1, objorder.getLsuserMaster().getLssitemaster().getSitecode(), objorder.getFromdate(),
+//							objorder.getTodate(), objorder.getLstproject()));
+//		} else if (protocoltype != -1 && Orderflag == null && reject == null) {
+//			lstorders = LSlogilabprotocoldetailRepository
+//					.findByOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndProtocoltypeOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndProtocoltypeOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndProtocoltypeOrderByProtocolordercodeDesc(
+//							1, objorder.getLsuserMaster().getLssitemaster().getSitecode(), 1, objorder.getFromdate(),
+//							objorder.getTodate(), protocoltype, 1,
+//							objorder.getLsuserMaster().getLssitemaster().getSitecode(), 2,
+//							objorder.getLsuserMaster().getUsercode(), objorder.getFromdate(), objorder.getTodate(),
+//							protocoltype, 1, objorder.getLsuserMaster().getLssitemaster().getSitecode(), 3,
+//							objorder.getFromdate(), objorder.getTodate(), userlist, protocoltype);
+//
+//			lstorders.addAll(LSlogilabprotocoldetailRepository
+//					.findByOrdercancellAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterInAndProtocoltypeOrderByProtocolordercodeDesc(
+//							1, objorder.getLsuserMaster().getLssitemaster().getSitecode(), objorder.getFromdate(),
+//							objorder.getTodate(), objorder.getLstproject(), protocoltype));
+//		} else if (protocoltype == -1 && Orderflag != null && reject == null) {
+//			lstorders = LSlogilabprotocoldetailRepository
+//					.findByOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndOrderflagOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndOrderflagOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndOrderflagOrderByProtocolordercodeDesc(
+//							1, objorder.getLsuserMaster().getLssitemaster().getSitecode(), 1, objorder.getFromdate(),
+//							objorder.getTodate(), Orderflag, 1,
+//							objorder.getLsuserMaster().getLssitemaster().getSitecode(), 2,
+//							objorder.getLsuserMaster().getUsercode(), objorder.getFromdate(), objorder.getTodate(),
+//							Orderflag, 1, objorder.getLsuserMaster().getLssitemaster().getSitecode(), 3,
+//							objorder.getFromdate(), objorder.getTodate(), userlist, Orderflag);
+//
+//			lstorders.addAll(LSlogilabprotocoldetailRepository
+//					.findByOrdercancellAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterInAndOrderflagOrderByProtocolordercodeDesc(
+//							1, objorder.getLsuserMaster().getLssitemaster().getSitecode(), objorder.getFromdate(),
+//							objorder.getTodate(), objorder.getLstproject(), Orderflag));
+//
+//		} else if (protocoltype == -1 && Orderflag == null && reject != null) {
+//			lstorders = LSlogilabprotocoldetailRepository
+//					.findByOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndRejectedOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndRejectedOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndRejectedOrderByProtocolordercodeDesc(
+//							1, objorder.getLsuserMaster().getLssitemaster().getSitecode(), 1, objorder.getFromdate(),
+//							objorder.getTodate(), 1, 1, objorder.getLsuserMaster().getLssitemaster().getSitecode(), 2,
+//							objorder.getLsuserMaster().getUsercode(), objorder.getFromdate(), objorder.getTodate(), 1,
+//							1, objorder.getLsuserMaster().getLssitemaster().getSitecode(), 3, objorder.getFromdate(),
+//							objorder.getTodate(), userlist, 1);
+//
+//			lstorders.addAll(LSlogilabprotocoldetailRepository
+//					.findByOrdercancellAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterInAndRejectedOrderByProtocolordercodeDesc(
+//							1, objorder.getLsuserMaster().getLssitemaster().getSitecode(), objorder.getFromdate(),
+//							objorder.getTodate(), objorder.getLstproject(), 1));
+//
+//		} else if (protocoltype != -1 && Orderflag != null && reject == null) {
+//			lstorders = LSlogilabprotocoldetailRepository
+//					.findByOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndProtocoltypeAndOrderflagOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndProtocoltypeAndOrderflagOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndProtocoltypeAndOrderflagOrderByProtocolordercodeDesc(
+//							1, objorder.getLsuserMaster().getLssitemaster().getSitecode(), 1, objorder.getFromdate(),
+//							objorder.getTodate(), protocoltype, Orderflag, 1,
+//							objorder.getLsuserMaster().getLssitemaster().getSitecode(), 2,
+//							objorder.getLsuserMaster().getUsercode(), objorder.getFromdate(), objorder.getTodate(),
+//							protocoltype, Orderflag, 1, objorder.getLsuserMaster().getLssitemaster().getSitecode(), 3,
+//							objorder.getFromdate(), objorder.getTodate(), userlist, protocoltype, Orderflag);
+//
+//			lstorders.addAll(LSlogilabprotocoldetailRepository
+//					.findByOrdercancellAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterInAndProtocoltypeAndOrderflagOrderByProtocolordercodeDesc(
+//							1, objorder.getLsuserMaster().getLssitemaster().getSitecode(), objorder.getFromdate(),
+//							objorder.getTodate(), objorder.getLstproject(), protocoltype, Orderflag));
+//
+//		} else if (protocoltype != -1 && Orderflag == null && reject != null) {
+//			lstorders = LSlogilabprotocoldetailRepository
+//					.findByOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndProtocoltypeAndRejectedOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndProtocoltypeAndRejectedOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndProtocoltypeAndRejectedOrderByProtocolordercodeDesc(
+//							1, objorder.getLsuserMaster().getLssitemaster().getSitecode(), 1, objorder.getFromdate(),
+//							objorder.getTodate(), protocoltype, 1, 1,
+//							objorder.getLsuserMaster().getLssitemaster().getSitecode(), 2,
+//							objorder.getLsuserMaster().getUsercode(), objorder.getFromdate(), objorder.getTodate(),
+//							protocoltype, 1, 1, objorder.getLsuserMaster().getLssitemaster().getSitecode(), 3,
+//							objorder.getFromdate(), objorder.getTodate(), userlist, protocoltype, 1);
+//
+//			lstorders.addAll(LSlogilabprotocoldetailRepository
+//					.findByOrdercancellAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterInAndProtocoltypeAndRejectedOrderByProtocolordercodeDesc(
+//							1, objorder.getLsuserMaster().getLssitemaster().getSitecode(), objorder.getFromdate(),
+//							objorder.getTodate(), objorder.getLstproject(), protocoltype, 1));
+//
+//		} else if (protocoltype == -1 && Orderflag != null && reject != null) {
+//			lstorders = LSlogilabprotocoldetailRepository
+//					.findByOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndRejectedOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndOrderflagAndRejectedOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndOrderflagAndRejectedOrderByProtocolordercodeDesc(
+//							1, objorder.getLsuserMaster().getLssitemaster().getSitecode(), 1, objorder.getFromdate(),
+//							objorder.getTodate(), Orderflag, 1, 1,
+//							objorder.getLsuserMaster().getLssitemaster().getSitecode(), 2,
+//							objorder.getLsuserMaster().getUsercode(), objorder.getFromdate(), objorder.getTodate(),
+//							Orderflag, 1, 1, objorder.getLsuserMaster().getLssitemaster().getSitecode(), 3,
+//							objorder.getFromdate(), objorder.getTodate(), userlist, Orderflag, 1);
+//
+//			lstorders.addAll(LSlogilabprotocoldetailRepository
+//					.findByOrdercancellAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterInAndOrderflagAndRejectedOrderByProtocolordercodeDesc(
+//							1, objorder.getLsuserMaster().getLssitemaster().getSitecode(), objorder.getFromdate(),
+//							objorder.getTodate(), objorder.getLstproject(), Orderflag, 1));
+//		} else { // protocoltype != -1 && Orderflag != null && reject!=null
+//			lstorders = LSlogilabprotocoldetailRepository
+//					.findByOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndProtocoltypeAndOrderflagAndRejectedOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndProtocoltypeAndOrderflagAndRejectedOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndProtocoltypeAndOrderflagAndRejectedOrderByProtocolordercodeDesc(
+//							1, objorder.getLsuserMaster().getLssitemaster().getSitecode(), 1, objorder.getFromdate(),
+//							objorder.getTodate(), protocoltype, Orderflag, 1, 1,
+//							objorder.getLsuserMaster().getLssitemaster().getSitecode(), 2,
+//							objorder.getLsuserMaster().getUsercode(), objorder.getFromdate(), objorder.getTodate(),
+//							protocoltype, Orderflag, 1, 1, objorder.getLsuserMaster().getLssitemaster().getSitecode(),
+//							3, objorder.getFromdate(), objorder.getTodate(), userlist, protocoltype, Orderflag, 1);
+//			lstorders.addAll(LSlogilabprotocoldetailRepository
+//					.findByOrdercancellAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterInAndProtocoltypeAndOrderflagAndRejectedOrderByProtocolordercodeDesc(
+//							1, objorder.getLsuserMaster().getLssitemaster().getSitecode(), objorder.getFromdate(),
+//							objorder.getTodate(), objorder.getLstproject(), protocoltype, Orderflag, 1));
+//
+//		}
+//		lstorders.forEach(
+//				objorderDetail -> objorderDetail.setLstelnprotocolworkflow(objorder.getLstelnprotocolworkflow()));
+//		List<Long> protocolordercode = new ArrayList<>();
+//		if (lstorders.size() > 0 && objorder.getSearchCriteriaType() != null) {
+//			protocolordercode = lstorders.stream().map(Logilabprotocolorders::getProtocolordercode)
+//					.collect(Collectors.toList());
+//			retuobjts.put("protocolordercodeslist", protocolordercode);
+//		}
+//		retuobjts.put("protocolorders", lstorders);
+//		return retuobjts;
+//	}
 
+	
 	public Map<String, Object> Getprotocolcancelledorders(LSlogilabprotocoldetail objorder) {
-		Map<String, Object> retuobjts = new HashMap<>();
-		Integer protocoltype = objorder.getProtocoltype();
-		String Orderflag = null;
-		if (objorder.getOrderflag() != null) {
-			Orderflag = objorder.getOrderflag();
-		}
-		Integer reject = null;
-		if (objorder.getRejected() != null) {
-			reject = objorder.getRejected();
-		}
-		List<Logilabprotocolorders> lstorders = new ArrayList<Logilabprotocolorders>();
-		List<Integer> userlist = objorder.getLsuserMaster().getUsernotify() != null ? objorder.getLsuserMaster()
-				.getUsernotify().stream().map(LSuserMaster::getUsercode).collect(Collectors.toList())
-				: new ArrayList<Integer>();
-		if (protocoltype == -1 && Orderflag == null && reject == null) {
-			lstorders = LSlogilabprotocoldetailRepository
-					.findByOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndCreatebyInOrderByProtocolordercodeDesc(
-							1, objorder.getLsuserMaster().getLssitemaster().getSitecode(), 1, objorder.getFromdate(),
-							objorder.getTodate(), 1, objorder.getLsuserMaster().getLssitemaster().getSitecode(), 2,
-							objorder.getLsuserMaster().getUsercode(), objorder.getFromdate(), objorder.getTodate(), 1,
-							objorder.getLsuserMaster().getLssitemaster().getSitecode(), 3, objorder.getFromdate(),
-							objorder.getTodate(), userlist);
-
-			lstorders.addAll(LSlogilabprotocoldetailRepository
-					.findByOrdercancellAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterInOrderByProtocolordercodeDesc(
-							1, objorder.getLsuserMaster().getLssitemaster().getSitecode(), objorder.getFromdate(),
-							objorder.getTodate(), objorder.getLstproject()));
-		} else if (protocoltype != -1 && Orderflag == null && reject == null) {
-			lstorders = LSlogilabprotocoldetailRepository
-					.findByOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndProtocoltypeOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndProtocoltypeOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndProtocoltypeOrderByProtocolordercodeDesc(
-							1, objorder.getLsuserMaster().getLssitemaster().getSitecode(), 1, objorder.getFromdate(),
-							objorder.getTodate(), protocoltype, 1,
-							objorder.getLsuserMaster().getLssitemaster().getSitecode(), 2,
-							objorder.getLsuserMaster().getUsercode(), objorder.getFromdate(), objorder.getTodate(),
-							protocoltype, 1, objorder.getLsuserMaster().getLssitemaster().getSitecode(), 3,
-							objorder.getFromdate(), objorder.getTodate(), userlist, protocoltype);
-
-			lstorders.addAll(LSlogilabprotocoldetailRepository
-					.findByOrdercancellAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterInAndProtocoltypeOrderByProtocolordercodeDesc(
-							1, objorder.getLsuserMaster().getLssitemaster().getSitecode(), objorder.getFromdate(),
-							objorder.getTodate(), objorder.getLstproject(), protocoltype));
-		} else if (protocoltype == -1 && Orderflag != null && reject == null) {
-			lstorders = LSlogilabprotocoldetailRepository
-					.findByOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndOrderflagOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndOrderflagOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndOrderflagOrderByProtocolordercodeDesc(
-							1, objorder.getLsuserMaster().getLssitemaster().getSitecode(), 1, objorder.getFromdate(),
-							objorder.getTodate(), Orderflag, 1,
-							objorder.getLsuserMaster().getLssitemaster().getSitecode(), 2,
-							objorder.getLsuserMaster().getUsercode(), objorder.getFromdate(), objorder.getTodate(),
-							Orderflag, 1, objorder.getLsuserMaster().getLssitemaster().getSitecode(), 3,
-							objorder.getFromdate(), objorder.getTodate(), userlist, Orderflag);
-
-			lstorders.addAll(LSlogilabprotocoldetailRepository
-					.findByOrdercancellAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterInAndOrderflagOrderByProtocolordercodeDesc(
-							1, objorder.getLsuserMaster().getLssitemaster().getSitecode(), objorder.getFromdate(),
-							objorder.getTodate(), objorder.getLstproject(), Orderflag));
-
-		} else if (protocoltype == -1 && Orderflag == null && reject != null) {
-			lstorders = LSlogilabprotocoldetailRepository
-					.findByOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndRejectedOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndRejectedOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndRejectedOrderByProtocolordercodeDesc(
-							1, objorder.getLsuserMaster().getLssitemaster().getSitecode(), 1, objorder.getFromdate(),
-							objorder.getTodate(), 1, 1, objorder.getLsuserMaster().getLssitemaster().getSitecode(), 2,
-							objorder.getLsuserMaster().getUsercode(), objorder.getFromdate(), objorder.getTodate(), 1,
-							1, objorder.getLsuserMaster().getLssitemaster().getSitecode(), 3, objorder.getFromdate(),
-							objorder.getTodate(), userlist, 1);
-
-			lstorders.addAll(LSlogilabprotocoldetailRepository
-					.findByOrdercancellAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterInAndRejectedOrderByProtocolordercodeDesc(
-							1, objorder.getLsuserMaster().getLssitemaster().getSitecode(), objorder.getFromdate(),
-							objorder.getTodate(), objorder.getLstproject(), 1));
-
-		} else if (protocoltype != -1 && Orderflag != null && reject == null) {
-			lstorders = LSlogilabprotocoldetailRepository
-					.findByOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndProtocoltypeAndOrderflagOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndProtocoltypeAndOrderflagOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndProtocoltypeAndOrderflagOrderByProtocolordercodeDesc(
-							1, objorder.getLsuserMaster().getLssitemaster().getSitecode(), 1, objorder.getFromdate(),
-							objorder.getTodate(), protocoltype, Orderflag, 1,
-							objorder.getLsuserMaster().getLssitemaster().getSitecode(), 2,
-							objorder.getLsuserMaster().getUsercode(), objorder.getFromdate(), objorder.getTodate(),
-							protocoltype, Orderflag, 1, objorder.getLsuserMaster().getLssitemaster().getSitecode(), 3,
-							objorder.getFromdate(), objorder.getTodate(), userlist, protocoltype, Orderflag);
-
-			lstorders.addAll(LSlogilabprotocoldetailRepository
-					.findByOrdercancellAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterInAndProtocoltypeAndOrderflagOrderByProtocolordercodeDesc(
-							1, objorder.getLsuserMaster().getLssitemaster().getSitecode(), objorder.getFromdate(),
-							objorder.getTodate(), objorder.getLstproject(), protocoltype, Orderflag));
-
-		} else if (protocoltype != -1 && Orderflag == null && reject != null) {
-			lstorders = LSlogilabprotocoldetailRepository
-					.findByOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndProtocoltypeAndRejectedOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndProtocoltypeAndRejectedOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndProtocoltypeAndRejectedOrderByProtocolordercodeDesc(
-							1, objorder.getLsuserMaster().getLssitemaster().getSitecode(), 1, objorder.getFromdate(),
-							objorder.getTodate(), protocoltype, 1, 1,
-							objorder.getLsuserMaster().getLssitemaster().getSitecode(), 2,
-							objorder.getLsuserMaster().getUsercode(), objorder.getFromdate(), objorder.getTodate(),
-							protocoltype, 1, 1, objorder.getLsuserMaster().getLssitemaster().getSitecode(), 3,
-							objorder.getFromdate(), objorder.getTodate(), userlist, protocoltype, 1);
-
-			lstorders.addAll(LSlogilabprotocoldetailRepository
-					.findByOrdercancellAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterInAndProtocoltypeAndRejectedOrderByProtocolordercodeDesc(
-							1, objorder.getLsuserMaster().getLssitemaster().getSitecode(), objorder.getFromdate(),
-							objorder.getTodate(), objorder.getLstproject(), protocoltype, 1));
-
-		} else if (protocoltype == -1 && Orderflag != null && reject != null) {
-			lstorders = LSlogilabprotocoldetailRepository
-					.findByOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndRejectedOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndOrderflagAndRejectedOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndOrderflagAndRejectedOrderByProtocolordercodeDesc(
-							1, objorder.getLsuserMaster().getLssitemaster().getSitecode(), 1, objorder.getFromdate(),
-							objorder.getTodate(), Orderflag, 1, 1,
-							objorder.getLsuserMaster().getLssitemaster().getSitecode(), 2,
-							objorder.getLsuserMaster().getUsercode(), objorder.getFromdate(), objorder.getTodate(),
-							Orderflag, 1, 1, objorder.getLsuserMaster().getLssitemaster().getSitecode(), 3,
-							objorder.getFromdate(), objorder.getTodate(), userlist, Orderflag, 1);
-
-			lstorders.addAll(LSlogilabprotocoldetailRepository
-					.findByOrdercancellAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterInAndOrderflagAndRejectedOrderByProtocolordercodeDesc(
-							1, objorder.getLsuserMaster().getLssitemaster().getSitecode(), objorder.getFromdate(),
-							objorder.getTodate(), objorder.getLstproject(), Orderflag, 1));
-		} else { // protocoltype != -1 && Orderflag != null && reject!=null
-			lstorders = LSlogilabprotocoldetailRepository
-					.findByOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndProtocoltypeAndOrderflagAndRejectedOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndProtocoltypeAndOrderflagAndRejectedOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndProtocoltypeAndOrderflagAndRejectedOrderByProtocolordercodeDesc(
-							1, objorder.getLsuserMaster().getLssitemaster().getSitecode(), 1, objorder.getFromdate(),
-							objorder.getTodate(), protocoltype, Orderflag, 1, 1,
-							objorder.getLsuserMaster().getLssitemaster().getSitecode(), 2,
-							objorder.getLsuserMaster().getUsercode(), objorder.getFromdate(), objorder.getTodate(),
-							protocoltype, Orderflag, 1, 1, objorder.getLsuserMaster().getLssitemaster().getSitecode(),
-							3, objorder.getFromdate(), objorder.getTodate(), userlist, protocoltype, Orderflag, 1);
-			lstorders.addAll(LSlogilabprotocoldetailRepository
-					.findByOrdercancellAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterInAndProtocoltypeAndOrderflagAndRejectedOrderByProtocolordercodeDesc(
-							1, objorder.getLsuserMaster().getLssitemaster().getSitecode(), objorder.getFromdate(),
-							objorder.getTodate(), objorder.getLstproject(), protocoltype, Orderflag, 1));
-
-		}
-		lstorders.forEach(
-				objorderDetail -> objorderDetail.setLstelnprotocolworkflow(objorder.getLstelnprotocolworkflow()));
-		List<Long> protocolordercode = new ArrayList<>();
-		if (lstorders.size() > 0 && objorder.getSearchCriteriaType() != null) {
-			protocolordercode = lstorders.stream().map(Logilabprotocolorders::getProtocolordercode)
-					.collect(Collectors.toList());
-			retuobjts.put("protocolordercodeslist", protocolordercode);
-		}
-		retuobjts.put("protocolorders", lstorders);
-		return retuobjts;
+	Map<String, Object> retuobjts = new HashMap<>();
+	Integer protocoltype = objorder.getProtocoltype();
+	String Orderflag = null;
+	if (objorder.getOrderflag() != null) {
+		Orderflag = objorder.getOrderflag();
 	}
+	Integer reject = null;
+	if (objorder.getRejected() != null) {
+		reject = objorder.getRejected();
+	}
+	
+	Date fromdate = objorder.getFromdate();
+	Date todate = objorder.getTodate();
+	
+	
+	List<LSuserteammapping> lstteammap = lsuserteammappingRepository.findBylsuserMaster(objorder.getLsuserMaster());
+	List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(lstteammap,
+			objorder.getLsuserMaster().getLssitemaster());
+	
+	List<LSprotocolselectedteam> selectedteamorders = lsprotoselectedteamRepo.findByUserteamInAndCreatedtimestampBetween(lstteam,fromdate,todate);
 
+	List<Long> selectedteamprotcolorderList = (selectedteamorders != null && !selectedteamorders.isEmpty())
+		    ? selectedteamorders.stream()
+		        .map(LSprotocolselectedteam::getProtocolordercode)
+		        .filter(Objects::nonNull)
+		        .distinct()
+		        .collect(Collectors.toList())
+		    : Collections.singletonList(-1L);
+		        
+	List<Logilabprotocolorders> lstorders = new ArrayList<Logilabprotocolorders>();
+	List<Integer> userlist = objorder.getLstuserMaster()!= null ? objorder.getLstuserMaster()
+			.stream().map(LSuserMaster::getUsercode).collect(Collectors.toList())
+			: new ArrayList<Integer>();
+	if (protocoltype == -1 && Orderflag == null && reject == null) {
+		lstorders = LSlogilabprotocoldetailRepository
+				.findByOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndTeamselectedOrTeamselectedAndProtocolordercodeInAndOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndCreatebyInOrderByProtocolordercodeDesc(
+						1, objorder.getLsuserMaster().getLssitemaster().getSitecode(), 1, objorder.getFromdate(),objorder.getTodate(),
+						1, objorder.getLsuserMaster().getLssitemaster().getSitecode(), 2,objorder.getLsuserMaster().getUsercode(), objorder.getFromdate(), objorder.getTodate(),
+						1,objorder.getLsuserMaster().getLssitemaster().getSitecode(), 3, objorder.getFromdate(),objorder.getTodate(), userlist,false,
+						true , selectedteamprotcolorderList,1,objorder.getLsuserMaster().getLssitemaster().getSitecode(), 3, objorder.getFromdate(),objorder.getTodate(), userlist);
+
+		lstorders.addAll(LSlogilabprotocoldetailRepository
+				.findByOrdercancellAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterInOrderByProtocolordercodeDesc(
+						1, objorder.getLsuserMaster().getLssitemaster().getSitecode(), objorder.getFromdate(),
+						objorder.getTodate(), objorder.getLstproject()));
+	} else if (protocoltype != -1 && Orderflag == null && reject == null) {
+		lstorders = LSlogilabprotocoldetailRepository
+				.findByOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndProtocoltypeOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndProtocoltypeOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndProtocoltypeAndTeamselectedOrTeamselectedAndProtocolordercodeInAndOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndProtocoltypeOrderByProtocolordercodeDesc(
+						1, objorder.getLsuserMaster().getLssitemaster().getSitecode(), 1, objorder.getFromdate(),objorder.getTodate(), protocoltype, 
+						1,objorder.getLsuserMaster().getLssitemaster().getSitecode(), 2,objorder.getLsuserMaster().getUsercode(), objorder.getFromdate(), objorder.getTodate(),protocoltype,
+						1, objorder.getLsuserMaster().getLssitemaster().getSitecode(), 3,objorder.getFromdate(), objorder.getTodate(), userlist, protocoltype,false,
+						true , selectedteamprotcolorderList ,1, objorder.getLsuserMaster().getLssitemaster().getSitecode(), 3,objorder.getFromdate(), objorder.getTodate(), userlist, protocoltype);
+
+
+		lstorders.addAll(LSlogilabprotocoldetailRepository
+				.findByOrdercancellAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterInAndProtocoltypeOrderByProtocolordercodeDesc(
+						1, objorder.getLsuserMaster().getLssitemaster().getSitecode(), objorder.getFromdate(),
+						objorder.getTodate(), objorder.getLstproject(), protocoltype));
+	} else if (protocoltype == -1 && Orderflag != null && reject == null) {
+		lstorders = LSlogilabprotocoldetailRepository
+				.findByOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndOrderflagOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndOrderflagOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndOrderflagAndTeamselectedOrTeamselectedAndProtocolordercodeInAndOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndOrderflagOrderByProtocolordercodeDesc(
+						1, objorder.getLsuserMaster().getLssitemaster().getSitecode(), 1, objorder.getFromdate(),objorder.getTodate(), Orderflag,
+						1,objorder.getLsuserMaster().getLssitemaster().getSitecode(), 2,objorder.getLsuserMaster().getUsercode(), objorder.getFromdate(), objorder.getTodate(),Orderflag,
+						1, objorder.getLsuserMaster().getLssitemaster().getSitecode(), 3,objorder.getFromdate(), objorder.getTodate(), userlist, Orderflag,false,
+						true , selectedteamprotcolorderList , 1 , objorder.getLsuserMaster().getLssitemaster().getSitecode(), 3,objorder.getFromdate(), objorder.getTodate(), userlist, Orderflag);
+
+
+		lstorders.addAll(LSlogilabprotocoldetailRepository
+				.findByOrdercancellAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterInAndOrderflagOrderByProtocolordercodeDesc(
+						1, objorder.getLsuserMaster().getLssitemaster().getSitecode(), objorder.getFromdate(),
+						objorder.getTodate(), objorder.getLstproject(), Orderflag));
+
+	} else if (protocoltype == -1 && Orderflag == null && reject != null) {
+		lstorders = LSlogilabprotocoldetailRepository
+				.findByOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndRejectedOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndRejectedOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndRejectedAndTeamselectedOrTeamselectedAndProtocolordercodeInAndOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndRejectedOrderByProtocolordercodeDesc(
+						1, objorder.getLsuserMaster().getLssitemaster().getSitecode(), 1, objorder.getFromdate(),objorder.getTodate(), 1,
+						1, objorder.getLsuserMaster().getLssitemaster().getSitecode(), 2,objorder.getLsuserMaster().getUsercode(), objorder.getFromdate(), objorder.getTodate(), 1,
+						1, objorder.getLsuserMaster().getLssitemaster().getSitecode(), 3, objorder.getFromdate(),objorder.getTodate(), userlist, 1,false,
+						true , selectedteamprotcolorderList ,1, objorder.getLsuserMaster().getLssitemaster().getSitecode(), 3, objorder.getFromdate(),objorder.getTodate(), userlist, 1);
+
+
+		lstorders.addAll(LSlogilabprotocoldetailRepository
+				.findByOrdercancellAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterInAndRejectedOrderByProtocolordercodeDesc(
+						1, objorder.getLsuserMaster().getLssitemaster().getSitecode(), objorder.getFromdate(),
+						objorder.getTodate(), objorder.getLstproject(), 1));
+
+	} else if (protocoltype != -1 && Orderflag != null && reject == null) {
+		lstorders = LSlogilabprotocoldetailRepository
+				.findByOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndProtocoltypeAndOrderflagOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndProtocoltypeAndOrderflagOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndProtocoltypeAndOrderflagAndTeamselectedOrTeamselectedAndProtocolordercodeInAndOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndProtocoltypeAndOrderflagOrderByProtocolordercodeDesc(
+						1, objorder.getLsuserMaster().getLssitemaster().getSitecode(), 1, objorder.getFromdate(),objorder.getTodate(), protocoltype, Orderflag,
+						1,objorder.getLsuserMaster().getLssitemaster().getSitecode(), 2,objorder.getLsuserMaster().getUsercode(), objorder.getFromdate(), objorder.getTodate(),protocoltype, Orderflag,
+						1, objorder.getLsuserMaster().getLssitemaster().getSitecode(), 3,objorder.getFromdate(), objorder.getTodate(), userlist, protocoltype, Orderflag,false,
+						true , selectedteamprotcolorderList ,1, objorder.getLsuserMaster().getLssitemaster().getSitecode(), 3,objorder.getFromdate(), objorder.getTodate(), userlist, protocoltype, Orderflag);
+
+
+		lstorders.addAll(LSlogilabprotocoldetailRepository
+				.findByOrdercancellAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterInAndProtocoltypeAndOrderflagOrderByProtocolordercodeDesc(
+						1, objorder.getLsuserMaster().getLssitemaster().getSitecode(), objorder.getFromdate(),
+						objorder.getTodate(), objorder.getLstproject(), protocoltype, Orderflag));
+
+	} else if (protocoltype != -1 && Orderflag == null && reject != null) {
+		lstorders = LSlogilabprotocoldetailRepository
+				.findByOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndProtocoltypeAndRejectedOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndProtocoltypeAndRejectedOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndProtocoltypeAndRejectedAndTeamselectedOrTeamselectedAndProtocolordercodeInAndOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndProtocoltypeAndRejectedOrderByProtocolordercodeDesc(
+						1, objorder.getLsuserMaster().getLssitemaster().getSitecode(), 1, objorder.getFromdate(),objorder.getTodate(), protocoltype, 1,
+						1,objorder.getLsuserMaster().getLssitemaster().getSitecode(), 2,objorder.getLsuserMaster().getUsercode(), objorder.getFromdate(), objorder.getTodate(),protocoltype, 1,
+						1, objorder.getLsuserMaster().getLssitemaster().getSitecode(), 3,objorder.getFromdate(), objorder.getTodate(), userlist, protocoltype, 1,false,
+						true , selectedteamprotcolorderList ,1, objorder.getLsuserMaster().getLssitemaster().getSitecode(), 3,objorder.getFromdate(), objorder.getTodate(), userlist, protocoltype, 1);
+
+
+		lstorders.addAll(LSlogilabprotocoldetailRepository
+				.findByOrdercancellAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterInAndProtocoltypeAndRejectedOrderByProtocolordercodeDesc(
+						1, objorder.getLsuserMaster().getLssitemaster().getSitecode(), objorder.getFromdate(),
+						objorder.getTodate(), objorder.getLstproject(), protocoltype, 1));
+
+	} else if (protocoltype == -1 && Orderflag != null && reject != null) {
+		lstorders = LSlogilabprotocoldetailRepository
+				.findByOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndRejectedOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndOrderflagAndRejectedOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndOrderflagAndRejectedAndTeamselectedOrTeamselectedAndProtocolordercodeInAndOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndOrderflagAndRejectedOrderByProtocolordercodeDesc(
+						1, objorder.getLsuserMaster().getLssitemaster().getSitecode(), 1, objorder.getFromdate(),objorder.getTodate(), Orderflag, 1,
+						1,objorder.getLsuserMaster().getLssitemaster().getSitecode(), 2,objorder.getLsuserMaster().getUsercode(), objorder.getFromdate(), objorder.getTodate(),Orderflag, 1,
+						1, objorder.getLsuserMaster().getLssitemaster().getSitecode(), 3,objorder.getFromdate(), objorder.getTodate(), userlist, Orderflag, 1,false,
+						true , selectedteamprotcolorderList ,1, objorder.getLsuserMaster().getLssitemaster().getSitecode(), 3,objorder.getFromdate(), objorder.getTodate(), userlist, Orderflag, 1);
+
+
+		lstorders.addAll(LSlogilabprotocoldetailRepository
+				.findByOrdercancellAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterInAndOrderflagAndRejectedOrderByProtocolordercodeDesc(
+						1, objorder.getLsuserMaster().getLssitemaster().getSitecode(), objorder.getFromdate(),
+						objorder.getTodate(), objorder.getLstproject(), Orderflag, 1));
+	} else { // protocoltype != -1 && Orderflag != null && reject!=null
+		lstorders = LSlogilabprotocoldetailRepository
+				.findByOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndProtocoltypeAndOrderflagAndRejectedOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndProtocoltypeAndOrderflagAndRejectedOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndProtocoltypeAndOrderflagAndRejectedAndTeamselectedOrTeamselectedAndProtocolordercodeInAndOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndProtocoltypeAndOrderflagAndRejectedOrderByProtocolordercodeDesc(
+						1, objorder.getLsuserMaster().getLssitemaster().getSitecode(), 1, objorder.getFromdate(),objorder.getTodate(), protocoltype, Orderflag, 1, 
+						1,objorder.getLsuserMaster().getLssitemaster().getSitecode(), 2,objorder.getLsuserMaster().getUsercode(), objorder.getFromdate(), objorder.getTodate(),protocoltype, Orderflag, 1,
+						1, objorder.getLsuserMaster().getLssitemaster().getSitecode(),3, objorder.getFromdate(), objorder.getTodate(), userlist, protocoltype, Orderflag, 1,false,
+						true , selectedteamprotcolorderList ,1, objorder.getLsuserMaster().getLssitemaster().getSitecode(),3, objorder.getFromdate(), objorder.getTodate(), userlist, protocoltype, Orderflag, 1);
+		lstorders.addAll(LSlogilabprotocoldetailRepository
+				.findByOrdercancellAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterInAndProtocoltypeAndOrderflagAndRejectedOrderByProtocolordercodeDesc(
+						1, objorder.getLsuserMaster().getLssitemaster().getSitecode(), objorder.getFromdate(),
+						objorder.getTodate(), objorder.getLstproject(), protocoltype, Orderflag, 1));
+
+	}
+	lstorders.forEach(
+			objorderDetail -> objorderDetail.setLstelnprotocolworkflow(objorder.getLstelnprotocolworkflow()));
+	List<Long> protocolordercode = new ArrayList<>();
+	if (lstorders.size() > 0 && objorder.getSearchCriteriaType() != null) {
+		protocolordercode = lstorders.stream().map(Logilabprotocolorders::getProtocolordercode)
+				.collect(Collectors.toList());
+		retuobjts.put("protocolordercodeslist", protocolordercode);
+	}
+	retuobjts.put("protocolorders", lstorders);
+	return retuobjts;
+}
+	
 	public List<Integer> getprotocolcode(LSprotocolmaster objuser) {
 		return lsProtocolMasterRepository.getprotocolcode(objuser.getProtocolmastername());
 

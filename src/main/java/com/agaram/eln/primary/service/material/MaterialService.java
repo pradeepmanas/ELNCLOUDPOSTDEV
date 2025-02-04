@@ -49,10 +49,12 @@ import com.agaram.eln.primary.model.material.MaterialType;
 import com.agaram.eln.primary.model.material.Period;
 import com.agaram.eln.primary.model.material.Section;
 import com.agaram.eln.primary.model.material.Unit;
-import com.agaram.eln.primary.model.sample.Sample;
 import com.agaram.eln.primary.model.sequence.SequenceTable;
+import com.agaram.eln.primary.model.sequence.SequenceTableOrderType;
+import com.agaram.eln.primary.model.sequence.SequenceTableProject;
 import com.agaram.eln.primary.model.sequence.SequenceTableProjectLevel;
 import com.agaram.eln.primary.model.sequence.SequenceTableSite;
+import com.agaram.eln.primary.model.sequence.SequenceTableTask;
 import com.agaram.eln.primary.model.sequence.SequenceTableTaskLevel;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.repository.cloudFileManip.CloudOrderAttachmentRepository;
@@ -71,7 +73,6 @@ import com.agaram.eln.primary.repository.material.MaterialTypeRepository;
 import com.agaram.eln.primary.repository.material.PeriodRepository;
 import com.agaram.eln.primary.repository.material.SectionRepository;
 import com.agaram.eln.primary.repository.material.UnitRepository;
-import com.agaram.eln.primary.repository.sample.SampleRepository;
 import com.agaram.eln.primary.repository.sequence.SequenceTableRepository;
 import com.agaram.eln.primary.repository.sequence.SequenceTableSiteRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
@@ -129,8 +130,6 @@ public class MaterialService {
 	private SequenceTableSiteRepository sequencetablesiteRepository;
 	@Autowired
 	private MaterialLinksRepository materiallinksrepository;
-	@Autowired
-	private SampleRepository SampleRepository;
 
 	public ResponseEntity<Object> getMaterialcombo(Integer nmaterialtypecode, Integer nsitecode) {
 
@@ -2065,16 +2064,5 @@ public class MaterialService {
 	{
 		materiallinksrepository.delete(materiallink);
 		return new ResponseEntity<>(materiallink, HttpStatus.OK);
-	}
-	
-	public ResponseEntity<Object> geSampleList(Map<String, Object> inputMap) throws ParseException {
-		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-		Date fromDate = sdf.parse(inputMap.get("fromdate").toString());
-		Date toDate = sdf.parse(inputMap.get("todate").toString());
-		Integer nsiteInteger = (Integer) inputMap.get("nsitecode");
-	    List<Sample> lstSample = SampleRepository.findByNsitecodeAndCreateddateBetweenOrderBySamplecodeDesc(nsiteInteger,fromDate,toDate);
-		objmap.put("lstSample", lstSample);		
-		return new ResponseEntity<>(objmap, HttpStatus.OK);
 	}
 }

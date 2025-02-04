@@ -315,7 +315,7 @@ public class UserService {
 
 	public List<LSuserMaster> GetUsers(LSuserMaster objusergroup) {
 
-		if (objusergroup.getUsername().equalsIgnoreCase("Administrator")) {
+		if (objusergroup.getUsername().equalsIgnoreCase("Administrator") || objusergroup.getLsusergrouptrans().getUsergroupname().equalsIgnoreCase("Administrator")) {
 
 //			return lsuserMasterRepository.findByUserretirestatusNotOrderByCreateddateDesc(1);
 			return lsuserMasterRepository.findAllByOrderByCreateddateDesc();
@@ -1178,8 +1178,12 @@ public class UserService {
 		LSuserMaster objExitinguser = new LSuserMaster();
 		String username = objuser.getsUsername();
 		LSSiteMaster objsite = LSSiteMasterRepository.findBysitecode(Integer.parseInt(objuser.getsSiteCode()));
-		objExitinguser = lsuserMasterRepository.findByusernameAndLssitemaster(username, objsite);
-
+//		objExitinguser = lsuserMasterRepository.findByusernameAndLssitemaster(username, objsite);
+		List<LSMultisites> userocedsites = LSMultisitesRepositery.findByLssiteMaster(objsite);
+        List<Integer> usercode = userocedsites.stream().map(LSMultisites::getUsercode).collect(Collectors.toList());
+        
+       List<LSuserMaster>  userobj = lsuserMasterRepository.findByUsernameIgnoreCaseAndUsercodeIn(objuser.getsUsername(), usercode);
+       objExitinguser = userobj.get(0);
 		if (objExitinguser != null) {
 			String Password = AESEncryption.decrypt(objExitinguser.getPassword());
 			objExitinguser.setObjResponse(new Response());

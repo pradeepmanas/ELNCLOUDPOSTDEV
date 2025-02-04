@@ -10,7 +10,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -23,6 +25,7 @@ import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.cloudProtocol.CloudLsLogilabprotocolstepInfo;
 import com.agaram.eln.primary.model.dashboard.LsActiveWidgets;
 import com.agaram.eln.primary.model.instrumentDetails.LSOrdernotification;
+import com.agaram.eln.primary.model.instrumentDetails.LSSelectedTeam;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorder;
 import com.agaram.eln.primary.model.instrumentDetails.LsAutoregister;
 import com.agaram.eln.primary.model.instrumentDetails.Lsprotocolorderstructure;
@@ -125,6 +128,10 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date completedtimestamp;
 
+	@OneToMany
+	@JoinColumn(name="protocolordercode")
+	private List<LSprotocolselectedteam> lsprotocolselectedTeam;
+	
 	@ManyToOne
 	private LSprotocolmaster lsprotocolmaster;
 
@@ -1157,5 +1164,23 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	public void setTasklevelsequence(Long tasklevelsequence) {
 		this.tasklevelsequence = tasklevelsequence;
 	}
+	
+	private Boolean teamselected = false;
+	
+	
+    public Boolean getTeamselected() {
+		return teamselected;
+	}
 
+	public void setTeamselected(Boolean teamselected) {
+		this.teamselected = teamselected;
+	}
+
+	public List<LSprotocolselectedteam> getLsprotocolselectedTeam() {
+		return lsprotocolselectedTeam;
+	}
+
+	public void setLsprotocolselectedTeam(List<LSprotocolselectedteam> lsprotocolselectedTeam) {
+		this.lsprotocolselectedTeam = lsprotocolselectedTeam;
+	}
 }

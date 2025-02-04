@@ -57,6 +57,7 @@ import com.agaram.eln.primary.model.methodsetup.CloudParserFile;
 import com.agaram.eln.primary.model.methodsetup.ELNFileAttachments;
 import com.agaram.eln.primary.model.methodsetup.Method;
 import com.agaram.eln.primary.model.protocols.LSlogilabprotocoldetail;
+import com.agaram.eln.primary.model.protocols.LSprotocolselectedteam;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplefile;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplefileversion;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
@@ -1457,4 +1458,12 @@ public class InstrumentController {
 		return instrumentService.Getselectedteam(batchcode);
 	}
 	
+	@RequestMapping("/Getprotoselectedteam")
+	public List<LSprotocolselectedteam> Getprotoselectedteam(@RequestBody Map<String, Object> mapObject)throws Exception
+	{
+		final ObjectMapper mapper = new ObjectMapper();
+		final Long protocolordercode = mapper.convertValue(mapObject.get("protocolordercode"), Long.class);
+
+		return instrumentService.Getprotoselectedteam(protocolordercode);
+	}
 }
