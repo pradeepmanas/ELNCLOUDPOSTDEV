@@ -1089,4 +1089,3 @@ ALTER TABLE IF Exists LSprojectmaster ADD COLUMN IF NOT EXISTS projectid charact
 ALTER TABLE IF Exists elnmaterial ADD COLUMN IF NOT EXISTS usageoption Integer;
 
 update elnmaterial set usageoption = 1 where usageoption IS NULL;
-

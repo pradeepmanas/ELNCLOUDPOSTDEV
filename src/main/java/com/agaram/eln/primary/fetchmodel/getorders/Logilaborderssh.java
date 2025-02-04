@@ -76,7 +76,7 @@ public class Logilaborderssh extends LogilabOrdermastersh {
 		this.lu = lockeduser;
 		this.tc = testcode;
 		this.lsm = lssamplemaster;
-		this.lpm =lsprojectmaster!=null?new LSprojectmaster(lsprojectmaster.getCreatedby(),lsprojectmaster.getProjectcode(),lsprojectmaster.getProjectname(),lsprojectmaster.getProjectstatus(),lsprojectmaster.getStatus(),lsprojectmaster.getTeamname()):lsprojectmaster;
+		this.lpm =lsprojectmaster!=null?new LSprojectmaster(lsprojectmaster.getCreatedby(),lsprojectmaster.getProjectcode(),lsprojectmaster.getProjectname(),lsprojectmaster.getProjectstatus(),lsprojectmaster.getStatus(),lsprojectmaster.getTeamname(), lsprojectmaster.getProjectid()):lsprojectmaster;
 		this.fc = lsfile != null ? lsfile.getFilecode() : -1;
 		this.ft = filetype;
 		this.lum = lsuserMaster!=null? new LSuserMaster(lsuserMaster.getUsercode(),lsuserMaster.getUsername(),lsuserMaster.getLssitemaster()):null;
