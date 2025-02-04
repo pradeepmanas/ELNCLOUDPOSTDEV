@@ -952,54 +952,54 @@ ALTER TABLE IF EXISTS lsselectedteam add column IF NOT EXISTS createdtimestamp T
 
 ALTER TABLE IF EXISTS LSlogilabprotocoldetail ADD COLUMN IF NOT EXISTS teamselected BOOLEAN DEFAULT false;
 
-DO
-$do$
-DECLARE
-   _kind "char";
-BEGIN
-   SELECT relkind
-   FROM   pg_class
-   WHERE  relname = 'lsprotocolselectedteam_selectionid_seq' 
-   INTO  _kind;
-   IF NOT FOUND THEN CREATE SEQUENCE lsprotocolselectedteam_selectionid_seq;
-   ELSIF _kind = 'S' THEN  
-   ELSE                  
-   END IF;
-END
-$do$;
+-- DO
+-- $do$
+-- DECLARE
+--    _kind "char";
+-- BEGIN
+--    SELECT relkind
+--    FROM   pg_class
+--    WHERE  relname = 'lsprotocolselectedteam_selectionid_seq' 
+--    INTO  _kind;
+--    IF NOT FOUND THEN CREATE SEQUENCE lsprotocolselectedteam_selectionid_seq;
+--    ELSIF _kind = 'S' THEN  
+--    ELSE                  
+--    END IF;
+-- END
+-- $do$;
 
-CREATE TABLE IF NOT EXISTS public.lsprotocolselectedteam
-(
-    selectionid integer NOT NULL DEFAULT nextval('lsprotocolselectedteam_selectionid_seq'::regclass),
-    createdtimestamp timestamp without time zone,
-    directorycode bigint,
-    elnmaterial_nmaterialcode integer,
-    sitemaster_sitecode integer,
-    userteam_teamcode integer,
-    protocolordercode numeric(17,0),
-    CONSTRAINT lsprotocolselectedteam_pkey PRIMARY KEY (selectionid),
-    CONSTRAINT fkh41wcx0af4lebf4urbt2rvvf8 FOREIGN KEY (userteam_teamcode)
-        REFERENCES public.lsusersteam (teamcode) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE NO ACTION,
-    CONSTRAINT fki7iw035ur3ddsu7up2vd5sxg7 FOREIGN KEY (protocolordercode)
-        REFERENCES public.lslogilabprotocoldetail (protocolordercode) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE NO ACTION,
-    CONSTRAINT fkj6il3oc52j95k6mno6hd9s34n FOREIGN KEY (elnmaterial_nmaterialcode)
-        REFERENCES public.elnmaterial (nmaterialcode) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE NO ACTION,
-    CONSTRAINT fkn0csmb7jby4mn1oih4bm3et3y FOREIGN KEY (sitemaster_sitecode)
-        REFERENCES public.lssitemaster (sitecode) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE NO ACTION
-)
+-- CREATE TABLE IF NOT EXISTS public.lsprotocolselectedteam
+-- (
+--     selectionid integer NOT NULL DEFAULT nextval('lsprotocolselectedteam_selectionid_seq'::regclass),
+--     createdtimestamp timestamp without time zone,
+--     directorycode bigint,
+--     elnmaterial_nmaterialcode integer,
+--     sitemaster_sitecode integer,
+--     userteam_teamcode integer,
+--     protocolordercode numeric(17,0),
+--     CONSTRAINT lsprotocolselectedteam_pkey PRIMARY KEY (selectionid),
+--     CONSTRAINT fkh41wcx0af4lebf4urbt2rvvf8 FOREIGN KEY (userteam_teamcode)
+--         REFERENCES public.lsusersteam (teamcode) MATCH SIMPLE
+--         ON UPDATE NO ACTION
+--         ON DELETE NO ACTION,
+--     CONSTRAINT fki7iw035ur3ddsu7up2vd5sxg7 FOREIGN KEY (protocolordercode)
+--         REFERENCES public.lslogilabprotocoldetail (protocolordercode) MATCH SIMPLE
+--         ON UPDATE NO ACTION
+--         ON DELETE NO ACTION,
+--     CONSTRAINT fkj6il3oc52j95k6mno6hd9s34n FOREIGN KEY (elnmaterial_nmaterialcode)
+--         REFERENCES public.elnmaterial (nmaterialcode) MATCH SIMPLE
+--         ON UPDATE NO ACTION
+--         ON DELETE NO ACTION,
+--     CONSTRAINT fkn0csmb7jby4mn1oih4bm3et3y FOREIGN KEY (sitemaster_sitecode)
+--         REFERENCES public.lssitemaster (sitecode) MATCH SIMPLE
+--         ON UPDATE NO ACTION
+--         ON DELETE NO ACTION
+-- )
 
-TABLESPACE pg_default;
+-- TABLESPACE pg_default;
 
-ALTER TABLE IF EXISTS public.lsprotocolselectedteam
-    OWNER to postgres;
+-- ALTER TABLE IF EXISTS public.lsprotocolselectedteam
+--     OWNER to postgres;
     
 CREATE TABLE IF NOT EXISTS public.sampleattachments
 (
