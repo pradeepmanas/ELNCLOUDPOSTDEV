@@ -1200,16 +1200,16 @@ public class MaterialService {
 				obj.getNsitecode(),obj.getSmaterialname(),obj.getMaterialcategory(),obj.getNmaterialcode());
 		
 		obj.setResponse(new Response());
-		
-		if(objElnmaterial == null) {
-			
-			Elnmaterial objMaterial = elnmaterialRepository.findOne(obj.getNmaterialcode());
+		Elnmaterial objMaterial = elnmaterialRepository.findOne(obj.getNmaterialcode());
 
-			obj.setAssignedproject(objMaterial.getAssignedproject());
-			obj.setElnmaterialchemdiagref(objMaterial.getElnmaterialchemdiagref());
-			obj.setCreateddate(objMaterial.getCreateddate());
-			elnmaterialRepository.save(obj);
-			
+		if(objElnmaterial == null) {
+
+			objMaterial.setAssignedproject(obj.getAssignedproject());
+			objMaterial.setElnmaterialchemdiagref(obj.getElnmaterialchemdiagref());
+			objMaterial.setModifiedby(obj.getModifiedby());
+			objMaterial.setModifieddate(obj.getModifieddate());
+			objMaterial.setJsondata(obj.getJsondata());
+			elnmaterialRepository.save(objMaterial);
 			obj.getResponse().setInformation("IDS_SAVE_SUCCEED");
 			obj.getResponse().setStatus(true);
 			

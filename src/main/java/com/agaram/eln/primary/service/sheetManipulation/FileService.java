@@ -728,7 +728,7 @@ public class FileService {
 //		Lsrepositories lsrepositories = new Lsrepositories();
 //		lsrepositories.setSitecode(objuser.getLssitemaster().getSitecode());
 //		mapOrders.put("inventories", inventoryservice.Getallrepositories(lsrepositories));
-//		mapOrders.put("sheets", GetApprovedSheets(0, objuser));
+		mapOrders.put("sheets", GetApprovedSheets(0, objuser));
 		ElnmaterialInventory lsinventories = new ElnmaterialInventory();
 		lsinventories.setNsitecode(objuser.getLssitemaster().getSitecode());
 		mapOrders.put("inventories", materialInventoryService.GetAllInventories(lsinventories));

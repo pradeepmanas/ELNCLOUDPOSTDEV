@@ -20,8 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.model.equipment.Equipment;
-import com.agaram.eln.primary.model.material.MaterialAttachments;
-import com.agaram.eln.primary.model.sample.DerivedSamples;
+import com.agaram.eln.primary.model.material.MaterialAttachments;import com.agaram.eln.primary.model.sample.DerivedSamples;
 import com.agaram.eln.primary.model.sample.Sample;
 import com.agaram.eln.primary.model.sample.SampleAttachments;
 import com.agaram.eln.primary.model.sample.SampleCategory;
@@ -43,6 +42,7 @@ import com.agaram.eln.primary.repository.sequence.SequenceTableTaskLevelReposito
 import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
 import com.agaram.eln.primary.service.cloudFileManip.CloudFileManipulationservice;
 import com.agaram.eln.primary.service.fileManipulation.FileManipulationservice;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 @Service
 public class SampleService<ParentSample>{
@@ -289,10 +289,14 @@ public class SampleService<ParentSample>{
 		return new ResponseEntity<>(sample, HttpStatus.OK);
 	}
 
-	public ResponseEntity<Object> updateSample(Sample sample)
-	{
-		samplerepository.save(sample);
-		return new ResponseEntity<>(sample, HttpStatus.OK);
+	public ResponseEntity<Object> updateSample(Sample sample) {
+		Sample objSample = samplerepository.findOne(sample.getSamplecode());
+		objSample.setAssignedproject(sample.getAssignedproject());
+		objSample.setModifieddate(sample.getModifieddate());
+		objSample.setModifiedby(sample.getModifiedby());
+		objSample.setJsondata(sample.getJsondata());
+		samplerepository.save(objSample);
+		return new ResponseEntity<>(objSample, HttpStatus.OK);
 	}
 	
 	public ResponseEntity<Object> getchildsample(List<Sample> sample)

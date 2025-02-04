@@ -1089,3 +1089,31 @@ ALTER TABLE IF Exists LSprojectmaster ADD COLUMN IF NOT EXISTS projectid charact
 ALTER TABLE IF Exists elnmaterial ADD COLUMN IF NOT EXISTS usageoption Integer;
 
 update elnmaterial set usageoption = 1 where usageoption IS NULL;
+
+ALTER TABLE IF Exists material ADD COLUMN IF NOT EXISTS usageoption Integer;
+
+update material set usageoption = 1 where usageoption IS NULL;
+
+CREATE TABLE IF NOT EXISTS public.materialprojecthistory
+(
+    materialprojectcode integer NOT NULL,
+    createddate timestamp without time zone,
+    description character varying(255) COLLATE pg_catalog."default",
+    nmaterialcode integer,
+    createby_usercode integer,
+    lsproject_projectcode integer,
+    CONSTRAINT materialprojecthistory_pkey PRIMARY KEY (materialprojectcode),
+    CONSTRAINT fkixmykqu7aadpcy59olw8y48m3 FOREIGN KEY (createby_usercode)
+        REFERENCES public.lsusermaster (usercode) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT fkqnas4ctnsy7svnlnu4m560avj FOREIGN KEY (lsproject_projectcode)
+        REFERENCES public.lsprojectmaster (projectcode) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.materialprojecthistory
+    OWNER to postgres;

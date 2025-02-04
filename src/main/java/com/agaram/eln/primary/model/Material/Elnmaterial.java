@@ -132,6 +132,9 @@ public class Elnmaterial implements Serializable{
 	@Column(name = "usageoption", nullable = false)
 	private int usageoption;
 	
+	@Transient
+	private MaterialProjectHistory materialprojecthistory;
+	
 	public String getmDate() {
 		return mDate;
 	}
