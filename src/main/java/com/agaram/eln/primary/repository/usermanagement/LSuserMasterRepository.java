@@ -225,5 +225,13 @@ public interface LSuserMasterRepository extends JpaRepository<LSuserMaster, Inte
 	public LSuserMaster findTop1ByEmailidIgnoreCaseAndAutenticatefrom(String emailid, int i);
 
 	public List<LSuserMaster> findByusernameIn(List<String> userNameList);
+	@Transactional
+	@Query(value = "SELECT COUNT(DISTINCT u.usercode) \r\n"
+			+ "FROM lsusermaster u\r\n"
+			+ "JOIN lsmultisites m ON u.usercode = m.usercode\r\n"
+			+ "JOIN lssitemaster s ON m.lssitemaster_sitecode = s.sitecode\r\n"
+			+ "WHERE u.userretirestatus = 0 \r\n"
+			+ "AND s.istatus = 1;", nativeQuery = true)
+	public Long getTenantlicenseCount();
 
 }

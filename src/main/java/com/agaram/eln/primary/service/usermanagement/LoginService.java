@@ -3109,7 +3109,7 @@ public class LoginService {
 		Map<String, Object> rtnobj = new HashMap<>();
 		
 		//for eln lite lic
-				if(obj.get("isMultitenant").toString().equals("2")) {
+				if(obj.get("isMultitenant") != null && obj.get("isMultitenant").toString().equals("2")) {
 					String strNumber = (String) obj.get("lssitemaster");
 					int sitecode = Integer.parseInt(strNumber);		
 					Integer usercode = (Integer) obj.get("usercode");
@@ -3136,7 +3136,9 @@ public class LoginService {
 			rtnobj.put("Noofuser", tenant.getNoofusers());
 			LSSiteMaster sitemaster = new LSSiteMaster();
 			sitemaster.setSitecode(Integer.parseInt((String) obj.get("lssitemaster")));
-			Long usercount = lsuserMasterRepository.countByLssitemasterAndUserstatus(sitemaster, "A");
+			//Long usercount = lsuserMasterRepository.countByLssitemasterAndUserstatus(sitemaster, "A");
+//			Long usercount = lsuserMasterRepository.getTenantlicenseCount();
+			Long usercount = lsuserMasterRepository.countByUserretirestatusNot(1);
 			rtnobj.put("activeuser", usercount);
 		} else {
 

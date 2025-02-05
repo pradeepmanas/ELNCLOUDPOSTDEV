@@ -315,7 +315,7 @@ public class UserService {
 
 	public List<LSuserMaster> GetUsers(LSuserMaster objusergroup) {
 
-		if (objusergroup.getUsername().equalsIgnoreCase("Administrator") || objusergroup.getLsusergrouptrans().getUsergroupname().equalsIgnoreCase("Administrator")) {
+		if (objusergroup.getUsername().equalsIgnoreCase("Administrator") || objusergroup.getLsusergrouptrans().getUsergroupcode() == 1) {
 
 //			return lsuserMasterRepository.findByUserretirestatusNotOrderByCreateddateDesc(1);
 			return lsuserMasterRepository.findAllByOrderByCreateddateDesc();
