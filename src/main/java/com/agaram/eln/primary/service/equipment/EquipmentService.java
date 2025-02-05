@@ -660,8 +660,9 @@ public class EquipmentService {
 				
 			}else {
 				equipmentRepository.save(obj);
-				
-				communicationRepository.save(obj.getCommunicationsetting());
+				if(obj.getCommunicationsetting() != null) {
+					communicationRepository.save(obj.getCommunicationsetting());
+				}				
 			}
 			
 			obj.getResponse().setInformation("IDS_SAVE_SUCCEED");

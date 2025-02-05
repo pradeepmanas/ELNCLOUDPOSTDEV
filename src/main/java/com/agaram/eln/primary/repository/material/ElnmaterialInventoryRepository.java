@@ -132,4 +132,14 @@ public interface ElnmaterialInventoryRepository extends JpaRepository<Elnmateria
 
 	List<ElnmaterialInventory> findByNsitecodeAndNstatusOrderByNmaterialinventorycodeAsc(Integer nsitecode, int i);
 
+	List<ElnmaterialInventory> findByNsitecodeAndMaterialInAndMaterialtypeAndMaterialcategoryOrderByNmaterialinventorycodeDesc(
+			Integer nsiteInteger, List<Elnmaterial> objlstElnmaterial, MaterialType objMaterialType,
+			MaterialCategory objMaterialCategory, Pageable pageable);
+
+	long countByNsitecodeAndMaterialInAndMaterialtypeAndMaterialcategoryOrderByNmaterialinventorycodeDesc(
+			Integer nsiteInteger, List<Elnmaterial> objlstElnmaterial, MaterialType objMaterialType,
+			MaterialCategory objMaterialCategory);
+
+	long countByNsitecodeOrderByNmaterialinventorycodeDesc(Integer nsiteInteger);
+
 }

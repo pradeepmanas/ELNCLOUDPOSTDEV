@@ -4045,4 +4045,31 @@ public class MaterialInventoryService {
 		long InventoryCount = elnmaterialInventoryReppository.countByNsitecode(inputMap.getSitecode());
 		return InventoryCount;
 	}
+	
+	public ResponseEntity<Object> getElnMateriallInventoryByFilter(Map<String, Object> inputMap) {
+		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
+		ObjectMapper objmapper = new ObjectMapper();
+		Integer nsiteInteger = (Integer) inputMap.get("nsitecode");
+		MaterialType objMaterialType = objmapper.convertValue(inputMap.get("materialtype"), MaterialType.class);
+		MaterialCategory objMaterialCategory = objmapper.convertValue(inputMap.get("materialcategory"),MaterialCategory.class);
+        List<Elnmaterial> objlstElnmaterial = objmapper.convertValue(inputMap.get("material"), new TypeReference<List<Elnmaterial>>() {});
+		int page =(int) inputMap.get("page");
+		int size =(int) inputMap.get("size");
+		Pageable pageable =new PageRequest(page, size);
+		List<ElnmaterialInventory> lstElnInventories = new ArrayList<ElnmaterialInventory>();
+		long count=0L;
+		if(!objlstElnmaterial.isEmpty()) {
+			lstElnInventories = elnmaterialInventoryReppository
+					.findByNsitecodeAndMaterialInAndMaterialtypeAndMaterialcategoryOrderByNmaterialinventorycodeDesc(nsiteInteger,objlstElnmaterial,objMaterialType,objMaterialCategory,pageable);
+			
+			 count =elnmaterialInventoryReppository
+			.countByNsitecodeAndMaterialInAndMaterialtypeAndMaterialcategoryOrderByNmaterialinventorycodeDesc(nsiteInteger,objlstElnmaterial,objMaterialType,objMaterialCategory);
+		}else {
+			lstElnInventories= elnmaterialInventoryReppository.findByNsitecodeOrderByNmaterialinventorycodeDesc(nsiteInteger,pageable);
+			count =elnmaterialInventoryReppository.countByNsitecodeOrderByNmaterialinventorycodeDesc(nsiteInteger);
+		}
+		objmap.put("lstMaterialInventory", lstElnInventories);
+		objmap.put("count", count);
+		return new ResponseEntity<>(objmap, HttpStatus.OK);
+	}
 }

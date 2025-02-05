@@ -217,7 +217,7 @@ public class SampleStorageLocation {
 	@Override
 	public String toString() {
 		return "SampleStorageLocation [samplestoragelocationkey=" + samplestoragelocationkey + ", createdby="
-				+ createdby + ", createddate=" + createddate + ", sampleStorageVersion=" + sampleStorageVersion
+				+ createdby + ", createddate=" + createddate + ", sampleStorageVersion=" + sampleStorageVersion.size()
 				+ ", samplestoragelocationname=" + samplestoragelocationname + ", status=" + status + ", sitekey="
 				+ sitekey + "]";
 	}	

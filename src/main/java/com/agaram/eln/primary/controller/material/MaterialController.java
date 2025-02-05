@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.agaram.eln.primary.model.material.Elnmaterial;
 import com.agaram.eln.primary.model.material.Material;
 import com.agaram.eln.primary.model.material.MaterialLinks;
+import com.agaram.eln.primary.model.material.MaterialProjectHistory;
 import com.agaram.eln.primary.service.material.MaterialService;
 
 @RestController
@@ -266,5 +267,15 @@ public class MaterialController {
 	public ResponseEntity<Object> deleteLinkforMaterial(@RequestBody MaterialLinks materiallink)throws Exception
 	{
 		return objMaterialService.deleteLinkforMaterial(materiallink);
+	}
+	
+	@PostMapping("/updatematerialprojecthistory")
+	public ResponseEntity<Object> updatematerialprojecthistory(@RequestBody MaterialProjectHistory[] materiallist)throws Exception
+	{
+		return objMaterialService.updatematerialprojecthistory(materiallist);
+	}
+	@RequestMapping(value = "/geSampleList", method = RequestMethod.POST)
+	public ResponseEntity<Object> geSampleList(@RequestBody Map<String, Object> inputMap) throws Exception {
+		return objMaterialService.geSampleList(inputMap);
 	}
 }
