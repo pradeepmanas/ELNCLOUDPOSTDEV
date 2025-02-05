@@ -725,18 +725,24 @@ public class FileService {
 				LSusersteamRepository.findByLsuserteammappingInAndStatusAndLssitemaster(lsuserteammappingRepository.findBylsuserMaster(objuser), 1,objuser.getLssitemaster())
 				, 1,objuser.getLssitemaster());
 		mapOrders.put("project", prolist);
-//		Lsrepositories lsrepositories = new Lsrepositories();
-//		lsrepositories.setSitecode(objuser.getLssitemaster().getSitecode());
-//		mapOrders.put("inventories", inventoryservice.Getallrepositories(lsrepositories));
-		mapOrders.put("sheets", GetApprovedSheets(0, objuser));
-		ElnmaterialInventory lsinventories = new ElnmaterialInventory();
-		lsinventories.setNsitecode(objuser.getLssitemaster().getSitecode());
-		mapOrders.put("inventories", materialInventoryService.GetAllInventories(lsinventories));
+		
+		/**uncommented to check memory leak issue*/
+		Lsrepositories lsrepositories = new Lsrepositories();
+		lsrepositories.setSitecode(objuser.getLssitemaster().getSitecode());
+		mapOrders.put("inventories", inventoryservice.Getallrepositories(lsrepositories));
+		
+//		mapOrders.put("sheets", GetApprovedSheets(0, objuser));
+		
+		/**commented to check memory leak issue*/ 
+//		ElnmaterialInventory lsinventories = new ElnmaterialInventory();
+//		lsinventories.setNsitecode(objuser.getLssitemaster().getSitecode());
+//		mapOrders.put("inventories", materialInventoryService.GetAllInventories(lsinventories));
+		
 		mapReq4Material.put("sitecode", objuser.getLssitemaster().getSitecode());
 		mapOrders.put("limsInventory", transactionService.getMaterialLst4DashBoard(mapReq4Material));
 		mapOrders.put("material", transactionService.getMaterials(objuser));
-//		lsrepositories = null;
-		lsinventories = null;
+		lsrepositories = null;
+//		lsinventories = null;
 		return mapOrders;
 	}
 
