@@ -295,6 +295,11 @@ public class SampleService<ParentSample>{
 		objSample.setModifieddate(sample.getModifieddate());
 		objSample.setModifiedby(sample.getModifiedby());
 		objSample.setJsondata(sample.getJsondata());
+		if(sample.getSamplestoragemapping()!=null)
+		{
+			objSample.setSamplestoragemapping(sample.getSamplestoragemapping());
+			samplestoragemappingrepository.save(objSample.getSamplestoragemapping());
+		}
 		samplerepository.save(objSample);
 		return new ResponseEntity<>(objSample, HttpStatus.OK);
 	}
