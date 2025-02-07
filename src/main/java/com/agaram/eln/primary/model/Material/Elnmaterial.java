@@ -135,6 +135,12 @@ public class Elnmaterial implements Serializable{
 	@Column(name = "usageoption", nullable = false)
 	private int usageoption;
 	
+	@Column(name = "reusabletype")
+	private Integer reusabletype;
+	
+	@Column(name = "trackconsumption")
+	private Integer trackconsumption;
+	
 	@OneToMany(cascade = CascadeType.PERSIST)
 	@JoinColumn(name="nmaterialcode")
 	@OrderBy("materialprojectcode DESC")
@@ -496,15 +502,35 @@ public class Elnmaterial implements Serializable{
 	public void setBarcodetype(Integer barcodetype) {
 		this.barcodetype = barcodetype;
 	}
+	
 	public int getUsageoption() {
 		return usageoption;
 	}
+	
 	public void setUsageoption(int usageoption) {
 		this.usageoption = usageoption;
 	}
+	
+	public Integer getReusabletype() {
+		return reusabletype;
+	}
+	
+	public void setReusabletype(Integer reusabletype) {
+		this.reusabletype = reusabletype;
+	}
+	
+	public Integer getTrackconsumption() {
+		return trackconsumption;
+	}
+	
+	public void setTrackconsumption(Integer trackconsumption) {
+		this.trackconsumption = trackconsumption;
+	}
+	
 	public List<MaterialProjectHistory> getMaterialprojecthistory() {
 		return materialprojecthistory;
 	}
+	
 	public void setMaterialprojecthistory(List<MaterialProjectHistory> materialprojecthistory) {
 		this.materialprojecthistory = materialprojecthistory;
 	}

@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.agaram.eln.primary.model.sample.Sample;
 import com.agaram.eln.primary.model.sample.SampleCategory;
 import com.agaram.eln.primary.model.sample.SampleLinks;
+import com.agaram.eln.primary.model.sample.SampleProjectHistory;
 import com.agaram.eln.primary.service.sample.SampleService;
 
 @RestController
@@ -98,5 +99,11 @@ public class SampleController {
 	public ResponseEntity<Object> getAssignedTaskOnSample(@RequestBody Map<String, Object> inputMap)throws Exception
 	{
 		return objSampleService.getAssignedTaskOnSample(inputMap);
+	}
+	
+	@PostMapping("/updatemsampleprojecthistory")
+	public ResponseEntity<Object> updatemsampleprojecthistory(@RequestBody SampleProjectHistory[] samplelist)throws Exception
+	{
+		return objSampleService.updatemsampleprojecthistory(samplelist);
 	}
 }

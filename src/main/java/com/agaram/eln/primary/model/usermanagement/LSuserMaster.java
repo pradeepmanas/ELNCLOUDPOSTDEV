@@ -38,6 +38,16 @@ public class LSuserMaster {
 	@Column(columnDefinition = "varchar(255)")
 	private String username;
 	@Column(columnDefinition = "varchar(255)")
+	private String designation;
+	public String getDesignation() {
+		return designation;
+	}
+
+	public void setDesignation(String designation) {
+		this.designation = designation;
+	}
+
+	@Column(columnDefinition = "varchar(255)")
 	private String password;
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date lastloggedon;

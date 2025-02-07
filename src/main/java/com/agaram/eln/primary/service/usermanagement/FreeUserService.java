@@ -228,6 +228,11 @@ public class FreeUserService {
 				objuser.setPassword(objuser.getSubcode());
 			}
 			objuser.setEdulevel(objuser.getEdulevel());
+			//set password
+			if(objuser.getAutenticatefrom() == 0) {			
+			String Password = AESEncryption.encrypt(objuser.getPassword());
+			objuser.setPassword(Password);			
+			}
 			lsuserMasterRepository.save(objuser);
 			
 			LSPasswordPolicy objpolicy = new LSPasswordPolicy();
@@ -240,7 +245,7 @@ public class FreeUserService {
 			objpolicy.setMaxpasswrdlength(10);
 			objpolicy.setMincapitalchar(0);
 			objpolicy.setMinnumericchar(0);
-			objpolicy.setMinpasswrdlength(4);
+			objpolicy.setMinpasswrdlength(5);
 			objpolicy.setMinsmallchar(0);
 			objpolicy.setMinspecialchar(0);
 			objpolicy.setPasswordexpiry(90);

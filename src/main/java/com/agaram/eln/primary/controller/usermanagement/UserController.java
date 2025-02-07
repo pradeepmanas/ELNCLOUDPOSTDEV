@@ -734,5 +734,10 @@ public class UserController {
 	public List<LSusergroup> insertImportUserGroup (@RequestBody Map<String, Object> objusergroup) throws ParseException{
 		return userService.insertImportUserGroup(objusergroup);
 	}
+	
+	@PostMapping("/getDesignation")
+	public List<LSuserMaster> getDesignation(@RequestBody Map<String, Object> obj) throws Exception {
+		return userService.getDesignation(obj);
+	}
 }
 

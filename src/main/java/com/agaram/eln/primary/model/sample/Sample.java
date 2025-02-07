@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -13,6 +14,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -88,6 +90,12 @@ public class Sample implements Serializable{
 	@OneToOne
 	private SampleStorageMapping samplestoragemapping;
 
+	@OneToMany(cascade = CascadeType.PERSIST)
+	@JoinColumn(name="samplecode")
+	@OrderBy("sampleprojectcode DESC")
+	private List<SampleProjectHistory> sampleprojecthistory;
+	
+	
 	public List<SampleAttachments> getlsSampleAttachments() {
 		return lssampleAttachments;
 	}
@@ -245,20 +253,20 @@ public class Sample implements Serializable{
 		this.derivedtype = derivedtype;
 	}
 
-	public List<SampleAttachments> getLssampleAttachments() {
-		return lssampleAttachments;
-	}
-
-	public void setLssampleAttachments(List<SampleAttachments> lssampleAttachments) {
-		this.lssampleAttachments = lssampleAttachments;
-	}
-
 	public SampleStorageMapping getSamplestoragemapping() {
 		return samplestoragemapping;
 	}
 
 	public void setSamplestoragemapping(SampleStorageMapping samplestoragemapping) {
 		this.samplestoragemapping = samplestoragemapping;
+	}
+
+	public List<SampleProjectHistory> getSampleprojecthistory() {
+		return sampleprojecthistory;
+	}
+
+	public void setSampleprojecthistory(List<SampleProjectHistory> sampleprojecthistory) {
+		this.sampleprojecthistory = sampleprojecthistory;
 	}
 
 }

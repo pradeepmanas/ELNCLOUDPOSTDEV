@@ -1463,139 +1463,149 @@ public class UserService {
 	@SuppressWarnings("unused")
 	public LSuserMaster Usersendpasswormail(LSuserMaster objusermaster) throws MessagingException {
 
-		if ((objusermaster.getIsmultitenant() == 2
-				&& objusermaster.getObjResponse().getInformation() == "Forget password")
-				|| objusermaster.getIsmultitenant() != null && objusermaster.getMultitenantusercount() != null
-						&& (objusermaster.getIsmultitenant() == 1 || objusermaster.getIsmultitenant() == 2)) {
+
+		if ((objusermaster.getIsmultitenant() == 2 && objusermaster.getObjResponse().getInformation() == "Forget password") || objusermaster.getIsmultitenant() != null && objusermaster.getMultitenantusercount() != null
+				&& (objusermaster.getIsmultitenant() == 1 || objusermaster.getIsmultitenant() == 2)) {
 			String password = Generatetenantpassword();
 			String passwordadmin = AESEncryption.encrypt(password);
 			LSuserMaster lsuserMaster = new LSuserMaster();
-			objusermaster.setPassword(passwordadmin);
+			if(objusermaster.getIsmultitenant() != 2) {
+				objusermaster.setPassword(passwordadmin);
+			}
+			
 			Email email = new Email();
 			email.setMailto(objusermaster.getEmailid());
 			LocalDate date = LocalDate.now();
-			// Define a DateTimeFormatter with a specific pattern
-			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-			// Format the date
-			String formattedDate = date.format(formatter);
-			Integer accounttype;
-			Integer days = null;
-			String Accounttype = null;
-			if (objusermaster.getIsmultitenant().equals(2)) {
-				accounttype = objusermaster.getLssitemaster().getAccouttype();
-				// days print
-				days = accounttype.toString().equals("3") ? 90 : 30;
-				Accounttype = accounttype.toString().equals("3") ? "Academic"
-						: accounttype.toString().equals("2") ? "Corporate" : "Personal";
-			}
-			if (objusermaster.getAutenticatefrom() != null
-					&& (objusermaster.getAutenticatefrom() == 1 || objusermaster.getAutenticatefrom() == 2)
-					&& objusermaster.getIsmultitenant() == 2) {
-
-				email.setSubject("ELN LITE User Credentials");
-				email.setMailcontent(
-
-						"<div class=\"container\" style=\" width: 100%;max-width: 600px; margin: 0 auto;background-color: #ffffff;font-family: Arial, sans-serif;\">\r\n"
-								+ "        <!-- Header -->\r\n"
-								+ "        <div class=\"header\" style=\" padding: 20px; background-color: #ffffff; color: #ffffff;\">\r\n"
-								+ "           <img src=\"cid:image1\" alt=\"Logo 1\" width=\"130px\"/>\r\n"
-								+ "           <img src=\"cid:image2\" alt=\"Logo 2\" width=\"75px\" style=\"float: right;\"/>\r\n"
-								+ "        </div>\r\n" + "        \r\n" + "        <!-- Content -->\r\n"
-								+ "        <div class=\"content\" style=\" padding: 20px; background-color: #cce0fb;\">\r\n"
-								+ "            <p><b>Dear Customer,</b></p>\r\n"
-								+ "            <div class=\"content-text\" style=\"text-align: center;\">\r\n"
-								+ "                <p class=\"text-align\" style=\"color: #000; font-size: 14px;\">Thanks for your interest in Logilab ELN LITE.</p>\r\n"
-								+ "                <p style=\"font-size: 14px; color: #032c67;\"><b><a href=\""
-								+ objusermaster.getUserloginlink()
-								+ "\" style=\"color: #032c67; text-decoration: underline\"><u>Click here to visit Logilab ELN LITE Login page</u></a></b></p>\r\n"
-								+ "<br /><p style=\"font-size: 14px; color: #000000;\">Registration successful. Your Logilab ELN lite trial "
-								+ Accounttype
-								+ " account has been activated successfully. The free trial will expire <b>" + days
-								+ "</b> days from today on <b>" + formattedDate + "</b> </p><br />"
-								+ "                <p style=\"color: #000;font-size: 13px;\"><b>Plase contact our support team by mail at <span style=\"color: #1d75f1;\">support@agaramtech.com</span> for any queries.</b></p>\r\n"
-								+ "            </div>\r\n" + "            \r\n" + "            \r\n"
-								+ "        </div>\r\n" + "        \r\n" + "        <!-- Footer -->\r\n"
-								+ "        <div class=\"footer\" style=\"padding: 10px; background-color: #cce0fb; color: #000; text-align: center; font-size: 12px;\">\r\n"
-								+ "            <img src=\"cid:image3\" alt=\"Logo 3\" width=\"125px\" style=\"float: left;margin-top: 10px;\"/>\r\n"
-								+ "            <div>\r\n"
-								+ "                <p>Copyrights &copy; 2024 - 2025 Agaram Technology Pvt Ltd.</p>\r\n"
-								+ "                <p style=\"color: #032c67;\"><a href=\"https://www.agaramtech.com/about-us\" style=\"color: #032c67; text-decoration: underline;\"><u>About</u></a> | <a href=\"https://www.agaramtech.com/terms-and-conditions\" style=\"color: #032c67; text-decoration: underline;\"><u>Terms & Conditions</u></a> | <a href=\"https://www.logilabeln.com/contact\" style=\"color: #032c67; text-decoration: underline;\"><u>Contact Us</u></a></p>\r\n"
-								+ "            </div>\r\n" + "        </div>\r\n" + "    </div>");
-
-			} else if (objusermaster.getAutenticatefrom() != null && objusermaster.getAutenticatefrom() == 0
-					&& objusermaster.getIsmultitenant() == 2
-					&& objusermaster.getObjResponse().getInformation().equals("Forget password")) {
+	        // Define a DateTimeFormatter with a specific pattern
+	        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+	        // Format the date
+	        String formattedDate = date.format(formatter);
+	        Integer accounttype;
+	        Integer days = null;
+	        String Accounttype = null;
+	        if(objusermaster.getIsmultitenant().equals(2)) {
+	        	accounttype =objusermaster.getLssitemaster().getAccouttype();
+		        // days print
+	        	days=  accounttype.toString().equals("3") ? 90 : 30;
+		        Accounttype = accounttype.toString().equals("3") ? "Academic" : accounttype.toString().equals("2") ? "Corporate" : "Personal" ;		
+	        }
+	        //sso user mail microsoft / google
+	        if(objusermaster.getAutenticatefrom() != null && (objusermaster.getAutenticatefrom() == 1 || objusermaster.getAutenticatefrom() == 2) && objusermaster.getIsmultitenant() == 2) {		
+	
+//				email.setSubject("ELN LITE User Credentials");
+//				email.setMailcontent(
+//						
+//						"<div class=\"container\" style=\" width: 100%;max-width: 600px; margin: 0 auto;background-color: #ffffff;font-family: Arial, sans-serif;\">\r\n"
+//						+ "        <!-- Header -->\r\n"
+//						+ "        <div class=\"header\" style=\" padding: 20px; background-color: #ffffff; color: #ffffff;\">\r\n"
+//						+ "           <img src=\"cid:image1\" alt=\"Logo 1\" width=\"130px\"/>\r\n"
+//						+ "           <img src=\"cid:image2\" alt=\"Logo 2\" width=\"75px\" style=\"float: right;\"/>\r\n"
+//						+ "        </div>\r\n"
+//						+ "        \r\n"
+//						+ "        <!-- Content -->\r\n"
+//						+ "        <div class=\"content\" style=\" padding: 20px; background-color: #cce0fb;\">\r\n"
+//						+ "            <p><b>Dear Customer,</b></p>\r\n"
+//						+ "            <div class=\"content-text\" style=\"text-align: center;\">\r\n"
+//						+ "                <p class=\"text-align\" style=\"color: #000; font-size: 14px;\">Thanks for your interest in Logilab ELN LITE.</p>\r\n"
+//						+ "                <p style=\"font-size: 14px; color: #032c67;\"><b><a href=\""+objusermaster.getUserloginlink()+"\" style=\"color: #032c67; text-decoration: underline\"><u>Click here to visit Logilab ELN LITE Login page</u></a></b></p>\r\n"
+//						+ "<br /><p style=\"font-size: 14px; color: #000000;\">Registration successful. Your Logilab ELN lite trial "+ Accounttype +" account has been activated successfully. The free trial will expire <b>"+ days +"</b> days from today on <b>"+formattedDate+"</b> </p><br />"
+//						+ "                <p style=\"color: #000;font-size: 13px;\"><b>Plase contact our support team by mail at <span style=\"color: #1d75f1;\">support@agaramtech.com</span> for any queries.</b></p>\r\n"
+//						+ "            </div>\r\n"
+//						+ "            \r\n"
+//						+ "            \r\n"
+//						+ "        </div>\r\n"
+//						+ "        \r\n"
+//						+ "        <!-- Footer -->\r\n"
+//						+ "        <div class=\"footer\" style=\"padding: 10px; background-color: #cce0fb; color: #000; text-align: center; font-size: 12px;\">\r\n"
+//						+ "            <img src=\"cid:image3\" alt=\"Logo 3\" width=\"125px\" style=\"float: left;margin-top: 10px;\"/>\r\n"
+//						+ "            <div>\r\n"
+//						+ "                <p>Copyrights &copy; 2024 - 2025 Agaram Technology Pvt Ltd.</p>\r\n"
+//						+ "                <p style=\"color: #032c67;\"><a href=\"https://www.agaramtech.com/about-us\" style=\"color: #032c67; text-decoration: underline;\"><u>About</u></a> | <a href=\"https://www.agaramtech.com/terms-and-conditions\" style=\"color: #032c67; text-decoration: underline;\"><u>Terms & Conditions</u></a> | <a href=\"https://www.logilabeln.com/contact\" style=\"color: #032c67; text-decoration: underline;\"><u>Contact Us</u></a></p>\r\n"
+//						+ "            </div>\r\n"
+//						+ "        </div>\r\n"
+//						+ "    </div>"						
+//						);
+				
+	        }else if(objusermaster.getAutenticatefrom() != null && objusermaster.getAutenticatefrom() == 0 && objusermaster.getIsmultitenant() == 2 && objusermaster.getObjResponse().getInformation().equals("Forget password")) {
 				email.setSubject("Reset your Logilab ELN lite Password");
 				email.setMailcontent(
 						"<div class=\"container\" style=\" width: 100%;max-width: 600px; margin: 0 auto;background-color: #ffffff;font-family: Arial, sans-serif;\">\r\n"
-								+ "        <!-- Header -->\r\n"
-								+ "        <div class=\"header\" style=\" padding: 20px; background-color: #ffffff; color: #ffffff;\">\r\n"
-								+ "           <img src=\"cid:image1\" alt=\"Logo 1\" width=\"130px\"/>\r\n"
-								+ "           <img src=\"cid:image2\" alt=\"Logo 2\" width=\"75px\" style=\"float: right;\"/>\r\n"
-								+ "        </div>\r\n" + "        \r\n" + "        <!-- Content -->\r\n"
-								+ "        <div class=\"content\" style=\" padding: 20px; background-color: #cce0fb;\">\r\n"
-								+ "            <p><b>Dear Customer,</b></p>\r\n"
-								+ "            <div class=\"content-text\" style=\"text-align: center;\">\r\n"
-								+ "                <p class=\"text-align\" style=\"color: #000; font-size: 14px;\">We received your request to reset your Logilab ELN lite account password</p>\r\n"
-								+ "                <p style=\"font-size: 14px; color: #032c67;\"><b><a href=\""
-								+ objusermaster.getUserloginlink()
-								+ "\" style=\"color: #032c67; text-decoration: underline\"><u>Click here to Reset your Password</u></a></b></p>\r\n"
-								+ "                <ul style=\"list-style: none; margin-bottom: 25px;\">\r\n"
-								+ "                    <li style=\"padding-bottom: 5px; color: #626367; font-size: 14px;\">1. After logging in, a new password generation screen will appear</li>\r\n"
-								+ "                    <li style=\"color: #626367; font-size: 14px;\">2. Paste the temporary password and proceed.</li>\r\n"
-								+ "                </ul>\r\n"
-								+ "                <div class=\"text-box\" style=\"width: 265px;margin: auto;padding: 8px;background: #fff;border-radius: 6px;margin-bottom: 20px;display: inline-block;\"><b style=\"font-size: 12px;float: left;margin-right: 19px;text-align: left;color: #626367;\">Username</b><span style=\" color: #1d75f1; font-size: 13px;text-align: left;float: left;display: inline-block;\">"
-								+ objusermaster.getUsername() + "</span></div>\r\n"
-								+ "                <div class=\"text-box\" style=\"width: 265px;margin: auto;padding: 8px;background: #fff;border-radius: 6px;margin-bottom: 20px;display: inline-block;\"><b style=\"font-size: 12px;float: left;margin-right: 19px;text-align: left;color: #626367;\">Temporary Password</b><span style=\" color: #1d75f1; font-size: 13px;text-align: left;float: left;display: inline-block;\">"
-								+ password + "</span></div>\r\n"
-								+ "                <p style=\"font-size: 12px;color: #626367;\">Please note that organization's password policies might apply to your password</p>\r\n"
-								+ "                <p style=\"color: #000;font-size: 13px;\"><b>Plase contact our support team by mail at <span style=\"color: #1d75f1;\">support@agaramtech.com</span> for any queries.</b></p>\r\n"
-								+ "            </div>\r\n" + "            \r\n" + "            \r\n"
-								+ "        </div>\r\n" + "        \r\n" + "        <!-- Footer -->\r\n"
-								+ "        <div class=\"footer\" style=\"padding: 10px; background-color: #cce0fb; color: #000; text-align: center; font-size: 12px;\">\r\n"
-								+ "            <img src=\"cid:image3\" alt=\"Logo 3\" width=\"125px\" style=\"float: left;margin-top: 10px;\"/>\r\n"
-								+ "            <div>\r\n"
-								+ "                <p>Copyrights &copy; 2024 - 2025 Agaram Technology Pvt Ltd.</p>\r\n"
-								+ "                <p style=\"color: #032c67;\"><a href=\"https://www.agaramtech.com/about-us\" style=\"color: #032c67; text-decoration: underline;\"><u>About</u></a> | <a href=\"https://www.agaramtech.com/terms-and-conditions\" style=\"color: #032c67; text-decoration: underline;\"><u>Terms & Conditions</u></a> | <a href=\"https://www.logilabeln.com/contact\" style=\"color: #032c67; text-decoration: underline;\"><u>Contact Us</u></a></p>\r\n"
-								+ "            </div>\r\n" + "        </div>\r\n" + "    </div>");
-			} else if (objusermaster.getAutenticatefrom() != null && objusermaster.getAutenticatefrom() == 0
-					&& objusermaster.getIsmultitenant() == 2) {
-				email.setSubject("ELN LITE User Credentials");
-				email.setMailcontent(
-						"<div class=\"container\" style=\" width: 100%;max-width: 600px; margin: 0 auto;background-color: #ffffff;font-family: Arial, sans-serif;\">\r\n"
-								+ "        <!-- Header -->\r\n"
-								+ "        <div class=\"header\" style=\" padding: 20px; background-color: #ffffff; color: #ffffff;\">\r\n"
-								+ "           <img src=\"cid:image1\" alt=\"Logo 1\" width=\"130px\"/>\r\n"
-								+ "           <img src=\"cid:image2\" alt=\"Logo 2\" width=\"75px\" style=\"float: right;\"/>\r\n"
-								+ "        </div>\r\n" + "        \r\n" + "        <!-- Content -->\r\n"
-								+ "        <div class=\"content\" style=\" padding: 20px; background-color: #cce0fb;\">\r\n"
-								+ "            <p><b>Dear Customer,</b></p>\r\n"
-								+ "            <div class=\"content-text\" style=\"text-align: center;\">\r\n"
-								+ "                <p class=\"text-align\" style=\"color: #000; font-size: 14px;\">Thanks for your interest in Logilab ELN LITE.</p>\r\n"
-								+ "                <p style=\"color: #626367; font-size: 14px;\">we've set up an "
-								+ Accounttype + " account for you. Kindly create a password.</p>\r\n"
-								+ "                <p style=\"font-size: 14px; color: #032c67;\"><b><a href=\""
-								+ objusermaster.getUserloginlink()
-								+ "\" style=\"color: #032c67; text-decoration: underline\"><u>Click here to visit Logilab ELN LITE Login page</u></a></b></p>\r\n"
-								+ "                <ul style=\"list-style: none; margin-bottom: 25px;\">\r\n"
-								+ "                    <li style=\"padding-bottom: 5px; color: #626367; font-size: 14px;\">1. After logging in, a new password generation screen will appear</li>\r\n"
-								+ "                    <li style=\"color: #626367; font-size: 14px;\">2. Paste the temporary password and proceed.</li>\r\n"
-								+ "                </ul>\r\n"
-								+ "                <div class=\"text-box\" style=\"width: 265px;margin: auto;padding: 8px;background: #fff;border-radius: 6px;margin-bottom: 20px;display: inline-block;\"><b style=\"font-size: 12px;float: left;margin-right: 19px;text-align: left;color: #626367;\">Username</b><span style=\" color: #1d75f1; font-size: 13px;text-align: left;float: left;display: inline-block;\">"
-								+ objusermaster.getUsername() + "</span></div>\r\n"
-								+ "                <div class=\"text-box\" style=\"width: 265px;margin: auto;padding: 8px;background: #fff;border-radius: 6px;margin-bottom: 20px;display: inline-block;\"><b style=\"font-size: 12px;float: left;margin-right: 19px;text-align: left;color: #626367;\">Temporary Password</b><span style=\" color: #1d75f1; font-size: 13px;text-align: left;float: left;display: inline-block;\">"
-								+ password + "</span></div>\r\n"
-								+ "                <p style=\"font-size: 12px;color: #626367;\">Please note that organization's password policies might apply to your password</p>\r\n"
-								+ "                <p style=\"color: #000;font-size: 13px;\"><b>Plase contact our support team by mail at <span style=\"color: #1d75f1;\">support@agaramtech.com</span> for any queries.</b></p>\r\n"
-								+ "            </div>\r\n" + "            \r\n" + "            \r\n"
-								+ "        </div>\r\n" + "        \r\n" + "        <!-- Footer -->\r\n"
-								+ "        <div class=\"footer\" style=\"padding: 10px; background-color: #cce0fb; color: #000; text-align: center; font-size: 12px;\">\r\n"
-								+ "            <img src=\"cid:image3\" alt=\"Logo 3\" width=\"125px\" style=\"float: left;margin-top: 10px;\"/>\r\n"
-								+ "            <div>\r\n"
-								+ "                <p>Copyrights &copy; 2024 - 2025 Agaram Technology Pvt Ltd.</p>\r\n"
-								+ "                <p style=\"color: #032c67;\"><a href=\"https://www.agaramtech.com/about-us\" style=\"color: #032c67; text-decoration: underline;\"><u>About</u></a> | <a href=\"https://www.agaramtech.com/terms-and-conditions\" style=\"color: #032c67; text-decoration: underline;\"><u>Terms & Conditions</u></a> | <a href=\"https://www.logilabeln.com/contact\" style=\"color: #032c67; text-decoration: underline;\"><u>Contact Us</u></a></p>\r\n"
-								+ "            </div>\r\n" + "        </div>\r\n" + "    </div>");
-			} else {
+						+ "        <!-- Header -->\r\n"
+						+ "        <div class=\"header\" style=\" padding: 20px; background-color: #ffffff; color: #ffffff;\">\r\n"
+						+ "           <img src=\"cid:image1\" alt=\"Logo 1\" width=\"130px\"/>\r\n"
+						+ "           <img src=\"cid:image2\" alt=\"Logo 2\" width=\"75px\" style=\"float: right;\"/>\r\n"
+						+ "        </div>\r\n"
+						+ "        \r\n"
+						+ "        <!-- Content -->\r\n"
+						+ "        <div class=\"content\" style=\" padding: 20px; background-color: #cce0fb;\">\r\n"
+						+ "            <p><b>Dear Customer,</b></p>\r\n"
+						+ "            <div class=\"content-text\" style=\"text-align: center;\">\r\n"
+						+ "                <p class=\"text-align\" style=\"color: #000; font-size: 14px;\">We received your request to reset your Logilab ELN lite account password</p>\r\n"
+						+ "                <p style=\"font-size: 14px; color: #032c67;\"><b><a href=\""+objusermaster.getUserloginlink()+"\" style=\"color: #032c67; text-decoration: underline\"><u>Click here to Reset your Password</u></a></b></p>\r\n"
+						+ "                <ul style=\"list-style: none; margin-bottom: 25px;\">\r\n"
+						+ "                    <li style=\"padding-bottom: 5px; color: #626367; font-size: 14px;\">1. After logging in, a new password generation screen will appear</li>\r\n"
+						+ "                    <li style=\"color: #626367; font-size: 14px;\">2. Paste the temporary password and proceed.</li>\r\n"
+						+ "                </ul>\r\n"
+						+ "                <div class=\"text-box\" style=\"width: 265px;margin: auto;padding: 8px;background: #fff;border-radius: 6px;margin-bottom: 20px;display: inline-block;\"><b style=\"font-size: 12px;float: left;margin-right: 19px;text-align: left;color: #626367;\">Username</b><span style=\" color: #1d75f1; font-size: 13px;text-align: left;float: left;display: inline-block;\">"+objusermaster.getUsername()+"</span></div>\r\n"
+						+ "                <div class=\"text-box\" style=\"width: 265px;margin: auto;padding: 8px;background: #fff;border-radius: 6px;margin-bottom: 20px;display: inline-block;\"><b style=\"font-size: 12px;float: left;margin-right: 19px;text-align: left;color: #626367;\">Temporary Password</b><span style=\" color: #1d75f1; font-size: 13px;text-align: left;float: left;display: inline-block;\">"+password+"</span></div>\r\n"
+						+ "                <p style=\"font-size: 12px;color: #626367;\">Please note that organization's password policies might apply to your password</p>\r\n"
+						+ "                <p style=\"color: #000;font-size: 13px;\"><b>Plase contact our support team by mail at <span style=\"color: #1d75f1;\">support@agaramtech.com</span> for any queries.</b></p>\r\n"
+						+ "            </div>\r\n"
+						+ "            \r\n"
+						+ "            \r\n"
+						+ "        </div>\r\n"
+						+ "        \r\n"
+						+ "        <!-- Footer -->\r\n"
+						+ "        <div class=\"footer\" style=\"padding: 10px; background-color: #cce0fb; color: #000; text-align: center; font-size: 12px;\">\r\n"
+						+ "            <img src=\"cid:image3\" alt=\"Logo 3\" width=\"125px\" style=\"float: left;margin-top: 10px;\"/>\r\n"
+						+ "            <div>\r\n"
+						+ "                <p>Copyrights &copy; 2024 - 2025 Agaram Technology Pvt Ltd.</p>\r\n"
+						+ "                <p style=\"color: #032c67;\"><a href=\"https://www.agaramtech.com/about-us\" style=\"color: #032c67; text-decoration: underline;\"><u>About</u></a> | <a href=\"https://www.agaramtech.com/terms-and-conditions\" style=\"color: #032c67; text-decoration: underline;\"><u>Terms & Conditions</u></a> | <a href=\"https://www.logilabeln.com/contact\" style=\"color: #032c67; text-decoration: underline;\"><u>Contact Us</u></a></p>\r\n"
+						+ "            </div>\r\n"
+						+ "        </div>\r\n"
+						+ "    </div>"						
+						);
+			}else if(objusermaster.getAutenticatefrom() != null && objusermaster.getAutenticatefrom() == 0 && objusermaster.getIsmultitenant() == 2) {
+//				email.setSubject("ELN LITE User Credentials");
+//				email.setMailcontent(
+//						"<div class=\"container\" style=\" width: 100%;max-width: 600px; margin: 0 auto;background-color: #ffffff;font-family: Arial, sans-serif;\">\r\n"
+//						+ "        <!-- Header -->\r\n"
+//						+ "        <div class=\"header\" style=\" padding: 20px; background-color: #ffffff; color: #ffffff;\">\r\n"
+//						+ "           <img src=\"cid:image1\" alt=\"Logo 1\" width=\"130px\"/>\r\n"
+//						+ "           <img src=\"cid:image2\" alt=\"Logo 2\" width=\"75px\" style=\"float: right;\"/>\r\n"
+//						+ "        </div>\r\n"
+//						+ "        \r\n"
+//						+ "        <!-- Content -->\r\n"
+//						+ "        <div class=\"content\" style=\" padding: 20px; background-color: #cce0fb;\">\r\n"
+//						+ "            <p><b>Dear Customer,</b></p>\r\n"
+//						+ "            <div class=\"content-text\" style=\"text-align: center;\">\r\n"
+//						+ "                <p class=\"text-align\" style=\"color: #000; font-size: 14px;\">Thanks for your interest in Logilab ELN LITE.</p>\r\n"
+//						+ "                <p style=\"color: #626367; font-size: 14px;\">we've set up an "+ Accounttype +" account for you. Kindly create a password.</p>\r\n"
+//						+ "                <p style=\"font-size: 14px; color: #032c67;\"><b><a href=\""+objusermaster.getUserloginlink()+"\" style=\"color: #032c67; text-decoration: underline\"><u>Click here to visit Logilab ELN LITE Login page</u></a></b></p>\r\n"
+//						+ "                <ul style=\"list-style: none; margin-bottom: 25px;\">\r\n"
+//						+ "                    <li style=\"padding-bottom: 5px; color: #626367; font-size: 14px;\">1. After logging in, a new password generation screen will appear</li>\r\n"
+//						+ "                    <li style=\"color: #626367; font-size: 14px;\">2. Paste the temporary password and proceed.</li>\r\n"
+//						+ "                </ul>\r\n"
+//						+ "                <div class=\"text-box\" style=\"width: 265px;margin: auto;padding: 8px;background: #fff;border-radius: 6px;margin-bottom: 20px;display: inline-block;\"><b style=\"font-size: 12px;float: left;margin-right: 19px;text-align: left;color: #626367;\">Username</b><span style=\" color: #1d75f1; font-size: 13px;text-align: left;float: left;display: inline-block;\">"+objusermaster.getUsername()+"</span></div>\r\n"
+//						+ "                <div class=\"text-box\" style=\"width: 265px;margin: auto;padding: 8px;background: #fff;border-radius: 6px;margin-bottom: 20px;display: inline-block;\"><b style=\"font-size: 12px;float: left;margin-right: 19px;text-align: left;color: #626367;\">Temporary Password</b><span style=\" color: #1d75f1; font-size: 13px;text-align: left;float: left;display: inline-block;\">"+password+"</span></div>\r\n"
+//						+ "                <p style=\"font-size: 12px;color: #626367;\">Please note that organization's password policies might apply to your password</p>\r\n"
+//						+ "                <p style=\"color: #000;font-size: 13px;\"><b>Plase contact our support team by mail at <span style=\"color: #1d75f1;\">support@agaramtech.com</span> for any queries.</b></p>\r\n"
+//						+ "            </div>\r\n"
+//						+ "            \r\n"
+//						+ "            \r\n"
+//						+ "        </div>\r\n"
+//						+ "        \r\n"
+//						+ "        <!-- Footer -->\r\n"
+//						+ "        <div class=\"footer\" style=\"padding: 10px; background-color: #cce0fb; color: #000; text-align: center; font-size: 12px;\">\r\n"
+//						+ "            <img src=\"cid:image3\" alt=\"Logo 3\" width=\"125px\" style=\"float: left;margin-top: 10px;\"/>\r\n"
+//						+ "            <div>\r\n"
+//						+ "                <p>Copyrights &copy; 2024 - 2025 Agaram Technology Pvt Ltd.</p>\r\n"
+//						+ "                <p style=\"color: #032c67;\"><a href=\"https://www.agaramtech.com/about-us\" style=\"color: #032c67; text-decoration: underline;\"><u>About</u></a> | <a href=\"https://www.agaramtech.com/terms-and-conditions\" style=\"color: #032c67; text-decoration: underline;\"><u>Terms & Conditions</u></a> | <a href=\"https://www.logilabeln.com/contact\" style=\"color: #032c67; text-decoration: underline;\"><u>Contact Us</u></a></p>\r\n"
+//						+ "            </div>\r\n"
+//						+ "        </div>\r\n"
+//						+ "    </div>"						
+//						);
+			}else {
 				email.setSubject("ELN User Credentials");
 				email.setMailcontent(
 						"<b>Dear Customer,</b><br><center><img src=\"cid:image\"  style =width:120px; height:100px border: 3px;'></center><br><br>"
@@ -1605,8 +1615,7 @@ public class UserService {
 								+ "Paste the password in the Old Password Textbox, and then generate your new password.<br><br>"
 								+ "<b style='margin-left: 76px;'>Username:</b>\t\t " + objusermaster.getUsername()
 								+ "<br><br>" + "<b style='margin-left: 76px;'>Password &nbsp;:</b>\t\t" + password
-								+ "<br><br>" + "<b style='margin-left: 76px;'><a href="
-								+ objusermaster.getUserloginlink()
+								+ "<br><br>" + "<b style='margin-left: 76px;'><a href=" + objusermaster.getUserloginlink()
 								+ ">Click here to Logilab ELN Login page</a></b><br><br>"
 								+ "<p>If you have any queries, please contact our support by mail to info@agaramtech.com <br><br><br>"
 								+ "Regards,</p>" + "<b>Agaram Technologies Private Limited</b><br><br>"
@@ -1614,65 +1623,71 @@ public class UserService {
 								+ "<br><br><p>T: +91 44 4208 2005</p><p>T: +91 44 42189406</p>"
 								+ "W:<a href='https://www.agaramtech.com'>https://www.agaramtech.com</a></p>");
 			}
+			
 
-			if (objusermaster.getIsmultitenant() == 2) {
-				emailService.sendEmailelnLite(email);
-
-				// mail copy
-				if (objusermaster.getObjResponse().getInformation() != null
-						&& objusermaster.getObjResponse().getInformation() == "User registered successfully") {
-
-					Integer atype = objusermaster.getLssitemaster().getAccouttype();
-
-					String Actype = atype.toString().equals("3") ? "Academic"
-							: atype.toString().equals("2") ? "Corporate" : "Personal";
-
-					email.setSubject("New Logilab ELN lite registration received");
-					email.setMailcontent(
-
-							"<div class=\"container\" style=\" width: 100%;max-width: 600px; margin: 0 auto;background-color: #ffffff;font-family: Arial, sans-serif;\">\r\n"
-									+ "        <!-- Header -->\r\n"
-									+ "        <div class=\"header\" style=\" padding: 20px; background-color: #ffffff; color: #ffffff;\">\r\n"
-									+ "           <img src=\"cid:image1\" alt=\"Logo 1\" width=\"130px\"/>\r\n"
-									+ "           <img src=\"cid:image2\" alt=\"Logo 2\" width=\"75px\" style=\"float: right;\"/>\r\n"
-									+ "        </div>\r\n" + "        \r\n" + "        <!-- Content -->\r\n"
-									+ " <div class=\"content\"> " + " <div class=\"content-text\">"
-									+ "  <p style=\"color: #000; font-size: 14px;\">Name : "
-									+ objusermaster.getUsername() + "</p>"
-									+ "  <p style=\"color: #000; font-size: 14px;\">Company : "
-									+ objusermaster.getLssitemaster().getOrganisationname() + "</p>"
-									+ " <p style=\"color: #000; font-size: 14px;\">Plan type : " + Actype + " </p>"
-									+ " <p style=\"color: #000; font-size: 14px;\">Email ID : "
-									+ objusermaster.getEmailid() + "</p>"
-									+ "<p style=\"color: #000; font-size: 14px;\">Designation : "
-									+ objusermaster.getDesignationname() + "</p>"
-									+ "<p style=\"color: #000; font-size: 14px;\">Country : "
-									+ objusermaster.getLssitemaster().getCountry() + "</p>" + "</div>" + " </div>"
-									+ "        <!-- Footer -->\r\n"
-									+ "        <div class=\"footer\" style=\"padding: 10px; background-color: #cce0fb; color: #000; text-align: center; font-size: 12px;\">\r\n"
-									+ "            <img src=\"cid:image3\" alt=\"Logo 3\" width=\"125px\" style=\"float: left;margin-top: 10px;\"/>\r\n"
-									+ "            <div>\r\n"
-									+ "                <p>Copyrights &copy; 2024 - 2025 Agaram Technology Pvt Ltd.</p>\r\n"
-									+ "                <p style=\"color: #032c67;\"><a href=\"https://www.agaramtech.com/about-us\" style=\"color: #032c67; text-decoration: underline;\"><u>About</u></a> | <a href=\"https://www.agaramtech.com/terms-and-conditions\" style=\"color: #032c67; text-decoration: underline;\"><u>Terms & Conditions</u></a> | <a href=\"https://www.logilabeln.com/contact\" style=\"color: #032c67; text-decoration: underline;\"><u>Contact Us</u></a></p>\r\n"
-									+ "            </div>\r\n" + "        </div>\r\n" + "    </div>");
-
-					emailService.sendEmailelnLiteCopy(email);
+		
+			if(objusermaster.getIsmultitenant() == 2) {
+				
+//				emailService.sendEmailelnLite(email);
+								
+				// mail copy			
+				if(objusermaster.getObjResponse().getInformation() != null && objusermaster.getObjResponse().getInformation() == "User registered successfully"){
+				
+				Integer atype =objusermaster.getLssitemaster().getAccouttype();
+		        
+		       String Actype = atype.toString().equals("3") ? "Academic" : atype.toString().equals("2") ? "Corporate" : "Personal" ;
+		        
+				email.setSubject("New Logilab ELN lite registration received");
+				email.setMailcontent(
+						
+						"<div class=\"container\" style=\" width: 100%;max-width: 600px; margin: 0 auto;background-color: #ffffff;font-family: Arial, sans-serif;\">\r\n"
+						+ "        <!-- Header -->\r\n"
+						+ "        <div class=\"header\" style=\" padding: 20px; background-color: #ffffff; color: #ffffff;\">\r\n"
+						+ "           <img src=\"cid:image1\" alt=\"Logo 1\" width=\"130px\"/>\r\n"
+						+ "           <img src=\"cid:image2\" alt=\"Logo 2\" width=\"75px\" style=\"float: right;\"/>\r\n"
+						+ "        </div>\r\n"
+						+ "        \r\n"
+						+ "        <!-- Content -->\r\n"
+						+ " <div class=\"content\"> "            
+								+ " <div class=\"content-text\">"
+								+ "  <p style=\"color: #000; font-size: 14px;\">Name : "+ objusermaster.getUsername()+"</p>"
+								+ "  <p style=\"color: #000; font-size: 14px;\">Company : "+ objusermaster.getLssitemaster().getOrganisationname()+"</p>"
+								+ " <p style=\"color: #000; font-size: 14px;\">Plan type : "+ Actype +" </p>"
+								+ " <p style=\"color: #000; font-size: 14px;\">Email ID : "+ objusermaster.getEmailid()+"</p>"
+								+ "<p style=\"color: #000; font-size: 14px;\">Designation : "+ objusermaster.getDesignationname()+"</p>"             
+								+ "<p style=\"color: #000; font-size: 14px;\">Country : "+ objusermaster.getLssitemaster().getCountry()+"</p>"
+			            +"</div>"
+			       +" </div>"
+						+ "        <!-- Footer -->\r\n"
+						+ "        <div class=\"footer\" style=\"padding: 10px; background-color: #cce0fb; color: #000; text-align: center; font-size: 12px;\">\r\n"
+						+ "            <img src=\"cid:image3\" alt=\"Logo 3\" width=\"125px\" style=\"float: left;margin-top: 10px;\"/>\r\n"
+						+ "            <div>\r\n"
+						+ "                <p>Copyrights &copy; 2024 - 2025 Agaram Technology Pvt Ltd.</p>\r\n"
+						+ "                <p style=\"color: #032c67;\"><a href=\"https://www.agaramtech.com/about-us\" style=\"color: #032c67; text-decoration: underline;\"><u>About</u></a> | <a href=\"https://www.agaramtech.com/terms-and-conditions\" style=\"color: #032c67; text-decoration: underline;\"><u>Terms & Conditions</u></a> | <a href=\"https://www.logilabeln.com/contact\" style=\"color: #032c67; text-decoration: underline;\"><u>Contact Us</u></a></p>\r\n"
+						+ "            </div>\r\n"
+						+ "        </div>\r\n"
+						+ "    </div>"						
+						);
+				
+	        
+				emailService.sendEmailelnLiteCopy(email);
 				}
-			} else {
+			}else {
 				emailService.sendEmail(email);
 			}
-
-			if (objusermaster.getIsmultitenant() == 2) {
-				lsuserMasterRepository.setpasswordandpasswordstatusandforgetstatusByusercode(
-						objusermaster.getPassword(), objusermaster.getPasswordstatus(), objusermaster.getUsercode());
-			} else {
-				lsuserMasterRepository.setpasswordandpasswordstatusByusercode(objusermaster.getPassword(),
+			
+			if(objusermaster.getIsmultitenant() == 2) {
+				lsuserMasterRepository.setpasswordandpasswordstatusandforgetstatusByusercode(objusermaster.getPassword(),
 						objusermaster.getPasswordstatus(), objusermaster.getUsercode());
-			}
+				}else {
+					lsuserMasterRepository.setpasswordandpasswordstatusByusercode(objusermaster.getPassword(),
+							objusermaster.getPasswordstatus(), objusermaster.getUsercode());
+				}
 		}
 
 		return objusermaster;
 
+	
 	}
 
 	public List<LScentralisedUsers> Getallcentraliseduser(LScentralisedUsers objctrluser) {
@@ -2365,5 +2380,17 @@ public class UserService {
 		lSusergroupRepository.save(userGroupList); // kumu - user group Save
 
 		return userGroupList;
+	}
+
+	public List<LSuserMaster> getDesignation(Map<String, Object> obj) {
+		LSSiteMaster objSite = new LSSiteMaster();
+		String userCodeString = (String) obj.get("usercode");
+		String sitecode = (String) obj.get("sitecode");
+		String userName = (String) obj.get("username");
+		String sitename = (String) obj.get("sitename");
+		objSite.setSitecode(Integer.parseInt(sitecode));
+		objSite.setSitename(sitename);
+		return lsuserMasterRepository.findByUsercodeAndUsernameAndLssitemaster(Integer.parseInt(userCodeString),
+				userName, objSite);
 	}
 }

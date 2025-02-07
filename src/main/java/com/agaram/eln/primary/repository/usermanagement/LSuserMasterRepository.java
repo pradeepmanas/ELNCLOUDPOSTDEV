@@ -234,4 +234,7 @@ public interface LSuserMasterRepository extends JpaRepository<LSuserMaster, Inte
 			+ "AND s.istatus = 1;", nativeQuery = true)
 	public Long getTenantlicenseCount();
 
+	public List<LSuserMaster> findByUsercodeAndUsernameAndLssitemaster(int userCode, String userName,
+			LSSiteMaster objSite);
+
 }

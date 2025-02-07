@@ -11,6 +11,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.util.Arrays;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,14 +27,17 @@ import com.agaram.eln.primary.model.sample.Sample;
 import com.agaram.eln.primary.model.sample.SampleAttachments;
 import com.agaram.eln.primary.model.sample.SampleCategory;
 import com.agaram.eln.primary.model.sample.SampleLinks;
+import com.agaram.eln.primary.model.sample.SampleProjectHistory;
 import com.agaram.eln.primary.model.sequence.SequenceTable;
 import com.agaram.eln.primary.model.sequence.SequenceTableProjectLevel;
 import com.agaram.eln.primary.model.sequence.SequenceTableSite;
 import com.agaram.eln.primary.model.sequence.SequenceTableTaskLevel;
 import com.agaram.eln.primary.model.sheetManipulation.LSfiletest;
+import com.agaram.eln.primary.repository.material.MaterialProjectHistoryRepository;
 import com.agaram.eln.primary.repository.sample.DerivedSamplesRepository;
 import com.agaram.eln.primary.repository.sample.SampleAttachementsRepository;
 import com.agaram.eln.primary.repository.sample.SampleLinkRepository;
+import com.agaram.eln.primary.repository.sample.SampleProjectHistoryRepository;
 import com.agaram.eln.primary.repository.sample.SampleRepository;
 import com.agaram.eln.primary.repository.sample.SampleStorageMappingRepository;
 import com.agaram.eln.primary.repository.sequence.SequenceTableProjectLevelRepository;
@@ -71,6 +76,8 @@ public class SampleService<ParentSample>{
 	private SequenceTableSiteRepository sequencetablesiteRepository;
 	@Autowired
 	private SampleStorageMappingRepository samplestoragemappingrepository;
+	@Autowired
+	private SampleProjectHistoryRepository sampleprojecthistoryrepository;
 
 	public ResponseEntity<Object> getSampleonCategory(SampleCategory objsamplecat){			
 			List<Sample> lstsample = samplerepository.findBySamplecategoryAndNsitecodeOrderBySamplecodeDesc(objsamplecat,objsamplecat.getNsitecode());
@@ -256,7 +263,7 @@ public class SampleService<ParentSample>{
 		}
 	}
 	
-	public ResponseEntity<Object> createSample(Sample sample)
+	public ResponseEntity<Object> createSample(Sample sample) throws ParseException
 	{
 		SequenceTableProjectLevel objprojectseq = new SequenceTableProjectLevel();
 		SequenceTableTaskLevel objtaskseq = new SequenceTableTaskLevel();
@@ -272,12 +279,17 @@ public class SampleService<ParentSample>{
 			derivedsamplesrepository.save(sample.getParentsamples());
 		}
 		
-		try {
+		
 			GetSampleSequence(sample,seqorder, objprojectseq, objtaskseq);
-		} catch (ParseException e) {
-			
-			e.printStackTrace();
-		}
+			sample.getSampleprojecthistory().forEach(history -> {
+				try {
+					history.setCreateddate(commonfunction.getCurrentUtcTime());
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			});
+			sampleprojecthistoryrepository.save(sample.getSampleprojecthistory());
 		
 		if(sample.getSamplestoragemapping()!=null)
 		{
@@ -289,6 +301,39 @@ public class SampleService<ParentSample>{
 		return new ResponseEntity<>(sample, HttpStatus.OK);
 	}
 
+//	public ResponseEntity<Object> createSample(Sample sample)
+//	{
+//		SequenceTableProjectLevel objprojectseq = new SequenceTableProjectLevel();
+//		SequenceTableTaskLevel objtaskseq = new SequenceTableTaskLevel();
+//		SequenceTable seqorder = null;
+//		try {
+//			seqorder = validateandupdatesamplesequencenumber(sample, objprojectseq, objtaskseq);
+//		} catch (ParseException e) {
+//			e.printStackTrace();
+//		}
+//		boolean isrest = false;
+//		if(sample.getDerivedtype() == 3)
+//		{
+//			derivedsamplesrepository.save(sample.getParentsamples());
+//		}
+//		
+//		try {
+//			GetSampleSequence(sample,seqorder, objprojectseq, objtaskseq);
+//		} catch (ParseException e) {
+//			
+//			e.printStackTrace();
+//		}
+//		
+//		if(sample.getSamplestoragemapping()!=null)
+//		{
+//			samplestoragemappingrepository.save(sample.getSamplestoragemapping());
+//		}
+//		
+//		samplerepository.save(sample);
+//		updatesequence(5,sample);
+//		return new ResponseEntity<>(sample, HttpStatus.OK);
+//	}
+
 	public ResponseEntity<Object> updateSample(Sample sample) {
 		Sample objSample = samplerepository.findOne(sample.getSamplecode());
 		objSample.setAssignedproject(sample.getAssignedproject());
@@ -299,6 +344,11 @@ public class SampleService<ParentSample>{
 		{
 			objSample.setSamplestoragemapping(sample.getSamplestoragemapping());
 			samplestoragemappingrepository.save(objSample.getSamplestoragemapping());
+		}
+		if(sample.getDerivedtype() == 3)
+		{
+			derivedsamplesrepository.save(sample.getParentsamples());
+			objSample.setParentsamples(sample.getParentsamples());
 		}
 		samplerepository.save(objSample);
 		return new ResponseEntity<>(objSample, HttpStatus.OK);
@@ -399,5 +449,19 @@ public class SampleService<ParentSample>{
 		
 		Sample sample = samplerepository.findOne(selectedSample);
 		return new ResponseEntity<>(sample.getAssignedproject(), HttpStatus.OK);
+	}
+	public ResponseEntity<Object> updatemsampleprojecthistory(SampleProjectHistory[] samplelist)
+	{
+		List<SampleProjectHistory> history = Arrays.asList(samplelist);
+		history.forEach(his -> {
+			try {
+				his.setCreateddate(commonfunction.getCurrentUtcTime());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		});
+		sampleprojecthistoryrepository.save(history);
+		return new ResponseEntity<>(samplelist, HttpStatus.OK);
 	}
 }

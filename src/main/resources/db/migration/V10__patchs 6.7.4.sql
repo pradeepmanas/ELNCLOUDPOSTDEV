@@ -1094,6 +1094,8 @@ ALTER TABLE IF Exists material ADD COLUMN IF NOT EXISTS usageoption Integer;
 
 update material set usageoption = 1 where usageoption IS NULL;
 
+ALTER TABLE IF Exists LSusermaster ADD COLUMN IF NOT EXISTS designation character varying(255);
+
 CREATE TABLE IF NOT EXISTS public.materialprojecthistory
 (
     materialprojectcode integer NOT NULL,
@@ -1116,4 +1118,32 @@ CREATE TABLE IF NOT EXISTS public.materialprojecthistory
 TABLESPACE pg_default;
 
 ALTER TABLE IF EXISTS public.materialprojecthistory
+    OWNER to postgres;
+
+
+ALTER TABLE IF EXISTS elnmaterial ADD COLUMN IF NOT EXISTS reusabletype Integer;
+ALTER TABLE IF EXISTS elnmaterial ADD COLUMN IF NOT EXISTS trackconsumption Integer;
+
+CREATE TABLE IF NOT EXISTS public.sampleprojecthistory
+(
+    sampleprojectcode integer NOT NULL,
+    createddate timestamp without time zone,
+    description character varying(255) COLLATE pg_catalog."default",
+    samplecode integer,
+    createby_usercode integer,
+    lsproject_projectcode integer,
+    CONSTRAINT sampleprojecthistory_pkey PRIMARY KEY (sampleprojectcode),
+    CONSTRAINT fkaca6olii2kmaectqw3i0dfeio FOREIGN KEY (lsproject_projectcode)
+        REFERENCES public.lsprojectmaster (projectcode) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT fkk8mmkn24gnrysp627iqgj7j7a FOREIGN KEY (createby_usercode)
+        REFERENCES public.lsusermaster (usercode) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+ 
+TABLESPACE pg_default;
+ 
+ALTER TABLE IF EXISTS public.sampleprojecthistory
     OWNER to postgres;
