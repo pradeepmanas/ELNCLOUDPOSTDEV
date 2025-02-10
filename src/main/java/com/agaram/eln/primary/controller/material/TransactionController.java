@@ -53,6 +53,12 @@ public class TransactionController {
 		return transactionService.createMaterialResultUsed(inputMap);
 	}
 	
+	@PostMapping(value = "/QuantityReduceonSample")
+	public ResponseEntity<Object> QuantityReduceonSample(@RequestBody Map<String, Object> inputMap) throws Exception {
+
+		return transactionService.QuantityReduceonSample(inputMap);
+	}
+	
 	@PostMapping(value = "/createMaterialResultUsedReturn")
 	public ResponseEntity<Object> createMaterialResultUsedReturn(@RequestBody Map<String, Object> inputMap) throws Exception {
 

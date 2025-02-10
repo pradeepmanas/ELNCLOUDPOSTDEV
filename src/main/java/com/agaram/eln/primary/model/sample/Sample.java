@@ -18,7 +18,9 @@ import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Type;
 
 import com.agaram.eln.primary.model.material.MaterialAttachments;
@@ -86,6 +88,33 @@ public class Sample implements Serializable{
 	private List<SampleAttachments> lssampleAttachments;
 	
 	private Integer derivedtype;
+	private Integer expirytype;
+	@Transient
+	private String expiryTypeValue;
+	private Boolean quarantine;
+	private Boolean openexpiry;
+	private String openexpiryvalue;
+	private String openexpiryperiod;
+	private Integer ntransactionstatus; 
+	
+	@Column(name = "trackconsumption")
+	private Integer trackconsumption;
+	@Transient
+	private String openexpiryneedvalue;
+	@Transient
+	private String quarantinevalue;
+	
+	@Column(name = "storagecondition")
+	private String storagecondition;
+	@Column(name = "quantity")
+	private Integer quantity;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date expirydate;
+	
+	@ColumnDefault("1")
+	@Column(name = "usageoption", nullable = false)
+	private Integer usageoption;
 	
 	@OneToOne
 	private SampleStorageMapping samplestoragemapping;
@@ -95,6 +124,98 @@ public class Sample implements Serializable{
 	@OrderBy("sampleprojectcode DESC")
 	private List<SampleProjectHistory> sampleprojecthistory;
 	
+	
+	public Integer getQuantity() {
+		return quantity;
+	}
+
+	public void setQuantity(Integer quantity) {
+		this.quantity = quantity;
+	}
+	public Integer getUsageoption() {
+		return usageoption;
+	}
+	
+	public void setUsageoption(Integer usageoption) {
+		this.usageoption = usageoption;
+	}
+	
+	public Date getExpirydate() {
+		return expirydate;
+	}
+
+	public void setExpirydate(Date expirydate) {
+		this.expirydate = expirydate;
+	}
+	public String getStoragecondition() {
+		return storagecondition;
+	}
+
+	public void setStoragecondition(String storagecondition) {
+		this.storagecondition = storagecondition;
+	}
+	public Integer getTrackconsumption() {
+		return trackconsumption;
+	}
+	
+	public void setTrackconsumption(Integer trackconsumption) {
+		this.trackconsumption = trackconsumption;
+	}
+
+	public Boolean getOpenexpiry() {
+		return openexpiry;
+	}
+
+	public void setOpenexpiry(Boolean openexpiry) {
+		this.openexpiry = openexpiry;
+	}
+
+	public String getOpenexpiryvalue() {
+		return openexpiryvalue;
+	}
+
+	public void setOpenexpiryvalue(String openexpiryvalue) {
+		this.openexpiryvalue = openexpiryvalue;
+	}
+
+	public String getOpenexpiryperiod() {
+		return openexpiryperiod;
+	}
+
+	public void setOpenexpiryperiod(String openexpiryperiod) {
+		this.openexpiryperiod = openexpiryperiod;
+	}
+
+	public Boolean getQuarantine() {
+		return quarantine;
+	}
+
+	public void setQuarantine(Boolean quarantine) {
+		this.quarantine = quarantine;
+	}
+	public String getQuarantinevalue() {
+		return quarantinevalue;
+	}
+
+	public void setQuarantinevalue(String quarantinevalue) {
+		this.quarantinevalue = quarantinevalue;
+	}
+	
+	public String getExpiryTypeValue() {
+		return this.expirytype != null && this.expirytype == 1 ? "Expiry Date" : (this.expirytype != null && this.expirytype == 0 ? "No Expiry" : "Open Expiry");
+	}
+
+	public void setExpiryTypeValue(String expiryTypeValue) {
+		this.expiryTypeValue = expiryTypeValue;
+	}
+	
+	public Integer getExpirytype() {
+		return expirytype;
+	}
+
+	public void setExpirytype(Integer expirytype) {
+		this.expirytype = expirytype;
+	}
 	
 	public List<SampleAttachments> getlsSampleAttachments() {
 		return lssampleAttachments;
@@ -267,6 +388,14 @@ public class Sample implements Serializable{
 
 	public void setSampleprojecthistory(List<SampleProjectHistory> sampleprojecthistory) {
 		this.sampleprojecthistory = sampleprojecthistory;
+	}
+
+	public Integer getNtransactionstatus() {
+		return ntransactionstatus;
+	}
+
+	public void setNtransactionstatus(Integer ntransactionstatus) {
+		this.ntransactionstatus = ntransactionstatus;
 	}
 
 }

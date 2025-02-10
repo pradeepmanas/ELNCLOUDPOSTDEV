@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.agaram.eln.primary.model.material.ElnmaterialInventory;
 import com.agaram.eln.primary.model.sample.Sample;
 import com.agaram.eln.primary.model.sample.SampleCategory;
 import com.agaram.eln.primary.model.sample.SampleLinks;
@@ -105,5 +107,23 @@ public class SampleController {
 	public ResponseEntity<Object> updatemsampleprojecthistory(@RequestBody SampleProjectHistory[] samplelist)throws Exception
 	{
 		return objSampleService.updatemsampleprojecthistory(samplelist);
+	}
+	@RequestMapping(value = "/getSampleProps", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> getSampleProps(@RequestBody Map<String, Object> inputMap) throws Exception {
+
+		Integer nsiteInteger = (Integer) inputMap.get("nsitecode");
+		
+		return (ResponseEntity<Object>) objSampleService.getSampleProps(nsiteInteger);
+	}
+	
+	@RequestMapping(value = "/getSampleCategoryByIdBarCodeFilter", method = RequestMethod.POST)
+	public ResponseEntity<Object> getSampleCategoryByIdBarCodeFilter(@RequestBody Map<String, Object> inputMap)
+			throws Exception {
+		return objSampleService.getSampleCategoryByIdBarCodeFilter(inputMap);
+	}
+	
+	@RequestMapping(value = "/updateSampleExpiry", method = RequestMethod.POST)
+	public ResponseEntity<Object> updateSampleExpiry(@RequestBody Sample objSample) throws Exception {
+		return objSampleService.updateSampleExpiry(objSample);
 	}
 }

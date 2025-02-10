@@ -1224,6 +1224,15 @@ public class MaterialService {
 			objMaterial.setModifiedby(obj.getModifiedby());
 			objMaterial.setModifieddate(obj.getModifieddate());
 			objMaterial.setJsondata(obj.getJsondata());
+			obj.getMaterialprojecthistory().forEach(history -> {
+				try {
+					history.setCreateddate(commonfunction.getCurrentUtcTime());
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			});
+			materialprojecthistoryrepository.save(obj.getMaterialprojecthistory());
 			elnmaterialRepository.save(objMaterial);
 			obj.getResponse().setInformation("IDS_SAVE_SUCCEED");
 			obj.getResponse().setStatus(true);
@@ -1478,17 +1487,17 @@ public class MaterialService {
 		List<Map<String, Object>> lstMaterial = new ArrayList<Map<String, Object>>();
 //		ObjectMapper objMapper = new ObjectMapper();
 
-		final Material objMatDetails = materialRepository.findByNstatusAndNmaterialcode(1,
+		final Elnmaterial objMatDetails = elnmaterialRepository.findByNstatusAndNmaterialcode(1,
 				(Integer) inputMap.get("nmaterialcode"));
 
 		if (objMatDetails != null) {
-			Map<String, Object> objMaterial = new ObjectMapper().readValue(objMatDetails.getJsonuidata(), Map.class);
+			Map<String, Object> objMaterial = new ObjectMapper().readValue(objMatDetails.getJsondata(), Map.class);
 
 			objMaterial.put("nmaterialcode", objMatDetails.getNmaterialcode());
 
 			lstMaterial.add(objMaterial);
 
-			objmap.put("SelectedMaterial", lstMaterial.get(lstMaterial.size() - 1));
+			objmap.put("SelectedMaterial", objMatDetails);
 		}
 
 //		objmap.putAll((Map<String, Object>) objMaterialSectionDAO

@@ -1,4 +1,4 @@
-package com.agaram.eln.primary.model.material;
+package com.agaram.eln.primary.model.sample;
 
 import java.util.Date;
 import java.util.List;
@@ -8,24 +8,40 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.general.Response;
+import com.agaram.eln.primary.model.instrumentDetails.LsOrderattachments;
+import com.agaram.eln.primary.model.material.Elnmaterial;
+import com.agaram.eln.primary.model.material.ElnresultUsedMaterial;
+import com.agaram.eln.primary.model.material.Manufacturer;
+import com.agaram.eln.primary.model.material.MaterialCategory;
+import com.agaram.eln.primary.model.material.MaterialGrade;
+import com.agaram.eln.primary.model.material.MaterialType;
+import com.agaram.eln.primary.model.material.Section;
+import com.agaram.eln.primary.model.material.Supplier;
+import com.agaram.eln.primary.model.material.Unit;
+import com.agaram.eln.primary.model.samplestoragelocation.SelectedInventoryMapped;
 import com.agaram.eln.primary.model.sheetManipulation.LStestmasterlocal;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
-@Table(name = "elnresultusedmaterial")
-public class ElnresultUsedMaterial {
+@Table(name="elnresultusedsample")
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class ElnresultUsedSample {
 	
 	@Id
-	@Column(name = "nresultusedmaterialcode") 
+	@Column(name = "nelnresultusedsamplecode") 
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	Integer nresultusedmaterialcode;
+	Integer nelnresultusedsamplecode;
 
 	@Column(name = "ordercode", nullable = false)
 	private Long ordercode;
@@ -33,19 +49,19 @@ public class ElnresultUsedMaterial {
 	@Column(name = "transactionscreen", nullable = false)//1 protocol template,2 sheet order,3 protocol order
 	private Integer transactionscreen;
 	
-	@Column(name = "templatecode", nullable = false)
+	@Column(name = "templatecode")
 	private Integer templatecode;
 
-	@Column(name = "nmaterialtypecode", nullable = false)
+	@Column(name = "nmaterialtypecode")
 	private Integer nmaterialtypecode;
 
-	@Column(name = "nmaterialcategorycode", nullable = false)
+	@Column(name = "nmaterialcategorycode")
 	private Integer nmaterialcategorycode;
 
-	@Column(name = "nmaterialcode", nullable = false)
+	@Column(name = "nmaterialcode")
 	private Integer nmaterialcode;
 
-	@Column(name = "ninventorycode", nullable = false)
+	@Column(name = "ninventorycode")
 	private Integer ninventorycode;
 	
 	private Double nqtyissued;
@@ -139,13 +155,6 @@ public class ElnresultUsedMaterial {
 		this.qtyleft = qtyleft;
 	}
 
-	public Integer getNresultusedmaterialcode() {
-		return nresultusedmaterialcode;
-	}
-
-	public void setNresultusedmaterialcode(Integer nresultusedmaterialcode) {
-		this.nresultusedmaterialcode = nresultusedmaterialcode;
-	}
 
 	public Long getOrdercode() {
 		return ordercode;

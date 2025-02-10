@@ -49,6 +49,8 @@ import com.agaram.eln.primary.model.material.MaterialInventoryTransaction;
 import com.agaram.eln.primary.model.material.MaterialType;
 import com.agaram.eln.primary.model.material.ResultUsedMaterial;
 import com.agaram.eln.primary.model.material.Unit;
+import com.agaram.eln.primary.model.sample.ElnresultUsedSample;
+import com.agaram.eln.primary.model.sample.Sample;
 import com.agaram.eln.primary.model.sheetManipulation.LStestmasterlocal;
 import com.agaram.eln.primary.model.usermanagement.LSnotification;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
@@ -66,6 +68,8 @@ import com.agaram.eln.primary.repository.material.MaterialInventoryTransactionRe
 import com.agaram.eln.primary.repository.material.MaterialRepository;
 import com.agaram.eln.primary.repository.material.MaterialTypeRepository;
 import com.agaram.eln.primary.repository.material.ResultUsedMaterialRepository;
+import com.agaram.eln.primary.repository.sample.ElnresultUsedSampleRepository;
+import com.agaram.eln.primary.repository.sample.SampleRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LStestmasterlocalRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSnotificationRepository;
 import com.fasterxml.jackson.core.JsonParseException;
@@ -127,6 +131,11 @@ public class TransactionService {
 	
 	@Autowired
 	private LStestmasterlocalRepository lStestmasterlocalRepository;
+	
+	@Autowired
+	private SampleRepository SampleRepository;
+	@Autowired
+	private ElnresultUsedSampleRepository ElnresultUsedSampleRepository;
 
 	public ResponseEntity<Object> getLoadOnInventoryData(Map<String, Object> inputMap) {
 
@@ -665,18 +674,27 @@ public class TransactionService {
 
 		ElnmaterialInventory objInventory = elnmaterialInventoryRepository.findByNmaterialinventorycode(objInventoryFromMap.getNmaterialinventorycode());
 
-		Double getIssuedQty = Double.parseDouble(objResultMap.get("savailablequantity").toString());
 		
 		Double getUsedQty = Double.parseDouble(objResultMap.get("usedQuantity").toString());
-
+		Double getIssuedQty;
 		LSuserMaster objUser = new LSuserMaster();
 		objUser.setUsercode(cft.getLsuserMaster());
 
 		ElnresultUsedMaterial resultUsedMaterial = new ElnresultUsedMaterial();
 		
-		objInventory.setSavailablequantity(getIssuedQty.toString());
+		if((Integer.parseInt(objResultMap.get("transactionscreen").toString())==2) && getUsedQty!=null) {
+			getIssuedQty =Double.parseDouble(objInventory.getSavailablequantity())+getUsedQty ;
+			objInventory.setSavailablequantity(getIssuedQty.toString());
+			
+		}else {
+			getIssuedQty = Double.parseDouble(objInventory.getSavailablequantity()) - getUsedQty;			
+			objInventory.setSavailablequantity(getIssuedQty.toString());
+		}
+		
+		
 		
 		resultUsedMaterial.setCreatedbyusercode(objUser);
+	
 		resultUsedMaterial.setNqtyused(getUsedQty);
 		resultUsedMaterial.setBatchid(objResultMap.get("batchid").toString());
 		resultUsedMaterial.setNmaterialcode(objInventory.getMaterial().getNmaterialcode());
@@ -1717,6 +1735,72 @@ public class TransactionService {
 
 	public List<Elnmaterial> getMaterials(LSuserMaster objClass) {
 		return elnmaterialRepository.findByNstatusAndNsitecodeOrderByNmaterialcodeDesc(1, objClass.getLssitemaster().getSitecode());
+	}
+
+	public ResponseEntity<Object> QuantityReduceonSample(Map<String, Object> inputMap) {
+		ObjectMapper Objmapper = new ObjectMapper();
+
+		final LScfttransaction cft = Objmapper.convertValue(inputMap.get("silentAudit"), LScfttransaction.class);
+		final Sample objSample = Objmapper.convertValue(inputMap.get("Sample"),Sample.class);
+		final Map<String, Object> objResultMap = (Map<String, Object>) inputMap.get("resultObject");
+		final LStestmasterlocal objTest = new LStestmasterlocal();
+		Integer ActionType = Integer.parseInt(inputMap.get("ActionType").toString());
+		objTest.setTestcode((Integer) objResultMap.get("testcode"));
+
+		Sample objSampleobj = SampleRepository.findBySamplecode(objSample.getSamplecode());
+
+//		Double getIssuedQty = Double.parseDouble(objResultMap.get("issuedQuantity").toString());
+		Double getIssuedQty = Double.parseDouble(objSampleobj.getQuantity().toString());
+		Double getUsedQty = Double.parseDouble(objResultMap.get("usedQuantity").toString());
+		Double getQtyLeft;
+		if(ActionType==0) {
+			getQtyLeft = getIssuedQty - Double.parseDouble(objResultMap.get("usedQuantity").toString());
+		}else {
+			getQtyLeft = getIssuedQty + Double.parseDouble(objResultMap.get("usedQuantity").toString());
+		}
+		int qtyLeftAsInt = getQtyLeft.intValue();
+		objSampleobj.setQuantity(qtyLeftAsInt);
+		LSuserMaster objUser = new LSuserMaster();
+		objUser.setUsercode(cft.getLsuserMaster());
+
+		ElnresultUsedSample ElnresultUsedSample = new ElnresultUsedSample();
+		if (objTest.getTestcode() != -1) {
+//			resultUsedMaterial.setTestcode(objTest);
+			LStestmasterlocal isPresent = lStestmasterlocalRepository.findBytestcode(objTest.getTestcode());
+			if(isPresent != null){
+				ElnresultUsedSample.setTestcode(objTest);
+			}else {
+				ElnresultUsedSample.setTestcode(null);
+			}
+		}
+//		resultUsedMaterial.setCreateddate(cft.getTransactiondate());
+		ElnresultUsedSample.setSamplecode(objSampleobj.getSamplecode());
+		ElnresultUsedSample.setCreatedbyusercode(objUser);
+		ElnresultUsedSample.setNqtyissued(getIssuedQty);
+		ElnresultUsedSample.setNqtyleft(getQtyLeft);
+		ElnresultUsedSample.setNqtyused(getUsedQty);
+		ElnresultUsedSample.setBatchid(objResultMap.get("batchid").toString());
+		ElnresultUsedSample.setOrdercode(Long.valueOf(objResultMap.get("ordercode").toString()));
+		ElnresultUsedSample.setTransactionscreen(Integer.parseInt(objResultMap.get("transactionscreen").toString()));
+		ElnresultUsedSample.setTemplatecode(Integer.parseInt(objResultMap.get("templatecode").toString()));
+		ElnresultUsedSample.setJsondata(cft.getComments());
+		ElnresultUsedSample.setNstatus(1);
+		ElnresultUsedSample.setResponse(new Response());
+		ElnresultUsedSample.getResponse().setStatus(true);
+
+	
+		try {
+			ElnresultUsedSample.setCreateddate(commonfunction.getCurrentUtcTime());
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		ElnresultUsedSample.setQtyleft(getQtyLeft.toString());
+		
+		ElnresultUsedSample.setIsreturn(0);
+		ElnresultUsedSampleRepository.save(ElnresultUsedSample);
+		SampleRepository.save(objSampleobj);
+		return new ResponseEntity<>(ElnresultUsedSample, HttpStatus.OK);
 	}
 
 }

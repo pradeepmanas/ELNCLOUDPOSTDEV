@@ -13,9 +13,11 @@ import javax.persistence.Table;
 
 import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Table(name = "materialprojecthistory")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class MaterialProjectHistory {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

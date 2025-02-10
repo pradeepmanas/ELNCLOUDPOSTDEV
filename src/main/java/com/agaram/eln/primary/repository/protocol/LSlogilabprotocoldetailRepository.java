@@ -1802,6 +1802,7 @@ List<Logilabprotocolorders> findByLsprojectmasterInAndElnmaterialAndTestcodeAndC
 	        "    LOWER(o.protocolordername) LIKE LOWER(?2) " +
 	        "    OR LOWER(m.testname) LIKE LOWER(?2) " +
 	        "    OR LOWER(o.keyword) LIKE LOWER(?2) " +
+	        "	 OR LOWER(o.sequenceid) LIKE LOWER(?2)"+
 	        "    OR LOWER(l.protocolmastername) LIKE LOWER(?2)" +
 	        "  )" +
 	        ")" +
@@ -1813,6 +1814,7 @@ List<Logilabprotocolorders> findByLsprojectmasterInAndElnmaterialAndTestcodeAndC
 	        "    LOWER(o.protocolordername) LIKE LOWER(?2) " +
 	        "    OR LOWER(m.testname) LIKE LOWER(?2) " +
 	        "    OR LOWER(o.keyword) LIKE LOWER(?2) " +
+	        "	 OR LOWER(o.sequenceid) LIKE LOWER(?2)"+
 	        "    OR LOWER(l.protocolmastername) LIKE LOWER(?2)" +
 	        "  ) " +
 	        "  AND o.viewoption = ?4 " +
@@ -1827,6 +1829,7 @@ List<Logilabprotocolorders> findByLsprojectmasterInAndElnmaterialAndTestcodeAndC
 			        "    LOWER(o.protocolordername) LIKE LOWER(?2) " +
 			        "    OR LOWER(m.testname) LIKE LOWER(?2) " +
 			        "    OR LOWER(o.keyword) LIKE LOWER(?2) " +
+			        "	 OR LOWER(o.sequenceid) LIKE LOWER(?2)"+
 			        "    OR LOWER(l.protocolmastername) LIKE LOWER(?2)" +
 			        "  ) " +
 			        "  AND o.viewoption = ?5 " +
@@ -1843,6 +1846,7 @@ List<Logilabprotocolorders> findByLsprojectmasterInAndElnmaterialAndTestcodeAndC
 			        "    LOWER(o.protocolordername) LIKE LOWER(?2) " +
 			        "    OR LOWER(m.testname) LIKE LOWER(?2) " +
 			        "    OR LOWER(o.keyword) LIKE LOWER(?2) " +
+			        "	 OR LOWER(o.sequenceid) LIKE LOWER(?2)"+
 			        "    OR LOWER(l.protocolmastername) LIKE LOWER(?2)" +
 			        "  ) " +
 			        "  AND o.viewoption = ?5 " +
@@ -1861,6 +1865,7 @@ List<Logilabprotocolorders> findByLsprojectmasterInAndElnmaterialAndTestcodeAndC
 		        "    LOWER(o.protocolordername) LIKE LOWER(?2) " +
 		        "    OR LOWER(m.testname) LIKE LOWER(?2) " +
 		        "    OR LOWER(o.keyword) LIKE LOWER(?2) " +
+		        "	 OR LOWER(o.sequenceid) LIKE LOWER(?2)"+
 		        "    OR LOWER(l.protocolmastername) LIKE LOWER(?2)" +
 		        "  ) " +
 		        "  AND o.viewoption = ?5 " +
@@ -1877,6 +1882,7 @@ List<Logilabprotocolorders> findByLsprojectmasterInAndElnmaterialAndTestcodeAndC
 		        "    LOWER(o.protocolordername) LIKE LOWER(?2) " +
 		        "    OR LOWER(m.testname) LIKE LOWER(?2) " +
 		        "    OR LOWER(o.keyword) LIKE LOWER(?2) " +
+		        "	 OR LOWER(o.sequenceid) LIKE LOWER(?2)"+
 		        "    OR LOWER(l.protocolmastername) LIKE LOWER(?2)" +
 		        "  ) " +
 		        "  AND o.viewoption = ?5 " +
@@ -1896,6 +1902,7 @@ List<Logilabprotocolorders> findByLsprojectmasterInAndElnmaterialAndTestcodeAndC
 	        "    LOWER(o.protocolordername) LIKE LOWER(?2) " +
 	        "    OR LOWER(m.testname) LIKE LOWER(?2) " +
 	        "    OR LOWER(o.keyword) LIKE LOWER(?2) " +
+	        "	 OR LOWER(o.sequenceid) LIKE LOWER(?2)"+
 	        "    OR LOWER(l.protocolmastername) LIKE LOWER(?2)" +
 	        "  )" +
 	        ")" +
@@ -1910,6 +1917,7 @@ List<Logilabprotocolorders> findByLsprojectmasterInAndElnmaterialAndTestcodeAndC
 	        "    LOWER(o.protocolordername) LIKE LOWER(?2) " +
 	        "    OR LOWER(m.testname) LIKE LOWER(?2) " +
 	        "    OR LOWER(o.keyword) LIKE LOWER(?2) " +
+	        "	 OR LOWER(o.sequenceid) LIKE LOWER(?2)"+
 	        "    OR LOWER(l.protocolmastername) LIKE LOWER(?2)" +
 	        "  )" +
 	        ")" +
@@ -1926,6 +1934,7 @@ List<Logilabprotocolorders> findByLsprojectmasterInAndElnmaterialAndTestcodeAndC
 			        "    LOWER(o.protocolordername) LIKE LOWER(?2) " +
 			        "    OR LOWER(m.testname) LIKE LOWER(?2) " +
 			        "    OR LOWER(o.keyword) LIKE LOWER(?2) " +
+			        "	 OR LOWER(o.sequenceid) LIKE LOWER(?2)"+
 			        "    OR LOWER(l.protocolmastername) LIKE LOWER(?2)" +
 			        "  )" +
 			        "  )" +
@@ -1943,6 +1952,7 @@ List<Logilabprotocolorders> findByLsprojectmasterInAndElnmaterialAndTestcodeAndC
 		  	        "    LOWER(o.protocolordername) LIKE LOWER(?2) " +
 		  	        "    OR LOWER(m.testname) LIKE LOWER(?2) " +
 		  	        "    OR LOWER(o.keyword) LIKE LOWER(?2) " +
+		  	        "	 OR LOWER(o.sequenceid) LIKE LOWER(?2)"+
 		  	        "    OR LOWER(l.protocolmastername) LIKE LOWER(?2)" +
 		  	        "  )" +
 		  	        "  )" +

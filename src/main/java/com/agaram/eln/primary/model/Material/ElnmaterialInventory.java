@@ -87,6 +87,17 @@ public class ElnmaterialInventory {
 		this.sbatchno = sbatchno;
 	}
 
+	@Column(name = "reusablecount")
+	private Integer reusablecount;
+	
+	public Integer getReusablecount() {
+		return reusablecount;
+	}
+
+	public void setReusablecount(Integer reusablecount) {
+		this.reusablecount = reusablecount;
+	}
+
 	@OneToMany
 	@JoinColumn(name = "nmaterialinventorycode")
 	private List<LsOrderattachments> lsOrderattachments;

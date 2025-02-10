@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -22,7 +23,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.model.equipment.Equipment;
-import com.agaram.eln.primary.model.material.MaterialAttachments;import com.agaram.eln.primary.model.sample.DerivedSamples;
+import com.agaram.eln.primary.model.material.ElnmaterialInventory;
+import com.agaram.eln.primary.model.material.MaterialAttachments;
+import com.agaram.eln.primary.model.material.Period;
+import com.agaram.eln.primary.model.sample.DerivedSamples;
 import com.agaram.eln.primary.model.sample.Sample;
 import com.agaram.eln.primary.model.sample.SampleAttachments;
 import com.agaram.eln.primary.model.sample.SampleCategory;
@@ -34,6 +38,7 @@ import com.agaram.eln.primary.model.sequence.SequenceTableSite;
 import com.agaram.eln.primary.model.sequence.SequenceTableTaskLevel;
 import com.agaram.eln.primary.model.sheetManipulation.LSfiletest;
 import com.agaram.eln.primary.repository.material.MaterialProjectHistoryRepository;
+import com.agaram.eln.primary.repository.material.PeriodRepository;
 import com.agaram.eln.primary.repository.sample.DerivedSamplesRepository;
 import com.agaram.eln.primary.repository.sample.SampleAttachementsRepository;
 import com.agaram.eln.primary.repository.sample.SampleLinkRepository;
@@ -54,6 +59,8 @@ public class SampleService<ParentSample>{
 	
 	@Autowired
 	private SampleRepository samplerepository;
+	@Autowired
+	PeriodRepository periodRepository;
 	@Autowired
 	private SampleAttachementsRepository sampleAttachementsRepository;
 	@Autowired
@@ -300,46 +307,22 @@ public class SampleService<ParentSample>{
 		updatesequence(5,sample);
 		return new ResponseEntity<>(sample, HttpStatus.OK);
 	}
-
-//	public ResponseEntity<Object> createSample(Sample sample)
-//	{
-//		SequenceTableProjectLevel objprojectseq = new SequenceTableProjectLevel();
-//		SequenceTableTaskLevel objtaskseq = new SequenceTableTaskLevel();
-//		SequenceTable seqorder = null;
-//		try {
-//			seqorder = validateandupdatesamplesequencenumber(sample, objprojectseq, objtaskseq);
-//		} catch (ParseException e) {
-//			e.printStackTrace();
-//		}
-//		boolean isrest = false;
-//		if(sample.getDerivedtype() == 3)
-//		{
-//			derivedsamplesrepository.save(sample.getParentsamples());
-//		}
-//		
-//		try {
-//			GetSampleSequence(sample,seqorder, objprojectseq, objtaskseq);
-//		} catch (ParseException e) {
-//			
-//			e.printStackTrace();
-//		}
-//		
-//		if(sample.getSamplestoragemapping()!=null)
-//		{
-//			samplestoragemappingrepository.save(sample.getSamplestoragemapping());
-//		}
-//		
-//		samplerepository.save(sample);
-//		updatesequence(5,sample);
-//		return new ResponseEntity<>(sample, HttpStatus.OK);
-//	}
-
 	public ResponseEntity<Object> updateSample(Sample sample) {
 		Sample objSample = samplerepository.findOne(sample.getSamplecode());
 		objSample.setAssignedproject(sample.getAssignedproject());
 		objSample.setModifieddate(sample.getModifieddate());
 		objSample.setModifiedby(sample.getModifiedby());
 		objSample.setJsondata(sample.getJsondata());
+		objSample.setExpirytype(sample.getExpirytype());
+		objSample.setExpirydate(sample.getExpirydate());
+		objSample.setOpenexpiry(sample.getOpenexpiry());
+		objSample.setOpenexpiryperiod(sample.getOpenexpiryperiod());
+		objSample.setOpenexpiryvalue(sample.getOpenexpiryvalue());
+		objSample.setQuantity(sample.getQuantity());
+		objSample.setQuarantine(sample.getQuarantine());
+		objSample.setTrackconsumption(sample.getTrackconsumption());
+		objSample.setStoragecondition(sample.getStoragecondition());
+		objSample.setUsageoption(sample.getUsageoption());
 		if(sample.getSamplestoragemapping()!=null)
 		{
 			objSample.setSamplestoragemapping(sample.getSamplestoragemapping());
@@ -350,6 +333,15 @@ public class SampleService<ParentSample>{
 			derivedsamplesrepository.save(sample.getParentsamples());
 			objSample.setParentsamples(sample.getParentsamples());
 		}
+		sample.getSampleprojecthistory().forEach(history -> {
+			try {
+				history.setCreateddate(commonfunction.getCurrentUtcTime());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		});
+		sampleprojecthistoryrepository.save(sample.getSampleprojecthistory());
 		samplerepository.save(objSample);
 		return new ResponseEntity<>(objSample, HttpStatus.OK);
 	}
@@ -360,6 +352,8 @@ public class SampleService<ParentSample>{
 		List<Integer> result = derived.stream()
                 .map(DerivedSamples::getSamplecode)
                 .collect(Collectors.toList());
+		while (result.remove(null)) { 
+        } 
 		List<Sample> lstsample = samplerepository.findBysamplecodeInOrderBySamplecodeDesc(result);
 		return new ResponseEntity<>(lstsample, HttpStatus.OK);
 	}
@@ -463,5 +457,45 @@ public class SampleService<ParentSample>{
 		});
 		sampleprojecthistoryrepository.save(history);
 		return new ResponseEntity<>(samplelist, HttpStatus.OK);
+	}
+
+	public ResponseEntity<Object> getSampleProps(Integer nsiteInteger) {
+		Map<String, Object> objMap = new HashMap<>();
+		List<Period> lstPeriods = periodRepository.findByNstatusOrderByNperiodcode(1);
+		objMap.put("lstPeriods", lstPeriods);
+		return new ResponseEntity<>(objMap, HttpStatus.OK);
+	}
+
+	@SuppressWarnings("unchecked")
+	public ResponseEntity<Object> getSampleCategoryByIdBarCodeFilter(Map<String, Object> inputMap) {
+		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
+		
+		List<String> lstIds = (List<String>) inputMap.get("selectedRecord");
+		Integer nsiteInteger = (Integer) inputMap.get("nsitecode");
+		
+		List<Sample> lstSampleCat = samplerepository.findBySamplecodeInAndNsitecode(lstIds, nsiteInteger);
+		
+		objmap.put("lstSampleCategory", lstSampleCat);
+		return new ResponseEntity<>(objmap, HttpStatus.OK);
+	}
+
+	public ResponseEntity<Object> updateSampleExpiry(Sample objSample)
+			throws ParseException {
+
+		Sample objInventory = samplerepository.findBySamplecode(objSample.getSamplecode());
+
+		if (objSample.getOpenexpiry()) {
+			objInventory.setOpenexpiry(true);
+			objInventory.setExpirydate(objSample.getExpirydate());
+			objInventory.setNtransactionstatus(objSample.getNtransactionstatus());
+			samplerepository.save(objInventory);
+			return new ResponseEntity<>(objInventory, HttpStatus.OK);
+		}
+		objInventory.setOpenexpiry(objSample.getOpenexpiry());
+		objInventory.setNstatus(objSample.getNstatus());
+		objInventory.setNtransactionstatus(objSample.getNtransactionstatus());
+
+		samplerepository.save(objInventory);
+		return new ResponseEntity<>(objInventory, HttpStatus.OK);
 	}
 }

@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import com.agaram.eln.primary.model.material.ElnmaterialInventory;
 import com.agaram.eln.primary.model.sample.Sample;
 import com.agaram.eln.primary.model.sample.SampleCategory;
 
@@ -18,5 +19,9 @@ public interface SampleRepository  extends JpaRepository<Sample,Integer>{
 
 	List<Sample> findByNsitecodeAndCreateddateBetweenOrderBySamplecodeDesc(Integer nsiteInteger, Date fromDate,
 			Date toDate);
+
+	List<Sample> findBySamplecodeInAndNsitecode(List<String> lstIds, Integer nsiteInteger);
+
+	Sample findBySamplecode(Integer samplecode);
 
 }
