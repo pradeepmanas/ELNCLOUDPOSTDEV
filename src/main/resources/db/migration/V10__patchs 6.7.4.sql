@@ -1147,3 +1147,77 @@ TABLESPACE pg_default;
  
 ALTER TABLE IF EXISTS public.sampleprojecthistory
     OWNER to postgres;
+    
+ALTER TABLE IF EXISTS sample ADD COLUMN IF NOT EXISTS usageoption Integer;
+update sample set usageoption = 1 where usageoption IS NULL;
+ALTER TABLE IF EXISTS sample ADD COLUMN IF NOT EXISTS trackconsumption Integer;
+ALTER TABLE IF EXISTS sample ADD COLUMN IF NOT EXISTS expirytype Integer;
+ALTER TABLE IF EXISTS sample ADD COLUMN IF NOT EXISTS quarantine Boolean;
+ALTER TABLE IF EXISTS sample ADD COLUMN IF NOT EXISTS openexpiry Boolean;
+ALTER TABLE IF Exists sample ADD COLUMN IF NOT EXISTS openexpiryvalue character varying(255);
+ALTER TABLE IF Exists sample ADD COLUMN IF NOT EXISTS openexpiryperiod character varying(255);
+ALTER TABLE IF Exists sample ADD COLUMN IF NOT EXISTS expirydate timestamp without time zone;
+ALTER TABLE IF Exists sample ADD COLUMN IF NOT EXISTS storagecondition character varying(255);
+ALTER TABLE IF Exists sample ADD COLUMN IF NOT EXISTS expirydate timestamp without time zone;
+ALTER TABLE IF Exists sample ADD COLUMN IF NOT EXISTS quantity character varying(255);
+    
+ALTER TABLE IF EXISTS elnmaterialinventory ADD COLUMN IF NOT EXISTS reusablecount Integer;
+
+ALTER TABLE IF EXISTS sample ADD COLUMN IF NOT EXISTS ntransactionstatus Integer;
+
+
+DO
+$do$
+DECLARE
+   _kind "char";
+BEGIN
+   SELECT relkind
+   FROM   pg_class
+   WHERE  relname = 'elnresultusedsample_nelnresultusedsamplecode_seq' 
+   INTO  _kind;
+
+   IF NOT FOUND THEN CREATE SEQUENCE elnresultusedsample_nelnresultusedsamplecode_seq;
+   ELSIF _kind = 'S' THEN  
+     
+   ELSE                  
+    
+   END IF;
+END
+$do$;
+
+CREATE TABLE IF NOT EXISTS public.elnresultusedsample
+(
+    nelnresultusedsamplecode integer NOT NULL DEFAULT nextval('elnresultusedsample_nelnresultusedsamplecode_seq'::regclass),
+    batchid character varying(255) COLLATE pg_catalog."default",
+    createddate timestamp without time zone,
+    isreturn integer,
+    jsondata character varying(255) COLLATE pg_catalog."default",
+    ninventorycode integer,
+    nmaterialcategorycode integer,
+    nmaterialcode integer,
+    nmaterialtypecode integer,
+    nqtyissued double precision,
+    nqtyleft double precision,
+    nqtyused double precision,
+    nstatus integer NOT NULL,
+    ordercode bigint NOT NULL,
+    samplecode integer,
+    templatecode integer,
+    transactionscreen integer NOT NULL,
+    createdbyusercode_usercode integer,
+    testcode_testcode integer,
+    CONSTRAINT elnresultusedsample_pkey PRIMARY KEY (nelnresultusedsamplecode),
+    CONSTRAINT fk2ce13miulxs7tsv4jcosci43r FOREIGN KEY (createdbyusercode_usercode)
+        REFERENCES public.lsusermaster (usercode) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT fkdswac9ojjpi11ijmohga4hlc FOREIGN KEY (testcode_testcode)
+        REFERENCES public.lstestmasterlocal (testcode) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.elnresultusedsample
+    OWNER to postgres;
