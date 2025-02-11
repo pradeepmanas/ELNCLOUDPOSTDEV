@@ -1,5 +1,6 @@
 package com.agaram.eln.primary.controller.material;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -129,5 +130,9 @@ public class TransactionController {
 	public ResponseEntity<Object> getTransactionResultsByDate(@RequestBody Map<String, Object> inputMap) throws Exception {
 
 		return transactionService.getTransactionResultsByDate(inputMap);
+	}
+	@RequestMapping(value = "/getsamplelist", method = RequestMethod.POST)
+	public ResponseEntity<Object> getsamplelist(@RequestBody List<Integer> Sample) throws Exception {
+		return transactionService.getsamplelist(Sample);
 	}
 }

@@ -1803,4 +1803,12 @@ public class TransactionService {
 		return new ResponseEntity<>(ElnresultUsedSample, HttpStatus.OK);
 	}
 
+	public ResponseEntity<Object> getsamplelist(List<Integer> sample) {
+		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
+		List<Sample> samplelist = SampleRepository.findBySamplecodeIn(sample);
+		objmap.put("samplelist", samplelist);
+		return new ResponseEntity<>(objmap, HttpStatus.OK);
+	}
+
+
 }

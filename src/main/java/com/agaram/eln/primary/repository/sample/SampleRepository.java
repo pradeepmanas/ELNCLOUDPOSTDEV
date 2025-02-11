@@ -24,4 +24,6 @@ public interface SampleRepository  extends JpaRepository<Sample,Integer>{
 
 	Sample findBySamplecode(Integer samplecode);
 
+	List<Sample> findBySamplecodeIn(List<Integer> sample);
+
 }

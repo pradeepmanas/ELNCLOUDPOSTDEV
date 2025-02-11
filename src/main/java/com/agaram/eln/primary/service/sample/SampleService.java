@@ -54,6 +54,7 @@ import com.agaram.eln.primary.service.cloudFileManip.CloudFileManipulationservic
 import com.agaram.eln.primary.service.fileManipulation.FileManipulationservice;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
+
 @Service
 public class SampleService<ParentSample>{
 	
@@ -307,7 +308,9 @@ public class SampleService<ParentSample>{
 		updatesequence(5,sample);
 		return new ResponseEntity<>(sample, HttpStatus.OK);
 	}
+	
 	public ResponseEntity<Object> updateSample(Sample sample) {
+		
 		Sample objSample = samplerepository.findOne(sample.getSamplecode());
 		objSample.setAssignedproject(sample.getAssignedproject());
 		objSample.setModifieddate(sample.getModifieddate());
@@ -333,6 +336,7 @@ public class SampleService<ParentSample>{
 			derivedsamplesrepository.save(sample.getParentsamples());
 			objSample.setParentsamples(sample.getParentsamples());
 		}
+		
 		sample.getSampleprojecthistory().forEach(history -> {
 			try {
 				history.setCreateddate(commonfunction.getCurrentUtcTime());
@@ -341,6 +345,7 @@ public class SampleService<ParentSample>{
 				e.printStackTrace();
 			}
 		});
+		
 		sampleprojecthistoryrepository.save(sample.getSampleprojecthistory());
 		samplerepository.save(objSample);
 		return new ResponseEntity<>(objSample, HttpStatus.OK);

@@ -23,6 +23,7 @@ import javax.persistence.Transient;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Type;
 
+import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.material.MaterialAttachments;
 import com.agaram.eln.primary.model.material.Unit;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
@@ -118,6 +119,17 @@ public class Sample implements Serializable{
 	
 	@OneToOne
 	private SampleStorageMapping samplestoragemapping;
+
+	@Transient
+	private LScfttransaction objsilentaudit;
+	
+	public LScfttransaction getObjsilentaudit() {
+		return objsilentaudit;
+	}
+
+	public void setObjsilentaudit(LScfttransaction objsilentaudit) {
+		this.objsilentaudit = objsilentaudit;
+	}
 
 	@OneToMany(cascade = CascadeType.PERSIST)
 	@JoinColumn(name="samplecode")

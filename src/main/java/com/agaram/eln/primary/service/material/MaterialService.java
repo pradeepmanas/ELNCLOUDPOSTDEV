@@ -1186,6 +1186,7 @@ public class MaterialService {
 			obj.setCreateby(objMaster);
 			obj.setCreateddate(commonfunction.getCurrentUtcTime());
 			GetSequences(obj, seqorder, objprojectseq, objtaskseq);
+			if(obj.getMaterialprojecthistory() != null) {
 			obj.getMaterialprojecthistory().forEach(history -> {
 				try {
 					history.setCreateddate(commonfunction.getCurrentUtcTime());
@@ -1194,6 +1195,7 @@ public class MaterialService {
 					e.printStackTrace();
 				}
 			});
+			}
 			materialprojecthistoryrepository.save(obj.getMaterialprojecthistory());
 			elnmaterialRepository.save(obj);
 			updatesequence(3,obj);
@@ -1224,15 +1226,22 @@ public class MaterialService {
 			objMaterial.setModifiedby(obj.getModifiedby());
 			objMaterial.setModifieddate(obj.getModifieddate());
 			objMaterial.setJsondata(obj.getJsondata());
-			obj.getMaterialprojecthistory().forEach(history -> {
-				try {
-					history.setCreateddate(commonfunction.getCurrentUtcTime());
-				} catch (ParseException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			});
-			materialprojecthistoryrepository.save(obj.getMaterialprojecthistory());
+			objMaterial.setExpirytype(obj.getExpirytype());
+			objMaterial.setOpenexpiry(obj.getOpenexpiry());
+			objMaterial.setOpenexpiryperiod(obj.getOpenexpiryperiod());
+			objMaterial.setOpenexpiryvalue(obj.getOpenexpiryvalue());
+			objMaterial.setQuarantine(obj.getQuarantine());
+			if(obj.getMaterialprojecthistory() != null) {
+				obj.getMaterialprojecthistory().forEach(history -> {
+					try {
+						history.setCreateddate(commonfunction.getCurrentUtcTime());
+					} catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				});
+				materialprojecthistoryrepository.save(obj.getMaterialprojecthistory());
+			}
 			elnmaterialRepository.save(objMaterial);
 			obj.getResponse().setInformation("IDS_SAVE_SUCCEED");
 			obj.getResponse().setStatus(true);

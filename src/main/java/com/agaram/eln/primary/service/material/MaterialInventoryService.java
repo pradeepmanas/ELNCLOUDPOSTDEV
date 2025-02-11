@@ -3044,7 +3044,7 @@ public class MaterialInventoryService {
 		lstSec = sectionRepository.findByNstatusAndNsitecodeOrderByNsectioncodeDesc(1, nsiteInteger);
 		
 		objmap.put("lstGrade", lstGrade);
-		objmap.put("lstSuplier", lstSuplier);
+		objmap.put("lstSupplier", lstSuplier);
 		objmap.put("lstManufacturer", lstManufacturer);
 
 		objmap.put("lstMaterial", lstElnmaterials);
