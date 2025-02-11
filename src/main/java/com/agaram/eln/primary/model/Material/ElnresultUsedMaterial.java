@@ -88,16 +88,16 @@ public class ElnresultUsedMaterial {
 	@Transient
 	private Date todate;
 	
-	private Integer samplecode;
-
-
-	public Integer getSamplecode() {
-		return samplecode;
-	}
-
-	public void setSamplecode(Integer samplecode) {
-		this.samplecode = samplecode;
-	}
+//	private Integer samplecode;
+//
+//
+//	public Integer getSamplecode() {
+//		return samplecode;
+//	}
+//
+//	public void setSamplecode(Integer samplecode) {
+//		this.samplecode = samplecode;
+//	}
 
 	public Date getFromdate() {
 		return fromdate;
