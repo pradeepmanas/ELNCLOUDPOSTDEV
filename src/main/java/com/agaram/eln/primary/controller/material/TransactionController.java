@@ -135,4 +135,8 @@ public class TransactionController {
 	public ResponseEntity<Object> getsamplelist(@RequestBody List<Integer> Sample) throws Exception {
 		return transactionService.getsamplelist(Sample);
 	}
+	@RequestMapping(value = "/updateinventoryreusablecount", method = RequestMethod.POST)
+	public ResponseEntity<Object> updateinventoryreusablecount(@RequestBody Map<String, Object> resultusedmaterial) {
+		return transactionService.updateinventoryreusablecount(resultusedmaterial);
+	}
 }

@@ -77,6 +77,7 @@ public class Sample implements Serializable{
 	@Column(name = "applicationsequence")
 	private Long applicationsequence;
 	
+	
 	@Column(name = "sequenceid")
 	private String sequenceid;
 	
@@ -97,6 +98,7 @@ public class Sample implements Serializable{
 	private String openexpiryvalue;
 	private String openexpiryperiod;
 	private Integer ntransactionstatus; 
+	private Double nqtynotification;
 	
 	@Column(name = "trackconsumption")
 	private Integer trackconsumption;
@@ -408,6 +410,14 @@ public class Sample implements Serializable{
 
 	public void setNtransactionstatus(Integer ntransactionstatus) {
 		this.ntransactionstatus = ntransactionstatus;
+	}
+
+	public Double getNqtynotification() {
+		return nqtynotification;
+	}
+
+	public void setNqtynotification(Double nqtynotification) {
+		this.nqtynotification = nqtynotification;
 	}
 
 }

@@ -1221,3 +1221,5 @@ TABLESPACE pg_default;
 
 ALTER TABLE IF EXISTS public.elnresultusedsample
     OWNER to postgres;
+    
+ALTER TABLE IF EXISTS sample ADD COLUMN IF NOT EXISTS nqtynotification double precision;

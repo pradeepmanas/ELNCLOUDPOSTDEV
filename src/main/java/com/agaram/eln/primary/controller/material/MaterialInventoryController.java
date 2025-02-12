@@ -394,4 +394,11 @@ public class MaterialInventoryController {
 	public ResponseEntity<Object> getElnMateriallInventoryByFilter(@RequestBody Map<String, Object> inputMap) throws Exception {
 		return materialInventoryService.getElnMateriallInventoryByFilter(inputMap);
 	}
+	
+	@RequestMapping(value = "/getElnMaterialInventoryByMaterialforreducequantity", method = RequestMethod.POST)
+	public ResponseEntity<Object> getElnMaterialInventoryByMaterialforreducequantity(@RequestBody List<Integer> lstMaterial) throws Exception {
+		return materialInventoryService.getElnMaterialInventoryByMaterialforreducequantity(lstMaterial);
+	}
+	
+
 }

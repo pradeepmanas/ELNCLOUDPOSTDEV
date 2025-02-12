@@ -9,4 +9,6 @@ public interface SampleAttachementsRepository extends JpaRepository<SampleAttach
 
 	List<SampleAttachments> findBySamplecodeOrderByNsampleattachcodeDesc(int samplecode);
 
+	SampleAttachments findByFileid(String fileid);
+
 }

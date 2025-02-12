@@ -30,6 +30,7 @@ import com.agaram.eln.primary.model.material.Supplier;
 import com.agaram.eln.primary.model.material.Unit;
 import com.agaram.eln.primary.model.samplestoragelocation.SelectedInventoryMapped;
 import com.agaram.eln.primary.model.sheetManipulation.LStestmasterlocal;
+import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -103,6 +104,25 @@ public class ElnresultUsedSample {
 
 	@Transient
 	private Date todate;
+	
+	public Integer getNelnresultusedsamplecode() {
+		return nelnresultusedsamplecode;
+	}
+
+	public void setNelnresultusedsamplecode(Integer nelnresultusedsamplecode) {
+		this.nelnresultusedsamplecode = nelnresultusedsamplecode;
+	}
+
+	public LSSiteMaster getSitemaster() {
+		return sitemaster;
+	}
+
+	public void setSitemaster(LSSiteMaster sitemaster) {
+		this.sitemaster = sitemaster;
+	}
+
+	@Transient
+	LSSiteMaster sitemaster;
 	
 	private Integer samplecode;
 
@@ -290,5 +310,13 @@ public class ElnresultUsedSample {
 
 	public void setResponse(Response response) {
 		this.response = response;
+	}
+
+	public Integer getNelnresultusedsamplecode() {
+		return nelnresultusedsamplecode;
+	}
+
+	public void setNelnresultusedsamplecode(Integer nelnresultusedsamplecode) {
+		this.nelnresultusedsamplecode = nelnresultusedsamplecode;
 	}
 }

@@ -4,16 +4,13 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import java.util.Arrays;
-
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,10 +19,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.agaram.eln.primary.commonfunction.commonfunction;
-import com.agaram.eln.primary.model.equipment.Equipment;
-import com.agaram.eln.primary.model.material.ElnmaterialInventory;
-import com.agaram.eln.primary.model.material.MaterialAttachments;
 import com.agaram.eln.primary.model.material.Period;
+import com.agaram.eln.primary.model.material.Unit;
 import com.agaram.eln.primary.model.sample.DerivedSamples;
 import com.agaram.eln.primary.model.sample.Sample;
 import com.agaram.eln.primary.model.sample.SampleAttachments;
@@ -36,9 +31,8 @@ import com.agaram.eln.primary.model.sequence.SequenceTable;
 import com.agaram.eln.primary.model.sequence.SequenceTableProjectLevel;
 import com.agaram.eln.primary.model.sequence.SequenceTableSite;
 import com.agaram.eln.primary.model.sequence.SequenceTableTaskLevel;
-import com.agaram.eln.primary.model.sheetManipulation.LSfiletest;
-import com.agaram.eln.primary.repository.material.MaterialProjectHistoryRepository;
 import com.agaram.eln.primary.repository.material.PeriodRepository;
+import com.agaram.eln.primary.repository.material.UnitRepository;
 import com.agaram.eln.primary.repository.sample.DerivedSamplesRepository;
 import com.agaram.eln.primary.repository.sample.SampleAttachementsRepository;
 import com.agaram.eln.primary.repository.sample.SampleLinkRepository;
@@ -52,7 +46,6 @@ import com.agaram.eln.primary.repository.sequence.SequenceTableTaskLevelReposito
 import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
 import com.agaram.eln.primary.service.cloudFileManip.CloudFileManipulationservice;
 import com.agaram.eln.primary.service.fileManipulation.FileManipulationservice;
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 
 @Service
@@ -86,6 +79,8 @@ public class SampleService<ParentSample>{
 	private SampleStorageMappingRepository samplestoragemappingrepository;
 	@Autowired
 	private SampleProjectHistoryRepository sampleprojecthistoryrepository;
+	@Autowired
+	UnitRepository unitRepository;
 
 	public ResponseEntity<Object> getSampleonCategory(SampleCategory objsamplecat){			
 			List<Sample> lstsample = samplerepository.findBySamplecategoryAndNsitecodeOrderBySamplecodeDesc(objsamplecat,objsamplecat.getNsitecode());
@@ -326,6 +321,7 @@ public class SampleService<ParentSample>{
 		objSample.setTrackconsumption(sample.getTrackconsumption());
 		objSample.setStoragecondition(sample.getStoragecondition());
 		objSample.setUsageoption(sample.getUsageoption());
+		objSample.setUnit(sample.getUnit());
 		if(sample.getSamplestoragemapping()!=null)
 		{
 			objSample.setSamplestoragemapping(sample.getSamplestoragemapping());
@@ -336,15 +332,16 @@ public class SampleService<ParentSample>{
 			derivedsamplesrepository.save(sample.getParentsamples());
 			objSample.setParentsamples(sample.getParentsamples());
 		}
-		
-		sample.getSampleprojecthistory().forEach(history -> {
-			try {
-				history.setCreateddate(commonfunction.getCurrentUtcTime());
-			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		});
+		if (sample.getSampleprojecthistory() != null) {
+			sample.getSampleprojecthistory().forEach(history -> {
+				try {
+					history.setCreateddate(commonfunction.getCurrentUtcTime());
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			});
+		}
 		
 		sampleprojecthistoryrepository.save(sample.getSampleprojecthistory());
 		samplerepository.save(objSample);
@@ -467,6 +464,8 @@ public class SampleService<ParentSample>{
 	public ResponseEntity<Object> getSampleProps(Integer nsiteInteger) {
 		Map<String, Object> objMap = new HashMap<>();
 		List<Period> lstPeriods = periodRepository.findByNstatusOrderByNperiodcode(1);
+		List<Unit> lstUnits = unitRepository.findByNsitecodeAndNstatusOrderByNunitcodeDesc(nsiteInteger,1);
+		objMap.put("lstUnits", lstUnits);
 		objMap.put("lstPeriods", lstPeriods);
 		return new ResponseEntity<>(objMap, HttpStatus.OK);
 	}

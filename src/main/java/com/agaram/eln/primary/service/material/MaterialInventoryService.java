@@ -45,6 +45,7 @@ import com.agaram.eln.primary.config.TenantContext;
 import com.agaram.eln.primary.global.Enumeration;
 import com.agaram.eln.primary.global.FileDTO;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
+import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.instrumentDetails.LsOrderLinks;
 import com.agaram.eln.primary.model.instrumentDetails.LsOrderattachments;
 import com.agaram.eln.primary.model.material.Elnmaterial;
@@ -68,6 +69,8 @@ import com.agaram.eln.primary.model.material.Section;
 import com.agaram.eln.primary.model.material.Supplier;
 import com.agaram.eln.primary.model.material.TransactionStatus;
 import com.agaram.eln.primary.model.material.Unit;
+import com.agaram.eln.primary.model.sample.ElnresultUsedSample;
+import com.agaram.eln.primary.model.sample.Sample;
 import com.agaram.eln.primary.model.samplestoragelocation.SampleStorageLocation;
 import com.agaram.eln.primary.model.samplestoragelocation.SampleStorageVersion;
 import com.agaram.eln.primary.model.samplestoragelocation.SelectedInventoryMapped;
@@ -75,6 +78,7 @@ import com.agaram.eln.primary.model.sequence.SequenceTable;
 import com.agaram.eln.primary.model.sequence.SequenceTableProjectLevel;
 import com.agaram.eln.primary.model.sequence.SequenceTableSite;
 import com.agaram.eln.primary.model.sequence.SequenceTableTaskLevel;
+import com.agaram.eln.primary.model.sheetManipulation.LStestmasterlocal;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.repository.instrumentDetails.LsOrderattachmentsRepository;
@@ -98,6 +102,7 @@ import com.agaram.eln.primary.repository.material.ResultUsedMaterialRepository;
 import com.agaram.eln.primary.repository.material.SectionRepository;
 import com.agaram.eln.primary.repository.material.SupplierRepository;
 import com.agaram.eln.primary.repository.material.TransactionStatusRepository;
+import com.agaram.eln.primary.repository.material.UnitRepository;
 import com.agaram.eln.primary.repository.samplestoragelocation.SampleStorageLocationRepository;
 import com.agaram.eln.primary.repository.samplestoragelocation.SampleStorageVersionRepository;
 import com.agaram.eln.primary.repository.samplestoragelocation.SelectedInventoryMappedRepository;
@@ -164,6 +169,8 @@ public class MaterialInventoryService {
 	ManufacturerRepository manufacturerRepository;
 	@Autowired
 	SectionRepository sectionRepository;
+	@Autowired
+	UnitRepository unitRepository;
 	@Autowired
 	ElnmaterialInventoryRepository elnmaterialInventoryReppository;
 	@Autowired
@@ -3042,6 +3049,7 @@ public class MaterialInventoryService {
 		lstSuplier = supplierRepository.findByNstatusAndNsitecodeOrderByNsuppliercodeDesc(1, nsiteInteger);
 		lstManufacturer = manufacturerRepository.findByNstatusAndNsitecodeOrderByNmanufcodeDesc(1, nsiteInteger);
 		lstSec = sectionRepository.findByNstatusAndNsitecodeOrderByNsectioncodeDesc(1, nsiteInteger);
+		lstUnits = unitRepository.findByNsitecodeAndNstatusOrderByNunitcodeDesc(nsiteInteger,1);
 		
 		objmap.put("lstGrade", lstGrade);
 		objmap.put("lstSupplier", lstSuplier);
@@ -3050,10 +3058,10 @@ public class MaterialInventoryService {
 		objmap.put("lstMaterial", lstElnmaterials);
 		objmap.put("lstCategories", lstCategories);
 		objmap.put("lstType", lstMaterialTypes);
-		if (!lstElnmaterials.isEmpty()) {
-			lstUnits.add(lstElnmaterials.get(0).getUnit());
-			lstSec.add(lstElnmaterials.get(0).getSection());
-		}
+//		if (!lstElnmaterials.isEmpty()) {
+//			lstUnits.add(lstElnmaterials.get(0).getUnit());
+//			lstSec.add(lstElnmaterials.get(0).getSection());
+//		}
 
 		objmap.put("lstUnit", lstUnits);
 		objmap.put("lstSection", lstSec);
@@ -4072,4 +4080,16 @@ public class MaterialInventoryService {
 		objmap.put("count", count);
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
 	}
+
+	public ResponseEntity<Object> getElnMaterialInventoryByMaterialforreducequantity(List<Integer> lstMaterial) {
+		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
+
+		List<Elnmaterial> material = elnMaterialRepository.findByNmaterialcodeIn(lstMaterial);
+		List<ElnmaterialInventory> inventoryItems = elnmaterialInventoryReppository.findByMaterialInAndReusablecountIsNullOrMaterialInAndReusablecountNotOrderByNmaterialinventorycodeDesc(material,material,0);
+		
+		objmap.put("lstELNmaterial", lstMaterial);
+		objmap.put("lstELNInventory", inventoryItems);
+		return new ResponseEntity<>(objmap, HttpStatus.OK);
+	}
+
 }

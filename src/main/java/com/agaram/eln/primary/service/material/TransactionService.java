@@ -13,6 +13,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -136,6 +137,8 @@ public class TransactionService {
 	private SampleRepository SampleRepository;
 	@Autowired
 	private ElnresultUsedSampleRepository ElnresultUsedSampleRepository;
+	@Autowired
+	ElnmaterialInventoryRepository elnmaterialInventoryReppository;
 
 	public ResponseEntity<Object> getLoadOnInventoryData(Map<String, Object> inputMap) {
 
@@ -1071,6 +1074,11 @@ public class TransactionService {
 		
 		List<ElnmaterialInventory> objInventories = elnmaterialInventoryRepository.findByNsitecodeAndNtransactionstatusAndIsexpiryAndExpirydateBetween(cft.getLssitemaster(),28, true, currentDate, endDate);
 		List<ElnmaterialInventory> expiredInvent = new ArrayList<ElnmaterialInventory>();
+		
+		//sample notification
+		List<Sample> objsamples = SampleRepository.findByNsitecodeAndNtransactionstatusAndOpenexpiryAndExpirydateBetween(cft.getLssitemaster(),28, true, currentDate, endDate);
+		List<Sample> expiredsample= new ArrayList<Sample>();
+		
 		List<LSnotification> lstLSnotifications = new ArrayList<LSnotification>();
 
 		objInventories.stream().peek(objInventory -> {
@@ -1103,10 +1111,140 @@ public class TransactionService {
 			}
 		}).collect(Collectors.toList());
 		
+		objsamples.stream().peek(objsample -> {
+			if (objsample.getOpenexpiry()) {
+				Date expDate = objsample.getExpirydate();
+				
+				try {
+					long millisecondsDate1 = commonfunction.getCurrentUtcTime().getTime();
+					long millisecondsDate2 = expDate.getTime();
+					
+					if (millisecondsDate1 < millisecondsDate2) {
+			            System.out.println("Date 1 is before Date 2");
+			            lstLSnotifications.addAll(updateNotificationOnELNSample(objsample, "EXPIRYDATE", cft, 0.0, expDate));
+			        } else if (millisecondsDate1 > millisecondsDate2) {
+			            System.out.println("Date 1 is after Date 2");
+			            objsample.setNtransactionstatus(55);
+			            expiredsample.add(objsample);
+						lstLSnotifications.addAll(updateNotificationOnELNSample(objsample, "EXPIRYREACHED", cft, 0.0, expDate));
+			        } else {
+			            System.out.println("Date 1 and Date 2 are equal");
+			            objsample.setNtransactionstatus(55);
+			            expiredsample.add(objsample);
+						lstLSnotifications.addAll(updateNotificationOnELNSample(objsample, "EXPIRYREACHED", cft, 0.0, expDate));
+			        }
+					
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}).collect(Collectors.toList());
+		
 		lsnotificationRepository.save(lstLSnotifications);
 		elnmaterialInventoryRepository.save(expiredInvent);
+		SampleRepository.save(expiredsample);
 	}
 	
+
+	public List<LSnotification> updateNotificationOnELNSample(Sample objsample, String task,
+			LScfttransaction cft, double getQtyLeft, Date date) {
+
+		List<LSnotification> lstnotifications = new ArrayList<LSnotification>();
+		
+		List<ElnresultUsedSample> objLstTransactions = ElnresultUsedSampleRepository.findBySamplecode(objsample.getSamplecode());
+
+		List<LSuserMaster> objLstuser = objLstTransactions.stream()
+				.map(ElnresultUsedSample::getCreatedbyusercode).filter(Objects::nonNull).collect(Collectors.toList());
+
+		if (!objLstuser.isEmpty()) {
+			List<Integer> objnotifyuser = objLstuser.stream().map(LSuserMaster::getUsercode).collect(Collectors.toList());
+
+			objnotifyuser = objnotifyuser.stream().distinct().collect(Collectors.toList());
+			
+			if(objnotifyuser.contains(cft.getLsuserMaster())) {
+				
+				LSuserMaster objUser = new LSuserMaster();
+				objUser.setUsercode(cft.getLsuserMaster());
+
+				String details = "";
+
+				if (task.equals("INVENTORYQTYNOTIFICATION")) {
+
+					details = "{\"inventoryid\":\"" + objsample.getSamplecode() + "\",  " + "\"qtyleft\":\""
+							+ getQtyLeft + "\",  " + "\"notificationamount\":\"" + objsample.getNqtynotification() + "\"}";
+
+				} else if (task.equals("EXPIRYDATE")) {
+					details = "{\"inventoryid\":\"" + objsample.getSamplecode() + "\",  " + "\"daysleft\":\"" + date + "\"}";
+				} else {
+					details = "{\"inventoryid\":\"" + objsample.getSamplecode() + "\",  " + "\"daysleft\":\"" + getQtyLeft + "\"}";
+				}
+
+				String notification = details;
+
+				LSnotification objnotify = new LSnotification();
+
+				objnotify.setNotifationto(objUser);
+				objnotify.setNotifationfrom(objUser);
+				objnotify.setNotificationdate(cft.getTransactiondate());
+				objnotify.setNotification(task);
+				objnotify.setNotificationdetils(notification);
+				objnotify.setIsnewnotification(1);
+				objnotify.setNotificationpath("/sample");
+				objnotify.setNotificationfor(1);
+				
+				lstnotifications.add(objnotify);
+				
+				return lstnotifications;
+			}
+		}else {
+			List<Integer> objnotifyuser = new ArrayList<Integer>();
+			Integer getUsrCode = objsample.getCreateby() != null ?  objsample.getCreateby().getUsercode() : null;
+			if(getUsrCode != null) {
+				objnotifyuser.add(getUsrCode);
+				
+				if(objnotifyuser.contains(cft.getLsuserMaster())) {
+					
+					LSuserMaster objUser = new LSuserMaster();
+					objUser.setUsercode(cft.getLsuserMaster());
+
+					String details = "";
+
+					if (task.equals("INVENTORYQTYNOTIFICATION")) {
+
+						details = "{\"inventoryid\":\"" + objsample.getSamplename() + "\",  " + "\"qtyleft\":\""
+								+ getQtyLeft + "\",  " + "\"notificationamount\":\"" + objsample.getNqtynotification() + "\"}";
+
+					} else if (task.equals("EXPIRYDATE")) {
+						details = "{\"inventoryid\":\"" +  objsample.getSamplename() + "\",  " + "\"daysleft\":\"" + date + "\"}";
+					} else {
+						details = "{\"inventoryid\":\"" +  objsample.getSamplename() + "\",  " + "\"daysleft\":\"" + getQtyLeft + "\"}";
+					}
+
+					String notification = details;
+
+					LSnotification objnotify = new LSnotification();
+
+					objnotify.setNotifationto(objUser);
+					objnotify.setNotifationfrom(objUser);
+					objnotify.setNotificationdate(cft.getTransactiondate());
+					objnotify.setNotification(task);
+					objnotify.setNotificationdetils(notification);
+					objnotify.setIsnewnotification(1);
+					objnotify.setNotificationpath("/sample");
+					objnotify.setNotificationfor(1);
+					
+					lstnotifications.add(objnotify);
+					
+					return lstnotifications;
+				}
+			}
+			
+		}
+		return lstnotifications;
+	
+	}
+
 	public List<LSnotification> updateNotificationOnELNInventory(ElnmaterialInventory objInventory, String task, LScfttransaction cft,
 			Double getQtyLeft,Date date) {
 
@@ -1800,6 +1938,15 @@ public class TransactionService {
 		ElnresultUsedSample.setIsreturn(0);
 		ElnresultUsedSampleRepository.save(ElnresultUsedSample);
 		SampleRepository.save(objSampleobj);
+		
+		if (objSampleobj.getNqtynotification() != null) {
+			if (objSampleobj.getNqtynotification() <= getQtyLeft ? false : true) {
+				List<LSnotification> lstLSnotifications = new ArrayList<LSnotification>();
+				lstLSnotifications.addAll(updateNotificationOnELNSample(objSampleobj, "INVENTORYQTYNOTIFICATION", cft, getQtyLeft, new Date()));
+				lsnotificationRepository.save(lstLSnotifications);
+			}
+		}
+		
 		return new ResponseEntity<>(ElnresultUsedSample, HttpStatus.OK);
 	}
 
@@ -1810,5 +1957,51 @@ public class TransactionService {
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
 	}
 
+	public ResponseEntity<Object> updateinventoryreusablecount(Map<String, Object> resultusedmaterial) {
+		ObjectMapper Objmapper = new ObjectMapper();
+		final ElnmaterialInventory ionvenobj = Objmapper.convertValue(resultusedmaterial.get("elnmaterialinventory"), ElnmaterialInventory.class);
+		ElnmaterialInventory obj=elnmaterialInventoryReppository.findByNmaterialinventorycode(ionvenobj.getNmaterialinventorycode());
+		if(ionvenobj.getReusablecount()!=null) {
+			obj.setReusablecount(ionvenobj.getReusablecount());
+			elnmaterialInventoryReppository.save(obj);
+		}
+		
+		final Map<String, Object> objResultMap = (Map<String, Object>) resultusedmaterial.get("resultObject");
+		final LScfttransaction cft = Objmapper.convertValue(resultusedmaterial.get("silentAudit"), LScfttransaction.class);
+		ElnresultUsedMaterial ElnresultUsedMaterial = new ElnresultUsedMaterial();
+		  LSuserMaster objUser = new LSuserMaster();
+	        objUser.setUsercode(cft.getLsuserMaster());
+	        if(ionvenobj.getReusablecount()!=null) {
+	        Double getUsedQty = Double.parseDouble(ionvenobj.getReusablecount().toString());
+	        ElnresultUsedMaterial.setNqtyleft(getUsedQty);
+	    	ElnresultUsedMaterial.setQtyleft(ionvenobj.getReusablecount().toString());
+	        }
+		ElnresultUsedMaterial.setCreatedbyusercode(objUser);
+		ElnresultUsedMaterial.setNqtyissued(1D);
+		
+		ElnresultUsedMaterial.setNqtyused(1D);
+		ElnresultUsedMaterial.setNmaterialcode(obj.getMaterial().getNmaterialcode());
+		ElnresultUsedMaterial.setNmaterialcategorycode(obj.getMaterialcategory().getNmaterialcatcode());
+		ElnresultUsedMaterial.setNinventorycode(obj.getNmaterialinventorycode());
+		ElnresultUsedMaterial.setNmaterialtypecode(obj.getMaterialtype().getNmaterialtypecode());
+		ElnresultUsedMaterial.setBatchid(objResultMap.get("batchid").toString());
+		ElnresultUsedMaterial.setOrdercode(Long.valueOf(objResultMap.get("ordercode").toString()));
+		ElnresultUsedMaterial.setTransactionscreen(Integer.parseInt(objResultMap.get("transactionscreen").toString()));
+		ElnresultUsedMaterial.setTemplatecode(Integer.parseInt(objResultMap.get("templatecode").toString()));
+		ElnresultUsedMaterial.setJsondata(cft.getComments());
+		ElnresultUsedMaterial.setNstatus(1);
+		ElnresultUsedMaterial.setResponse(new Response());
+		ElnresultUsedMaterial.getResponse().setStatus(true);
+		try {
+			ElnresultUsedMaterial.setCreateddate(commonfunction.getCurrentUtcTime());
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	
+		ElnresultUsedMaterial.setIsreturn(0);
+		elnresultUsedMaterialRepository.save(ElnresultUsedMaterial);
+		 return new ResponseEntity<>("true", HttpStatus.OK);
+	}
 
 }

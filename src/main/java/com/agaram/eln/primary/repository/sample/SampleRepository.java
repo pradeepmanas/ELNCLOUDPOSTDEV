@@ -25,5 +25,12 @@ public interface SampleRepository  extends JpaRepository<Sample,Integer>{
 	Sample findBySamplecode(Integer samplecode);
 
 	List<Sample> findBySamplecodeIn(List<Integer> sample);
+	
+	List<Sample> findByNsitecodeAndNtransactionstatusAndOpenexpiryAndExpirydateBetween(
+			Integer lssitemaster, int i, boolean b, Date currentDate, Date endDate);
+
+	List<Sample> findByNsitecodeAndCreateddateBetweenAndNtransactionstatusOrderBySamplecodeDesc(Integer sitecode,
+			Date fromdate, Date todate, int i);
+
 
 }

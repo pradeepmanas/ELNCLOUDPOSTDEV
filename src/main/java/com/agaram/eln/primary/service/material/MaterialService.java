@@ -51,7 +51,9 @@ import com.agaram.eln.primary.model.material.MaterialType;
 import com.agaram.eln.primary.model.material.Period;
 import com.agaram.eln.primary.model.material.Section;
 import com.agaram.eln.primary.model.material.Unit;
+import com.agaram.eln.primary.model.sample.ElnresultUsedSample;
 import com.agaram.eln.primary.model.sample.Sample;
+import com.agaram.eln.primary.model.sample.SampleAttachments;
 import com.agaram.eln.primary.model.sequence.SequenceTable;
 import com.agaram.eln.primary.model.sequence.SequenceTableProjectLevel;
 import com.agaram.eln.primary.model.sequence.SequenceTableSite;
@@ -74,6 +76,7 @@ import com.agaram.eln.primary.repository.material.MaterialTypeRepository;
 import com.agaram.eln.primary.repository.material.PeriodRepository;
 import com.agaram.eln.primary.repository.material.SectionRepository;
 import com.agaram.eln.primary.repository.material.UnitRepository;
+import com.agaram.eln.primary.repository.sample.SampleAttachementsRepository;
 import com.agaram.eln.primary.repository.sample.SampleRepository;
 import com.agaram.eln.primary.repository.sequence.SequenceTableRepository;
 import com.agaram.eln.primary.repository.sequence.SequenceTableSiteRepository;
@@ -136,6 +139,8 @@ public class MaterialService {
 	private MaterialProjectHistoryRepository materialprojecthistoryrepository;
 	@Autowired
 	private SampleRepository SampleRepository;
+	@Autowired
+	private SampleAttachementsRepository SampleAttachementsRepository;
 
 	public ResponseEntity<Object> getMaterialcombo(Integer nmaterialtypecode, Integer nsitecode) {
 
@@ -2009,8 +2014,14 @@ public class MaterialService {
 		}
 
 		MaterialAttachments objFile = materialAttachmentsRepository.findByFileid(fileid);
+		SampleAttachments objsFile = SampleAttachementsRepository.findByFileid(fileid);
 		HttpHeaders header = new HttpHeaders();
-		header.set("Content-Disposition", "attachment; filename=" + objFile.getFilename());
+		
+		if(objFile != null) {			
+			header.set("Content-Disposition", "attachment; filename=" + objFile.getFilename());
+		}else {
+			header.set("Content-Disposition", "attachment; filename=" + objsFile.getFilename());
+		}
 
 		if (Integer.parseInt(param) == 0) {
 			CloudOrderAttachment objfile = CloudOrderAttachmentRepository.findByFileid(fileid);
@@ -2115,13 +2126,9 @@ public class MaterialService {
 	}
 	
 	
-	public ResponseEntity<Object> geSampleList(Map<String, Object> inputMap) throws ParseException {
+	public ResponseEntity<Object> geSampleList(ElnresultUsedSample inputMap) throws ParseException {
 		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-		Date fromDate = sdf.parse(inputMap.get("fromdate").toString());
-		Date toDate = sdf.parse(inputMap.get("todate").toString());
-		Integer nsiteInteger = (Integer) inputMap.get("nsitecode");
-	    List<Sample> lstSample = SampleRepository.findByNsitecodeAndCreateddateBetweenOrderBySamplecodeDesc(nsiteInteger,fromDate,toDate);
+	    List<Sample> lstSample = SampleRepository.findByNsitecodeAndCreateddateBetweenAndNtransactionstatusOrderBySamplecodeDesc(inputMap.getSitemaster().getSitecode(),inputMap.getFromdate(),inputMap.getTodate(),28);
 		objmap.put("lstSample", lstSample);		
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
 	}

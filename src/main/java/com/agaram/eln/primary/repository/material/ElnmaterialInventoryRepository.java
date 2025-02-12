@@ -142,4 +142,7 @@ public interface ElnmaterialInventoryRepository extends JpaRepository<Elnmateria
 
 	long countByNsitecodeOrderByNmaterialinventorycodeDesc(Integer nsiteInteger);
 
+	List<ElnmaterialInventory> findByMaterialInAndReusablecountIsNullOrMaterialInAndReusablecountNotOrderByNmaterialinventorycodeDesc(
+			List<Elnmaterial> material,List<Elnmaterial> material1, int i);
+
 }

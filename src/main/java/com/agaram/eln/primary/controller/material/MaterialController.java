@@ -21,6 +21,7 @@ import com.agaram.eln.primary.model.material.Elnmaterial;
 import com.agaram.eln.primary.model.material.Material;
 import com.agaram.eln.primary.model.material.MaterialLinks;
 import com.agaram.eln.primary.model.material.MaterialProjectHistory;
+import com.agaram.eln.primary.model.sample.ElnresultUsedSample;
 import com.agaram.eln.primary.service.material.MaterialService;
 
 @RestController
@@ -275,7 +276,7 @@ public class MaterialController {
 		return objMaterialService.updatematerialprojecthistory(materiallist);
 	}
 	@RequestMapping(value = "/geSampleList", method = RequestMethod.POST)
-	public ResponseEntity<Object> geSampleList(@RequestBody Map<String, Object> inputMap) throws Exception {
+	public ResponseEntity<Object> geSampleList(@RequestBody ElnresultUsedSample inputMap) throws Exception {
 		return objMaterialService.geSampleList(inputMap);
 	}
 }
