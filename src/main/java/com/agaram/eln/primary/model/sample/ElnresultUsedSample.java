@@ -104,14 +104,6 @@ public class ElnresultUsedSample {
 
 	@Transient
 	private Date todate;
-	
-	public Integer getNelnresultusedsamplecode() {
-		return nelnresultusedsamplecode;
-	}
-
-	public void setNelnresultusedsamplecode(Integer nelnresultusedsamplecode) {
-		this.nelnresultusedsamplecode = nelnresultusedsamplecode;
-	}
 
 	public LSSiteMaster getSitemaster() {
 		return sitemaster;
