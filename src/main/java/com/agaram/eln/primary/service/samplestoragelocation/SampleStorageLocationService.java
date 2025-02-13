@@ -74,10 +74,12 @@ public class SampleStorageLocationService {
 		}
 	}
 
-	public ResponseEntity<Object> updateSampleStorageLocation(final SampleStorageLocation sampleStorageLocation,final SampleStorageVersion sampleStorageVersion, LScfttransaction Auditobj)throws JsonMappingException, JsonProcessingException {
+	public ResponseEntity<Object> updateSampleStorageLocation(final SampleStorageLocation sampleStorageLocation,final SampleStorageVersion sampleStorageVersion, LScfttransaction Auditobj)throws JsonMappingException, JsonProcessingException, ParseException {
 		sampleStorageLocation.setObjsilentaudit(Auditobj);
 		sampleStorageLocation.setCreatedby(Auditobj.getUsername());
 		sampleStorageVersion.setCreatedby(Auditobj.getUsername());
+		sampleStorageLocation.setModifieddate(commonfunction.getCurrentUtcTime());
+
 		sampleStorageLocationRepository.save(sampleStorageLocation);
 		
 		List<SampleStorageVersion> sampleStorageVersionList = sampleStorageVersionRepository

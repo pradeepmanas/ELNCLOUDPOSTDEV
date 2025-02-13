@@ -6907,10 +6907,21 @@ public class ProtocolService {
 					.findByProtocolordercode(lSlogilabprotocoldetail.getProtocolordercode());
 			Integer ismultitenant = object.convertValue(body.get("ismultitenant"), Integer.class);
 			int sitecode = object.convertValue(body.get("sitecode"), Integer.class);
-			int usercode = object.convertValue(body.get("usercode"), Integer.class);
+			Integer usercode = object.convertValue(body.get("usercode"), Integer.class);
 			String username = (String) body.get("username");
 			Boolean doversion = object.convertValue(body.get("doversion"), Boolean.class);
-
+			Boolean idletimesave = object.convertValue(body.get("idletimesave"), Boolean.class);
+			
+			// idle time save unlock order if user equal 
+			if(protocolOrder.getProtocolordercode() != null && idletimesave != null && idletimesave == true ) {
+				if (usercode != null && protocolOrder.getLockeduser() != null
+						&& usercode.equals(protocolOrder.getLockeduser())) {
+					protocolOrder.setLockeduser(null);
+					protocolOrder.setLockedusername(null);
+					protocolOrder.setActiveuser(null);
+				}
+			}
+			
 			if (body.get("protocoldatainfo") != null) {
 				lSlogilabprotocoldetail.setProtocoldatainfo((String) body.get("protocoldatainfo"));
 				protocolOrder.setProtocoldatainfo((String) body.get("protocoldatainfo"));

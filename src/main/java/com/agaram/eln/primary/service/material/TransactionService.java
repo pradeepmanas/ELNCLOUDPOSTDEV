@@ -1913,6 +1913,8 @@ public class TransactionService {
 		}
 //		resultUsedMaterial.setCreateddate(cft.getTransactiondate());
 		ElnresultUsedSample.setSamplecode(objSampleobj.getSamplecode());
+		ElnresultUsedSample.setSamlename(objSampleobj.getSamplename());
+		ElnresultUsedSample.setSamlesequenceid(objSampleobj.getSequenceid());
 		ElnresultUsedSample.setCreatedbyusercode(objUser);
 		ElnresultUsedSample.setNqtyissued(getIssuedQty);
 		ElnresultUsedSample.setNqtyleft(getQtyLeft);

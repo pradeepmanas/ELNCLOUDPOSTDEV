@@ -71,4 +71,12 @@ public interface ElnmaterialRepository extends JpaRepository<Elnmaterial, Intege
 
 	Elnmaterial findByNstatusAndNmaterialcode(int i, Integer integer);
 
+
+	List<Elnmaterial> findByNsitecodeAndCreateddateBetweenAndAssignedprojectOrNsitecodeAndCreateddateBetweenAndAssignedprojectIsNullOrderByNmaterialcodeDesc(
+			Integer nsiteInteger, Date fromDate, Date toDate, String string, Integer nsiteInteger2, Date fromDate2,
+			Date toDate2);
+
+	List<Elnmaterial> findByNsitecodeAndCreateddateBetweenAndNmaterialcodeInOrderByNmaterialcodeDesc(
+			Integer nsiteInteger, Date fromDate, Date toDate, List<Integer> nmaterialcode);
+
 }

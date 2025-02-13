@@ -40,6 +40,7 @@ import com.agaram.eln.primary.model.equipment.EquipmentType;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.instrumentDetails.LsOrderattachments;
 import com.agaram.eln.primary.model.material.Elnmaterial;
+import com.agaram.eln.primary.model.material.ElnresultUsedMaterial;
 import com.agaram.eln.primary.model.material.MappedTemplateFieldPropsMaterial;
 import com.agaram.eln.primary.model.material.Material;
 import com.agaram.eln.primary.model.material.MaterialAttachments;
@@ -54,10 +55,12 @@ import com.agaram.eln.primary.model.material.Unit;
 import com.agaram.eln.primary.model.sample.ElnresultUsedSample;
 import com.agaram.eln.primary.model.sample.Sample;
 import com.agaram.eln.primary.model.sample.SampleAttachments;
+import com.agaram.eln.primary.model.sample.SampleProjectHistory;
 import com.agaram.eln.primary.model.sequence.SequenceTable;
 import com.agaram.eln.primary.model.sequence.SequenceTableProjectLevel;
 import com.agaram.eln.primary.model.sequence.SequenceTableSite;
 import com.agaram.eln.primary.model.sequence.SequenceTableTaskLevel;
+import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.repository.cloudFileManip.CloudOrderAttachmentRepository;
 import com.agaram.eln.primary.repository.equipment.EquipmentCategoryRepository;
@@ -77,6 +80,7 @@ import com.agaram.eln.primary.repository.material.PeriodRepository;
 import com.agaram.eln.primary.repository.material.SectionRepository;
 import com.agaram.eln.primary.repository.material.UnitRepository;
 import com.agaram.eln.primary.repository.sample.SampleAttachementsRepository;
+import com.agaram.eln.primary.repository.sample.SampleProjectHistoryRepository;
 import com.agaram.eln.primary.repository.sample.SampleRepository;
 import com.agaram.eln.primary.repository.sequence.SequenceTableRepository;
 import com.agaram.eln.primary.repository.sequence.SequenceTableSiteRepository;
@@ -141,6 +145,8 @@ public class MaterialService {
 	private SampleRepository SampleRepository;
 	@Autowired
 	private SampleAttachementsRepository SampleAttachementsRepository;
+	@Autowired
+	private SampleProjectHistoryRepository SampleProjectHistoryRepository;
 
 	public ResponseEntity<Object> getMaterialcombo(Integer nmaterialtypecode, Integer nsitecode) {
 
@@ -1880,24 +1886,31 @@ public class MaterialService {
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
 	}
 	
-	public ResponseEntity<Object> getElnMaterialOnProtocol(Map<String, Object> inputMap) throws ParseException {
+	public ResponseEntity<Object> getElnMaterialOnProtocol(ElnresultUsedMaterial inputMap) throws ParseException {
 		
 		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
+		Integer ScreenType=Integer.parseInt(inputMap.getCustomobject().get("ScreenType").toString());
 		
-//		long longFromValue = Long.parseLong(inputMap.get("fromdate").toString());
-//		long longToValue = Long.parseLong(inputMap.get("todate").toString());
-//		Date fromDate = new Date(longFromValue);
-//		Date toDate = new Date(longToValue);
-		
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-		Date fromDate = sdf.parse(inputMap.get("fromdate").toString());
-		Date toDate = sdf.parse(inputMap.get("todate").toString());
-		
-		Integer nsiteInteger = (Integer) inputMap.get("nsitecode");
-		
-	    
-	    List<Elnmaterial> lstMaterial = elnmaterialRepository.findByNsitecodeAndCreateddateBetweenOrderByNmaterialcodeDesc(nsiteInteger,fromDate,toDate);
-			
+		Integer nsiteInteger = (Integer) inputMap.getCustomobject().get("nsitecode");
+		 List<Elnmaterial> lstMaterial;
+	    if(ScreenType==1) {
+	    	  lstMaterial = elnmaterialRepository.findByNsitecodeAndCreateddateBetweenAndAssignedprojectOrNsitecodeAndCreateddateBetweenAndAssignedprojectIsNullOrderByNmaterialcodeDesc(nsiteInteger,inputMap.getFromdate(),inputMap.getTodate(),"-1",nsiteInteger,inputMap.getFromdate(),inputMap.getTodate());
+
+	    }else {
+	    	ObjectMapper obj= new ObjectMapper();
+	    	LSprojectmaster project =obj.convertValue(inputMap.getCustomobject().get("project"), new TypeReference<List<LSprojectmaster>>() {
+				});
+	    	List<MaterialProjectHistory> MaterialProjectHistory1=materialprojecthistoryrepository.findByLsprojectIn(project);
+	    	List<Integer> nmaterialcode = MaterialProjectHistory1.stream().map(MaterialProjectHistory::getNmaterialcode)
+					.collect(Collectors.toList());
+	    	if(ScreenType==2) {
+	    		  lstMaterial = elnmaterialRepository.findByNsitecodeAndCreateddateBetweenAndNmaterialcodeInOrderByNmaterialcodeDesc(nsiteInteger,inputMap.getFromdate(),inputMap.getTodate(),nmaterialcode);
+
+	    	}else {
+	    		lstMaterial = elnmaterialRepository.findByNsitecodeAndCreateddateBetweenAndAssignedprojectOrNsitecodeAndCreateddateBetweenAndAssignedprojectIsNullOrderByNmaterialcodeDesc(nsiteInteger,inputMap.getFromdate(),inputMap.getTodate(),"-1",nsiteInteger,inputMap.getFromdate(),inputMap.getTodate());
+	    		lstMaterial.addAll(elnmaterialRepository.findByNsitecodeAndCreateddateBetweenAndNmaterialcodeInOrderByNmaterialcodeDesc(nsiteInteger,inputMap.getFromdate(),inputMap.getTodate(),nmaterialcode));	    	}
+	    }
+	  			
 		objmap.put("lstMaterial", lstMaterial);		
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
 	}
@@ -2129,11 +2142,59 @@ public class MaterialService {
 	}
 	
 	
-	public ResponseEntity<Object> geSampleList(ElnresultUsedSample inputMap) throws ParseException {
-		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
-	    List<Sample> lstSample = SampleRepository.findByNsitecodeAndCreateddateBetweenAndNtransactionstatusOrderBySamplecodeDesc(inputMap.getSitemaster().getSitecode(),inputMap.getFromdate(),inputMap.getTodate(),28);
-		objmap.put("lstSample", lstSample);		
-		return new ResponseEntity<>(objmap, HttpStatus.OK);
+	public ResponseEntity<Object> getSampleList(ElnresultUsedSample inputMap) throws ParseException {
+	    Integer screenType = Integer.parseInt(inputMap.getCustomobject().get("ScreenType").toString());
+	    Map<String, Object> objMap = new LinkedHashMap<>();
+	    List<Sample> lstSample;
+	    Integer siteCode = inputMap.getSitemaster().getSitecode();
+	    Date fromDate = inputMap.getFromdate();
+	    Date toDate = inputMap.getTodate();
+	    Integer transactionStatus = 28;
+	    String commonQueryPart = " ORDER BY Samplecode DESC";
+	    if (screenType == 1) {
+	    	lstSample = 
+            SampleRepository.findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndAssignedprojectAndTrackconsumptionNotAndQuantityGreaterThanOrNsitecodeAndCreateddateBetweenAndNtransactionstatusAndAssignedprojectIsNullAndTrackconsumptionNotAndQuantityGreaterThanOrNsitecodeAndCreateddateBetweenAndNtransactionstatusAndAssignedprojectAndTrackconsumptionAndQuantityGreaterThanOrNsitecodeAndCreateddateBetweenAndNtransactionstatusAndAssignedprojectIsNullAndTrackconsumptionAndQuantityGreaterThanOrderBySamplecodeDesc(
+            	    siteCode, fromDate, toDate, transactionStatus, "-1", 0, 0,
+            	    siteCode, fromDate, toDate, transactionStatus, 0, 0,
+            	    siteCode, fromDate, toDate, transactionStatus, "-1", 0, 0,
+            	    siteCode, fromDate, toDate, transactionStatus,  0, 0
+                );
+            
+	    } else {
+	        List<LSprojectmaster> project = deserializeProjects(inputMap.getCustomobject().get("project"));
+	        List<SampleProjectHistory> sampleProjectHistoryList = SampleProjectHistoryRepository.findByLsprojectIn(project);
+
+	        List<Integer> sampleCodes = sampleProjectHistoryList.stream()
+	                .map(SampleProjectHistory::getsamplecode)
+	                .collect(Collectors.toList());
+
+	        if (screenType == 2) {
+	            lstSample = SampleRepository.findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndSamplecodeInOrderBySamplecodeDesc(
+	                    siteCode, fromDate, toDate, transactionStatus, sampleCodes
+	            );
+	        } else {
+	        	lstSample = SampleRepository.findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndAssignedprojectAndTrackconsumptionNotAndQuantityGreaterThanOrNsitecodeAndCreateddateBetweenAndNtransactionstatusAndAssignedprojectIsNullAndTrackconsumptionNotAndQuantityGreaterThanOrNsitecodeAndCreateddateBetweenAndNtransactionstatusAndAssignedprojectAndTrackconsumptionAndQuantityGreaterThanOrNsitecodeAndCreateddateBetweenAndNtransactionstatusAndAssignedprojectIsNullAndTrackconsumptionAndQuantityGreaterThanOrderBySamplecodeDesc(
+	        		    siteCode, fromDate, toDate, transactionStatus, "-1", 0, 0,
+	        		    siteCode, fromDate, toDate, transactionStatus, 0, 0,
+	        		    siteCode, fromDate, toDate, transactionStatus, "-1", 0, 0,
+	        		    siteCode, fromDate, toDate, transactionStatus,  0, 0
+	                );
+	            
+
+	            lstSample.addAll(SampleRepository.findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndSamplecodeInOrderBySamplecodeDesc(
+	                    siteCode, fromDate, toDate, transactionStatus, sampleCodes
+	            ));
+	        }
+	    }
+
+	    objMap.put("lstSample", lstSample);
+	    return new ResponseEntity<>(objMap, HttpStatus.OK);
 	}
+
+	private List<LSprojectmaster> deserializeProjects(Object projectObj) {
+	    ObjectMapper objectMapper = new ObjectMapper();
+	    return objectMapper.convertValue(projectObj, new TypeReference<List<LSprojectmaster>>() {});
+	}
+
 	
 }

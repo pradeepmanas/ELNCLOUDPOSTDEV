@@ -292,6 +292,13 @@ public class BaseMasterService {
 			} catch (ParseException e) {
 				e.printStackTrace();
 			}
+		}else {
+			try {
+				objClass.setModifieddate(commonfunction.getCurrentUtcTime());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		lStestmasterlocalRepository.save(objClass);
 		if(Isnewproject) {
@@ -436,6 +443,13 @@ public class BaseMasterService {
 				e.printStackTrace();
 			}
 			
+		}else {
+			try {
+				objClass.setModifieddate(commonfunction.getCurrentUtcTime());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		lSprojectmasterRepository.save(objClass);
 		if(Isnewproject) {

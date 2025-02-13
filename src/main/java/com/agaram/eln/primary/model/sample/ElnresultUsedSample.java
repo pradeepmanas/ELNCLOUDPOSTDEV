@@ -2,6 +2,7 @@ package com.agaram.eln.primary.model.sample;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -80,6 +81,37 @@ public class ElnresultUsedSample {
 	private String jsondata;
 	
 	private String batchid;
+	
+	private String samlename;
+	
+	private String samlesequenceid;
+	
+	@Transient
+	private Map<String, Object> customobject;
+	
+	public Map<String, Object> getCustomobject() {
+		return customobject;
+	}
+
+	public void setCustomobject(Map<String, Object> customobject) {
+		this.customobject = customobject;
+	}
+
+	public String getSamlesequenceid() {
+		return samlesequenceid;
+	}
+
+	public void setSamlesequenceid(String samlesequenceid) {
+		this.samlesequenceid = samlesequenceid;
+	}
+
+	public String getSamlename() {
+		return samlename;
+	}
+
+	public void setSamlename(String samlename) {
+		this.samlename = samlename;
+	}
 
 	@ManyToOne
 	private LSuserMaster createdbyusercode;

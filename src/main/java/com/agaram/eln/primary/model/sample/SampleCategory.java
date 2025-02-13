@@ -76,6 +76,9 @@ public class SampleCategory {
 	@Transient
 	private Response response;
 	
+	@Transient
+	private String displaystatus;
+	
 	@ManyToOne
 	private LSuserMaster createby;
 	
@@ -87,6 +90,7 @@ public class SampleCategory {
 	private Integer nstatus = 1;
 	
 	private String ssampletypename;
+	private transient String sDate;
 	
 	private transient String mDate;
 	
@@ -269,6 +273,18 @@ public class SampleCategory {
 
 	public static long getSerialversionuid() {
 		return serialVersionUID;
+	}
+	public String getDisplaystatus() {
+		return displaystatus;
+	}
+	public void setDisplaystatus(String displaystatus) {
+		this.displaystatus = displaystatus;
+	}
+	public String getsDate() {
+		return sDate;
+	}
+	public void setsDate(String sDate) {
+		this.sDate = sDate;
 	}
 	
 	

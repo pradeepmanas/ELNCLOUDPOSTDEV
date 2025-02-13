@@ -266,7 +266,7 @@ public class FileService {
 //	@Autowired
 //	private BarcodeMasterRepository barcodeMasterRepository;
 
-	public LSfile InsertupdateSheet(LSfile objfile) throws IOException {
+	public LSfile InsertupdateSheet(LSfile objfile) throws IOException, ParseException {
 
 		Boolean Isnew = false;
 
@@ -315,13 +315,13 @@ public class FileService {
 			}
 
 			Isnew = false;
-			objfile.setModifieddate(objfile.getModifieddate());
+			objfile.setModifieddate(commonfunction.getCurrentUtcTime());
 		} else {
 
 			Isnew = true;
 			try {
 				objfile.setCreatedate(commonfunction.getCurrentUtcTime());
-				objfile.setModifieddate(objfile.getModifieddate());
+				objfile.setModifieddate(commonfunction.getCurrentUtcTime());
 			} catch (ParseException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -1260,7 +1260,7 @@ public class FileService {
 		return objMap;
 	}
 
-	public boolean UpdateSheetversion(LSfile objfile, String orginalcontent) throws IOException {
+	public boolean UpdateSheetversion(LSfile objfile, String orginalcontent) throws IOException, ParseException {
 		int Versionnumber = 0;
 		String Content = "";
 		LSfile objesixting = lSfileRepository.findByfilecode(objfile.getFilecode());
@@ -1306,7 +1306,7 @@ public class FileService {
 			objversion.setLssheetworkflow(objesixting.getLssheetworkflow());
 			objversion.setLssitemaster(objesixting.getLssitemaster());
 			objversion.setModifiedby(objfile.getModifiedby());
-			objversion.setModifieddate(objfile.getModifieddate());
+			objversion.setModifieddate(commonfunction.getCurrentUtcTime());
 			objversion.setRejected(objesixting.getRejected());
 			objversion.setVersionno(Versionnumber);
 
@@ -1369,7 +1369,7 @@ public class FileService {
 			objversion.setLssheetworkflow(objesixting.getLssheetworkflow());
 			objversion.setLssitemaster(objesixting.getLssitemaster());
 			objversion.setModifiedby(objfile.getModifiedby());
-			objversion.setModifieddate(objfile.getModifieddate());
+			objversion.setModifieddate(commonfunction.getCurrentUtcTime());
 			objversion.setRejected(objesixting.getRejected());
 			objversion.setVersionno(Versionnumber);
 
@@ -1922,7 +1922,7 @@ public class FileService {
 		return mapObj;
 	}
 
-	public LSfile updatefilename(LSfile objfile) {
+	public LSfile updatefilename(LSfile objfile) throws ParseException {
 
 		LSfile fileByName = lSfileRepository.findByfilecode(objfile.getFilecode());
 		if (lSfileRepository.findByFilecodeNotAndLssitemasterAndFilenameuserIgnoreCase(objfile.getFilecode(),
@@ -1931,7 +1931,7 @@ public class FileService {
 				fileByName.setFilenameuser(objfile.getFilenameuser());
 				fileByName.setCategory(objfile.getCategory());
 				fileByName.setModifiedby(objfile.getModifiedby());
-				fileByName.setModifieddate(objfile.getModifieddate());
+				fileByName.setModifieddate(commonfunction.getCurrentUtcTime());
 				fileByName.setViewoption(objfile.getViewoption());
 				fileByName.setModifiedbyuser(objfile.getModifiedbyuser());
 				

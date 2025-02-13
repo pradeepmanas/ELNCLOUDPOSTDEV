@@ -2,6 +2,7 @@ package com.agaram.eln.primary.model.material;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -88,16 +89,18 @@ public class ElnresultUsedMaterial {
 	@Transient
 	private Date todate;
 	
-//	private Integer samplecode;
-//
-//
-//	public Integer getSamplecode() {
-//		return samplecode;
-//	}
-//
-//	public void setSamplecode(Integer samplecode) {
-//		this.samplecode = samplecode;
-//	}
+	@Transient
+	private Map<String, Object> customobject;
+	
+
+
+	public Map<String, Object> getCustomobject() {
+		return customobject;
+	}
+
+	public void setCustomobject(Map<String, Object> customobject) {
+		this.customobject = customobject;
+	}
 
 	public Date getFromdate() {
 		return fromdate;

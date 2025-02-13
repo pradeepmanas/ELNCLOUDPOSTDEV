@@ -32,12 +32,17 @@ public class SampleController {
 	private SampleService objSampleService;
 	private Map inputMap;
 	
+//	@RequestMapping(value = "/getSampleonCategory", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+//	public ResponseEntity<Object> getSampleonCategory(@RequestBody SampleCategory objsamplecat) throws Exception {
+//
+//		return (ResponseEntity<Object>) objSampleService.getSampleonCategory(objsamplecat);
+//	}
 	@RequestMapping(value = "/getSampleonCategory", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Object> getSampleonCategory(@RequestBody SampleCategory objsamplecat) throws Exception {
+	public ResponseEntity<Object> getSampleonCategory(@RequestBody Map<String, Object> inputMap) throws Exception {
 
-		return (ResponseEntity<Object>) objSampleService.getSampleonCategory(objsamplecat);
+		return (ResponseEntity<Object>) objSampleService.getSampleonCategory(inputMap);
 	}
-	
+
 	@RequestMapping(value = "/getSampleonSite", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> getSampleonSite(@RequestBody Sample objsample) throws Exception {
 
@@ -126,4 +131,7 @@ public class SampleController {
 	public ResponseEntity<Object> updateSampleExpiry(@RequestBody Sample objSample) throws Exception {
 		return objSampleService.updateSampleExpiry(objSample);
 	}
+
+	
+	
 }

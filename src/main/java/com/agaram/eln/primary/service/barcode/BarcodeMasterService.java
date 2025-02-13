@@ -123,7 +123,7 @@ public class BarcodeMasterService {
 	                barcodeobj.setBarcodefilename(filename);
 	                barcodeobj.setBarcodefileid(barcodeobj.getBarcodefileid());
 	                barcodeobj.setModifiedby(barcode.getModifiedby());
-	                barcodeobj.setModifieddate(barcode.getModifieddate());
+	                barcodeobj.setModifieddate(commonfunction.getCurrentUtcTime());
 	                barcodemasterrepository.save(barcodeobj);
 	                
 	                response.setStatus(true);

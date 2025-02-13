@@ -16,9 +16,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.agaram.eln.primary.commonfunction.commonfunction;
+import com.agaram.eln.primary.model.material.Elnmaterial;
+import com.agaram.eln.primary.model.material.MaterialCategory;
 import com.agaram.eln.primary.model.material.Period;
 import com.agaram.eln.primary.model.material.Unit;
 import com.agaram.eln.primary.model.sample.DerivedSamples;
@@ -49,6 +52,7 @@ import com.agaram.eln.primary.repository.sequence.SequenceTableTaskLevelReposito
 import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
 import com.agaram.eln.primary.service.cloudFileManip.CloudFileManipulationservice;
 import com.agaram.eln.primary.service.fileManipulation.FileManipulationservice;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 @Service
@@ -89,10 +93,24 @@ public class SampleService<ParentSample>{
 	@Autowired
 	UnitRepository unitRepository;
 
-	public ResponseEntity<Object> getSampleonCategory(SampleCategory objsamplecat){			
-			List<Sample> lstsample = samplerepository.findBySamplecategoryAndNsitecodeOrderBySamplecodeDesc(objsamplecat,objsamplecat.getNsitecode());
-			return new ResponseEntity<>(lstsample, HttpStatus.OK);
+//	public ResponseEntity<Object> getSampleonCategory(SampleCategory objsamplecat){			
+//			List<Sample> lstsample = samplerepository.findBySamplecategoryAndNsitecodeOrderBySamplecodeDesc(objsamplecat,objsamplecat.getNsitecode());
+//			return new ResponseEntity<>(lstsample, HttpStatus.OK);
+//	}
+public ResponseEntity<Object> getSampleonCategory(@RequestBody Map<String, Object> inputMap){
+		
+		final ObjectMapper objmapper = new ObjectMapper();
+		
+		SampleCategory objsamplecat = objmapper.convertValue(inputMap.get("category"), SampleCategory.class);
+		Date fromdate = objmapper.convertValue(inputMap.get("fromdate"), Date.class);
+		Date todate = objmapper.convertValue(inputMap.get("todate"), Date.class);
+				
+		List<Sample> lstsample = samplerepository.findBySamplecategoryAndNsitecodeAndCreateddateBetweenOrderBySamplecodeDesc(
+				objsamplecat,objsamplecat.getNsitecode(),fromdate,todate);
+		
+		return new ResponseEntity<>(lstsample, HttpStatus.OK);
 	}
+	
 	
 	public ResponseEntity<Object> getSampleonSite(Sample objsample){	
 		List<Sample> lstsample = samplerepository.findByNsitecodeOrderBySamplecodeDesc(objsample.getNsitecode());
@@ -311,11 +329,11 @@ public class SampleService<ParentSample>{
 		return new ResponseEntity<>(sample, HttpStatus.OK);
 	}
 	
-	public ResponseEntity<Object> updateSample(Sample sample) {
+	public ResponseEntity<Object> updateSample(Sample sample) throws ParseException {
 		
 		Sample objSample = samplerepository.findOne(sample.getSamplecode());
 		objSample.setAssignedproject(sample.getAssignedproject());
-		objSample.setModifieddate(sample.getModifieddate());
+		objSample.setModifieddate(commonfunction.getCurrentUtcTime());
 		objSample.setModifiedby(sample.getModifiedby());
 		objSample.setJsondata(sample.getJsondata());
 		objSample.setExpirytype(sample.getExpirytype());

@@ -34,7 +34,6 @@ public class EquipmentTypeService {
 				objMaterialType.setNstatus(1);
 				objMaterialType.setCreatedate(commonfunction.getCurrentUtcTime());
 				objMaterialType.setCreateby(objMaterialType.getCreateby());
-				
 				equipmentTypeRepository.save(objMaterialType);
 				objMaterialType.setInfo("IDS_SUCCESS");
 				return new ResponseEntity<>(objMaterialType, HttpStatus.OK);
@@ -55,7 +54,7 @@ public class EquipmentTypeService {
 				objMaterialType.setNstatus(1);
 				objMaterialType.setCreatedate(objMType.getCreatedate());
 				objMaterialType.setCreateby(objMType.getCreateby());
-				
+				objMaterialType.setModifieddate(commonfunction.getCurrentUtcTime());
 				equipmentTypeRepository.save(objMaterialType);
 				
 				objMaterialType.setInfo("IDS_SUCCESS");

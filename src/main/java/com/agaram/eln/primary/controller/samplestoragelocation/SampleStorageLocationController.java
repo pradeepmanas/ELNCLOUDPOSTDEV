@@ -1,5 +1,6 @@
 package com.agaram.eln.primary.controller.samplestoragelocation;
 
+import java.text.ParseException;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +38,7 @@ public class SampleStorageLocationController {
 
 	@PostMapping(value = "/updateSampleStorageLocation")
 	public ResponseEntity<Object> updateSampleStorageLocation(@Validated @RequestBody Map<String, Object> mapObject)
-			throws JsonProcessingException {
+			throws JsonProcessingException, ParseException {
 		final ObjectMapper mapper = new ObjectMapper();
 //		mapper.registerModule(new JavaTimeModule());
 		final SampleStorageLocation sampleStorageLocation = mapper.convertValue(mapObject.get("samplestoragelocation"),

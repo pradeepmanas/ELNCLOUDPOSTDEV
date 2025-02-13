@@ -61,7 +61,7 @@ public class EquipmentCategoryService {
 		}
 	}
 
-	public ResponseEntity<Object> updateEquipmentCategory(EquipmentCategory materialCategory) {
+	public ResponseEntity<Object> updateEquipmentCategory(EquipmentCategory materialCategory) throws ParseException {
 		final EquipmentCategory objMaterialCategory = equipmentCategoryRepository.findByNequipmentcatcode(materialCategory.getNequipmentcatcode());
 		materialCategory.setResponse(new Response());
 		if (objMaterialCategory == null) {
@@ -72,6 +72,7 @@ public class EquipmentCategoryService {
 			final EquipmentCategory materialCategoryObj = equipmentCategoryRepository.findByNsitecodeAndSequipmentcatnameIgnoreCaseAndNstatus(materialCategory.getNsitecode(),materialCategory.getSequipmentcatname(),1);
 			
 			if (materialCategoryObj == null || (materialCategoryObj.getNequipmentcatcode().equals(materialCategory.getNequipmentcatcode()))) {
+				materialCategory.setModifieddate(commonfunction.getCurrentUtcTime());
 				equipmentCategoryRepository.save(materialCategory);
 				materialCategory.getResponse().setStatus(true);
 				materialCategory.getResponse().setInformation("IDS_SUCCESS");

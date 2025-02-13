@@ -68,6 +68,8 @@ public class SampleTypeService {
 				objSampleType.setNstatus(1);
 				objSampleType.setCreatedate(objMType.getCreatedate());
 				objSampleType.setCreateby(objMType.getCreateby());
+				objSampleType.setModifieddate(commonfunction.getCurrentUtcTime());
+				
 				
 				sampleTypeRepository.save(objSampleType);
 				

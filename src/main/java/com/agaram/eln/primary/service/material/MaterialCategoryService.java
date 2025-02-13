@@ -140,7 +140,7 @@ public class MaterialCategoryService {
 		}
 	}
 
-	public ResponseEntity<Object> updateMaterialCategory(MaterialCategory materialCategory) {
+	public ResponseEntity<Object> updateMaterialCategory(MaterialCategory materialCategory) throws ParseException {
 		final MaterialCategory objMaterialCategory = MaterialCategoryRepository
 				.findByNmaterialcatcode(materialCategory.getNmaterialcatcode());
 		materialCategory.setResponse(new Response());
@@ -155,6 +155,7 @@ public class MaterialCategoryService {
 
 			if (materialCategoryObj == null
 					|| (materialCategoryObj.getNmaterialcatcode().equals(materialCategory.getNmaterialcatcode()))) {
+				materialCategory.setModifieddate(commonfunction.getCurrentUtcTime());
 				MaterialCategoryRepository.save(materialCategory);
 				materialCategory.getResponse().setStatus(true);
 				materialCategory.getResponse().setInformation("IDS_SUCCESS");

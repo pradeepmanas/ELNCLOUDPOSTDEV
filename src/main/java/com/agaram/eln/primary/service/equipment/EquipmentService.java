@@ -610,7 +610,7 @@ public class EquipmentService {
 					objequipment.getNsitecode());
 		}
 	}
-	public ResponseEntity<Object> updateELNEquipment(Equipment obj) {
+	public ResponseEntity<Object> updateELNEquipment(Equipment obj) throws ParseException {
 		
 		Equipment objElnmaterial = equipmentRepository.findByNsitecodeAndSequipmentnameAndEquipmentcategoryAndNequipmentcodeNotAndNstatus(obj.getNsitecode(),obj.getSequipmentname(),obj.getEquipmentcategory(),obj.getNequipmentcode(),1);
 		
@@ -619,6 +619,7 @@ public class EquipmentService {
 		if(objElnmaterial == null) {
 			
 			Equipment objMaterial = equipmentRepository.findOne(obj.getNequipmentcode());
+			obj.setModifieddate(commonfunction.getCurrentUtcTime());
 
 			obj.setSequipmentid(objMaterial.getSequipmentid());
 			obj.setCreateddate(objMaterial.getCreateddate());

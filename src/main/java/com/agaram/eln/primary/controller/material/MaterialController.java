@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.agaram.eln.primary.model.material.Elnmaterial;
+import com.agaram.eln.primary.model.material.ElnresultUsedMaterial;
 import com.agaram.eln.primary.model.material.Material;
 import com.agaram.eln.primary.model.material.MaterialLinks;
 import com.agaram.eln.primary.model.material.MaterialProjectHistory;
@@ -212,7 +213,7 @@ public class MaterialController {
 	}
 	
 	@RequestMapping(value = "/getElnMaterialOnProtocol", method = RequestMethod.POST)
-	public ResponseEntity<Object> getElnMaterialOnProtocol(@RequestBody Map<String, Object> inputMap) throws Exception {
+	public ResponseEntity<Object> getElnMaterialOnProtocol(@RequestBody ElnresultUsedMaterial inputMap) throws Exception {
 
 		return objMaterialService.getElnMaterialOnProtocol(inputMap);
 	}
@@ -277,6 +278,6 @@ public class MaterialController {
 	}
 	@RequestMapping(value = "/geSampleList", method = RequestMethod.POST)
 	public ResponseEntity<Object> geSampleList(@RequestBody ElnresultUsedSample inputMap) throws Exception {
-		return objMaterialService.geSampleList(inputMap);
+		return objMaterialService.getSampleList(inputMap);
 	}
 }

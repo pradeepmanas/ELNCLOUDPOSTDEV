@@ -436,6 +436,7 @@ public class UserService {
 			objusermaster.setCreateddate(updateUser.getCreateddate());
 			try {
 				updateUser.setModifieddate(commonfunction.getCurrentUtcTime());
+				updateUser.setModifiedby(objusermaster.getModifiedby());
 			} catch (ParseException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

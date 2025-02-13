@@ -132,6 +132,7 @@ public class MaterialTypeService {
 				objMaterialType.setNstatus(1);
 				objMaterialType.setCreatedate(objMType.getCreatedate());
 				objMaterialType.setCreateby(objMType.getCreateby());
+				objMaterialType.setModifieddate(commonfunction.getCurrentUtcTime());
 				
 				materialTypeRepository.save(objMaterialType);
 				

@@ -93,7 +93,7 @@ public class SampleCategoryService {
 		}
 	}
 	
-	public ResponseEntity<Object> updateSampleCategory(SampleCategory sampleCategory) {
+	public ResponseEntity<Object> updateSampleCategory(SampleCategory sampleCategory) throws ParseException {
 		final SampleCategory objSampleCategory = sampleCategoryRepository
 				.findByNsamplecatcode(sampleCategory.getNsamplecatcode());
 		sampleCategory.setResponse(new Response());
@@ -108,6 +108,7 @@ public class SampleCategoryService {
 
 			if (sampleCategoryObj == null
 					|| (sampleCategoryObj.getNsamplecatcode().equals(sampleCategory.getNsamplecatcode()))) {
+				sampleCategory.setModifieddate(commonfunction.getCurrentUtcTime());
 				sampleCategoryRepository.save(sampleCategory);
 				sampleCategory.getResponse().setStatus(true);
 				sampleCategory.getResponse().setInformation("IDS_SUCCESS");

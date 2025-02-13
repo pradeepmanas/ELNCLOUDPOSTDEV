@@ -1159,7 +1159,7 @@ ALTER TABLE IF Exists sample ADD COLUMN IF NOT EXISTS openexpiryperiod character
 ALTER TABLE IF Exists sample ADD COLUMN IF NOT EXISTS expirydate timestamp without time zone;
 ALTER TABLE IF Exists sample ADD COLUMN IF NOT EXISTS storagecondition character varying(255);
 ALTER TABLE IF Exists sample ADD COLUMN IF NOT EXISTS expirydate timestamp without time zone;
-ALTER TABLE IF Exists sample ADD COLUMN IF NOT EXISTS quantity character varying(255);
+ALTER TABLE IF Exists sample ADD COLUMN IF NOT EXISTS quantity Integer;
     
 ALTER TABLE IF EXISTS elnmaterialinventory ADD COLUMN IF NOT EXISTS reusablecount Integer;
 
@@ -1310,3 +1310,10 @@ BEGIN
         END IF;
     END LOOP;
 END $$;
+
+ALTER TABLE samplecategory DROP  IF EXISTS displaystatus;
+ALTER TABLE samplecategory DROP  IF EXISTS sDate;
+
+ALTER TABLE IF Exists elnresultusedsample ADD Column IF NOT EXISTS samlename character varying(255);
+
+ALTER TABLE IF Exists elnresultusedsample ADD Column IF NOT EXISTS samlesequenceid character varying(255);

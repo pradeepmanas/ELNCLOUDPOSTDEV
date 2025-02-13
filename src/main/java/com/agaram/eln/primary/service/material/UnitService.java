@@ -63,7 +63,7 @@ public class UnitService {
 		return new ResponseEntity<>(lstUnit, HttpStatus.OK);
 	}
 
-	public ResponseEntity<Object> updateUnit(Unit objUnit) {
+	public ResponseEntity<Object> updateUnit(Unit objUnit) throws ParseException {
 
 		final Unit unit = getActiveUnitById(objUnit.getNunitcode());
 		
@@ -82,6 +82,7 @@ public class UnitService {
 			if (unit1 == null || (unit1.getNunitcode().equals(objUnit.getNunitcode()))) {
 
 				unitobj.setObjsilentaudit(objUnit.getObjsilentaudit());
+				objUnit.setModifieddate(commonfunction.getCurrentUtcTime());
 				unitRepository.save(objUnit);
 				objUnit.getResponse().setStatus(true);
 				objUnit.getResponse().setInformation("IDS_SUCCESS");

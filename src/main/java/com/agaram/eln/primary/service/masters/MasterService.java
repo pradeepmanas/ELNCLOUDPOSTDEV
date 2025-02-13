@@ -513,7 +513,7 @@ public class MasterService {
 		return lslogbooksRepository.findBySitecodeOrderByLogbookcodeAsc(lslogbooks.getSitecode());
 	}
 
-	public Lslogbooks Savelogbook(Lslogbooks lslogbooks) {
+	public Lslogbooks Savelogbook(Lslogbooks lslogbooks) throws ParseException {
 		Response objResponse = new Response();
 		Lslogbooks objrepo = null;
 		if (lslogbooks.getLogbookcode() != null) {
@@ -532,6 +532,7 @@ public class MasterService {
 			if(lslogbooks.getLogbookcode() == null) {
 				try {
 					lslogbooks.setAddedon(commonfunction.getCurrentUtcTime());
+					
 				} catch (ParseException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -540,6 +541,9 @@ public class MasterService {
 			if(lslogbooks.getReviewstatus().isEmpty()) {
 				lslogbooks.setRevieweddate(null);
 						}
+			if(lslogbooks.getModifiedby() != null) {
+				lslogbooks.setModifieddate(commonfunction.getCurrentUtcTime());
+			}
 			
 			lslogbooksRepository.save(lslogbooks);
 		}
