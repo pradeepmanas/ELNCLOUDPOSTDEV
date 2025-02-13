@@ -1223,3 +1223,90 @@ ALTER TABLE IF EXISTS public.elnresultusedsample
     OWNER to postgres;
     
 ALTER TABLE IF EXISTS sample ADD COLUMN IF NOT EXISTS nqtynotification double precision;
+
+
+ALTER TABLE IF Exists LSlogilablimsorderdetail ADD COLUMN IF NOT EXISTS sitecode Integer;
+
+
+DO $$ 
+DECLARE
+    rec RECORD;
+    sitecode_val INTEGER;
+BEGIN
+    FOR rec IN 
+        SELECT lsfile_filecode
+        FROM lslogilablimsorderdetail
+        WHERE sitecode IS NULL And lsfile_filecode IS NOT NULL
+    LOOP
+        SELECT f.lssitemaster_sitecode
+        INTO sitecode_val
+        FROM lsfile f
+        WHERE f.filecode = rec.lsfile_filecode
+        AND f.lssitemaster_sitecode IS NOT NULL
+        LIMIT 1;
+
+        IF sitecode_val IS NOT NULL THEN
+            UPDATE lslogilablimsorderdetail
+            SET sitecode = sitecode_val
+            WHERE lsfile_filecode = rec.lsfile_filecode
+            AND sitecode IS NULL;
+        END IF;
+    END LOOP;
+END $$;
+
+DO $$ 
+DECLARE
+    rec RECORD;
+    sitecode_val INTEGER;
+BEGIN
+
+    FOR rec IN 
+        SELECT lsworkflow_workflowcode
+        FROM lslogilablimsorderdetail
+        WHERE sitecode IS NULL AND lsworkflow_workflowcode IS NOT NULL
+    LOOP
+      
+        SELECT w.lssitemaster_sitecode
+        INTO sitecode_val
+        FROM LSworkflow w
+        WHERE w.workflowcode = rec.lsworkflow_workflowcode
+        AND  w.lssitemaster_sitecode IS NOT NULL
+        LIMIT 1; 
+
+     
+        IF sitecode_val IS NOT NULL THEN
+            UPDATE lslogilablimsorderdetail
+            SET sitecode = sitecode_val
+            WHERE lsworkflow_workflowcode = rec.lsworkflow_workflowcode
+            AND sitecode IS NULL;
+        END IF;
+    END LOOP;
+END $$;
+
+
+DO $$ 
+DECLARE
+    rec RECORD;
+    sitecode_val INTEGER;
+BEGIN
+    FOR rec IN 
+        SELECT lsprojectmaster_projectcode
+        FROM lslogilablimsorderdetail
+        WHERE sitecode IS NULL and lsprojectmaster_projectcode is not null
+    LOOP
+       
+        SELECT P.lssitemaster_sitecode
+        INTO sitecode_val
+        FROM lsprojectmaster P
+        WHERE P.projectcode = rec.lsprojectmaster_projectcode
+        AND  w.lssitemaster_sitecode IS NOT NULL
+        LIMIT 1;
+
+        IF sitecode_val IS NOT NULL THEN
+            UPDATE lslogilablimsorderdetail
+            SET sitecode = sitecode_val
+            WHERE lsprojectmaster_projectcode = rec.lsprojectmaster_projectcode
+            AND sitecode IS NULL;
+        END IF;
+    END LOOP;
+END $$;

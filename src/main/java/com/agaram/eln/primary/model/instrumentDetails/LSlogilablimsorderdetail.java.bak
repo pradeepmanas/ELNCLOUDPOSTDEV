@@ -147,18 +147,8 @@ public class LSlogilablimsorderdetail {
 	
 	private Boolean teamselected = false;
 	
-	private Integer sitecode;
 	
-	
-    public Integer getSitecode() {
-		return sitecode;
-	}
-
-	public void setSitecode(Integer sitecode) {
-		this.sitecode = sitecode;
-	}
-
-	public Boolean getTeamselected() {
+    public Boolean getTeamselected() {
 		return teamselected;
 	}
 
@@ -353,6 +343,10 @@ public class LSlogilablimsorderdetail {
 	private Long tasklevelsequence;
 	
 	private String sequenceid;
+
+//	@ManyToOne
+//	private LsAutoregister lsautoregisterorders;
+	
 	
 	public LSlogilablimsorderdetail() {
 

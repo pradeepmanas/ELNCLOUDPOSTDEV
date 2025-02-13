@@ -27,6 +27,7 @@ import com.agaram.eln.primary.model.sample.SampleAttachments;
 import com.agaram.eln.primary.model.sample.SampleCategory;
 import com.agaram.eln.primary.model.sample.SampleLinks;
 import com.agaram.eln.primary.model.sample.SampleProjectHistory;
+import com.agaram.eln.primary.model.sample.SampleType;
 import com.agaram.eln.primary.model.sequence.SequenceTable;
 import com.agaram.eln.primary.model.sequence.SequenceTableProjectLevel;
 import com.agaram.eln.primary.model.sequence.SequenceTableSite;
@@ -35,10 +36,12 @@ import com.agaram.eln.primary.repository.material.PeriodRepository;
 import com.agaram.eln.primary.repository.material.UnitRepository;
 import com.agaram.eln.primary.repository.sample.DerivedSamplesRepository;
 import com.agaram.eln.primary.repository.sample.SampleAttachementsRepository;
+import com.agaram.eln.primary.repository.sample.SampleCategoryRepository;
 import com.agaram.eln.primary.repository.sample.SampleLinkRepository;
 import com.agaram.eln.primary.repository.sample.SampleProjectHistoryRepository;
 import com.agaram.eln.primary.repository.sample.SampleRepository;
 import com.agaram.eln.primary.repository.sample.SampleStorageMappingRepository;
+import com.agaram.eln.primary.repository.sample.SampleTypeRepository;
 import com.agaram.eln.primary.repository.sequence.SequenceTableProjectLevelRepository;
 import com.agaram.eln.primary.repository.sequence.SequenceTableRepository;
 import com.agaram.eln.primary.repository.sequence.SequenceTableSiteRepository;
@@ -53,6 +56,10 @@ public class SampleService<ParentSample>{
 	
 	@Autowired
 	private SampleRepository samplerepository;
+	@Autowired
+	SampleTypeRepository sampleTypeRepository;
+	@Autowired
+	SampleCategoryRepository sampleCategoryRepository;
 	@Autowired
 	PeriodRepository periodRepository;
 	@Autowired
@@ -321,6 +328,7 @@ public class SampleService<ParentSample>{
 		objSample.setTrackconsumption(sample.getTrackconsumption());
 		objSample.setStoragecondition(sample.getStoragecondition());
 		objSample.setUsageoption(sample.getUsageoption());
+		objSample.setNtransactionstatus(sample.getNtransactionstatus());
 		objSample.setUnit(sample.getUnit());
 		if(sample.getSamplestoragemapping()!=null)
 		{
@@ -463,10 +471,16 @@ public class SampleService<ParentSample>{
 
 	public ResponseEntity<Object> getSampleProps(Integer nsiteInteger) {
 		Map<String, Object> objMap = new HashMap<>();
+		List<SampleType> lstSampleTypes =  new ArrayList<SampleType>();
+		List<SampleCategory> lstCategories = new ArrayList<SampleCategory>();
+		lstSampleTypes = sampleTypeRepository.findByNsitecodeOrderByNsampletypecodeDesc(nsiteInteger);
+		lstCategories = sampleCategoryRepository.findByNsitecodeOrderByNsamplecatcodeDesc(nsiteInteger);
 		List<Period> lstPeriods = periodRepository.findByNstatusOrderByNperiodcode(1);
 		List<Unit> lstUnits = unitRepository.findByNsitecodeAndNstatusOrderByNunitcodeDesc(nsiteInteger,1);
 		objMap.put("lstUnits", lstUnits);
 		objMap.put("lstPeriods", lstPeriods);
+		objMap.put("lstCategories", lstCategories);
+		objMap.put("lstType", lstSampleTypes);
 		return new ResponseEntity<>(objMap, HttpStatus.OK);
 	}
 

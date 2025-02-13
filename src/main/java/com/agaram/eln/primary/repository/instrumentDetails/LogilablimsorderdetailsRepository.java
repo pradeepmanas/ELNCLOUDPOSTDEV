@@ -573,12 +573,6 @@ public interface LogilablimsorderdetailsRepository extends JpaRepository<LSlogil
 			int l, LSuserMaster lsuserMaster3, Date fromdate4, Date todate4, String orderflag4, Integer filetype4,
 			Integer testcode4);
 
-	Collection<? extends Logilaborderssh> findByOrderflagAndLsprojectmasterIsNullAndDirectorycodeIsNullAndElnmaterialInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterInAndOrdercancellIsNullAndTeamselectedOrTeamselectedAndBatchcodeInAndOrderflagAndLsprojectmasterIsNullAndDirectorycodeIsNullAndElnmaterialInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterInAndOrdercancellIsNullOrderByBatchcodeDesc(
-			String orderflag, List<Elnmaterial> currentChunk, Integer filetype, Date fromdate, Date todate, int i,
-			List<LSuserMaster> lstuserMaster, boolean b, boolean c, List<Long> selectedteambatchCodeList,
-			String orderflag2, List<Elnmaterial> currentChunk2, Integer filetype2, Date fromdate2, Date todate2, int j,
-			List<LSuserMaster> lstuserMaster2);
-
 	Collection<? extends Logilaborderssh> findByDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndAssignedtoIsNullOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndAssignedtoIsNullOrDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndAssignedtoIsNullAndTeamselectedOrTeamselectedAndBatchcodeInAndDirectorycodeInAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndOrderflagAndFiletypeAndAssignedtoIsNullOrderByBatchcodeDesc(
 			List<Long> directory_Code, int i, Date fromdate, Date todate, String orderflag, Integer filetype,
 			List<Long> directory_Code2, int j, LSuserMaster lsuserMaster, Date fromdate2, Date todate2,
@@ -862,5 +856,12 @@ public interface LogilablimsorderdetailsRepository extends JpaRepository<LSlogil
 			String orderflag, List<Elnmaterial> currentChunk, Integer filetype, Date fromdate, Date todate, int i,
 			boolean b, boolean c, List<Long> selectedteambatchCodeList, String orderflag2,
 			List<Elnmaterial> currentChunk2, Integer filetype2, Date fromdate2, Date todate2, int j);
+
+	Collection<? extends Logilaborderssh> findByOrderflagAndLsprojectmasterIsNullAndDirectorycodeIsNullAndElnmaterialInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterInAndOrdercancellIsNullAndTeamselectedOrTeamselectedAndBatchcodeInAndOrderflagAndLsprojectmasterIsNullAndDirectorycodeIsNullAndElnmaterialInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndOrdercancellIsNullOrderByBatchcodeDesc(
+			String orderflag, List<Elnmaterial> nmaterialcode, Integer filetype, Date fromdate, Date todate, int i,
+			LSuserMaster lsuserMaster, boolean b, boolean c, List<Long> selectedteambatchCodeList, String orderflag2,
+			List<Elnmaterial> nmaterialcode2, Integer filetype2, Date fromdate2, Date todate2, int j);
+
+	Long countBySitecode(Integer sitecode);
 
 }

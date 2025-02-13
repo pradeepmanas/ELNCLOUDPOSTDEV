@@ -25,6 +25,7 @@ import com.agaram.eln.primary.model.protocols.LSprotocolmaster;
 import com.agaram.eln.primary.model.protocols.LSprotocolworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplemaster;
 import com.agaram.eln.primary.model.sheetManipulation.LStestmasterlocal;
+import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 
@@ -2507,6 +2508,9 @@ List<Logilabprotocolorders> findByLsprojectmasterInAndElnmaterialAndTestcodeAndC
 			List<Integer> userlist, boolean b, boolean c, List<Long> selectedteamprotcolorderList, String orderflag2,
 			Integer protocoltype2, Date fromdate2, Date todate2, List<Elnmaterial> currentChunk2, int j,
 			List<Integer> userlist2);
+
+
+	Long countBySitecode(Integer integer);
 
 
 	}

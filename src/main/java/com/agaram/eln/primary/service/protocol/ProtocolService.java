@@ -3527,15 +3527,19 @@ public class ProtocolService {
 				seqorder.setApplicationsequence(appcount);
 			}
 			
-			if(sequencetablesiteRepository.findBySequencecodeAndSitecode(sequence,objorder.getLsuserMaster().getLssitemaster().getSitecode()) == null)
+			if(sequencetablesiteRepository.findBySequencecodeAndSitecode(sequence,objorder.getSitecode()) == null)
 			{
 				SequenceTableSite objsiteseq= new SequenceTableSite();
 				objsiteseq.setSequencecode(sequence);
-				objsiteseq.setSitecode(objorder.getLsuserMaster().getLssitemaster().getSitecode());
-				List<LSuserMaster> lstuser = lsusermasterRepository.findByLssitemasterOrderByCreateddateDesc(objorder.getLsuserMaster().getLssitemaster());
+				objsiteseq.setSitecode(objorder.getSitecode());
+				
+				LSSiteMaster site = new LSSiteMaster(objorder.getSitecode());
+				
+				List<LSuserMaster> lstuser = lsusermasterRepository.findByLssitemasterOrderByCreateddateDesc(site);
 				if(lstuser != null)
 				{
-					objsiteseq.setSitesequence(LSlogilabprotocoldetailRepository.countByLsuserMasterIn(lstuser));
+//					objsiteseq.setSitesequence(LSlogilabprotocoldetailRepository.countByLsuserMasterIn(lstuser));
+					objsiteseq.setSitesequence(LSlogilabprotocoldetailRepository.countBySitecode(objorder.getSitecode()));
 				}
 				else
 				{
@@ -3678,12 +3682,13 @@ public class ProtocolService {
 			{
 				objorder.setApplicationsequence(sqa.getApplicationsequence()+1);
 				
-				if(objorder !=null && objorder.getLsuserMaster() != null&&
-						objorder.getLsuserMaster().getLssitemaster()!=null && 
-						objorder.getLsuserMaster().getLssitemaster().getSitecode()!=null)
+//				if(objorder !=null && objorder.getLsuserMaster() != null&&
+//						objorder.getLsuserMaster().getLssitemaster()!=null && 
+//						objorder.getLsuserMaster().getLssitemaster().getSitecode()!=null)
+				if(objorder !=null && objorder.getSitecode()!=null)
 				{
 					SequenceTableSite sqsite = sqa.getSequencetablesite().stream()
-					        .filter(sq -> sq.getSitecode().equals(objorder.getLsuserMaster().getLssitemaster().getSitecode())
+					        .filter(sq -> sq.getSitecode().equals(objorder.getSitecode())
 					        && sq.getSequencecode().equals(sqa.getSequencecode())).findFirst().orElse(null);
 					if(sqsite != null)
 					{
@@ -3817,12 +3822,10 @@ public class ProtocolService {
 				sequencetableRepository.setinitialapplicationsequence(objorder.getApplicationsequence(),sequenceno);
 			}
 			
-			if(objorder.getSitesequence() != null && objorder.getLsuserMaster() != null&&
-					objorder.getLsuserMaster().getLssitemaster()!=null && 
-					objorder.getLsuserMaster().getLssitemaster().getSitecode()!=null)
+			if(objorder.getSitesequence() != null && objorder.getSitecode()!=null)
 			{
 				sequencetablesiteRepository.setinitialsitesequence(objorder.getSitesequence(), sequenceno,
-						objorder.getLsuserMaster().getLssitemaster().getSitecode());
+						objorder.getSitecode());
 			}
 			
 			if(objorder.getProjectsequence() != null && objorder.getLsprojectmaster() != null

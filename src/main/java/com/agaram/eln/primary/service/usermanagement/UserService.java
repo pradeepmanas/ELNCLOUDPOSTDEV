@@ -1816,6 +1816,8 @@ public class UserService {
 				bool = false;
 			}
 			return bool;
+		}else {
+			bool = false;
 		}
 
 		return bool;

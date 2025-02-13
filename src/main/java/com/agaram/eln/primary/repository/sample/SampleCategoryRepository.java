@@ -15,5 +15,8 @@ public interface SampleCategoryRepository extends JpaRepository<SampleCategory, 
 	public SampleCategory findByNsamplecatcode(Integer nsamplecatcode);
 
 	public SampleCategory findByNsitecodeAndSsamplecatnameIgnoreCase(Integer nsitecode, String ssamplecatname);
+	
+	List<SampleCategory> findByNsitecodeOrderByNsamplecatcodeDesc(Integer nsitecode);
+
 
 }

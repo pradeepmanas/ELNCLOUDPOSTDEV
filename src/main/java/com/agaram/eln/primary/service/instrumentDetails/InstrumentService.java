@@ -1406,15 +1406,20 @@ public class InstrumentService {
 			seqorder.setSequenceyear(Integer.parseInt(year.format(currentdate)));
 		}
 		
-		if(sequencetablesiteRepository.findBySequencecodeAndSitecode(sequence,objorder.getLsuserMaster().getLssitemaster().getSitecode()) == null)
+//		if(sequencetablesiteRepository.findBySequencecodeAndSitecode(sequence,objorder.getLsuserMaster().getLssitemaster().getSitecode()) == null)
+		if(sequencetablesiteRepository.findBySequencecodeAndSitecode(sequence,objorder.getSitecode()) == null)
 		{
 			SequenceTableSite objsiteseq= new SequenceTableSite();
 			objsiteseq.setSequencecode(sequence);
-			objsiteseq.setSitecode(objorder.getLsuserMaster().getLssitemaster().getSitecode());
-			List<LSuserMaster> lstuser = lsuserMasterRepository.findByLssitemasterOrderByCreateddateDesc(objorder.getLsuserMaster().getLssitemaster());
+			objsiteseq.setSitecode(objorder.getSitecode());
+			
+			LSSiteMaster site = new LSSiteMaster(objorder.getSitecode());
+
+			List<LSuserMaster> lstuser = lsuserMasterRepository.findByLssitemasterOrderByCreateddateDesc(site);
 			if(lstuser != null)
 			{
-				objsiteseq.setSitesequence(logilablimsorderdetailsRepository.countByLsuserMasterIn(lstuser));
+				//objsiteseq.setSitesequence(logilablimsorderdetailsRepository.countByLsuserMasterIn(lstuser));
+				objsiteseq.setSitesequence(logilablimsorderdetailsRepository.countBySitecode(objorder.getSitecode()));
 			}
 			else
 			{
@@ -1878,12 +1883,16 @@ public class InstrumentService {
 		{
 			objorder.setApplicationsequence(sqa.getApplicationsequence()+1);
 			
-			if(objorder !=null && objorder.getLsuserMaster() != null&&
-					objorder.getLsuserMaster().getLssitemaster()!=null && 
-					objorder.getLsuserMaster().getLssitemaster().getSitecode()!=null)
+//			if(objorder !=null && objorder.getLsuserMaster() != null&&
+//					objorder.getLsuserMaster().getLssitemaster()!=null && 
+//					objorder.getLsuserMaster().getLssitemaster().getSitecode()!=null)
+			if(objorder !=null && objorder.getSitecode() != null)
 			{
+//				SequenceTableSite sqsite = sqa.getSequencetablesite().stream()
+//				        .filter(sq -> sq.getSitecode().equals(objorder.getLsuserMaster().getLssitemaster().getSitecode())
+//				        && sq.getSequencecode().equals(sqa.getSequencecode())).findFirst().orElse(null);
 				SequenceTableSite sqsite = sqa.getSequencetablesite().stream()
-				        .filter(sq -> sq.getSitecode().equals(objorder.getLsuserMaster().getLssitemaster().getSitecode())
+				        .filter(sq -> sq.getSitecode().equals(objorder.getSitecode())
 				        && sq.getSequencecode().equals(sqa.getSequencecode())).findFirst().orElse(null);
 				if(sqsite != null)
 				{
@@ -2019,12 +2028,13 @@ public class InstrumentService {
 			sequencetableRepository.setinitialapplicationsequence(objorder.getApplicationsequence(),sequenceno);
 		}
 		
-		if(objorder.getSitesequence() != null && objorder.getLsuserMaster() != null&&
-				objorder.getLsuserMaster().getLssitemaster()!=null && 
-				objorder.getLsuserMaster().getLssitemaster().getSitecode()!=null)
+//		if(objorder.getSitesequence() != null && objorder.getLsuserMaster() != null&&
+//				objorder.getLsuserMaster().getLssitemaster()!=null && 
+//				objorder.getLsuserMaster().getLssitemaster().getSitecode()!=null)
+		if(objorder.getSitesequence() != null && objorder.getSitecode() != null)
 		{
 			sequencetablesiteRepository.setinitialsitesequence(objorder.getSitesequence(), sequenceno,
-					objorder.getLsuserMaster().getLssitemaster().getSitecode());
+					objorder.getSitecode());
 		}
 		
 		if(objorder.getProjectsequence() != null && objorder.getLsprojectmaster() != null
@@ -9314,9 +9324,9 @@ public class InstrumentService {
 
 				/**changed for p.team selection **/
 				lstorder.addAll(logilablimsorderdetailsRepository
-						.findByOrderflagAndLsprojectmasterIsNullAndDirectorycodeIsNullAndElnmaterialInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterInAndOrdercancellIsNullAndTeamselectedOrTeamselectedAndBatchcodeInAndOrderflagAndLsprojectmasterIsNullAndDirectorycodeIsNullAndElnmaterialInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterInAndOrdercancellIsNullOrderByBatchcodeDesc(
-								objorder.getOrderflag(), nmaterialcode, filetype, fromdate, todate, 3,objorder.getLstuserMaster(),false,
-								true,selectedteambatchCodeList,objorder.getOrderflag(), nmaterialcode, filetype, fromdate, todate, 3,objorder.getLstuserMaster()));
+						.findByOrderflagAndLsprojectmasterIsNullAndDirectorycodeIsNullAndElnmaterialInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndLsuserMasterInAndOrdercancellIsNullAndTeamselectedOrTeamselectedAndBatchcodeInAndOrderflagAndLsprojectmasterIsNullAndDirectorycodeIsNullAndElnmaterialInAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndViewoptionAndOrdercancellIsNullOrderByBatchcodeDesc(
+								objorder.getOrderflag(), nmaterialcode, filetype, fromdate, todate, 3,objorder.getLsuserMaster(),false,
+								true,selectedteambatchCodeList,objorder.getOrderflag(), nmaterialcode, filetype, fromdate, todate, 3));
 				
 				if (Directory_Code != null) {
 					/**existing**/

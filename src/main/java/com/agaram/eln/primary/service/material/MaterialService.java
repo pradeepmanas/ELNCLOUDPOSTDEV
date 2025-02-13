@@ -228,8 +228,11 @@ public class MaterialService {
 		final ObjectMapper objmapper = new ObjectMapper();
 		
 		MaterialCategory objCategory = objmapper.convertValue(inputMap.get("category"), MaterialCategory.class);
+		Date fromdate = objmapper.convertValue(inputMap.get("fromdate"), Date.class);
+		Date todate = objmapper.convertValue(inputMap.get("todate"), Date.class);
 				
-		List<Elnmaterial> lstMaterial = elnmaterialRepository.findByMaterialcategoryAndNsitecodeOrderByNmaterialcodeDesc(objCategory,objCategory.getNsitecode());
+		List<Elnmaterial> lstMaterial = elnmaterialRepository.findByMaterialcategoryAndNsitecodeAndCreateddateBetweenOrderByNmaterialcodeDesc(
+				objCategory,objCategory.getNsitecode(),fromdate,todate);
 		
 		return new ResponseEntity<>(lstMaterial, HttpStatus.OK);
 	}
