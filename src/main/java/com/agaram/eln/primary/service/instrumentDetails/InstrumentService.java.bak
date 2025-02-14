@@ -9830,9 +9830,9 @@ public class InstrumentService {
 								Directory_Code, 3, fromdate, todate, userlist,objorder.getOrderflag(), protocoltype,false,
 								true,selectedteamprotcolorderList,Directory_Code, 3, fromdate, todate, userlist,objorder.getOrderflag(), protocoltype));
 
-			//	if(Applicationseq) {
-			//		lstorder.forEach(objorderDetail -> objorderDetail.setPn(objorderDetail.getSid()));
-			//	}
+				if(Applicationseq) {
+					lstorder.forEach(objorderDetail -> objorderDetail.setPn(objorderDetail.getSid()));
+				}
 
 			}
 
