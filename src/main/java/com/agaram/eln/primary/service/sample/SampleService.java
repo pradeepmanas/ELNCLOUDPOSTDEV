@@ -104,7 +104,7 @@ public ResponseEntity<Object> getSampleonCategory(@RequestBody Map<String, Objec
 		SampleCategory objsamplecat = objmapper.convertValue(inputMap.get("category"), SampleCategory.class);
 		Date fromdate = objmapper.convertValue(inputMap.get("fromdate"), Date.class);
 		Date todate = objmapper.convertValue(inputMap.get("todate"), Date.class);
-				
+
 		List<Sample> lstsample = samplerepository.findBySamplecategoryAndNsitecodeAndCreateddateBetweenOrderBySamplecodeDesc(
 				objsamplecat,objsamplecat.getNsitecode(),fromdate,todate);
 		
@@ -348,6 +348,7 @@ public ResponseEntity<Object> getSampleonCategory(@RequestBody Map<String, Objec
 		objSample.setUsageoption(sample.getUsageoption());
 		objSample.setNtransactionstatus(sample.getNtransactionstatus());
 		objSample.setUnit(sample.getUnit());
+		objSample.setDateofcollection(sample.getDateofcollection());
 		if(sample.getSamplestoragemapping()!=null)
 		{
 			objSample.setSamplestoragemapping(sample.getSamplestoragemapping());

@@ -1160,7 +1160,8 @@ ALTER TABLE IF Exists sample ADD COLUMN IF NOT EXISTS expirydate timestamp witho
 ALTER TABLE IF Exists sample ADD COLUMN IF NOT EXISTS storagecondition character varying(255);
 ALTER TABLE IF Exists sample ADD COLUMN IF NOT EXISTS expirydate timestamp without time zone;
 ALTER TABLE IF Exists sample ADD COLUMN IF NOT EXISTS quantity Integer;
-    
+ALTER TABLE IF Exists sample ADD COLUMN IF NOT EXISTS dateofcollection timestamp without time zone;
+
 ALTER TABLE IF EXISTS elnmaterialinventory ADD COLUMN IF NOT EXISTS reusablecount Integer;
 
 ALTER TABLE IF EXISTS sample ADD COLUMN IF NOT EXISTS ntransactionstatus Integer;
@@ -1317,3 +1318,29 @@ ALTER TABLE samplecategory DROP  IF EXISTS sDate;
 ALTER TABLE IF Exists elnresultusedsample ADD Column IF NOT EXISTS samlename character varying(255);
 
 ALTER TABLE IF Exists elnresultusedsample ADD Column IF NOT EXISTS samlesequenceid character varying(255);
+
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1
+    FROM information_schema.columns
+    WHERE table_name = 'sample' AND column_name = 'quantity' AND data_type != 'integer'
+  ) THEN
+    EXECUTE 'ALTER TABLE sample ALTER COLUMN quantity TYPE integer USING quantity::integer';
+  END IF;
+END $$;
+
+
+ALTER TABLE IF Exists materialgrade ADD COLUMN IF NOT EXISTS modifieddate timestamp without time zone;
+
+ALTER TABLE IF Exists materialgrade ADD COLUMN IF NOT EXISTS modifiedby character varying(255);
+
+ALTER TABLE IF Exists supplier ADD COLUMN IF NOT EXISTS modifieddate timestamp without time zone;
+
+ALTER TABLE IF Exists supplier ADD COLUMN IF NOT EXISTS modifiedby character varying(255);
+
+ALTER TABLE IF Exists manufacturer ADD COLUMN IF NOT EXISTS modifieddate timestamp without time zone;
+
+ALTER TABLE IF Exists manufacturer ADD COLUMN IF NOT EXISTS modifiedby character varying(255);
+
+ALTER TABLE IF EXISTS elnresultusedmaterial ADD COLUMN IF NOT EXISTS showfullcomment Integer;

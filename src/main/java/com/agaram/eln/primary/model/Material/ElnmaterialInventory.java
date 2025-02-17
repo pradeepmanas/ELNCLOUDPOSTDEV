@@ -376,4 +376,9 @@ public class ElnmaterialInventory {
 	public void setInventoryname(String inventoryname) {
 		this.inventoryname = inventoryname;
 	}
+	
+	 public interface InventoryInterface {
+		  Integer getNmaterialinventorycode();
+		  String getSavailablequantity();
+	 }
 }

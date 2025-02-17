@@ -59,7 +59,7 @@ public class MaterialGradeService {
 		}
 	}
 
-	public ResponseEntity<Object> updateGrade(MaterialGrade objGrade) {
+	public ResponseEntity<Object> updateGrade(MaterialGrade objGrade) throws ParseException {
 		final MaterialGrade grade = getActiveGradeById(objGrade.getNmaterialgradecode());
 		objGrade.setResponse(new Response());
 		if (grade == null) {
@@ -73,6 +73,7 @@ public class MaterialGradeService {
 			if (grade1 == null || (grade1.getNmaterialgradecode().equals(objGrade.getNmaterialgradecode()))) {
 
 				grade.setObjsilentaudit(objGrade.getObjsilentaudit());
+				objGrade.setModifieddate(commonfunction.getCurrentUtcTime());
 				materialGradeRepository.save(objGrade);
 				objGrade.getResponse().setStatus(true);
 				objGrade.getResponse().setInformation("IDS_SUCCESS");

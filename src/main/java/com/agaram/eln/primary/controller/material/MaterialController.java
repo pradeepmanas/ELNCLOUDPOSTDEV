@@ -2,6 +2,7 @@ package com.agaram.eln.primary.controller.material;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -280,4 +281,6 @@ public class MaterialController {
 	public ResponseEntity<Object> geSampleList(@RequestBody ElnresultUsedSample inputMap) throws Exception {
 		return objMaterialService.getSampleList(inputMap);
 	}
+	
+	
 }

@@ -9,6 +9,7 @@ import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 
 public interface MaterialProjectHistoryRepository  extends JpaRepository<MaterialProjectHistory,Integer>{
 
-	List<MaterialProjectHistory> findByLsprojectIn(LSprojectmaster project);
+	List<MaterialProjectHistory> findByLsproject(LSprojectmaster project);
+
 
 }

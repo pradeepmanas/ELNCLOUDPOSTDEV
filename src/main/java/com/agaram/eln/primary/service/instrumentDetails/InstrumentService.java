@@ -11485,58 +11485,57 @@ public class InstrumentService {
 	}
 
 	public LSlogilablimsorderdetail acceptapprovel(LSlogilablimsorderdetail objdir) throws ParseException {
-		List<LSlogilablimsorderdetail> logiobj = new ArrayList<LSlogilablimsorderdetail>();
-		logiobj = lslogilablimsorderdetailRepository.findByBatchcodeAndBatchid(objdir.getBatchcode(),
-				objdir.getBatchid());
+		LSlogilablimsorderdetail logiobj = new LSlogilablimsorderdetail();
+		logiobj = lslogilablimsorderdetailRepository.findByBatchcodeOrderByBatchcodeDesc(objdir.getBatchcode());
 		String screen = "Sheet Order";
 
 		if (objdir.getApprovelaccept().equals("3")) {
-			logiobj.get(0).setApprovelaccept(objdir.getApprovelaccept());
-			logiobj.get(0).setApprovelstatus(objdir.getApprovelstatus());
-			logiobj.get(0).setOrderflag("R");
-			logiobj.get(0).setDirectorycode(null);
-			logiobj.get(0).setCompletedtimestamp(commonfunction.getCurrentUtcTime());
+			logiobj.setApprovelaccept(objdir.getApprovelaccept());
+			logiobj.setApprovelstatus(objdir.getApprovelstatus());
+			logiobj.setOrderflag("R");
+			logiobj.setDirectorycode(null);
+			logiobj.setCompletedtimestamp(commonfunction.getCurrentUtcTime());
 
 			String Notification = "REJECTALERT";
 
 			// LSuserMaster notifyfrom = logiobj.get(0).getLsuserMaster();
 			// LSuserMaster notifyto = logiobj.get(0).getAssignedto();
 
-			LSuserMaster notifyfrom = logiobj.get(0).getAssignedto();
-			LSuserMaster notifyto = logiobj.get(0).getLsuserMaster();
+			LSuserMaster notifyfrom = logiobj.getAssignedto();
+			LSuserMaster notifyto = logiobj.getLsuserMaster();
 
-			sendnotification(logiobj.get(0), Notification, screen, notifyto, notifyfrom);
+			sendnotification(logiobj, Notification, screen, notifyto, notifyfrom);
 
 		} else if (objdir.getApprovelaccept().equals("2")) {
-			logiobj.get(0).setApprovelaccept(objdir.getApprovelaccept());
+			logiobj.setApprovelaccept(objdir.getApprovelaccept());
 			// logiobj.get(0).setCanuserprocess(true);
-			logiobj.get(0).setSentforapprovel(objdir.getSentforapprovel());
+			logiobj.setSentforapprovel(objdir.getSentforapprovel());
 
 			String Notification = "RETURNALERT";
 
 //			LSuserMaster notifyfrom = logiobj.get(0).getLsuserMaster();
 //			LSuserMaster notifyto = logiobj.get(0).getAssignedto();
 
-			LSuserMaster notifyfrom = logiobj.get(0).getAssignedto();
-			LSuserMaster notifyto = logiobj.get(0).getLsuserMaster();
+			LSuserMaster notifyfrom = logiobj.getAssignedto();
+			LSuserMaster notifyto = logiobj.getLsuserMaster();
 
-			sendnotification(logiobj.get(0), Notification, screen, notifyto, notifyfrom);
+			sendnotification(logiobj, Notification, screen, notifyto, notifyfrom);
 			// logiobj.get(0).setSentforapprovel(objdir.getSentforapprovel());
 		} else {
 
-			logiobj.get(0).setApprovelaccept(objdir.getApprovelaccept());
+			logiobj.setApprovelaccept(objdir.getApprovelaccept());
 
 			String Notification = "APPROVEALERT";
 //			LSuserMaster notifyfrom = logiobj.get(0).getLsuserMaster();
 //			LSuserMaster notifyto = logiobj.get(0).getAssignedto();
-			LSuserMaster notifyfrom = logiobj.get(0).getAssignedto();
-			LSuserMaster notifyto = logiobj.get(0).getLsuserMaster();
-			sendnotification(logiobj.get(0), Notification, screen, notifyto, notifyfrom);
+			LSuserMaster notifyfrom = logiobj.getAssignedto();
+			LSuserMaster notifyto = logiobj.getLsuserMaster();
+			sendnotification(logiobj, Notification, screen, notifyto, notifyfrom);
 
 		}
 		lslogilablimsorderdetailRepository.save(logiobj);
 
-		return logiobj.get(0);
+		return logiobj;
 	}
 
 	public void sendnotification(LSlogilablimsorderdetail objdir, String Notification, String screen,

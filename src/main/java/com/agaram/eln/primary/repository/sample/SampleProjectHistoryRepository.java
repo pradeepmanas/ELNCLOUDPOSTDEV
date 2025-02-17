@@ -10,7 +10,7 @@ import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 
 public interface SampleProjectHistoryRepository extends JpaRepository<SampleProjectHistory,Integer>{
 
-	List<SampleProjectHistory> findByLsprojectIn(List<LSprojectmaster> project);
+	List<SampleProjectHistory> findByLsproject(LSprojectmaster project);
 
 }
 

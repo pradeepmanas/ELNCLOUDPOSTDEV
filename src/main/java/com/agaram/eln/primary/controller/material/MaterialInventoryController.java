@@ -1,25 +1,13 @@
 package com.agaram.eln.primary.controller.material;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.InputStreamResource;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,14 +17,11 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.agaram.eln.primary.global.FileDTO;
-import com.agaram.eln.primary.model.fileManipulation.Fileimages;
-import com.agaram.eln.primary.model.instrumentDetails.LsOrderLinks;
-import com.agaram.eln.primary.model.material.Elnmaterial;
-import com.agaram.eln.primary.model.material.ElnmaterialChemDiagRef;
 import com.agaram.eln.primary.model.material.ElnmaterialInventory;
+import com.agaram.eln.primary.model.material.ElnmaterialInventory.InventoryInterface;
 import com.agaram.eln.primary.model.material.ElnresultUsedMaterial;
-import com.agaram.eln.primary.model.material.MaterialInventory;
 import com.agaram.eln.primary.model.material.MaterilaInventoryLinks;
+import com.agaram.eln.primary.model.sample.ElnresultUsedSample;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 import com.agaram.eln.primary.service.material.MaterialInventoryService;
 import com.agaram.eln.primary.service.material.MaterialService;
@@ -300,6 +285,11 @@ public class MaterialInventoryController {
 		return materialInventoryService.getInventorytransactionhistory(resultusedmaterial);
 	}
 	
+	@RequestMapping(value = "/getInventorysampletransactionhistory", method = RequestMethod.POST)
+	public ResponseEntity<Object>getInventorysampletransactionhistory(@RequestBody ElnresultUsedSample resultusedsample) {
+		return materialInventoryService.getInventorysampletransactionhistory(resultusedsample);
+	}
+	
 	@PostMapping("/uploadinvimages")
 	public Map<String, Object> uploadInvimages(@RequestParam("file") MultipartFile file,
 			@RequestParam("originurl") String originurl, @RequestParam("username") String username,
@@ -400,5 +390,10 @@ public class MaterialInventoryController {
 		return materialInventoryService.getElnMaterialInventoryByMaterialforreducequantity(lstMaterial);
 	}
 	
+	@RequestMapping(value = "/getinventoryList", method = RequestMethod.POST)
+	public List<InventoryInterface> getinventoryList(@RequestBody List<Integer> inputMap) throws Exception {
+
+		return materialInventoryService.getinventoryList(inputMap);
+	}
 
 }

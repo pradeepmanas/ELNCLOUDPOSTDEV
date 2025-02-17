@@ -54,7 +54,7 @@ public class ManufacturerService {
 		}
 	}
 
-	public ResponseEntity<Object> updateManufacturer(Manufacturer objManufacturer) {
+	public ResponseEntity<Object> updateManufacturer(Manufacturer objManufacturer) throws ParseException {
 		final Manufacturer grade = getActiveManufacturerById(objManufacturer.getNmanufcode());
 		objManufacturer.setResponse(new Response());
 		if (grade == null) {
@@ -67,6 +67,7 @@ public class ManufacturerService {
 
 			if (grade1 == null || (grade1.getNmanufcode().equals(objManufacturer.getNmanufcode()))) {
 				grade.setObjsilentaudit(objManufacturer.getObjsilentaudit());
+				objManufacturer.setModifieddate(commonfunction.getCurrentUtcTime());
 				manufacturerRepository.save(objManufacturer);
 				objManufacturer.getResponse().setStatus(true);
 				objManufacturer.getResponse().setInformation("IDS_SUCCESS");

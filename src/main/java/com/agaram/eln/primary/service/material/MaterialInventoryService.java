@@ -51,6 +51,7 @@ import com.agaram.eln.primary.model.instrumentDetails.LsOrderattachments;
 import com.agaram.eln.primary.model.material.Elnmaterial;
 import com.agaram.eln.primary.model.material.ElnmaterialChemDiagRef;
 import com.agaram.eln.primary.model.material.ElnmaterialInventory;
+import com.agaram.eln.primary.model.material.ElnmaterialInventory.InventoryInterface;
 import com.agaram.eln.primary.model.material.ElnresultUsedMaterial;
 import com.agaram.eln.primary.model.material.Manufacturer;
 import com.agaram.eln.primary.model.material.MappedTemplateFieldPropsMaterial;
@@ -86,6 +87,7 @@ import com.agaram.eln.primary.repository.material.ElnmaterialChemDiagRefReposito
 import com.agaram.eln.primary.repository.material.ElnmaterialInventoryRepository;
 import com.agaram.eln.primary.repository.material.ElnmaterialRepository;
 import com.agaram.eln.primary.repository.material.ElnresultUsedMaterialRepository;
+import com.agaram.eln.primary.repository.sample.ElnresultUsedSampleRepository;
 import com.agaram.eln.primary.repository.material.ManufacturerRepository;
 import com.agaram.eln.primary.repository.material.MappedTemplateFieldPropsMaterialRepository;
 import com.agaram.eln.primary.repository.material.MaterialCategoryRepository;
@@ -103,6 +105,7 @@ import com.agaram.eln.primary.repository.material.SectionRepository;
 import com.agaram.eln.primary.repository.material.SupplierRepository;
 import com.agaram.eln.primary.repository.material.TransactionStatusRepository;
 import com.agaram.eln.primary.repository.material.UnitRepository;
+import com.agaram.eln.primary.repository.sample.ElnresultUsedSampleRepository;
 import com.agaram.eln.primary.repository.samplestoragelocation.SampleStorageLocationRepository;
 import com.agaram.eln.primary.repository.samplestoragelocation.SampleStorageVersionRepository;
 import com.agaram.eln.primary.repository.samplestoragelocation.SelectedInventoryMappedRepository;
@@ -175,6 +178,8 @@ public class MaterialInventoryService {
 	ElnmaterialInventoryRepository elnmaterialInventoryReppository;
 	@Autowired
 	ElnresultUsedMaterialRepository ElnresultUsedMaterialRepository;
+	@Autowired
+	ElnresultUsedSampleRepository ElnresultUsedSampleRepository;
 	@Autowired
 	MaterialChemicalDiagRepository MaterialChemicalDiagRepository;
 	@Autowired
@@ -3317,18 +3322,17 @@ public class MaterialInventoryService {
 		int page =(int) inputMap.get("page");
 		int size =(int) inputMap.get("size");
 		Pageable pageable =new PageRequest(page, size);
-		
-	//		MaterialCategory objmat = (MaterialCategory) inputMap.get("materialcategory");
-//		MaterialType objmattype = (MaterialType) inputMap.get("materialtype");
-		
-		
-//		Date fromDate = simpleDateFormat.parse((String) inputMap.get("fromdate"));
-//		Date toDate = simpleDateFormat.parse((String) inputMap.get("todate"));
+		ObjectMapper objmapper = new ObjectMapper();
 
-//		List<ElnmaterialInventory> lstElnInventories = elnmaterialInventoryReppository
-//				.findByNsitecodeAndCreateddateBetweenOrderByNmaterialinventorycodeDesc(nsiteInteger, fromDate, toDate);
+		MaterialCategory objCategory = objmapper.convertValue(inputMap.get("materialcategory"), MaterialCategory.class);
+		Date fromdate = objmapper.convertValue(inputMap.get("fromdate"), Date.class);
+		Date todate = objmapper.convertValue(inputMap.get("todate"), Date.class);
+	
+
+		List<ElnmaterialInventory> lstElnInventories = elnmaterialInventoryReppository
+			.findByMaterialcategoryAndNsitecodeAndCreateddateBetweenOrderByNmaterialinventorycodeDesc(objCategory,objCategory.getNsitecode(), fromdate, todate);
 		
-		List<ElnmaterialInventory> lstElnInventories = elnmaterialInventoryReppository.findByNsitecodeOrderByNmaterialinventorycodeDesc(nsiteInteger,pageable);
+	//	List<ElnmaterialInventory> lstElnInventories = elnmaterialInventoryReppository.findByNsitecodeOrderByNmaterialinventorycodeDesc(nsiteInteger,pageable);
 
 		objmap.put("lstMaterialInventory", lstElnInventories);
 
@@ -4091,5 +4095,33 @@ public class MaterialInventoryService {
 		objmap.put("lstELNInventory", inventoryItems);
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
 	}
+	
+	public List<InventoryInterface> getinventoryList(List<Integer> inputMap) {
+		List<InventoryInterface> ElnmaterialInventory = elnmaterialInventoryReppository
+				.findByNmaterialinventorycodeInOrderByNmaterialinventorycodeDesc(inputMap);
+		
+//		List<InventoryInterface> ElnmaterialInventory=null;
+		return ElnmaterialInventory;
 
+    }
+
+	public ResponseEntity<Object> getInventorysampletransactionhistory(ElnresultUsedSample resultusedsample) {
+		
+		Date fromdate = resultusedsample.getFromdate();
+		Date todate = resultusedsample.getTodate();
+		List<ElnresultUsedSample> Elnresult = new ArrayList<>();
+		if(resultusedsample.getSamplecode() !=null) {
+			
+			if(resultusedsample.getTransactionscreen() !=-1) {
+				Elnresult = ElnresultUsedSampleRepository.findBySamplecodeInAndCreateddateBetweenAndTransactionscreenOrderByNelnresultusedsamplecodeDesc(resultusedsample.getSamplecode(),fromdate,todate,resultusedsample.getTransactionscreen());
+			}
+			else {
+				Elnresult = ElnresultUsedSampleRepository.findBySamplecodeInAndCreateddateBetweenOrderByNelnresultusedsamplecodeDesc(resultusedsample.getSamplecode(),fromdate,todate);
+			}
+			
+		}
+		return new ResponseEntity<>(Elnresult, HttpStatus.OK);
+	}
+
+	
 }

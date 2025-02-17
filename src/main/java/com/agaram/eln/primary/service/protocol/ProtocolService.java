@@ -10275,9 +10275,12 @@ public class ProtocolService {
 
 	public LSlogilabprotocoldetail sendapprovel(LSlogilabprotocoldetail objdir) {
 		LSlogilabprotocoldetail logiobj = new LSlogilabprotocoldetail();
-		logiobj = LSlogilabprotocoldetailRepository.findByProtocolordercodeAndProtoclordername(
-				objdir.getProtocolordercode(), objdir.getProtoclordername());
+//		logiobj = LSlogilabprotocoldetailRepository.findByProtocolordercodeAndProtoclordername(
+//				objdir.getProtocolordercode(), objdir.getProtoclordername());
 
+		logiobj = LSlogilabprotocoldetailRepository.findByProtocolordercode(
+				objdir.getProtocolordercode());
+		
 		logiobj.setSentforapprovel(objdir.getSentforapprovel());
 		logiobj.setApprovelaccept(objdir.getApprovelaccept());
 		LSlogilabprotocoldetailRepository.save(logiobj);
@@ -10312,8 +10315,8 @@ public class ProtocolService {
 	@SuppressWarnings("unlikely-arg-type")
 	public LSlogilabprotocoldetail acceptapprovel(LSlogilabprotocoldetail objdir) throws ParseException {
 		LSlogilabprotocoldetail logiobj = new LSlogilabprotocoldetail();
-		logiobj = LSlogilabprotocoldetailRepository.findByProtocolordercodeAndProtoclordername(
-				objdir.getProtocolordercode(), objdir.getProtoclordername());
+		logiobj = LSlogilabprotocoldetailRepository.findByProtocolordercode(
+				objdir.getProtocolordercode());
 
 		String screen = "Protocol Order";
 		if (objdir.getApprovelaccept().equals("3")) {

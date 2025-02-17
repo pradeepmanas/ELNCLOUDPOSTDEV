@@ -114,6 +114,8 @@ public class Sample implements Serializable{
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date expirydate;
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date dateofcollection;
 	
 	@ColumnDefault("1")
 	@Column(name = "usageoption", nullable = false)
@@ -168,6 +170,15 @@ public class Sample implements Serializable{
 	public void setStoragecondition(String storagecondition) {
 		this.storagecondition = storagecondition;
 	}
+	
+	public Date getDateofcollection() {
+		return dateofcollection;
+	}
+
+	public void setDateofcollection(Date dateofcollection) {
+		this.dateofcollection = dateofcollection;
+	}
+
 	public Integer getTrackconsumption() {
 		return trackconsumption;
 	}

@@ -57,7 +57,7 @@ public class SupplierService {
 		}
 	}
 
-	public ResponseEntity<Object> updateSupplier(Supplier objSupplier) {
+	public ResponseEntity<Object> updateSupplier(Supplier objSupplier) throws ParseException {
 		final Supplier grade = getActiveSupplierById(objSupplier.getNsuppliercode());
 		objSupplier.setResponse(new Response());
 		if (grade == null) {
@@ -70,6 +70,7 @@ public class SupplierService {
 
 			if (grade1 == null || (grade1.getNsuppliercode().equals(objSupplier.getNsuppliercode()))) {
 				grade.setObjsilentaudit(objSupplier.getObjsilentaudit());
+				objSupplier.setModifieddate(commonfunction.getCurrentUtcTime());
 				supplierRepository.save(objSupplier);
 				objSupplier.getResponse().setStatus(true);
 				objSupplier.getResponse().setInformation("IDS_SUCCESS");

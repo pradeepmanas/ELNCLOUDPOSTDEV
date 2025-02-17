@@ -92,7 +92,17 @@ public class ElnresultUsedMaterial {
 	@Transient
 	private Map<String, Object> customobject;
 	
+	private Integer showfullcomment;
+	
 
+
+	public Integer getShowfullcomment() {
+		return showfullcomment;
+	}
+
+	public void setShowfullcomment(Integer showfullcomment) {
+		this.showfullcomment = showfullcomment;
+	}
 
 	public Map<String, Object> getCustomobject() {
 		return customobject;

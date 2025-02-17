@@ -605,12 +605,18 @@ public class TransactionService {
 //		Double getIssuedQty = Double.parseDouble(objResultMap.get("issuedQuantity").toString());
 		Double getIssuedQty = Double.parseDouble(objInventory.getSavailablequantity().toString());
 		Double getUsedQty = Double.parseDouble(objResultMap.get("usedQuantity").toString());
+		ElnresultUsedMaterial resultUsedMaterial = new ElnresultUsedMaterial();
+		if(getIssuedQty <= getUsedQty) {
+			resultUsedMaterial.setResponse(new Response());
+			resultUsedMaterial.getResponse().setStatus(false);
+			return new ResponseEntity<>(resultUsedMaterial, HttpStatus.OK);
+		}
 		Double getQtyLeft = getIssuedQty - Double.parseDouble(objResultMap.get("usedQuantity").toString());
 
 		LSuserMaster objUser = new LSuserMaster();
 		objUser.setUsercode(cft.getLsuserMaster());
 
-		ElnresultUsedMaterial resultUsedMaterial = new ElnresultUsedMaterial();
+	
 		if (objTest.getTestcode() != -1) {
 //			resultUsedMaterial.setTestcode(objTest);
 			LStestmasterlocal isPresent = lStestmasterlocalRepository.findBytestcode(objTest.getTestcode());
@@ -645,6 +651,10 @@ public class TransactionService {
 		}
 		
 		objInventory.setSavailablequantity(getQtyLeft.toString());
+		
+		if(getQtyLeft==0) {
+			objInventory.setNtransactionstatus(-1);
+		}
 		
 		resultUsedMaterial.setQtyleft(getQtyLeft.toString());
 		resultUsedMaterial.setIsreturn(0);
@@ -690,8 +700,15 @@ public class TransactionService {
 			objInventory.setSavailablequantity(getIssuedQty.toString());
 			
 		}else {
-			getIssuedQty = Double.parseDouble(objInventory.getSavailablequantity()) - getUsedQty;			
-			objInventory.setSavailablequantity(getIssuedQty.toString());
+			if(Double.parseDouble(objInventory.getSavailablequantity())>getUsedQty) {
+				getIssuedQty = Double.parseDouble(objInventory.getSavailablequantity()) - getUsedQty;			
+				objInventory.setSavailablequantity(getIssuedQty.toString());
+			}else {
+				resultUsedMaterial.setResponse(new Response());
+				resultUsedMaterial.getResponse().setStatus(false);
+				return new ResponseEntity<>(resultUsedMaterial, HttpStatus.OK);
+			}
+			
 		}
 		
 		
@@ -1965,6 +1982,9 @@ public class TransactionService {
 		ElnmaterialInventory obj=elnmaterialInventoryReppository.findByNmaterialinventorycode(ionvenobj.getNmaterialinventorycode());
 		if(ionvenobj.getReusablecount()!=null) {
 			obj.setReusablecount(ionvenobj.getReusablecount());
+			if(ionvenobj.getReusablecount()==0) {
+				obj.setNtransactionstatus(-1);
+			}
 			elnmaterialInventoryReppository.save(obj);
 		}
 		
@@ -1994,6 +2014,8 @@ public class TransactionService {
 		ElnresultUsedMaterial.setNstatus(1);
 		ElnresultUsedMaterial.setResponse(new Response());
 		ElnresultUsedMaterial.getResponse().setStatus(true);
+		ElnresultUsedMaterial.setShowfullcomment(1);
+		
 		try {
 			ElnresultUsedMaterial.setCreateddate(commonfunction.getCurrentUtcTime());
 		} catch (ParseException e) {

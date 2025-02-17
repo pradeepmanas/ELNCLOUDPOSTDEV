@@ -44,7 +44,7 @@ public class SampleCategoryService {
 	public ResponseEntity<Object> getSampleType(Integer nsitecode) {
 
 		List<SampleType> lstgetSampleType = sampleTypeRepository
-				.findByNsampletypecodeNotAndNstatusAndNsitecodeOrNsampletypecodeNotAndNstatusAndNdefaultstatus(-1,
+				.findByNsampletypecodeNotAndNstatusAndNsitecodeOrNsampletypecodeNotAndNstatusAndNdefaultstatusOrderByNsampletypecodeDesc(-1,
 						1, nsitecode, -1, 1, 4);
 		return new ResponseEntity<>(lstgetSampleType, HttpStatus.OK);
 	}

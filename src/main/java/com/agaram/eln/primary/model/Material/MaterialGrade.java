@@ -46,9 +46,30 @@ public class MaterialGrade {
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdate;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date modifieddate;
+	
+	@Column(name = "modifiedby")
+	private String modifiedby;
 
 	private transient String sDate;
 	
+	public Date getModifieddate() {
+		return modifieddate;
+	}
+
+	public void setModifieddate(Date modifieddate) {
+		this.modifieddate = modifieddate;
+	}
+
+	public String getModifiedby() {
+		return modifiedby;
+	}
+
+	public void setModifiedby(String modifiedby) {
+		this.modifiedby = modifiedby;
+	}
 	public String getsDate() {
 		return sDate;
 	}

@@ -42,7 +42,13 @@ public class Manufacturer {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdate;
 	
-private transient String sDate;
+	private transient String sDate;
+
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date modifieddate;
+
+	@Column(name = "modifiedby")
+	private String modifiedby;
 	
 	public String getsDate() {
 		return sDate;
@@ -96,6 +102,21 @@ private transient String sDate;
 	@Transient
 	private LScfttransaction objmanualaudit;
 	
+	public Date getModifieddate() {
+		return modifieddate;
+	}
+
+	public void setModifieddate(Date modifieddate) {
+		this.modifieddate = modifieddate;
+	}
+
+	public String getModifiedby() {
+		return modifiedby;
+	}
+
+	public void setModifiedby(String modifiedby) {
+		this.modifiedby = modifiedby;
+	}
 	public LScfttransaction getObjmanualaudit() {
 		return objmanualaudit;
 	}

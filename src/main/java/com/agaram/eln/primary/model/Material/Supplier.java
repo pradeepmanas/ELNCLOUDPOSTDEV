@@ -72,8 +72,14 @@ public class Supplier {
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdate;
+
+	private transient String sDate;
 	
-private transient String sDate;
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date modifieddate;
+
+	@Column(name = "modifiedby")
+	private String modifiedby;
 	
 	public String getsDate() {
 		return sDate;
@@ -93,6 +99,21 @@ private transient String sDate;
 	}
 	public void setCreatedate(Date createdate) {
 		this.createdate = createdate;
+	}
+	public Date getModifieddate() {
+		return modifieddate;
+	}
+
+	public void setModifieddate(Date modifieddate) {
+		this.modifieddate = modifieddate;
+	}
+
+	public String getModifiedby() {
+		return modifiedby;
+	}
+
+	public void setModifiedby(String modifiedby) {
+		this.modifiedby = modifiedby;
 	}
 	
 	@Transient

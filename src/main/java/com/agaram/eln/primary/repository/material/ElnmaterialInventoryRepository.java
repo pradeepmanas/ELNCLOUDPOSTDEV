@@ -11,9 +11,9 @@ import org.springframework.data.jpa.repository.Query;
 
 import com.agaram.eln.primary.model.material.Elnmaterial;
 import com.agaram.eln.primary.model.material.ElnmaterialInventory;
+import com.agaram.eln.primary.model.material.ElnmaterialInventory.InventoryInterface;
 import com.agaram.eln.primary.model.material.MaterialCategory;
 import com.agaram.eln.primary.model.material.MaterialType;
-import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
 
 public interface ElnmaterialInventoryRepository extends JpaRepository<ElnmaterialInventory, Integer>{
 
@@ -144,5 +144,8 @@ public interface ElnmaterialInventoryRepository extends JpaRepository<Elnmateria
 
 	List<ElnmaterialInventory> findByMaterialInAndReusablecountIsNullOrMaterialInAndReusablecountNotOrderByNmaterialinventorycodeDesc(
 			List<Elnmaterial> material,List<Elnmaterial> material1, int i);
+	
+	
+	   List<InventoryInterface> findByNmaterialinventorycodeInOrderByNmaterialinventorycodeDesc(List<Integer> nmaterialinventorycode);
 
 }
