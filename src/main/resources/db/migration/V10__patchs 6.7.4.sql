@@ -1344,3 +1344,4 @@ ALTER TABLE IF Exists manufacturer ADD COLUMN IF NOT EXISTS modifieddate timesta
 ALTER TABLE IF Exists manufacturer ADD COLUMN IF NOT EXISTS modifiedby character varying(255);
 
 ALTER TABLE IF EXISTS elnresultusedmaterial ADD COLUMN IF NOT EXISTS showfullcomment Integer;
+
