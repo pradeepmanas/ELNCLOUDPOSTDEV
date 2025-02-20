@@ -1808,7 +1808,8 @@ public class UserService {
 //			Long userCount = lsuserMasterRepository.countByusercodeNotAndUserretirestatusNotAndLssitemaster(1, 1,
 //					objsite);
 			Long userCount = lsuserMasterRepository.countByUserretirestatusNot(1);
-
+			Long userDeActiveCount = lsuserMasterRepository.countByUserstatus("D");
+			userCount =userCount - userDeActiveCount;
 			if (userCount < nConcurrentUsers) {
 
 				bool = true;
@@ -2086,8 +2087,8 @@ public class UserService {
 
 				List<LSuserMaster> existingUsers;
 				if (isnewuser) {
-					existingUsers = lsuserMasterRepository.findByUsernameIgnoreCaseAndUsercodeIn(objclass.getUsername(),
-							usercode);
+					existingUsers = lsuserMasterRepository.findByUsernameIgnoreCaseAndUsercodeInAndUserretirestatusNot(objclass.getUsername(),
+							usercode,1);
 				} else {
 					existingUsers = lsuserMasterRepository.findByUsernameIgnoreCaseAndUsercodeInAndUsercodeNot(
 							objclass.getUsername(), usercode, objclass.getUsercode());
@@ -2100,6 +2101,23 @@ public class UserService {
 					usernameExists = true;
 					break;
 				}
+				
+				if (existingUsers.isEmpty()) {
+					if(isnewuser) {
+						existingUsers = lsuserMasterRepository.findByUsernameIgnoreCase(objclass.getUsername());	
+					}					
+					if(!existingUsers.isEmpty()) {
+						retobj.put("presitemaster", LSSiteMasterRepository.findBysitecode(tempobj.getSitecode()));
+						retobj.put("username", objclass.getUsername());
+						
+			            retobj.put("message", "username already exists");
+			            retobj.put("listofusergroup", lSusergroupRepository
+								.findBylssitemasterInAndUsergroupnameNotOrderByUsergroupcodeDesc(sitecode, ""));
+						usernameExists = true;
+//						break;
+					}					
+				}
+				
 			}
 
 			retobj.put("usernameExists", usernameExists);

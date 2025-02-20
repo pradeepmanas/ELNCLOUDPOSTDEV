@@ -620,7 +620,7 @@ public class commonfunction {
 		
 		if(originalstring.contains("{m&") && originalstring.contains("$m}"))
 		{
-			SimpleDateFormat month = new SimpleDateFormat("mm");
+			SimpleDateFormat month = new SimpleDateFormat("MM");
 	        String currentMonth = month.format(currentdate);
 	        String namedmonth = modifiedstring.substring(modifiedstring.indexOf("{m&")+3, modifiedstring.indexOf("$m}"));
 	        

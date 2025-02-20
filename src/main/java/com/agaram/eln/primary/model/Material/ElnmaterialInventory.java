@@ -78,7 +78,29 @@ public class ElnmaterialInventory {
 	private Date receiveddate;
 	
 	private Double nqtynotification;
+	
+	@Column(name = "sequenceid")
+	private String sequenceid;
+	
+	@Transient
+	private Long previousstatus;
 
+	public Long getPreviousstatus() {
+		return previousstatus;
+	}
+
+	public void setPreviousstatus(Long previousstatus) {
+		this.previousstatus = previousstatus;
+	}
+
+	public String getSequenceid() {
+		return sequenceid;
+	}
+
+	public void setSequenceid(String sequenceid) {
+		this.sequenceid = sequenceid;
+	}
+	
 	public String getSbatchno() {
 		return sbatchno;
 	}

@@ -9,6 +9,7 @@ import javax.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import com.agaram.eln.primary.fetchmodel.inventory.Materialget;
 import com.agaram.eln.primary.model.material.Elnmaterial;
 import com.agaram.eln.primary.model.material.MaterialCategory;
 import com.agaram.eln.primary.model.material.MaterialType;
@@ -45,7 +46,7 @@ public interface ElnmaterialRepository extends JpaRepository<Elnmaterial, Intege
 
 	List<Elnmaterial> findBySmaterialnameStartingWithIgnoreCaseAndNsitecode(String searchString, Integer nsiteInteger);
 
-	List<Elnmaterial> findByNstatusAndNsitecodeOrderByNmaterialcodeDesc(int i, Integer integer);
+	List<Materialget> findByNstatusAndNsitecodeOrderByNmaterialcodeDesc(int i, Integer integer);
 
 	List<Elnmaterial> findByNsitecodeAndNstatusOrderByNmaterialcodeDesc(Integer nsiteInteger, int i);
 

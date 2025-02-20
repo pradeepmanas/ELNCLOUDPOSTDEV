@@ -144,4 +144,11 @@ public class EquipmentController {
 			throws Exception {
 		return equipmentService.onCheckItsUsed(obj);
 	}
+	
+	@RequestMapping(value = "/updatesequenceondefault", method = RequestMethod.POST)
+	public Boolean updatesequenceondefault(@RequestBody Equipment obj)
+			throws Exception {
+		return equipmentService.updatesequenceondefault(obj);
+	}
+	
 }

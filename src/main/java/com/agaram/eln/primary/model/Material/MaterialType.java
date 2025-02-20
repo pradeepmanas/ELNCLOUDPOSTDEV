@@ -2,13 +2,16 @@ package com.agaram.eln.primary.model.material;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -80,8 +83,13 @@ public class MaterialType implements Serializable {
 	public void setSmaterialcatname(String smaterialcatname) {
 		this.smaterialcatname = smaterialcatname;
 	}
+	
 	@ManyToOne
 	private BarcodeMaster barcode;
+	
+	@OneToMany
+	@JoinColumn(name="nmaterialtypecode")
+	private List<InventoryBarcodeMap> lstbarcodes;
 	
 	private transient String mDate;
 	
@@ -226,5 +234,12 @@ public class MaterialType implements Serializable {
 	public void setBarcode(BarcodeMaster barcode) {
 		this.barcode = barcode;
 	}
+	public List<InventoryBarcodeMap> getLstbarcodes() {
+		return lstbarcodes;
+	}
+	public void setLstbarcodes(List<InventoryBarcodeMap> lstbarcodes) {
+		this.lstbarcodes = lstbarcodes;
+	}
+	
 }
 

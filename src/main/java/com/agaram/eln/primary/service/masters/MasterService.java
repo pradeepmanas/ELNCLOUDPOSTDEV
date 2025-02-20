@@ -598,6 +598,13 @@ public class MasterService {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}	
+		}else if(lslogbooksdata.getLogbookdatacode() != null){
+			try {
+				lslogbooksdata.setModifieddate(commonfunction.getCurrentUtcTime());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		lslogbooksdataRepository.save(lslogbooksdata);
 

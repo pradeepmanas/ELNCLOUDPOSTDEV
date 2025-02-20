@@ -131,6 +131,8 @@ public interface EquipmentRepository extends JpaRepository<Equipment, Integer>{
 	List<Equipment> findByEquipmentcategoryAndNstatusAndCommunicationsettingNotIn(EquipmentCategory equicat, int i,
 			List<CommunicationSetting> lstcommtype);
 
+	List<Equipment> findByNequipmentcode(Integer nequipmentcode);
+
 	
 
 

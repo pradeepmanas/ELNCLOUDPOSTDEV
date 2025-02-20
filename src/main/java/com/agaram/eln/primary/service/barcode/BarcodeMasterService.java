@@ -288,7 +288,8 @@ public class BarcodeMasterService {
 			DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd ");
 			data = data.replace("$materialid$", inventory.getSinventoryid())
 					.replace("$materialname$", inventory.getMaterial().getSmaterialname())
-					.replace("$storagepath$", path).replace("$batchno$", inventory.getSbatchno())
+					.replace("$storagepath$", path)
+//					.replace("$batchno$", inventory.getSbatchno())
 					.replace("$generatedby$", username).replace("$generateddate$", dateFormat.format(currentdata));
 			MaterialCategory materialCategory = inventory.getMaterialcategory();
 			if (materialCategory != null && "Cell Bank".equals(materialCategory.getSmaterialtypename())) {

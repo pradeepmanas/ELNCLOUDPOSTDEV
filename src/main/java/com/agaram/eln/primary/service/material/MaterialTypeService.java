@@ -24,6 +24,7 @@ import com.agaram.eln.primary.model.sheetManipulation.LSsamplemaster;
 import com.agaram.eln.primary.repository.cfr.LSpreferencesRepository;
 import com.agaram.eln.primary.repository.instrumentDetails.LSlogilablimsorderdetailRepository;
 import com.agaram.eln.primary.repository.material.ElnmaterialRepository;
+import com.agaram.eln.primary.repository.material.InventoryBarcodeMapRepository;
 import com.agaram.eln.primary.repository.material.MaterialCategoryRepository;
 import com.agaram.eln.primary.repository.material.MaterialConfigRepository;
 import com.agaram.eln.primary.repository.material.MaterialTypeRepository;
@@ -53,6 +54,8 @@ public class MaterialTypeService {
 	LSlogilabprotocoldetailRepository lSlogilabprotocoldetailRepository;
 	@Autowired
 	LSpreferencesRepository lspreferencesRepository;
+	@Autowired
+	InventoryBarcodeMapRepository inventorybarcodemapRepository;
 
 	public ResponseEntity<Object> getMaterialType(MaterialType objMaterialType) {
 		List<MaterialType> lstmaterialtype = materialTypeRepository.
@@ -89,6 +92,7 @@ public class MaterialTypeService {
 			}
 			objMaterialType.setNformcode(40);
 			objMaterialType.setNstatus(1);
+			
 			materialConfigRepository.save(objMaterialType);
 		}
 		return new ResponseEntity<>(HttpStatus.OK);
@@ -111,6 +115,7 @@ public class MaterialTypeService {
 				objMaterialType.setCreatedate(commonfunction.getCurrentUtcTime());
 				objMaterialType.setCreateby(objMaterialType.getCreateby());
 				objMaterialType.setInfo("IDS_SUCCESS");
+				inventorybarcodemapRepository.save(objMaterialType.getLstbarcodes());
 				materialTypeRepository.save(objMaterialType);
 				return new ResponseEntity<>(objMaterialType, HttpStatus.OK);
 				
@@ -133,7 +138,7 @@ public class MaterialTypeService {
 				objMaterialType.setCreatedate(objMType.getCreatedate());
 				objMaterialType.setCreateby(objMType.getCreateby());
 				objMaterialType.setModifieddate(commonfunction.getCurrentUtcTime());
-				
+				inventorybarcodemapRepository.save(objMaterialType.getLstbarcodes());
 				materialTypeRepository.save(objMaterialType);
 				
 				objMaterialType.setInfo("IDS_SUCCESS");

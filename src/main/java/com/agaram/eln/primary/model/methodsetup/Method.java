@@ -44,7 +44,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
  */
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
 @XmlRootElement  (name = "method")
-@XmlType(propOrder = { "methodkey", "methodname", "instmaster","equipment", "instrawdataurl",
+@XmlType(propOrder = { "methodkey", "methodname", "instmaster","equipment", "instrawdataurl","modifiedby","modifieddate",
 		"samplesplit", "parser", "site", "status", "createdby", "createddate","username","transactiondate","filename","displayvalue",
 		"screenname","objsilentaudit","objmanualaudit","info","converterstatus"})
 @Entity
@@ -112,6 +112,11 @@ public class Method implements Serializable, Diffable<Method>{
 	@Column(columnDefinition = "varchar(255)")
 	private String filename;	
 	
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date modifieddate;
+	
+	@Column(name = "modifiedby")
+	private String modifiedby;
 	
 	@Column(name = "samplesplit")
 	private Integer samplesplit;
@@ -134,6 +139,22 @@ public class Method implements Serializable, Diffable<Method>{
 	@Column(name = "createddate")
 	private Date createddate;	
 			
+	public Date getModifieddate() {
+		return modifieddate;
+	}
+
+	public void setModifieddate(Date modifieddate) {
+		this.modifieddate = modifieddate;
+	}
+
+	public String getModifiedby() {
+		return modifiedby;
+	}
+
+	public void setModifiedby(String modifiedby) {
+		this.modifiedby = modifiedby;
+	}
+
 	@XmlAttribute	
 	public Integer getMethodkey() {
 		return methodkey;
@@ -402,6 +423,8 @@ public class Method implements Serializable, Diffable<Method>{
            .append("methodversion", this.getMethodversion(), obj.getMethodversion())
            .append("info", this.getInfo(), obj.getInfo())
            .append("converterstatus", this.getConverterstatus(), obj.getConverterstatus())
+           .append("modifieddate", this.modifieddate, obj.modifieddate) 
+           .append("modifiedby", this.modifiedby, obj.modifiedby) 
 	       .build();
 	}
 
@@ -449,6 +472,9 @@ public class Method implements Serializable, Diffable<Method>{
 		this.info=method.info;
 		this.converterstatus=method.converterstatus;
 		this.equipment = method.equipment;
+		this.modifieddate = method.modifieddate;
+        this.modifiedby = method.modifiedby;
+		
 
 	}
 	

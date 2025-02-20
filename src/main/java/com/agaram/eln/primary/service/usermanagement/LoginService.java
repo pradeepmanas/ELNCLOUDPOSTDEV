@@ -3129,6 +3129,9 @@ public class LoginService {
 
 		} else if (obj.get("licencetype") != null && obj.get("licencetype").equals("1")) {
 			Long usercount = lsuserMasterRepository.countByUserretirestatusNot(1);
+			Long userDeActiveCount = lsuserMasterRepository.countByUserstatus("D");
+			usercount =usercount - userDeActiveCount;
+			
 			rtnobj.put("activeuser", usercount);
 
 		} else if ((Integer) obj.get("isMultitenant") == 1) {

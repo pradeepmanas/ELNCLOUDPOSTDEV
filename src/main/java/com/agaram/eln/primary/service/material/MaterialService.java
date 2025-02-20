@@ -55,7 +55,9 @@ import com.agaram.eln.primary.model.material.Unit;
 import com.agaram.eln.primary.model.sample.ElnresultUsedSample;
 import com.agaram.eln.primary.model.sample.Sample;
 import com.agaram.eln.primary.model.sample.SampleAttachments;
+import com.agaram.eln.primary.model.sample.SampleCategory;
 import com.agaram.eln.primary.model.sample.SampleProjectHistory;
+import com.agaram.eln.primary.model.sample.SampleType;
 import com.agaram.eln.primary.model.sequence.SequenceTable;
 import com.agaram.eln.primary.model.sequence.SequenceTableProjectLevel;
 import com.agaram.eln.primary.model.sequence.SequenceTableSite;
@@ -2223,47 +2225,174 @@ public class MaterialService {
 	public ResponseEntity<Object> getSampleList(ElnresultUsedSample inputMap) throws ParseException {
 		Integer screenType = Integer.parseInt(inputMap.getCustomobject().get("ScreenType").toString());
 		Map<String, Object> objMap = new LinkedHashMap<>();
-		List<Sample> lstSample;
+		List<Sample> lstSample=new ArrayList<>();
 		Integer siteCode = inputMap.getSitemaster().getSitecode();
 		Date fromDate = inputMap.getFromdate();
 		Date toDate = inputMap.getTodate();
 		Integer transactionStatus = 28;
-		String commonQueryPart = " ORDER BY Samplecode DESC";
-		if (screenType == 1) {
-			lstSample = SampleRepository
-					.findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndAssignedprojectAndTrackconsumptionNotAndQuantityGreaterThanOrNsitecodeAndCreateddateBetweenAndNtransactionstatusAndAssignedprojectIsNullAndTrackconsumptionNotAndQuantityGreaterThanOrNsitecodeAndCreateddateBetweenAndNtransactionstatusAndAssignedprojectAndTrackconsumptionAndQuantityGreaterThanOrNsitecodeAndCreateddateBetweenAndNtransactionstatusAndAssignedprojectIsNullAndTrackconsumptionAndQuantityGreaterThanOrderBySamplecodeDesc(
-							siteCode, fromDate, toDate, transactionStatus, "-1", 0, 0, siteCode, fromDate, toDate,
-							transactionStatus, 0, 0, siteCode, fromDate, toDate, transactionStatus, "-1", 0, 0,
-							siteCode, fromDate, toDate, transactionStatus, 0, 0);
-
-		} else {
-			List<Integer> sampleCodes = new ArrayList<>();
-			if (inputMap.getCustomobject().get("project") != null) {
-				ObjectMapper obj = new ObjectMapper();
-				Object projectData = inputMap.getCustomobject().get("project");
-				LSprojectmaster project = obj.convertValue(projectData, LSprojectmaster.class);
-				List<SampleProjectHistory> sampleProjectHistoryList = SampleProjectHistoryRepository
-						.findByLsproject(project);
-				sampleCodes = sampleProjectHistoryList.stream().map(SampleProjectHistory::getsamplecode)
-						.collect(Collectors.toList());
-			}
-
-			if (screenType == 2) {
-				lstSample = SampleRepository
-						.findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndSamplecodeInOrderBySamplecodeDesc(
-								siteCode, fromDate, toDate, transactionStatus, sampleCodes);
-			} else {
+//		String commonQueryPart = " ORDER BY Samplecode DESC";
+		Boolean isFilter=(Boolean) inputMap.getCustomobject().get("isFilter");
+		if(!isFilter) {
+			if (screenType == 1) {
 				lstSample = SampleRepository
 						.findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndAssignedprojectAndTrackconsumptionNotAndQuantityGreaterThanOrNsitecodeAndCreateddateBetweenAndNtransactionstatusAndAssignedprojectIsNullAndTrackconsumptionNotAndQuantityGreaterThanOrNsitecodeAndCreateddateBetweenAndNtransactionstatusAndAssignedprojectAndTrackconsumptionAndQuantityGreaterThanOrNsitecodeAndCreateddateBetweenAndNtransactionstatusAndAssignedprojectIsNullAndTrackconsumptionAndQuantityGreaterThanOrderBySamplecodeDesc(
 								siteCode, fromDate, toDate, transactionStatus, "-1", 0, 0, siteCode, fromDate, toDate,
 								transactionStatus, 0, 0, siteCode, fromDate, toDate, transactionStatus, "-1", 0, 0,
 								siteCode, fromDate, toDate, transactionStatus, 0, 0);
 
-				lstSample.addAll(SampleRepository
-						.findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndSamplecodeInOrderBySamplecodeDesc(
-								siteCode, fromDate, toDate, transactionStatus, sampleCodes));
+			} else {
+				List<Integer> sampleCodes = new ArrayList<>();
+				if (inputMap.getCustomobject().get("project") != null) {
+					ObjectMapper obj = new ObjectMapper();
+					Object projectData = inputMap.getCustomobject().get("project");
+					LSprojectmaster project = obj.convertValue(projectData, LSprojectmaster.class);
+					List<SampleProjectHistory> sampleProjectHistoryList = SampleProjectHistoryRepository
+							.findByLsproject(project);
+					sampleCodes = sampleProjectHistoryList.stream().map(SampleProjectHistory::getsamplecode)
+							.collect(Collectors.toList());
+				}
+
+				if (screenType == 2) {
+					lstSample = SampleRepository
+							.findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndSamplecodeInOrderBySamplecodeDesc(
+									siteCode, fromDate, toDate, transactionStatus, sampleCodes);
+				} else {
+					lstSample = SampleRepository
+							.findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndAssignedprojectAndTrackconsumptionNotAndQuantityGreaterThanOrNsitecodeAndCreateddateBetweenAndNtransactionstatusAndAssignedprojectIsNullAndTrackconsumptionNotAndQuantityGreaterThanOrNsitecodeAndCreateddateBetweenAndNtransactionstatusAndAssignedprojectAndTrackconsumptionAndQuantityGreaterThanOrNsitecodeAndCreateddateBetweenAndNtransactionstatusAndAssignedprojectIsNullAndTrackconsumptionAndQuantityGreaterThanOrderBySamplecodeDesc(
+									siteCode, fromDate, toDate, transactionStatus, "-1", 0, 0, siteCode, fromDate, toDate,
+									transactionStatus, 0, 0, siteCode, fromDate, toDate, transactionStatus, "-1", 0, 0,
+									siteCode, fromDate, toDate, transactionStatus, 0, 0);
+
+					lstSample.addAll(SampleRepository
+							.findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndSamplecodeInOrderBySamplecodeDesc(
+									siteCode, fromDate, toDate, transactionStatus, sampleCodes));
+				}
+			}	
+		}else if(isFilter ) {
+			ObjectMapper objMaper = new ObjectMapper();
+			if(inputMap.getCustomobject().get("sampletype")!=null && inputMap.getCustomobject().get("samplecategories")!=null) {
+				Object sampletype = inputMap.getCustomobject().get("sampletype");
+				SampleType objSampleType = objMaper.convertValue(sampletype, new TypeReference<SampleType>() {});
+				Object samplecat = inputMap.getCustomobject().get("samplecategories");
+				SampleCategory objSampleCategory = objMaper.convertValue(samplecat, new TypeReference<SampleCategory>() {});
+				if (screenType == 1) {
+					lstSample = SampleRepository
+							.findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndAssignedprojectAndTrackconsumptionNotAndQuantityGreaterThanAndSampletypeAndSamplecategoryOrNsitecodeAndCreateddateBetweenAndNtransactionstatusAndAssignedprojectIsNullAndTrackconsumptionNotAndQuantityGreaterThanAndSampletypeAndSamplecategoryOrNsitecodeAndCreateddateBetweenAndNtransactionstatusAndAssignedprojectAndTrackconsumptionAndQuantityGreaterThanAndSampletypeAndSamplecategoryOrNsitecodeAndCreateddateBetweenAndNtransactionstatusAndAssignedprojectIsNullAndTrackconsumptionAndQuantityGreaterThanAndSampletypeAndSamplecategoryOrderBySamplecodeDesc(
+									siteCode, fromDate, toDate, transactionStatus, "-1", 0, 0,objSampleType,objSampleCategory, siteCode, fromDate, toDate,
+									transactionStatus, 0, 0,objSampleType,objSampleCategory, siteCode, fromDate, toDate, transactionStatus, "-1", 0, 0,objSampleType,objSampleCategory,
+									siteCode, fromDate, toDate, transactionStatus, 0, 0,objSampleType,objSampleCategory);
+
+				} else {
+					List<Integer> sampleCodes = new ArrayList<>();
+					if (inputMap.getCustomobject().get("project") != null) {
+						ObjectMapper obj = new ObjectMapper();
+						Object projectData = inputMap.getCustomobject().get("project");
+						LSprojectmaster project = obj.convertValue(projectData, LSprojectmaster.class);
+						List<SampleProjectHistory> sampleProjectHistoryList = SampleProjectHistoryRepository
+								.findByLsproject(project);
+						sampleCodes = sampleProjectHistoryList.stream().map(SampleProjectHistory::getsamplecode)
+								.collect(Collectors.toList());
+					}
+
+					if (screenType == 2) {
+						lstSample = SampleRepository
+								.findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndSamplecodeInAndSampletypeAndSamplecategoryOrderBySamplecodeDesc(
+										siteCode, fromDate, toDate, transactionStatus, sampleCodes,objSampleType,objSampleCategory);
+					} else {
+						lstSample = SampleRepository
+								.findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndAssignedprojectAndTrackconsumptionNotAndQuantityGreaterThanAndSampletypeAndSamplecategoryOrNsitecodeAndCreateddateBetweenAndNtransactionstatusAndAssignedprojectIsNullAndTrackconsumptionNotAndQuantityGreaterThanAndSampletypeAndSamplecategoryOrNsitecodeAndCreateddateBetweenAndNtransactionstatusAndAssignedprojectAndTrackconsumptionAndQuantityGreaterThanAndSampletypeAndSamplecategoryOrNsitecodeAndCreateddateBetweenAndNtransactionstatusAndAssignedprojectIsNullAndTrackconsumptionAndQuantityGreaterThanAndSampletypeAndSamplecategoryOrderBySamplecodeDesc(
+										siteCode, fromDate, toDate, transactionStatus, "-1", 0, 0,objSampleType,objSampleCategory, siteCode, fromDate, toDate,
+										transactionStatus, 0, 0,objSampleType,objSampleCategory, siteCode, fromDate, toDate, transactionStatus, "-1", 0, 0,objSampleType,objSampleCategory,
+										siteCode, fromDate, toDate, transactionStatus, 0, 0,objSampleType,objSampleCategory);
+
+						lstSample.addAll(SampleRepository
+								.findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndSamplecodeInAndSampletypeAndSamplecategoryOrderBySamplecodeDesc(
+										siteCode, fromDate, toDate, transactionStatus, sampleCodes,objSampleType,objSampleCategory));
+					}
+				}	
+			}else if(inputMap.getCustomobject().get("sampletype")!=null) {
+				Object sampletype = inputMap.getCustomobject().get("sampletype");
+				SampleType objSampleType = objMaper.convertValue(sampletype, new TypeReference<SampleType>() {});
+				if (screenType == 1) {
+					lstSample = SampleRepository
+							.findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndAssignedprojectAndTrackconsumptionNotAndQuantityGreaterThanAndSampletypeOrNsitecodeAndCreateddateBetweenAndNtransactionstatusAndAssignedprojectIsNullAndTrackconsumptionNotAndQuantityGreaterThanAndSampletypeOrNsitecodeAndCreateddateBetweenAndNtransactionstatusAndAssignedprojectAndTrackconsumptionAndQuantityGreaterThanAndSampletypeOrNsitecodeAndCreateddateBetweenAndNtransactionstatusAndAssignedprojectIsNullAndTrackconsumptionAndQuantityGreaterThanAndSampletypeOrderBySamplecodeDesc(
+									siteCode, fromDate, toDate, transactionStatus, "-1", 0, 0,objSampleType, siteCode, fromDate, toDate,
+									transactionStatus, 0, 0,objSampleType, siteCode, fromDate, toDate, transactionStatus, "-1", 0, 0,objSampleType,
+									siteCode, fromDate, toDate, transactionStatus, 0, 0,objSampleType);
+
+				} else {
+					List<Integer> sampleCodes = new ArrayList<>();
+					if (inputMap.getCustomobject().get("project") != null) {
+						ObjectMapper obj = new ObjectMapper();
+						Object projectData = inputMap.getCustomobject().get("project");
+						LSprojectmaster project = obj.convertValue(projectData, LSprojectmaster.class);
+						List<SampleProjectHistory> sampleProjectHistoryList = SampleProjectHistoryRepository
+								.findByLsproject(project);
+						sampleCodes = sampleProjectHistoryList.stream().map(SampleProjectHistory::getsamplecode)
+								.collect(Collectors.toList());
+					}
+
+					if (screenType == 2) {
+						lstSample = SampleRepository
+								.findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndSamplecodeInAndSampletypeOrderBySamplecodeDesc(
+										siteCode, fromDate, toDate, transactionStatus, sampleCodes,objSampleType);
+					} else {
+						lstSample = SampleRepository
+								.findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndAssignedprojectAndTrackconsumptionNotAndQuantityGreaterThanAndSampletypeOrNsitecodeAndCreateddateBetweenAndNtransactionstatusAndAssignedprojectIsNullAndTrackconsumptionNotAndQuantityGreaterThanAndSampletypeOrNsitecodeAndCreateddateBetweenAndNtransactionstatusAndAssignedprojectAndTrackconsumptionAndQuantityGreaterThanAndSampletypeOrNsitecodeAndCreateddateBetweenAndNtransactionstatusAndAssignedprojectIsNullAndTrackconsumptionAndQuantityGreaterThanAndSampletypeOrderBySamplecodeDesc(
+										siteCode, fromDate, toDate, transactionStatus, "-1", 0, 0,objSampleType, siteCode, fromDate, toDate,
+										transactionStatus, 0, 0,objSampleType, siteCode, fromDate, toDate, transactionStatus, "-1", 0, 0,objSampleType,
+										siteCode, fromDate, toDate, transactionStatus, 0, 0,objSampleType);
+
+						lstSample.addAll(SampleRepository
+								.findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndSamplecodeInAndSampletypeOrderBySamplecodeDesc(
+										siteCode, fromDate, toDate, transactionStatus, sampleCodes,objSampleType));
+					}
+				}	
+			}else if(inputMap.getCustomobject().get("samplecategories")!=null) {
+				Object samplecat = inputMap.getCustomobject().get("samplecategories");
+				SampleCategory objSampleCategory = objMaper.convertValue(samplecat, new TypeReference<SampleCategory>() {});
+				if (screenType == 1) {
+					lstSample = SampleRepository
+							.findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndAssignedprojectAndTrackconsumptionNotAndQuantityGreaterThanAndSamplecategoryOrNsitecodeAndCreateddateBetweenAndNtransactionstatusAndAssignedprojectIsNullAndTrackconsumptionNotAndQuantityGreaterThanAndSamplecategoryOrNsitecodeAndCreateddateBetweenAndNtransactionstatusAndAssignedprojectAndTrackconsumptionAndQuantityGreaterThanAndSamplecategoryOrNsitecodeAndCreateddateBetweenAndNtransactionstatusAndAssignedprojectIsNullAndTrackconsumptionAndQuantityGreaterThanAndSamplecategoryOrderBySamplecodeDesc(
+									siteCode, fromDate, toDate, transactionStatus, "-1", 0, 0,objSampleCategory, siteCode, fromDate, toDate,
+									transactionStatus, 0, 0,objSampleCategory, siteCode, fromDate, toDate, transactionStatus, "-1", 0, 0,objSampleCategory,
+									siteCode, fromDate, toDate, transactionStatus, 0, 0,objSampleCategory);
+
+				} else {
+					List<Integer> sampleCodes = new ArrayList<>();
+					if (inputMap.getCustomobject().get("project") != null) {
+						ObjectMapper obj = new ObjectMapper();
+						Object projectData = inputMap.getCustomobject().get("project");
+						LSprojectmaster project = obj.convertValue(projectData, LSprojectmaster.class);
+						List<SampleProjectHistory> sampleProjectHistoryList = SampleProjectHistoryRepository
+								.findByLsproject(project);
+						sampleCodes = sampleProjectHistoryList.stream().map(SampleProjectHistory::getsamplecode)
+								.collect(Collectors.toList());
+					}
+
+					if (screenType == 2) {
+						lstSample = SampleRepository
+								.findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndSamplecodeInAndSamplecategoryOrderBySamplecodeDesc(
+										siteCode, fromDate, toDate, transactionStatus, sampleCodes,objSampleCategory);
+					} else {
+						lstSample = SampleRepository
+								.findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndAssignedprojectAndTrackconsumptionNotAndQuantityGreaterThanAndSamplecategoryOrNsitecodeAndCreateddateBetweenAndNtransactionstatusAndAssignedprojectIsNullAndTrackconsumptionNotAndQuantityGreaterThanAndSamplecategoryOrNsitecodeAndCreateddateBetweenAndNtransactionstatusAndAssignedprojectAndTrackconsumptionAndQuantityGreaterThanAndSamplecategoryOrNsitecodeAndCreateddateBetweenAndNtransactionstatusAndAssignedprojectIsNullAndTrackconsumptionAndQuantityGreaterThanAndSamplecategoryOrderBySamplecodeDesc(
+										siteCode, fromDate, toDate, transactionStatus, "-1", 0, 0,objSampleCategory, siteCode, fromDate, toDate,
+										transactionStatus, 0, 0,objSampleCategory, siteCode, fromDate, toDate, transactionStatus, "-1", 0, 0,objSampleCategory,
+										siteCode, fromDate, toDate, transactionStatus, 0, 0,objSampleCategory);
+
+						lstSample.addAll(SampleRepository
+								.findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndSamplecodeInAndSamplecategoryOrderBySamplecodeDesc(
+										siteCode, fromDate, toDate, transactionStatus, sampleCodes,objSampleCategory));
+					}
+				}	
 			}
+			
+			
+
+			
 		}
+
 
 		objMap.put("lstSample", lstSample);
 		return new ResponseEntity<>(objMap, HttpStatus.OK);

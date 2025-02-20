@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.model.sample.SampleType;
+import com.agaram.eln.primary.repository.sample.SampleBarcodeMapRepository;
 import com.agaram.eln.primary.repository.sample.SampleTypeRepository;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -23,6 +24,8 @@ public class SampleTypeService {
 	
 	@Autowired
 	SampleTypeRepository sampleTypeRepository;
+	@Autowired
+	SampleBarcodeMapRepository sampleBarcodeMapRepository;
 	
 	public ResponseEntity<Object> getSampleType(SampleType objSampleType) {
 		List<SampleType> lstsampletype = sampleTypeRepository.
@@ -47,6 +50,7 @@ public class SampleTypeService {
 				objSampleType.setCreatedate(commonfunction.getCurrentUtcTime());
 				objSampleType.setCreateby(objSampleType.getCreateby());
 				objSampleType.setInfo("IDS_SUCCESS");
+				sampleBarcodeMapRepository.save(objSampleType.getLstbarcodes());
 				sampleTypeRepository.save(objSampleType);
 				return new ResponseEntity<>(objSampleType, HttpStatus.OK);
 				
@@ -70,7 +74,7 @@ public class SampleTypeService {
 				objSampleType.setCreateby(objMType.getCreateby());
 				objSampleType.setModifieddate(commonfunction.getCurrentUtcTime());
 				
-				
+				sampleBarcodeMapRepository.save(objSampleType.getLstbarcodes());
 				sampleTypeRepository.save(objSampleType);
 				
 				objSampleType.setInfo("IDS_SUCCESS");

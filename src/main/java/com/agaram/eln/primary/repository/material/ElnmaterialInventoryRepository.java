@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import com.agaram.eln.primary.fetchmodel.inventory.MaterialInventoryget;
 import com.agaram.eln.primary.model.material.Elnmaterial;
 import com.agaram.eln.primary.model.material.ElnmaterialInventory;
 import com.agaram.eln.primary.model.material.ElnmaterialInventory.InventoryInterface;
@@ -24,6 +25,9 @@ public interface ElnmaterialInventoryRepository extends JpaRepository<Elnmateria
 
 	List<ElnmaterialInventory> findByMaterialcategoryAndNsitecodeAndCreateddateBetweenOrderByNmaterialinventorycodeDesc(
 			MaterialCategory objMaterialCategory, Integer nsiteInteger, Date fromDate, Date toDate);
+	
+	List<ElnmaterialInventory> findByMaterialcategoryAndNsitecodeAndMaterialInAndCreateddateBetweenOrderByNmaterialinventorycodeDesc(
+			MaterialCategory objMaterialCategory, Integer nsiteInteger,List<Elnmaterial> lstmaterial, Date fromDate, Date toDate);
 
 	List<ElnmaterialInventory> findByMaterialtypeAndNsitecodeAndCreateddateBetweenOrderByNmaterialinventorycodeDesc(
 			MaterialType objMaterialType, Integer nsiteInteger, Date fromDate, Date toDate);
@@ -130,7 +134,7 @@ public interface ElnmaterialInventoryRepository extends JpaRepository<Elnmateria
 
 	long countByNsitecode(Integer integer);
 
-	List<ElnmaterialInventory> findByNsitecodeAndNstatusOrderByNmaterialinventorycodeAsc(Integer nsitecode, int i);
+	List<MaterialInventoryget> findByNsitecodeAndNstatusOrderByNmaterialinventorycodeAsc(Integer nsitecode, int i);
 
 	List<ElnmaterialInventory> findByNsitecodeAndMaterialInAndMaterialtypeAndMaterialcategoryOrderByNmaterialinventorycodeDesc(
 			Integer nsiteInteger, List<Elnmaterial> objlstElnmaterial, MaterialType objMaterialType,

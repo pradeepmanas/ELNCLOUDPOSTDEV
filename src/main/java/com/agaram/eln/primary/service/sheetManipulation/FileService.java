@@ -40,6 +40,9 @@ import com.agaram.eln.primary.fetchmodel.getorders.LogilabOrderDetails;
 //import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.fetchmodel.gettemplate.Sheettemplatefortest;
 import com.agaram.eln.primary.fetchmodel.gettemplate.Sheettemplateget;
+import com.agaram.eln.primary.fetchmodel.inventory.MaterialInventoryget;
+import com.agaram.eln.primary.fetchmodel.inventory.Materialget;
+import com.agaram.eln.primary.fetchmodel.inventory.Sampleget;
 import com.agaram.eln.primary.model.cloudFileManip.CloudSheetCreation;
 import com.agaram.eln.primary.model.cloudFileManip.CloudSheetVersion;
 import com.agaram.eln.primary.model.general.Response;
@@ -53,8 +56,6 @@ import com.agaram.eln.primary.model.protocols.ElnprotocolTemplateworkflow;
 import com.agaram.eln.primary.model.protocols.ElnprotocolTemplateworkflowgroupmap;
 import com.agaram.eln.primary.model.protocols.Elnprotocolworkflow;
 import com.agaram.eln.primary.model.protocols.LSlogilabprotocoldetail;
-import com.agaram.eln.primary.model.protocols.LSprotocolmaster;
-import com.agaram.eln.primary.model.protocols.LSprotocolmastertest;
 import com.agaram.eln.primary.model.sheetManipulation.LSfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSfileparameter;
 import com.agaram.eln.primary.model.sheetManipulation.LSfiletest;
@@ -122,6 +123,7 @@ import com.agaram.eln.primary.service.masters.MasterService;
 import com.agaram.eln.primary.service.material.MaterialInventoryService;
 import com.agaram.eln.primary.service.material.TransactionService;
 import com.agaram.eln.primary.service.protocol.Commonservice;
+import com.agaram.eln.primary.service.sample.SampleService;
 //import com.agaram.eln.primary.service.protocol.ProtocolService;
 import com.mongodb.gridfs.GridFSDBFile;
 
@@ -262,6 +264,9 @@ public class FileService {
 	
 	@Autowired
 	private MaterialInventoryService materialInventoryService;
+	
+	@Autowired
+	private SampleService sampleservice;
 	
 //	@Autowired
 //	private BarcodeMasterRepository barcodeMasterRepository;
@@ -744,6 +749,35 @@ public class FileService {
 		lsrepositories = null;
 //		lsinventories = null;
 		return mapOrders;
+	}
+	
+	public List<Testmaster> Gettaskforordercreate(LSuserMaster objuser) {
+		return masterService.getTestmaster(objuser);
+	}
+	
+	public List<LSprojectmaster> Getprojectforordercreate(LSuserMaster objuser)
+	{
+		List<LSprojectmaster> prolist = lsprojectrepo.findByLsusersteamInAndStatusAndLssitemasterOrderByProjectcodeDesc(
+				LSusersteamRepository.findByLsuserteammappingInAndStatusAndLssitemaster(lsuserteammappingRepository.findBylsuserMaster(objuser), 1,objuser.getLssitemaster())
+				, 1,objuser.getLssitemaster());
+		return prolist;
+	}
+	
+	public List<MaterialInventoryget> Getmaterialinventoryforordercreate(LSuserMaster objuser)
+	{
+		ElnmaterialInventory lsinventories = new ElnmaterialInventory();
+		lsinventories.setNsitecode(objuser.getLssitemaster().getSitecode());
+		return materialInventoryService.GetAllInventories(lsinventories);
+	}
+	
+	public List<Materialget> Getmaterialforordercreate(LSuserMaster objuser)
+	{
+		return transactionService.getMaterials(objuser);
+	}
+	
+	public List<Sampleget> Getsampleforordercreate(LSuserMaster objuser)
+	{
+		return sampleservice.getsample(objuser);
 	}
 
 	public Map<String, Object> GetMastersforsheetsetting(LSuserMaster objuser) {
@@ -2326,7 +2360,7 @@ public class FileService {
 	public Map<String, Object> GetMastersforordercreatesub(LSuserMaster objuser) {
 		Map<String, Object> mapOrders = new HashMap<String, Object>();
 		mapOrders.put("sheets", GetApprovedSheets(0, objuser));
-		mapOrders.put("material", transactionService.getMaterials(objuser));
+//		mapOrders.put("material", transactionService.getMaterials(objuser));
 		return mapOrders;
 	}
 

@@ -400,6 +400,15 @@ public class BaseMasterService {
 			objClass.getResponse().setInformation("ID_EXIST");
 			return objClass;
 		}
+		
+		if (objClass.getProjectcode() == null
+				&& lSprojectmasterRepository.findByProjectidIgnoreCaseAndLssitemaster(objClass.getProjectid(),
+						objClass.getLssitemaster()) != null) {
+			objClass.getResponse().setStatus(false);
+			objClass.getResponse().setInformation("ID_PROJECTIDEXIST");
+			return objClass;
+		}
+		
 		   if (objClass.getStatus() == -1) {
 		        LSprojectmaster existingProject = lSprojectmasterRepository.findOne(objClass.getProjectcode());
 		        if (existingProject != null) {
@@ -421,6 +430,14 @@ public class BaseMasterService {
 						objClass.getProjectname(), 1, objClass.getProjectcode(), objClass.getLssitemaster()) != null) {
 			objClass.getResponse().setStatus(false);
 			objClass.getResponse().setInformation("ID_EXIST");
+			return objClass;
+		}
+		   
+		else if (objClass.getProjectcode() != null
+				&& lSprojectmasterRepository.findByProjectidIgnoreCaseAndStatusAndLssitemaster(
+						objClass.getProjectid(), 1,objClass.getLssitemaster()) != null) {
+			objClass.getResponse().setStatus(false);
+			objClass.getResponse().setInformation("ID_PROJECTIDEXIST");
 			return objClass;
 		}
 

@@ -444,7 +444,7 @@ public class EquipmentService {
 			
 			if(sequence.contains("{m&") && sequence.contains("$m}"))
 			{
-				SimpleDateFormat month = new SimpleDateFormat("mm");
+				SimpleDateFormat month = new SimpleDateFormat("MM");
 		        String currentMonth = month.format(currentdate);
 		        String namedmonth = sequencetext.substring(sequencetext.indexOf("{m&")+3, sequencetext.indexOf("$m}"));
 		        
@@ -623,6 +623,7 @@ public class EquipmentService {
 
 			obj.setSequipmentid(objMaterial.getSequipmentid());
 			obj.setCreateddate(objMaterial.getCreateddate());
+			obj.setSequenceid(objMaterial.getSequenceid());
 			
 			if(obj.getReqcalibration()) {
 				obj.setLastcallibrated(obj.getLastcallibrated());
@@ -954,6 +955,17 @@ public class EquipmentService {
 		}else {
 			return false;
 		}
+	}
+	
+	
+	public Boolean updatesequenceondefault(Equipment obj) {
+		List<Equipment> objEquipments = equipmentRepository.findByNequipmentcode(obj.getNequipmentcode());
+
+		if(!objEquipments.isEmpty()) {
+			objEquipments.get(0).setSequenceid(objEquipments.get(0).getSequipmentid());
+			equipmentRepository.save(objEquipments);
+			}
+		return true;
 	}
 	
 //	public ResponseEntity<Object> createEquipmentResultUsed(Map<String, Object> inputMap) throws JsonParseException, JsonMappingException, IOException {

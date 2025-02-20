@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.agaram.eln.primary.commonfunction.commonfunction;
+import com.agaram.eln.primary.fetchmodel.inventory.Sampleget;
 import com.agaram.eln.primary.model.material.Elnmaterial;
 import com.agaram.eln.primary.model.material.MaterialCategory;
 import com.agaram.eln.primary.model.material.Period;
@@ -35,6 +36,7 @@ import com.agaram.eln.primary.model.sequence.SequenceTable;
 import com.agaram.eln.primary.model.sequence.SequenceTableProjectLevel;
 import com.agaram.eln.primary.model.sequence.SequenceTableSite;
 import com.agaram.eln.primary.model.sequence.SequenceTableTaskLevel;
+import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.repository.material.PeriodRepository;
 import com.agaram.eln.primary.repository.material.UnitRepository;
 import com.agaram.eln.primary.repository.sample.DerivedSamplesRepository;
@@ -93,11 +95,11 @@ public class SampleService<ParentSample>{
 	@Autowired
 	UnitRepository unitRepository;
 
-//	public ResponseEntity<Object> getSampleonCategory(SampleCategory objsamplecat){			
-//			List<Sample> lstsample = samplerepository.findBySamplecategoryAndNsitecodeOrderBySamplecodeDesc(objsamplecat,objsamplecat.getNsitecode());
-//			return new ResponseEntity<>(lstsample, HttpStatus.OK);
-//	}
-public ResponseEntity<Object> getSampleonCategory(@RequestBody Map<String, Object> inputMap){
+	public ResponseEntity<Object> getSampleonCategory(SampleCategory objsamplecat){			
+			List<Sample> lstsample = samplerepository.findBySamplecategoryAndNsitecodeOrderBySamplecodeDesc(objsamplecat,objsamplecat.getNsitecode());
+			return new ResponseEntity<>(lstsample, HttpStatus.OK);
+	}
+public ResponseEntity<Object> getSampleonCategoryFillter(@RequestBody Map<String, Object> inputMap){
 		
 		final ObjectMapper objmapper = new ObjectMapper();
 		
@@ -309,6 +311,8 @@ public ResponseEntity<Object> getSampleonCategory(@RequestBody Map<String, Objec
 		
 		
 			GetSampleSequence(sample,seqorder, objprojectseq, objtaskseq);
+			if(sample.getSampleprojecthistory() != null) {				
+			
 			sample.getSampleprojecthistory().forEach(history -> {
 				try {
 					history.setCreateddate(commonfunction.getCurrentUtcTime());
@@ -318,6 +322,8 @@ public ResponseEntity<Object> getSampleonCategory(@RequestBody Map<String, Objec
 				}
 			});
 			sampleprojecthistoryrepository.save(sample.getSampleprojecthistory());
+			}
+			
 		
 		if(sample.getSamplestoragemapping()!=null)
 		{
@@ -534,5 +540,10 @@ public ResponseEntity<Object> getSampleonCategory(@RequestBody Map<String, Objec
 
 		samplerepository.save(objInventory);
 		return new ResponseEntity<>(objInventory, HttpStatus.OK);
+	}
+	
+	public List<Sampleget> getsample(LSuserMaster objClass)
+	{
+		return samplerepository.findByNstatusAndNsitecodeOrderBySamplecodeDesc(1, objClass.getLssitemaster().getSitecode());
 	}
 }

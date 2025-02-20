@@ -31,6 +31,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.agaram.eln.primary.commonfunction.commonfunction;
+import com.agaram.eln.primary.fetchmodel.inventory.Materialget;
 //import com.agaram.eln.primary.fetchmodel.getmasters.Samplemaster;
 import com.agaram.eln.primary.global.Enumeration;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
@@ -958,7 +959,7 @@ public class TransactionService {
 
 		Map<String, Object> rtnMap = new HashMap<String, Object>();
 
-		List<Elnmaterial> lstMaterials = new ArrayList<Elnmaterial>();
+		List<Materialget> lstMaterials = new ArrayList<Materialget>();
 //		List<MaterialInventory> lstMaterialInventories = new ArrayList<MaterialInventory>();
 
 		lstMaterials = elnmaterialRepository.findByNstatusAndNsitecodeOrderByNmaterialcodeDesc(1,
@@ -1888,7 +1889,7 @@ public class TransactionService {
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
 	}
 
-	public List<Elnmaterial> getMaterials(LSuserMaster objClass) {
+	public List<Materialget> getMaterials(LSuserMaster objClass) {
 		return elnmaterialRepository.findByNstatusAndNsitecodeOrderByNmaterialcodeDesc(1, objClass.getLssitemaster().getSitecode());
 	}
 

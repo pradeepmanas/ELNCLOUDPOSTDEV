@@ -23,5 +23,15 @@ public interface ElnresultUsedMaterialRepository extends JpaRepository<Elnresult
 	List<ElnresultUsedMaterial> findByNinventorycodeInAndCreateddateBetweenAndTransactionscreenOrderByNresultusedmaterialcodeDesc(
 			List<Integer> inventorycode, Date fromdate, Date todate, Integer transactionscreen);
 
+	List<ElnresultUsedMaterial> findByNinventorycodeInAndCreateddateBetweenAndShowfullcommentIsNullOrderByNresultusedmaterialcodeDesc(
+			List<Integer> inventorycode, Date fromdate, Date todate);
+
+	List<ElnresultUsedMaterial> findByNinventorycodeInAndCreateddateBetweenAndShowfullcommentIsNotNull(
+			List<Integer> inventorycode, Date fromdate, Date todate);
+
+	List<ElnresultUsedMaterial> findByNinventorycodeInAndCreateddateBetweenAndShowfullcommentIsNotNullOrNinventorycodeInAndCreateddateBetweenAndShowfullcommentIsNullAndTransactionscreen(
+			List<Integer> inventorycode, Date fromdate, Date todate, List<Integer> inventorycode2, Date fromdate2,
+			Date todate2, Integer transactionscreen);
+
 
 }

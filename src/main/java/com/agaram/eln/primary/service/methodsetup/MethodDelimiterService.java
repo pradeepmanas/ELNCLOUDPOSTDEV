@@ -2,6 +2,7 @@ package com.agaram.eln.primary.service.methodsetup;
 
 
 import java.util.HashMap;
+import java.text.ParseException;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.List;
@@ -18,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.methodsetup.Delimiter;
 import com.agaram.eln.primary.model.methodsetup.MethodDelimiter;
@@ -192,7 +194,7 @@ public class MethodDelimiterService {
 	    		methodDelimiter.setCreatedby(createdUser);
 	    		methodDelimiter.setParsermethod(parserMethod);
 	    		methodDelimiter.setDelimiter(delimiter);
-	    			
+	    				    		
 	    		final MethodDelimiter savedMethodDelimiter = methodDelimiterRepo.save(methodDelimiter);
 	    		savedMethodDelimiter.setDisplayvalue(savedMethodDelimiter.getParsermethod().getParsermethodname());
 	    		savedMethodDelimiter.setScreenname("MethodDelimiter");
@@ -221,10 +223,11 @@ public class MethodDelimiterService {
      * @param request [HttpServletRequest] Request object to ip address of remote client
      * @param doneByUserKey [int] primary key of logged-in user who done this task
      * @return Response of updated MethodDelimiter entity
+	 * @throws ParseException 
 	 */
    @Transactional
    public ResponseEntity<Object> updateMethodDelimiter(final MethodDelimiter methodDelimiter, final LSSiteMaster site,
-		   final String comments, final HttpServletRequest request, final int doneByUserKey,MethodDelimiter auditdetails)
+		   final String comments, final HttpServletRequest request, final int doneByUserKey,MethodDelimiter auditdetails) throws ParseException
    {	   
 	   Boolean saveAuditTrail= true;
 	   final Optional<MethodDelimiter> methodDelimiterByKey = methodDelimiterRepo.findByMethoddelimiterkeyAndStatusAndLssitemaster(methodDelimiter.getMethoddelimiterkey(), 1,methodDelimiter.getLssitemaster());
@@ -262,7 +265,7 @@ public class MethodDelimiterService {
 				    	else
 				    	{			    		
 				    		//copy of object for using 'Diffable' to compare objects
-			    		
+				    		methodDelimiter.setModifieddate(commonfunction.getCurrentUtcTime());
 				    		final MethodDelimiter savedMethodDelimiter = methodDelimiterRepo.save(methodDelimiter);
 				    		
 				    		savedMethodDelimiter.setDisplayvalue(savedMethodDelimiter.getParsermethod().getParsermethodname());
@@ -332,10 +335,11 @@ public class MethodDelimiterService {
 	 * @param page [Page] entity relating to 'Delimiters'
 	 * @param request [HttpServletRequest] Request object to ip address of remote client
 	 * @return Response of deleted MethodDelimiter entity
+ * @throws ParseException 
 	 */
   @Transactional
   public ResponseEntity<Object> deleteMethodDelimiter(final int methodDelimiterKey, 
-		   final LSSiteMaster site, final String comments, final int doneByUserKey, final HttpServletRequest request,final MethodDelimiter otherdetails,MethodDelimiter auditdetails)
+		   final LSSiteMaster site, final String comments, final int doneByUserKey, final HttpServletRequest request,final MethodDelimiter otherdetails,MethodDelimiter auditdetails) throws ParseException
  {	   
 	   Boolean saveAuditTrial = true;
 	   final Optional<MethodDelimiter> delimiterByKey = methodDelimiterRepo.findByMethoddelimiterkeyAndStatusAndLssitemaster(methodDelimiterKey, 1,site);
@@ -379,6 +383,7 @@ public class MethodDelimiterService {
 				   //Its not associated in transaction
 				   delimiter.setStatus(-1);
 				   delimiter.setMethoddelimiterstatus("D");
+				   delimiter.setModifieddate(commonfunction.getCurrentUtcTime());
 				   final MethodDelimiter savedDelimiters = methodDelimiterRepo.save(delimiter);   
 			   
 				   savedDelimiters.setDisplayvalue(savedDelimiters.getParsermethod().getParsermethodname());

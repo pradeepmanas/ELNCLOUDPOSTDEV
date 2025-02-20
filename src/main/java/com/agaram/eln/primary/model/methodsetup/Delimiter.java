@@ -42,12 +42,12 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
  */
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
 @XmlRootElement  (name = "delimiter")
-@XmlType(propOrder = { "delimiterkey", "delimitername", "actualdelimiter", 
-		 "status", "createdby", "createddate" , "username","transactiondate","defaultvalue","displayvalue","screenname","objsilentaudit","objmanualaudit"})
+@XmlType(propOrder = { "delimiterkey", "delimitername", "actualdelimiter", "modifiedby",
+		 "status", "createdby", "createddate" , "username","transactiondate","defaultvalue","displayvalue","screenname","objsilentaudit","objmanualaudit","modifieddate"})
 @Entity
 @Table(name = "delimiter")
 public class Delimiter implements Serializable, Diffable<Delimiter>{
-	
+
 	/**
 	 * 
 	 */
@@ -109,6 +109,12 @@ public class Delimiter implements Serializable, Diffable<Delimiter>{
 	@Column(name = "screenname")
 	private String screenname;
 
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date modifieddate;
+	
+	@Column(name = "modifiedby")
+	private String modifiedby;
+	
 	@XmlAttribute	
 	public Integer getDelimiterkey() {
 		return delimiterkey;
@@ -242,8 +248,23 @@ public class Delimiter implements Serializable, Diffable<Delimiter>{
 	public void setLssitemaster(LSSiteMaster lssitemaster) {
 		this.lssitemaster = lssitemaster;
 	}
-
 	
+	public Date getModifieddate() {
+		return modifieddate;
+	}
+
+	public void setModifieddate(Date modifieddate) {
+		this.modifieddate = modifieddate;
+	}
+
+	public String getModifiedby() {
+		return modifiedby;
+	}
+
+	public void setModifiedby(String modifiedby) {
+		this.modifiedby = modifiedby;
+	}
+
 	public String getDelimiterstatus() {
 		if(delimiterstatus != null)
 		{
@@ -281,7 +302,9 @@ public class Delimiter implements Serializable, Diffable<Delimiter>{
            .append("screenname", this.screenname, obj.screenname)
            .append("objsilentaudit", this.objsilentaudit, obj.objsilentaudit)
            .append("objmanualaudit", this.objmanualaudit, obj.objmanualaudit)
-           .append("info", this.info, obj.info)
+           .append("info", this.info, obj.info) 
+           .append("modifieddate", this.modifieddate, obj.modifieddate) 
+           .append("modifiedby", this.modifiedby, obj.modifiedby) 
            
            .build();
 	}
@@ -308,7 +331,8 @@ public class Delimiter implements Serializable, Diffable<Delimiter>{
 		this.objsilentaudit = delimiter.objsilentaudit;
 		this.objmanualaudit = delimiter.objmanualaudit;
 		this.info = delimiter.info;
-
+		this.modifieddate = delimiter.modifieddate;
+        this.modifiedby = delimiter.modifiedby;
 	}
 	
 	/**

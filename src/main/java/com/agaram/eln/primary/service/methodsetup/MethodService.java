@@ -71,6 +71,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.exception.FileStorageException;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.equipment.Equipment;
@@ -116,6 +117,7 @@ import com.mongodb.gridfs.GridFSDBFile;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.text.ParseException;
 
 import org.springframework.util.StringUtils;
 
@@ -409,6 +411,7 @@ public class MethodService {
 	 * @param page [Page] entity relating to 'MethodMaster'
 	 * @param request [HttpServletRequest] Request object to ip address of remote client
 	 * @return Response of updated method master entity
+	 * @throws ParseException 
 	 */
 	
 	/* change for equipment*/
@@ -522,7 +525,7 @@ public class MethodService {
 	
     @Transactional
 	public ResponseEntity<Object> updateMethod(final Method method, final LSSiteMaster site, final int doneByUserKey, 
-			    final HttpServletRequest request,Method auditdetails)
+			    final HttpServletRequest request,Method auditdetails) throws ParseException
 	{	  		
 		boolean saveAuditTrail=true;	
 		//final InstrumentMaster instMaster = instMastRepo.findOne(method.getInstmaster().getInstmastkey());
@@ -544,7 +547,9 @@ public class MethodService {
 				 
 				if(methodByName.get().getMethodkey().equals(method.getMethodkey()))
 		    	{   
-					method.setEquipment(equipment);		    			
+					method.setEquipment(equipment);		
+					method.setModifieddate(commonfunction.getCurrentUtcTime());
+					
 		    		final Method savedMethod = methodRepo.save(method);
 		    		
 		    		savedMethod.setDisplayvalue(savedMethod.getMethodname());
@@ -560,6 +565,7 @@ public class MethodService {
 		   }
 			else
 	    	{			    		
+				method.setModifieddate(commonfunction.getCurrentUtcTime());
 	    		final Method savedMethod = methodRepo.save(method);
 	    		
 	    		savedMethod.setDisplayvalue(savedMethod.getMethodname());
@@ -625,11 +631,12 @@ public class MethodService {
 	 * @param page [Page] entity relating to 'MethodMaster'
 	 * @param request [HttpServletRequest] Request object to ip address of remote client
 	 * @return Response of deleted method master entity
+	 * @throws ParseException 
 	 */
 	 @Transactional()
 	   public ResponseEntity<Object> deleteMethod(final int methodKey, 
 			   final LSSiteMaster site, final String comments, final int doneByUserKey, 
-			   final HttpServletRequest request,final Method otherdetails,Method auditdetails)
+			   final HttpServletRequest request,final Method otherdetails,Method auditdetails) throws ParseException
 	   {	   
 		  boolean saveAuditTrial=true;
 		   final Optional<Method> methodByKey = methodRepo.findByMethodkeyAndStatus(methodKey, 1);
@@ -654,6 +661,7 @@ public class MethodService {
 						
 				       method.setStatus(-1);
 					   method.setMethodstatus("D");
+					   method.setModifieddate(commonfunction.getCurrentUtcTime());
 					   final Method savedMethod = methodRepo.save(method);   
 					   
 					   savedMethod.setDisplayvalue(savedMethod.getMethodname());

@@ -44,7 +44,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
 @XmlRootElement  (name = "methoddelimiter")
 @XmlType(propOrder = { "methoddelimiterkey", "parsermethod", "delimiter", "status", "createdby", "createddate","transactiondate",
-		"screenname","displayvalue","defaultvalue","objsilentaudit","objmanualaudit"})
+		"screenname","displayvalue","defaultvalue","objsilentaudit","objmanualaudit","modifieddate", "modifiedby"})
 @Entity
 @Table(name = "methoddelimiter")
 public class MethodDelimiter  implements Serializable, Diffable<MethodDelimiter>{
@@ -75,6 +75,12 @@ public class MethodDelimiter  implements Serializable, Diffable<MethodDelimiter>
 	 
 	@Transient
 	private String info;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date modifieddate;
+	
+	@Column(name = "modifiedby")
+	private String modifiedby;
 	
 	@Transient
 	private String username;
@@ -212,7 +218,22 @@ public class MethodDelimiter  implements Serializable, Diffable<MethodDelimiter>
 	}
 
 	
-	
+	public Date getModifieddate() {
+		return modifieddate;
+	}
+
+	public void setModifieddate(Date modifieddate) {
+		this.modifieddate = modifieddate;
+	}
+
+	public String getModifiedby() {
+		return modifiedby;
+	}
+
+	public void setModifiedby(String modifiedby) {
+		this.modifiedby = modifiedby;
+	}
+
 	public Integer getDefaultvalue() {
 		return defaultvalue;
 	}
@@ -283,7 +304,8 @@ public class MethodDelimiter  implements Serializable, Diffable<MethodDelimiter>
            .append("objmanualaudit", this.objmanualaudit, obj.objmanualaudit)
            .append("info", this.info, obj.info)
            .append("methoddelimiterstatus", this.methoddelimiterstatus, obj.methoddelimiterstatus)
-
+           .append("modifieddate", this.modifieddate, obj.modifieddate) 
+           .append("modifiedby", this.modifiedby, obj.modifiedby) 
 
 	       .build();
 	}
@@ -312,7 +334,8 @@ public class MethodDelimiter  implements Serializable, Diffable<MethodDelimiter>
     	this.objmanualaudit = methodDelimiter.objmanualaudit;
     	this.info = methodDelimiter.info;
     	this.methoddelimiterstatus = methodDelimiter.methoddelimiterstatus;
-    	
+		this.modifieddate = methodDelimiter.modifieddate;
+        this.modifiedby = methodDelimiter.modifiedby;
       
 
 

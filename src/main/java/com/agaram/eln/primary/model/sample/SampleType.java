@@ -1,13 +1,16 @@
 package com.agaram.eln.primary.model.sample;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -18,6 +21,7 @@ import org.hibernate.annotations.Type;
 
 import com.agaram.eln.primary.model.barcode.BarcodeMaster;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
+import com.agaram.eln.primary.model.material.InventoryBarcodeMap;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 
 @Entity
@@ -76,6 +80,10 @@ public class SampleType {
 
 	@ManyToOne
 	private BarcodeMaster barcode;
+	
+	@OneToMany
+	@JoinColumn(name="nsampletypecode")
+	private List<SampleBarcodeMap> lstbarcodes;
 
 	@ColumnDefault("1")
 	@Column(name = "usageoption", nullable = false)
@@ -271,6 +279,12 @@ public class SampleType {
 
 	public static long getSerialversionuid() {
 		return serialVersionUID;
+	}
+	public List<SampleBarcodeMap> getLstbarcodes() {
+		return lstbarcodes;
+	}
+	public void setLstbarcodes(List<SampleBarcodeMap> lstbarcodes) {
+		this.lstbarcodes = lstbarcodes;
 	}
 	
 	}

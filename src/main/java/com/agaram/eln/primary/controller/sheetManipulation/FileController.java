@@ -14,9 +14,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.agaram.eln.primary.fetchmodel.getmasters.Testmaster;
 import com.agaram.eln.primary.fetchmodel.gettemplate.Sheettemplateget;
+import com.agaram.eln.primary.fetchmodel.inventory.MaterialInventoryget;
+import com.agaram.eln.primary.fetchmodel.inventory.Materialget;
+import com.agaram.eln.primary.fetchmodel.inventory.Sampleget;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.instrumentDetails.LSlogilablimsorderdetail;
+import com.agaram.eln.primary.model.material.ElnmaterialInventory;
 import com.agaram.eln.primary.model.protocols.ElnprotocolTemplateworkflow;
 import com.agaram.eln.primary.model.protocols.Elnprotocolworkflow;
 import com.agaram.eln.primary.model.protocols.LSprotocolmaster;
@@ -32,6 +37,7 @@ import com.agaram.eln.primary.model.sheetManipulation.Lsfileshareto;
 import com.agaram.eln.primary.model.sheetManipulation.Lssheetworkflowhistory;
 import com.agaram.eln.primary.model.sheetManipulation.Notification;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
+import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.service.sheetManipulation.FileService;
 
@@ -117,6 +123,31 @@ public class FileController {
 	@PostMapping("/GetMastersforordercreate")
 	public Map<String, Object> GetMastersforordercreate(@RequestBody LSuserMaster objuser) {
 		return fileService.GetMastersforordercreate(objuser);
+	}
+	
+	@PostMapping("/Gettaskforordercreate")
+	public List<Testmaster> Gettaskforordercreate(@RequestBody LSuserMaster objuser) {
+		return fileService.Gettaskforordercreate(objuser);
+	}
+	
+	@PostMapping("/Getprojectforordercreate")
+	public List<LSprojectmaster> Getprojectforordercreate(@RequestBody LSuserMaster objuser) {
+		return fileService.Getprojectforordercreate(objuser);
+	}
+	
+	@PostMapping("/Getmaterialinventoryforordercreate")
+	public List<MaterialInventoryget> Getmaterialinventoryforordercreate(@RequestBody LSuserMaster objuser) {
+		return fileService.Getmaterialinventoryforordercreate(objuser);
+	}
+	
+	@PostMapping("/Getmaterialforordercreate")
+	public List<Materialget> Getmaterialforordercreate(@RequestBody LSuserMaster objuser) {
+		return fileService.Getmaterialforordercreate(objuser);
+	}
+	
+	@PostMapping("/Getsampleforordercreate")
+	public List<Sampleget> Getsampleforordercreate(@RequestBody LSuserMaster objuser) {
+		return fileService.Getsampleforordercreate(objuser);
 	}
 	
 	@PostMapping("/GetMastersforsheetsetting")

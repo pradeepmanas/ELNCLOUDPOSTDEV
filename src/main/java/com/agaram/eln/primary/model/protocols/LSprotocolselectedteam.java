@@ -35,7 +35,7 @@ private static final long serialVersionUID = 1L;
 	@ManyToOne
 	private LSusersteam userteam;
 	
-	@OneToMany()
+	@OneToMany(fetch = FetchType.LAZY)
 	@JoinColumn(name="teamcode")
 	private List<LSuserteammapping> lsuserteammapping;
 

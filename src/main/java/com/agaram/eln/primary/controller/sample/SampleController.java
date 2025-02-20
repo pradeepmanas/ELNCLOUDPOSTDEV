@@ -32,15 +32,15 @@ public class SampleController {
 	private SampleService objSampleService;
 	private Map inputMap;
 	
-//	@RequestMapping(value = "/getSampleonCategory", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-//	public ResponseEntity<Object> getSampleonCategory(@RequestBody SampleCategory objsamplecat) throws Exception {
-//
-//		return (ResponseEntity<Object>) objSampleService.getSampleonCategory(objsamplecat);
-//	}
 	@RequestMapping(value = "/getSampleonCategory", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> getSampleonCategory(@RequestBody SampleCategory objsamplecat) throws Exception {
+
+		return (ResponseEntity<Object>) objSampleService.getSampleonCategory(objsamplecat);
+	}
+	@RequestMapping(value = "/getSampleonCategoryFillter", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> getSampleonCategory(@RequestBody Map<String, Object> inputMap) throws Exception {
 
-		return (ResponseEntity<Object>) objSampleService.getSampleonCategory(inputMap);
+		return (ResponseEntity<Object>) objSampleService.getSampleonCategoryFillter(inputMap);
 	}
 
 	@RequestMapping(value = "/getSampleonSite", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)

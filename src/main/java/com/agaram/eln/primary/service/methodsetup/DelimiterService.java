@@ -1,5 +1,6 @@
 package com.agaram.eln.primary.service.methodsetup;
 
+import java.text.ParseException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.methodsetup.Delimiter;
 import com.agaram.eln.primary.model.methodsetup.MethodDelimiter;
@@ -148,7 +150,7 @@ public class DelimiterService {
 		   final int doneByUserKey,final Delimiter auditdetails, final HttpServletRequest request)
    {	   
 	   final Optional<Delimiter> delimiterByKey = delimitersRepo.findByDelimiterkeyAndStatusAndLssitemaster(delimiters.getDelimiterkey(), 1,delimiters.getLssitemaster());
-	   
+	  
 	   if(delimiterByKey.isPresent()) {		   
 		   final List<MethodDelimiter> methodDelimiterList = methodDelimiterRepo.findByDelimiterAndStatusAndLssitemaster(delimiterByKey.get(), 1,delimiters.getLssitemaster());
 		   
@@ -164,7 +166,12 @@ public class DelimiterService {
 				    	{   		    			
 			
 				    	delimiters.getObjsilentaudit().setModuleName("Delimiter");
-				
+				    	try {
+							delimiters.setModifieddate(commonfunction.getCurrentUtcTime());
+						} catch (ParseException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 				    	delimiters.getObjsilentaudit().setTableName("Delimiter");
 					
 				    		final Delimiter savedDelimiters = delimitersRepo.save(delimiters);
@@ -197,11 +204,18 @@ public class DelimiterService {
 		    			
 			    		//Updating fields with a new delimiter name
 		    			
+			    		try {
+							delimiters.setModifieddate(commonfunction.getCurrentUtcTime());
+						} catch (ParseException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 			    		final Delimiter savedMethod = delimitersRepo.save(delimiters);
 			    		
 			    		savedMethod.setDisplayvalue("Delimiter "+savedMethod.getDelimitername());
 			    		savedMethod.setScreenname("Delimiter");
 			    		savedMethod.setObjsilentaudit(auditdetails.getObjsilentaudit());
+			    		
 
 			    		return new ResponseEntity<>(savedMethod , HttpStatus.OK);			    		
 			    	}	
@@ -259,6 +273,12 @@ public class DelimiterService {
 				   //Its not associated in transaction
 				   delimiter.setStatus(-1);
 				   delimiter.setDelimiterstatus("D");
+				   try {
+					   delimiter.setModifieddate(commonfunction.getCurrentUtcTime());
+					} catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				   final Delimiter savedDelimiters = delimitersRepo.save(delimiter);  
 				   
 				   savedDelimiters.setDisplayvalue("Delimiter "+savedDelimiters.getDelimitername());

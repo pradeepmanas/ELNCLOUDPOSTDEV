@@ -17,4 +17,11 @@ public interface ElnresultUsedSampleRepository extends JpaRepository<ElnresultUs
 	 List<ElnresultUsedSample> findBySamplecodeInAndCreateddateBetweenOrderByNelnresultusedsamplecodeDesc(Integer samplecode,
 			Date fromdate, Date todate);
 
+//	List<ElnresultUsedSample> findByNinventorycodeInAndCreateddateBetweenAndShowfullcommentIsNotNull(
+//			List<Integer> inventorycode, Date fromdate, Date todate);
+
+//	List<ElnresultUsedSample> findBySamplecodeInAndCreateddateBetweenAndShowfullcommentIsNullOrderByNelnresultusedsamplecodeDesc(
+//			Integer samplecode, Date fromdate, Date todate);
+
+
 }
