@@ -1189,13 +1189,13 @@ public class TransactionService {
 
 				if (task.equals("INVENTORYQTYNOTIFICATION")) {
 
-					details = "{\"inventoryid\":\"" + objsample.getSamplecode() + "\",  " + "\"qtyleft\":\""
+					details = "{\"inventoryid\":\"" + objsample.getSamplename() + "\",  " + "\"qtyleft\":\""
 							+ getQtyLeft + "\",  " + "\"notificationamount\":\"" + objsample.getNqtynotification() + "\"}";
 
 				} else if (task.equals("EXPIRYDATE")) {
-					details = "{\"inventoryid\":\"" + objsample.getSamplecode() + "\",  " + "\"daysleft\":\"" + date + "\"}";
+					details = "{\"inventoryid\":\"" + objsample.getSamplename() + "\",  " + "\"daysleft\":\"" + date + "\"}";
 				} else {
-					details = "{\"inventoryid\":\"" + objsample.getSamplecode() + "\",  " + "\"daysleft\":\"" + getQtyLeft + "\"}";
+					details = "{\"inventoryid\":\"" + objsample.getSamplename() + "\",  " + "\"daysleft\":\"" + getQtyLeft + "\"}";
 				}
 
 				String notification = details;

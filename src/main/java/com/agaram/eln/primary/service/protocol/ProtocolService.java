@@ -4243,6 +4243,11 @@ public class ProtocolService {
 //				lSlogilabprotocoldetail.setLstworkflow(lSlogilabprotocoldetail.getLstworkflow());
 			}
 
+			if(lSlogilabprotocoldetail.getIsDefault() && lSlogilabprotocoldetail.getIsDefault() ) {
+				lSlogilabprotocoldetail.setSequenceid(lSlogilabprotocoldetail.getProtoclordername());
+				LSlogilabprotocoldetailRepository.save(lSlogilabprotocoldetail);
+			}
+			
 			mapObj.put("AddedProtocol", lSlogilabprotocoldetail);
 		}
 

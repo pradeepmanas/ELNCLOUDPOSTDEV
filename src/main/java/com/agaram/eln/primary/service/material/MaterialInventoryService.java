@@ -3150,6 +3150,7 @@ public class MaterialInventoryService {
 		List<SelectedInventoryMapped> objStorageLocation = objmapper.convertValue(
 				inputMap.get("selectedStorageLocation"), new TypeReference<List<SelectedInventoryMapped>>() {
 				});
+        final Boolean isdefault = objmapper.convertValue(inputMap.get("isDefault"), Boolean.class);
 
 		objInventory.forEach(objInv -> {
 			try {
@@ -3166,6 +3167,9 @@ public class MaterialInventoryService {
 				objInv.setNtransactionstatus(ntransStatus);
 				objInv.setInventoryname(objInv.getInventoryname());
 				objInv.setCreatedby(objInv.getCreatedby());
+				if(isdefault) {
+	                	objInv.setSequenceid(objInv.getSinventoryid());
+	        	}
 			} catch (ParseException e) {
 				e.printStackTrace();
 			}

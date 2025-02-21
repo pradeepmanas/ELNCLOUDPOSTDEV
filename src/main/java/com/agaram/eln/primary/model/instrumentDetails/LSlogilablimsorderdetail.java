@@ -185,6 +185,9 @@ public class LSlogilablimsorderdetail {
 	@JoinColumn(name = "batchcode")
 	private List<LsOrderattachments> lsOrderattachments;
 
+	@Transient
+	private Boolean isDefault;
+	
 	@OneToMany
 	@JoinColumn(name = "batchcode")
 	private List<ELNFileAttachments> ELNFileAttachments;
@@ -403,6 +406,14 @@ public class LSlogilablimsorderdetail {
 
 	public void setFilecode(Integer filecode) {
 		this.filecode = filecode;
+	}
+
+	public Boolean getIsDefault() {
+		return isDefault;
+	}
+
+	public void setIsDefault(Boolean isDefault) {
+		this.isDefault = isDefault;
 	}
 
 	public void setInstrumentname(String instrumentname) {

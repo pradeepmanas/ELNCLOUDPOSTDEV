@@ -1798,6 +1798,10 @@ public class InstrumentService {
 
 			}
 		}
+		
+		if(objorder.getIsDefault() && objorder.getIsDefault() ) {
+			objorder.setSequenceid(objorder.getBatchid());
+		}
 
 		final List<LSOrdernotification> ordernotList = new ArrayList<>(1);
 		if (objorder.getCautiondate() != null && objorder.getDuedate() != null) {
@@ -1843,6 +1847,7 @@ public class InstrumentService {
 			notificationRepository.save(notify);
 		}
 		lslogilablimsorderdetailRepository.save(objorder);
+
 		if (objorder.getRepeat() != null && objorder.getLsautoregisterorderdetail() != null && objorder.getRepeat()) {
 			try {
 				scheduleAutoregduringregister(objorder, milliseconds, timerId1);
@@ -11845,4 +11850,6 @@ public class InstrumentService {
 		
 		return selectedteam;
 	}
+	
+
 }

@@ -1467,5 +1467,10 @@ public class InstrumentController {
 
 		return instrumentService.Getprotoselectedteam(protocolordercode);
 	}
-
+	
+	@RequestMapping(value = "/updatesequenceondefault", method = RequestMethod.POST)
+	public LSlogilablimsorderdetail updatesequenceondefault(@RequestBody LSlogilablimsorderdetail objorder)
+			throws Exception {
+		return instrumentService.updatesequenceondefault(objorder);
+	}
 }

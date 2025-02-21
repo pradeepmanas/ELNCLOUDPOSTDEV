@@ -1911,11 +1911,11 @@ ON CONFLICT (orderno) DO NOTHING;
 ----AUDIT
 
 INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname,sequenceorder) 
-SELECT 'IDS_TSK_SCREENVIEW', 'IDS_MDL_AUDITTRAIL', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_AUDITTRAILHIS' ,49
+SELECT 'IDS_TSK_SCREENVIEW', 'IDS_MDL_AUDITTRAIL', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_AUDITTRAILHIS' ,50
 WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_SCREENVIEW' and screenname='IDS_SCN_AUDITTRAILHIS' and usergroupid_usergroupcode = 1); 
 
 INSERT INTO lsusergrouprightsmaster(orderno, displaytopic, modulename, screenname, sallow, screate, sdelete, sedit, status, sequenceorder) 
-VALUES (261, 'IDS_TSK_SCREENVIEW', 'IDS_MDL_AUDITTRAIL', 'IDS_SCN_AUDITTRAILHIS', '0', 'NA', 'NA', 'NA', '0,0,0', 49) 
+VALUES (261, 'IDS_TSK_SCREENVIEW', 'IDS_MDL_AUDITTRAIL', 'IDS_SCN_AUDITTRAILHIS', '0', 'NA', 'NA', 'NA', '0,0,0', 50) 
 ON CONFLICT (orderno) DO NOTHING;
 
 ------------------------------
@@ -2003,11 +2003,11 @@ where screenname = 'IDS_SCN_REPORTVIEVER' and modulename = 'IDS_MDL_REPORTS' and
 update lsusergrouprightsmaster set sequenceorder = 48 
 where screenname = 'IDS_SCN_REPORTMAPPER' and modulename = 'IDS_MDL_REPORTS' and displaytopic != 'IDS_TSK_SCREENVIEW';
 
-update lsusergrouprightsmaster set sequenceorder = 49 
-where screenname = 'IDS_SCN_AUDITTRAILHIS' and modulename = 'IDS_MDL_AUDITTRAIL' and displaytopic != 'IDS_TSK_SCREENVIEW';
 update lsusergrouprightsmaster set sequenceorder = 50 
-where screenname = 'IDS_SCN_CFRSETTINGS' and modulename = 'IDS_MDL_AUDITTRAIL' and displaytopic != 'IDS_TSK_SCREENVIEW';
+where screenname = 'IDS_SCN_AUDITTRAILHIS' and modulename = 'IDS_MDL_AUDITTRAIL' and displaytopic != 'IDS_TSK_SCREENVIEW';
 update lsusergrouprightsmaster set sequenceorder = 51 
+where screenname = 'IDS_SCN_CFRSETTINGS' and modulename = 'IDS_MDL_AUDITTRAIL' and displaytopic != 'IDS_TSK_SCREENVIEW';
+update lsusergrouprightsmaster set sequenceorder = 52 
 where screenname = 'IDS_SCN_AUDITTRAILCONFIG' and modulename = 'IDS_MDL_AUDITTRAIL' and displaytopic != 'IDS_TSK_SCREENVIEW';
 -------------------------------------------------------------------------
 
@@ -2087,11 +2087,11 @@ where screenname = 'IDS_SCN_REPORTVIEVER' and modulename = 'IDS_MDL_REPORTS' and
 update lsusergrouprights set sequenceorder = 48 
 where screenname = 'IDS_SCN_REPORTMAPPER' and modulename = 'IDS_MDL_REPORTS' and displaytopic != 'IDS_TSK_SCREENVIEW';
 
-update lsusergrouprights set sequenceorder = 49 
-where screenname = 'IDS_SCN_AUDITTRAILHIS' and modulename = 'IDS_MDL_AUDITTRAIL' and displaytopic != 'IDS_TSK_SCREENVIEW';
 update lsusergrouprights set sequenceorder = 50 
-where screenname = 'IDS_SCN_CFRSETTINGS' and modulename = 'IDS_MDL_AUDITTRAIL' and displaytopic != 'IDS_TSK_SCREENVIEW';
+where screenname = 'IDS_SCN_AUDITTRAILHIS' and modulename = 'IDS_MDL_AUDITTRAIL' and displaytopic != 'IDS_TSK_SCREENVIEW';
 update lsusergrouprights set sequenceorder = 51 
+where screenname = 'IDS_SCN_CFRSETTINGS' and modulename = 'IDS_MDL_AUDITTRAIL' and displaytopic != 'IDS_TSK_SCREENVIEW';
+update lsusergrouprights set sequenceorder = 52 
 where screenname = 'IDS_SCN_AUDITTRAILCONFIG' and modulename = 'IDS_MDL_AUDITTRAIL' and displaytopic != 'IDS_TSK_SCREENVIEW';
 
 ---------------------------

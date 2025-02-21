@@ -2012,8 +2012,8 @@ public class LoginService {
 			userDetails.setLssitemaster(lSSiteMasterRepository.findBysitecode(objuser.getLssitemaster().getSitecode()));
 			objuser = userDetails;
 			Response objResponse = new Response();
-			objResponse.setStatus(true);
-			objResponse.setInformation("");
+			objResponse.setStatus(false);
+			objResponse.setInformation("User already exists");
 			objuser.setUnifieduserid(userDetails.getUnifieduserid());
 			objuser.setObjResponse(objResponse);
 		}

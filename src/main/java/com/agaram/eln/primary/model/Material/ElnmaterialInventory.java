@@ -79,6 +79,9 @@ public class ElnmaterialInventory {
 	
 	private Double nqtynotification;
 	
+	@Transient
+	private Boolean isDefault ;
+	
 	@Column(name = "sequenceid")
 	private String sequenceid;
 	
@@ -154,6 +157,14 @@ public class ElnmaterialInventory {
 
 	public void setCreatedby(LSuserMaster createdby) {
 		this.createdby = createdby;
+	}
+
+	public Boolean getIsDefault() {
+		return isDefault;
+	}
+
+	public void setIsDefault(Boolean isDefault) {
+		this.isDefault = isDefault;
 	}
 
 	public Integer getNtransactionstatus() {

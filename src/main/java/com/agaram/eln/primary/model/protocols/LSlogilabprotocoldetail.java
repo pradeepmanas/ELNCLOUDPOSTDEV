@@ -76,6 +76,9 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	@Transient
 	private Lsprotocolorderstructure lsprotocolorderstructure;
 
+	@Transient
+	private Boolean isDefault;
+	
 	private Integer autoregistercount;
 
 	private Integer lockeduser;
@@ -382,6 +385,14 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 
 	public interface LSuserMasterInterface {
 		String getUsername();
+	}
+	
+	public Boolean getIsDefault() {
+		return isDefault;
+	}
+
+	public void setIsDefault(Boolean isDefault) {
+		this.isDefault = isDefault;
 	}
 
 	public LsActiveWidgets getLsActiveWidgets() {
