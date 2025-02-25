@@ -85,6 +85,26 @@ public class ElnresultUsedSample {
 	private String samlename;
 	
 	private String samlesequenceid;
+    
+	private Long statuschangesFrom;
+	
+	private Long statuschangesTo;
+	
+	public Long getStatuschangesFrom() {
+		return statuschangesFrom;
+	}
+
+	public void setStatuschangesFrom(Long statuschangesFrom) {
+		this.statuschangesFrom = statuschangesFrom;
+	}
+
+	public Long getStatuschangesTo() {
+		return statuschangesTo;
+	}
+
+	public void setStatuschangesTo(Long statuschangesTo) {
+		this.statuschangesTo = statuschangesTo;
+	}
 	
 	@Transient
 	private Map<String, Object> customobject;

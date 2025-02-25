@@ -51,6 +51,10 @@ public class Unit {
 	@Transient
 	private String smaterialcatname;
 	
+	
+	@Transient
+	private String ssamplecatname;
+	
 	private transient String mDate;
 	
 	@Temporal(TemporalType.TIMESTAMP)

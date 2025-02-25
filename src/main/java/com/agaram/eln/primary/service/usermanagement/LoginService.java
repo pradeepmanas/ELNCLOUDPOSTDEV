@@ -187,10 +187,11 @@ public class LoginService {
 	// added for notification
 
 	public List<LSSiteMaster> loadSite() {
-		List<LSSiteMaster> result = new ArrayList<LSSiteMaster>();
-		lSSiteMasterRepository.findByIstatus(1).forEach(result::add);
-		return result;
+	    List<LSSiteMaster> result = new ArrayList<>();
+	    lSSiteMasterRepository.findByIstatusOrderBySitecodeDesc(1).forEach(result::add);
+	    return result;
 	}
+
 
 	public List<LSSiteMaster> LoadSiteMaster() {
 		return lSSiteMasterRepository.findByOrderBySitecodeDesc();
@@ -405,7 +406,7 @@ public class LoginService {
 		List<LSMultisites> objformultisite = LSMultisitesRepositery.findByLssiteMaster(objsiteobj);
 		List<Integer> usercode = objformultisite.stream().map(LSMultisites::getUsercode).collect(Collectors.toList());
 		List<LSuserMaster> userobj = lSuserMasterRepository
-				.findByUsernameIgnoreCaseAndUsercodeInAndLoginfromAndUserretirestatusNot(username, usercode, "0", 1);
+				.findByUsernameIgnoreCaseAndUsercodeInAndLoginfromAndUserretirestatusNotAndUserstatusNot(username, usercode, "0", 1,"D");
 		LSSiteMaster[] tempobj = { null };
 		LSSiteMaster[] multisitelogin = { null };
 		if (!userobj.isEmpty()) {
@@ -1651,8 +1652,8 @@ public class LoginService {
 		List < LSMultisites > objformultisite = LSMultisitesRepositery.findByLssiteMaster(objsite);
 		List < Integer > usercode = objformultisite.stream().map(LSMultisites:: getUsercode).collect(Collectors.toList());
 		List < LSuserMaster > userobj = lSuserMasterRepository
-		    .findByUsernameIgnoreCaseAndUsercodeInAndLoginfromAndUserretirestatusNot(username,
-		        usercode, "1", 1);
+		    .findByUsernameIgnoreCaseAndUsercodeInAndLoginfromAndUserretirestatusNotAndUserstatusNot(username,
+		        usercode, "1", 1,"D");
 		
 		
 //		objExitinguser = lSuserMasterRepository.findByUsernameIgnoreCaseAndLoginfromAndLssitemaster(username, "1",
@@ -1922,101 +1923,145 @@ public class LoginService {
 
 	}
 
-	public LSuserMaster createuserforazure(LSuserMaster objuser) {
-		
-		List<LSMultisites> objformultisite = LSMultisitesRepositery.findByLssiteMaster(objuser.getLssitemaster());
-		List<Integer> usercode = objformultisite.stream().map(LSMultisites::getUsercode).collect(Collectors.toList());
-		List<LSuserMaster> userobj = lSuserMasterRepository
-				.findByUsernameIgnoreCaseAndUsercodeInAndLoginfromAndUserretirestatusNot(objuser.getUsername(),
-						usercode, "1", 1);
-//		LSuserMaster userDetails = lsuserMasterRepository.findByUsernameIgnoreCaseAndLoginfromAndLssitemaster(
-//				objuser.getUsername(), "1", objuser.getLssitemaster());
+	public LSuserMaster createuserforazure(LSuserMaster objuser) {	
+			
+			Map<String, Object> retobj = new HashMap<>();
+			boolean usernameExists = false;
+			List<LSSiteMaster> lsrights = Arrays.asList(objuser.getLssitemaster());
+			
+			if (objuser.getUsername() != null) {
+				for (LSSiteMaster tempobj : lsrights) {
+					List<LSMultisites> userocedsites = LSMultisitesRepositery.findByLssiteMaster(tempobj);
+					List<Integer> usercode1 = userocedsites.stream().map(LSMultisites::getUsercode)
+							.collect(Collectors.toList());
 
-//		if (userDetails == null) {
-		if (userobj.isEmpty()) {
-			if (objuser.getIsmultitenant() != null && objuser.getMultitenantusercount() != null
-					&& objuser.getIsmultitenant() == 1) {
-//				if(lsuserMasterRepository.countByusercodeNot(1) >= objuser.getMultitenantusercount())
-				if (lsuserMasterRepository.countByusercodeNotAndUserretirestatusNot(1, 1) >= objuser
-						.getMultitenantusercount()) {
-					Response objResponse = new Response();
-					objResponse.setStatus(false);
-					objResponse.setInformation("IDS_MSG_USERCOUNTEXCEEDS");
-					objuser.setObjResponse(objResponse);
+					List<LSuserMaster> existingUser = lsuserMasterRepository.findByUsernameIgnoreCaseAndUsercodeInAndUserretirestatusNotAndLoginfromAndUserstatusNot(objuser.getUsername(),usercode1,1,"1","D");
+					List<LSuserMaster> existingUser1 = lsuserMasterRepository.findByUsernameIgnoreCaseAndUserretirestatusNotAndLoginfromAndUserstatusNot(objuser.getUsername(),1,"1","D");
+					
+					if (!existingUser.isEmpty()) {
+						LSuserMaster userDetails = existingUser.get(0);
+						userDetails.setLssitemaster(lSSiteMasterRepository.findBysitecode(objuser.getLssitemaster().getSitecode()));
+						objuser = userDetails;
+						Response objResponse = new Response();
+						objResponse.setStatus(false);
+						objResponse.setInformation("User Name Alredy Exists");
+						objuser.setUnifieduserid(userDetails.getUnifieduserid());
+						objuser.setObjResponse(objResponse);
+//							retobj.put("sitemaster", LSSiteMasterRepository.findBysitecode(tempobj.getSitecode()));
+//							retobj.put("username", objclass.getUsername());
+////				            retobj.put("message", "username already exists");
+//							usernameExists = true;
+							break;
+						}
+					
+					if (existingUser.isEmpty()) {
+						if (objuser.getIsmultitenant() != null && objuser.getMultitenantusercount() != null
+								&& objuser.getIsmultitenant() == 1) {
+//							if(lsuserMasterRepository.countByusercodeNot(1) >= objuser.getMultitenantusercount())
+							if (lsuserMasterRepository.countByUserretirestatusNotAndUserstatusNot(1,"D") >= objuser.getMultitenantusercount()) {
+								Response objResponse = new Response();
+								objResponse.setStatus(false);
+								objResponse.setInformation("IDS_MSG_USERCOUNTEXCEEDS");
+								objuser.setObjResponse(objResponse);
 
-					return objuser;
+								return objuser;
+							}
+						}
+						LSusergroup objaadsgroup = LSusergroupRepository.findByusergroupnameAndLssitemaster("Azure aads",
+								objuser.getLssitemaster().getSitecode());
+						LSusergroup objgroup = new LSusergroup();
+						LSMultiusergroup LSMultiusergroup = new LSMultiusergroup();
+						LSMultisites multisiteobj = new LSMultisites();
+						if (objaadsgroup == null) {
+
+							objgroup.setUsergroupname("Azure aads");
+							objgroup.setLssitemaster(objuser.getLssitemaster().getSitecode());
+							objgroup.setCreatedby(objuser.getUsername());
+							objgroup.setModifiedby(objuser.getUsername());
+							objgroup.setCreatedon(objuser.getCreateddate());
+							objgroup.setModifiedon(objuser.getCreateddate());
+							objgroup.setUsergroupstatus("A");
+
+							LSusergroupRepository.save(objgroup);
+
+							objuser.setLsusergroup(objgroup);
+
+							LSMultiusergroup.setLsusergroup(objgroup);
+							LSMultiusergroup.setDefaultusergroup(1);
+						} else {
+							objuser.setLsusergroup(objaadsgroup);
+//							LSMultiusergroup.setDefaultusergroup(objaadsgroup.getUsergroupcode());
+							LSMultiusergroup.setDefaultusergroup(objaadsgroup.getUsergroupcode());
+							LSMultiusergroup.setLsusergroup(objaadsgroup);
+							if(!existingUser1.isEmpty()) {
+								LSMultiusergroup.setUsercode(existingUser1.get(0).getUsercode());	
+							}
+						}
+
+						multisiteobj.setLssiteMaster(objuser.getLssitemaster());						
+						if(!existingUser1.isEmpty()) {
+							multisiteobj.setDefaultsiteMaster(1);
+							multisiteobj.setUsercode(existingUser1.get(0).getUsercode());	
+						}
+						
+
+						objuser.setCreatedby(objuser.getUsername());
+						objuser.setModifiedby(objuser.getUsername());
+						objuser.setUserstatus("A");
+						objuser.setLockcount(0);
+						objuser.setUserretirestatus(0);
+						objuser.setPassword(objuser.getToken());
+
+						Response objResponse = new Response();
+						objResponse.setStatus(true);
+						objuser.setObjResponse(objResponse);
+						objuser.setLoginfrom("1");
+
+						List<LSMultiusergroup> LSMultiusergroup1 = new ArrayList<LSMultiusergroup>();
+						List<LSMultisites> lstmultisites = new ArrayList<LSMultisites>();
+						lstmultisites.add(multisiteobj);
+						LSMultiusergroup1.add(LSMultiusergroup);
+						objuser.setLsmultisites(lstmultisites);
+						objuser.setMultiusergroupcode(LSMultiusergroup1);
+						LSMultisitesRepositery.save(objuser.getLsmultisites());
+						LSMultiusergroupRepositery.save(objuser.getMultiusergroupcode());
+						
+						if(existingUser1.isEmpty()) {
+							lsuserMasterRepository.save(objuser);
+
+							String unifieduser = objuser.getUsername().toLowerCase().replaceAll("[^a-zA-Z0-9]", "") + "u"
+									+ objuser.getUsercode() + "s" + objuser.getLssitemaster().getSitecode()
+									+ objuser.getUnifieduserid();
+
+							objuser.setUnifieduserid(unifieduser);
+							lsuserMasterRepository.save(objuser);
+						}
+						
+						break;
+					}
+					
+
+					
+					
+					if (existingUser.isEmpty()) {
+						LSuserMaster userDetails1 = existingUser.get(0);
+						userDetails1.setLssitemaster(lSSiteMasterRepository.findBysitecode(objuser.getLssitemaster().getSitecode()));
+						objuser = userDetails1;
+						Response objResponse1 = new Response();
+						objResponse1.setStatus(true);
+						objResponse1.setInformation("");
+						objuser.setUnifieduserid(userDetails1.getUnifieduserid());
+						objuser.setObjResponse(objResponse1);	
+						break;
+					}
+					
 				}
+
+				retobj.put("usernameExists", usernameExists);
 			}
-			LSusergroup objaadsgroup = LSusergroupRepository.findByusergroupnameAndLssitemaster("Azure aads",
-					objuser.getLssitemaster().getSitecode());
-			LSusergroup objgroup = new LSusergroup();
-			LSMultiusergroup LSMultiusergroup = new LSMultiusergroup();
-			LSMultisites multisiteobj = new LSMultisites();
-			if (objaadsgroup == null) {
-
-				objgroup.setUsergroupname("Azure aads");
-				objgroup.setLssitemaster(objuser.getLssitemaster().getSitecode());
-				objgroup.setCreatedby(objuser.getUsername());
-				objgroup.setModifiedby(objuser.getUsername());
-				objgroup.setCreatedon(objuser.getCreateddate());
-				objgroup.setModifiedon(objuser.getCreateddate());
-				objgroup.setUsergroupstatus("A");
-
-				LSusergroupRepository.save(objgroup);
-
-				objuser.setLsusergroup(objgroup);
-
-				LSMultiusergroup.setLsusergroup(objgroup);
-				LSMultiusergroup.setDefaultusergroup(1);
-			} else {
-				objuser.setLsusergroup(objaadsgroup);
-//				LSMultiusergroup.setDefaultusergroup(objaadsgroup.getUsergroupcode());
-				LSMultiusergroup.setDefaultusergroup(1);
-				LSMultiusergroup.setLsusergroup(objaadsgroup);
-			}
-
-			multisiteobj.setLssiteMaster(objuser.getLssitemaster());
-			multisiteobj.setDefaultsiteMaster(1);
-//			multisiteobj.setUsercode();
-
-			objuser.setCreatedby(objuser.getUsername());
-			objuser.setModifiedby(objuser.getUsername());
-			objuser.setUserstatus("A");
-			objuser.setLockcount(0);
-			objuser.setUserretirestatus(0);
-			objuser.setPassword(objuser.getToken());
-
-			Response objResponse = new Response();
-			objResponse.setStatus(true);
-			objuser.setObjResponse(objResponse);
-			objuser.setLoginfrom("1");
-
-			List<LSMultiusergroup> LSMultiusergroup1 = new ArrayList<LSMultiusergroup>();
-			List<LSMultisites> lstmultisites = new ArrayList<LSMultisites>();
-			lstmultisites.add(multisiteobj);
-			LSMultiusergroup1.add(LSMultiusergroup);
-			objuser.setLsmultisites(lstmultisites);
-			objuser.setMultiusergroupcode(LSMultiusergroup1);
-			LSMultisitesRepositery.save(objuser.getLsmultisites());
-			LSMultiusergroupRepositery.save(objuser.getMultiusergroupcode());
-			lsuserMasterRepository.save(objuser);
-
-			String unifieduser = objuser.getUsername().toLowerCase().replaceAll("[^a-zA-Z0-9]", "") + "u"
-					+ objuser.getUsercode() + "s" + objuser.getLssitemaster().getSitecode()
-					+ objuser.getUnifieduserid();
-
-			objuser.setUnifieduserid(unifieduser);
-			lsuserMasterRepository.save(objuser);
-		} else {
-			LSuserMaster userDetails = userobj.get(0);
-			userDetails.setLssitemaster(lSSiteMasterRepository.findBysitecode(objuser.getLssitemaster().getSitecode()));
-			objuser = userDetails;
-			Response objResponse = new Response();
-			objResponse.setStatus(false);
-			objResponse.setInformation("User already exists");
-			objuser.setUnifieduserid(userDetails.getUnifieduserid());
-			objuser.setObjResponse(objResponse);
-		}
+			
+			
+		
 
 		return objuser;
 	}
@@ -2028,10 +2073,16 @@ public class LoginService {
 			return null;
 		
 		Map<String, Object> obj = new HashMap<>();
-		LSuserMaster userDetails = lsuserMasterRepository.findTop1ByUsernameIgnoreCaseAndLoginfromAndLssitemaster(
-				objuser.getUsername(), "1", objuser.getLssitemaster());
+//		LSuserMaster userDetails = lsuserMasterRepository.findTop1ByUsernameIgnoreCaseAndLoginfromAndLssitemaster(
+//				objuser.getUsername(), "1", objuser.getLssitemaster());
 
-		if(userDetails != null)
+		List<LSMultisites> userocedsites = LSMultisitesRepositery.findByLssiteMaster(objuser.getLssitemaster());
+		List<Integer> usercode1 = userocedsites.stream().map(LSMultisites::getUsercode)
+				.collect(Collectors.toList());
+
+		List<LSuserMaster> userDetails1 = lsuserMasterRepository.findByUsernameIgnoreCaseAndUsercodeInAndUserretirestatusNotAndLoginfromAndUserstatusNot(objuser.getUsername(),usercode1,1,"1","D");
+		LSuserMaster userDetails = userDetails1.isEmpty() ? null :  userDetails1.get(0);
+		if(userDetails != null )
 		{
 			LSPasswordPolicy policydays = LSPasswordPolicyRepository.findTopByAndLssitemasterOrderByPolicycodeDesc(objuser.getLssitemaster());
 			if (policydays == null) {

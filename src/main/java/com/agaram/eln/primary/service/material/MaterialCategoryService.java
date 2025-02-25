@@ -9,12 +9,12 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import javax.persistence.Query;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,16 +28,22 @@ import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.material.Elnmaterial;
 import com.agaram.eln.primary.model.material.ElnmaterialInventory;
 import com.agaram.eln.primary.model.material.MaterialCategory;
+import com.agaram.eln.primary.model.material.MaterialProjectHistory;
+import com.agaram.eln.primary.model.material.MaterialProjectMap;
 import com.agaram.eln.primary.model.material.MaterialType;
 import com.agaram.eln.primary.model.material.Unit;
+import com.agaram.eln.primary.model.sample.SampleProjectHistory;
 import com.agaram.eln.primary.model.samplestoragelocation.SampleStorageLocation;
-import com.agaram.eln.primary.model.samplestoragelocation.SampleStorageVersion;
 import com.agaram.eln.primary.model.samplestoragelocation.SelectedInventoryMapped;
-import com.agaram.eln.primary.model.usermanagement.LSMultiusergroup;
+import com.agaram.eln.primary.model.sequence.SequenceTable;
+import com.agaram.eln.primary.model.sequence.SequenceTableProjectLevel;
+import com.agaram.eln.primary.model.sequence.SequenceTableTaskLevel;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.repository.material.ElnmaterialInventoryRepository;
 import com.agaram.eln.primary.repository.material.ElnmaterialRepository;
 import com.agaram.eln.primary.repository.material.MaterialCategoryRepository;
+import com.agaram.eln.primary.repository.material.MaterialProjectHistoryRepository;
+import com.agaram.eln.primary.repository.material.MaterialProjectMapRepository;
 import com.agaram.eln.primary.repository.material.MaterialTypeRepository;
 import com.agaram.eln.primary.repository.material.UnitRepository;
 import com.agaram.eln.primary.repository.samplestoragelocation.SampleStorageLocationRepository;
@@ -71,9 +77,17 @@ public class MaterialCategoryService {
 
 	@PersistenceContext
 	private EntityManager entityManager;
-	
+
 	@Autowired
 	SampleStorageLocationRepository sampleStorageLocationRepository;
+
+	@Autowired
+	MaterialService MaterialService;
+
+	@Autowired
+	MaterialProjectMapRepository MaterialProjectMapRepository;
+	@Autowired
+	MaterialProjectHistoryRepository MaterialProjectHistoryRepository;
 
 	public ResponseEntity<Object> getMaterialType(Integer nsitecode) {
 
@@ -242,9 +256,33 @@ public class MaterialCategoryService {
 					return item;
 				}
 			}).collect(Collectors.toList());
-			
+
 			UnitRepository.save(unitvalues);
 		}
+
+		List<MaterialProjectMap> MaterialProjectMapobj = obj.convertValue(inputMap.get("materialprojectmap"),
+				new TypeReference<List<MaterialProjectMap>>() {
+				});
+		final Map<String, List<MaterialProjectMap>> customizedMaterialProjectMap = new HashMap<>();
+		if (MaterialProjectMapobj.size()>0 ) {
+			MaterialProjectMapRepository.save(MaterialProjectMapobj);
+			customizedMaterialProjectMap.putAll(MaterialProjectMapobj.stream()
+					.collect(Collectors.groupingBy(MaterialProjectMap::getMaterialname, Collectors.toList())));
+		}
+		List<MaterialProjectHistory> materialProjectHistoryMapobj = obj.convertValue(inputMap.get("materialprojecthistory"),
+				new TypeReference<List<MaterialProjectHistory>>() {
+				});
+		 Map<String, List<MaterialProjectHistory>> customizedMaterialProjectHistoryMap = new HashMap<>();
+			if (materialProjectHistoryMapobj.size()>0) {
+				materialProjectHistoryMapobj=materialProjectHistoryMapobj.stream().map((items) ->{
+					items.setCreateddate(currentDate);
+					return items;
+				}).collect(Collectors.toList());
+				MaterialProjectHistoryRepository.save(materialProjectHistoryMapobj);
+				customizedMaterialProjectHistoryMap.putAll(materialProjectHistoryMapobj.stream()
+						.collect(Collectors.groupingBy(MaterialProjectHistory::getMaterialname, Collectors.toList())));
+			}
+
 
 		// material -------------------------------------------------------
 
@@ -260,24 +298,34 @@ public class MaterialCategoryService {
 					"Smaterialname");
 
 			materialDatas = materialDatas.stream().map(itemsv -> {
-//				MaterialCategory unitmaterialcategory = materialCatMapaftersave
-//						.get(itemsv.getMaterialcategory().getSmaterialcatname());
-//				if (materialCategoriesExistvalues.get(itemsv.getMaterialcategory().getSmaterialcatname()) > 0) {
-//					Long existcount = materialCategoriesExistvalues
-//							.get(itemsv.getMaterialcategory().getSmaterialcatname()) + 1;
-//					unitmaterialcategory = materialCatMapaftersave
-//							.get(itemsv.getMaterialcategory().getSmaterialcatname() + "(" + existcount + ")");
-//				}
-//				if (unitmaterialcategory != null && unitmaterialcategory.getNmaterialcatcode() != null) {
-//					itemsv.setMaterialcategory(unitmaterialcategory);
-					if (itemsv.getUnit()!=null && itemsv.getUnit().getSunitname() != null && !unitfinalmap.isEmpty()) {
-						itemsv.setUnit(unitfinalmap.get(itemsv.getUnit().getSunitname()));
-					}
-//				}
+				if (itemsv.getUnit() != null && itemsv.getUnit().getSunitname() != null && !unitfinalmap.isEmpty()) {
+					itemsv.setUnit(unitfinalmap.get(itemsv.getUnit().getSunitname()));
+				}
+				String oldmaterialname=itemsv.getSmaterialname();
 				if (existMaterialList.get(itemsv.getSmaterialname()) > 0) {
 					Long existcount = existMaterialList.get(itemsv.getSmaterialname()) + 1;
 					itemsv.setSmaterialname(itemsv.getSmaterialname() + "(" + existcount + ")");
 				}
+				SequenceTableProjectLevel objprojectseq = new SequenceTableProjectLevel();
+				SequenceTableTaskLevel objtaskseq = new SequenceTableTaskLevel();
+
+				try {
+					SequenceTable seqorder = MaterialService.validateandupdatematerialsequencenumber(itemsv,
+							objprojectseq, objtaskseq);
+					itemsv = MaterialService.GetSequences(itemsv, seqorder, objprojectseq, objtaskseq);
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
+				if (MaterialProjectMapobj .size()>0 
+						&& customizedMaterialProjectMap.get(oldmaterialname)!=null ) {
+					List<MaterialProjectMap> mpm = customizedMaterialProjectMap.get(oldmaterialname);
+					itemsv.setMaterialprojectmap(mpm);
+				}
+				if (inputMap.get("materialprojecthistory")!=null && customizedMaterialProjectHistoryMap.get(oldmaterialname)!=null) {
+					List<MaterialProjectHistory> mpmh = customizedMaterialProjectHistoryMap.get(oldmaterialname);
+					itemsv.setMaterialprojecthistory(mpmh);
+				}
+
 				itemsv.setCreateddate(currentDate);
 				return itemsv;
 			}).filter(Objects::nonNull).collect(Collectors.toList());
@@ -299,9 +347,7 @@ public class MaterialCategoryService {
 			objInventory.forEach(objInv -> {
 				try {
 					String materialName = objInv.getMaterial().getSmaterialname();
-//					String materialCategoryName = objInv.getMaterialcategory().getSmaterialcatname();
-//					String materialTypeName = objInv.getMaterialtype().getSmaterialtypename();
-					String unitname =objInv.getUnit()!=null? objInv.getUnit().getSunitname():null;
+					String unitname = objInv.getUnit() != null ? objInv.getUnit().getSunitname() : null;
 					boolean isExpiry = objInv.getMaterial().getExpirytype() != null
 							&& objInv.getMaterial().getExpirytype() == 1;
 					Integer ntransStatus = (objInv.getMaterial().getQuarantine() != null
@@ -309,20 +355,12 @@ public class MaterialCategoryService {
 									: (objInv.getMaterial().getOpenexpiry() != null
 											&& objInv.getMaterial().getOpenexpiry()) ? 22 : 28;
 					objInv.setMaterial(updateMaterial(materialName, existMaterialList, materialMapaftersave));
-//					objInv.setMaterialcategory(updateMaterial(materialCategoryName, materialCategoriesExistvalues,
-//							materialCatMapaftersave));
 					if (unitname != null) {
 						objInv.setUnit(unitfinalmap.get(unitname));
 					}
-
-//					objInv.setMaterialtype(materialTypeMapFull.get(objInv.getMaterialtype().getSmaterialtypename()));
 					objInv.setCreateddate(commonfunction.getCurrentUtcTime());
 					objInv.setIsexpiry(isExpiry);
 					objInv.setNtransactionstatus(ntransStatus);
-//					if(objInv.getInventoryname()!=null) {
-//						objInv.setInventoryname(objInv.getInventoryname());
-//					}
-					
 					objInv.setCreatedby(objInv.getCreatedby());
 
 				} catch (ParseException e) {
@@ -413,7 +451,7 @@ public class MaterialCategoryService {
 
 	public ResponseEntity<Object> getAllActiveSampleStorageLocationforimport(Integer nsiteInteger) {
 		List<SampleStorageLocation> sampleStorageLocationList = sampleStorageLocationRepository
-				.findBySamplestoragelocationkeyOrSitekeyOrderBySamplestoragelocationkeyDesc(-1,nsiteInteger);
+				.findBySamplestoragelocationkeyOrSitekeyOrderBySamplestoragelocationkeyDesc(-1, nsiteInteger);
 
 		Map<String, Object> objMap = new LinkedHashMap<String, Object>();
 
@@ -422,4 +460,5 @@ public class MaterialCategoryService {
 		}
 		return new ResponseEntity<>(objMap, HttpStatus.OK);
 	}
+
 }

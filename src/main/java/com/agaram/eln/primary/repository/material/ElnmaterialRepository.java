@@ -79,5 +79,54 @@ public interface ElnmaterialRepository extends JpaRepository<Elnmaterial, Intege
 
 	List<Elnmaterial> findByNsitecodeAndCreateddateBetweenAndNmaterialcodeInOrderByNmaterialcodeDesc(
 			Integer nsiteInteger, Date fromDate, Date toDate, List<Integer> nmaterialcode);
+	
+	@Transactional
+	@Query(value = "select em.* from elnmaterial em "
+			+ "where em.materialcategory_nmaterialcatcode = ?1 and em.nsitecode = ?2 and "
+			+ "em.createddate BETWEEN ?3 AND ?4 and (select count(*) from materialprojectmap where nmaterialcode = em.nmaterialcode) = 0 Order By Nmaterialcode Desc",nativeQuery = true)
+	List<Elnmaterial> getMaterialOnGeneralProjects(Integer objMaterialCategory, Integer nsiteInteger, Date fromDate, Date toDate);
+
+	@Transactional
+	@Query(value = "select em.* from elnmaterial em "
+			+ "where em.materialcategory_nmaterialcatcode = ?1 and em.nsitecode = ?2 and "
+			+ "em.createddate BETWEEN ?3 AND ?4 and (select count(*) from materialprojectmap where nmaterialcode = em.nmaterialcode and lsproject_projectcode in (?5)) > 0 Order By Nmaterialcode Desc",nativeQuery = true)
+	List<Elnmaterial> getMaterialOnProjects(Integer objMaterialCategory, Integer nsiteInteger, Date fromDate, Date toDate, List<Integer> projectcode);
+
+	List<Elnmaterial> findByNsitecodeAndCreateddateBetweenAndNmaterialcodeNotInOrderByNmaterialcodeDesc(
+			Integer nsiteInteger, Date fromdate, Date todate, List<Integer> nmaterialcode);
+
+	List<Elnmaterial> findByNsitecodeAndCreateddateBetweenAndMaterialtypeAndMaterialcategoryOrderByNmaterialcodeDesc(
+			Integer nsiteInteger, Date fromdate, Date todate, MaterialType objmaterialtype,
+			MaterialCategory objMaterialCategory);
+
+	List<Elnmaterial> findByNsitecodeAndCreateddateBetweenAndMaterialtypeOrderByNmaterialcodeDesc(Integer nsiteInteger,
+			Date fromdate, Date todate, MaterialType objmaterialtype);
+
+	List<Elnmaterial> findByNsitecodeAndCreateddateBetweenAndMaterialcategoryOrderByNmaterialcodeDesc(
+			Integer nsiteInteger, Date fromdate, Date todate, MaterialCategory objMaterialCategory);
+
+	List<Elnmaterial> findByNsitecodeAndCreateddateBetweenAndNmaterialcodeInAndMaterialtypeAndMaterialcategoryOrderByNmaterialcodeDesc(
+			Integer nsiteInteger, Date fromdate, Date todate, List<Integer> nmaterialcode, MaterialType objmaterialtype,
+			MaterialCategory objMaterialCategory);
+
+	List<Elnmaterial> findByNsitecodeAndCreateddateBetweenAndNmaterialcodeNotInAndMaterialtypeAndMaterialcategoryOrderByNmaterialcodeDesc(
+			Integer nsiteInteger, Date fromdate, Date todate, List<Integer> nmaterialcode, MaterialType objmaterialtype,
+			MaterialCategory objMaterialCategory);
+
+	List<Elnmaterial> findByNsitecodeAndCreateddateBetweenAndNmaterialcodeInAndMaterialtypeOrderByNmaterialcodeDesc(
+			Integer nsiteInteger, Date fromdate, Date todate, List<Integer> nmaterialcode, MaterialType objmaterialtype,
+			MaterialCategory objMaterialCategory);
+
+	List<Elnmaterial> findByNsitecodeAndCreateddateBetweenAndNmaterialcodeNotInAndMaterialtypeOrderByNmaterialcodeDesc(
+			Integer nsiteInteger, Date fromdate, Date todate, List<Integer> nmaterialcode, MaterialType objmaterialtype,
+			MaterialCategory objMaterialCategory);
+
+	List<Elnmaterial> findByNsitecodeAndCreateddateBetweenAndNmaterialcodeInAndMaterialcategoryOrderByNmaterialcodeDesc(
+			Integer nsiteInteger, Date fromdate, Date todate, List<Integer> nmaterialcode,
+			MaterialCategory objMaterialCategory);
+
+	List<Elnmaterial> findByNsitecodeAndCreateddateBetweenAndNmaterialcodeNotInAndMaterialcategoryOrderByNmaterialcodeDesc(
+			Integer nsiteInteger, Date fromdate, Date todate, List<Integer> nmaterialcode,
+			MaterialCategory objMaterialCategory);
 
 }

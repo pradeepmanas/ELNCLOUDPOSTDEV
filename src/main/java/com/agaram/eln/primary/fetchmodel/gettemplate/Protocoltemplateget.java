@@ -16,6 +16,15 @@ public class Protocoltemplateget implements Comparable<Protocoltemplateget>{
 	private Date createdate;
 	private String lssheetworkflowname;
 	public Integer versionno;
+	private Date lastmodified;
+	
+	public Date getLastmodified() {
+		return lastmodified;
+	}
+
+	public void setLastmodified(Date lastmodified) {
+		this.lastmodified = lastmodified;
+	}
 	public Date getCreatedate() {
 		return createdate;
 	}
@@ -90,7 +99,7 @@ public class Protocoltemplateget implements Comparable<Protocoltemplateget>{
 	}
 
 	public Protocoltemplateget(Integer protocolmastercode, String protocolmastername, Integer protocolstatus,
-			Integer status, String createdbyusername, Integer approved, Integer rejected,Integer retirestatus, Date createdate,Integer versionno,ElnprotocolTemplateworkflow elnprotocoltemplateworkflow) {
+			Integer status, String createdbyusername, Integer approved, Integer rejected,Integer retirestatus, Date createdate,Integer versionno,ElnprotocolTemplateworkflow elnprotocoltemplateworkflow,Date lastmodified) {
 
 		this.protocolmastercode = protocolmastercode;
 		this.protocolmastername = protocolmastername;
@@ -102,6 +111,7 @@ public class Protocoltemplateget implements Comparable<Protocoltemplateget>{
 				: (approved == null ? "Created" :approved == 1 ? "Approved" : approved == 0 ? "Initiated":approved == 2?"Return":"");
 		this.lssheetworkflowname=elnprotocoltemplateworkflow!=null?elnprotocoltemplateworkflow.getWorkflowname():null;
 		this.versionno=versionno;
+		this.lastmodified=lastmodified;
 	}
 
 	@Override

@@ -48,6 +48,8 @@ public class Logilaborderssh extends LogilabOrdermastersh {
 	private String ac;
 	private Integer arc;
 	private Boolean ts;
+	private Date modifieddate;
+	private String modifiedby;
 	
 	public Logilaborderssh(Long batchcode, String batchid, String orderflag, Integer approvelstatus,
 			Integer lockeduser, Integer testcode, String testname, LSsamplemaster lssamplemaster,
@@ -56,11 +58,11 @@ public class Logilaborderssh extends LogilabOrdermastersh {
 			Lsrepositoriesdata lsrepositoriesdata,Lsrepositories lsrepositories,String keyword, Long directorycode,LStestmasterlocal lstestmasterlocal,
 			Integer ordercancell,Integer viewoption,Elnmaterial elnmaterial,MaterialInventory materialinventory,Integer approved,LSOrdernotification lsordernotification, 
 			Integer ordersaved,Boolean repeat,LsAutoregister lsautoregisterorders,Boolean sentforapprovel,String approvelaccept,Integer autoregistercount, String lockedusername, Long applicationsequence,
-			Long sitesequence, Long projectsequence, Long tasksequence, Long ordertypesequence, String sequenceid,Boolean teamselected) {
+			Long sitesequence, Long projectsequence, Long tasksequence, Long ordertypesequence, String sequenceid,Boolean teamselected,String modifiedby,Date modifieddate) {
 		
 		super(batchcode, batchid, lsworkflow, testname, lsfile, lssamplemaster, lsprojectmaster, filetype, orderflag,assignedto, createdtimestamp,completedtimestamp,keyword,
 				lstestmasterlocal, ordercancell,viewoption,lsuserMaster,testcode, approvelstatus,lsordernotification, ordersaved,repeat,lsautoregisterorders,sentforapprovel,
-				approvelaccept,autoregistercount, elnmaterial,lockedusername,applicationsequence,sitesequence,projectsequence,tasksequence,ordertypesequence,sequenceid,teamselected);
+				approvelaccept,autoregistercount, elnmaterial,lockedusername,applicationsequence,sitesequence,projectsequence,tasksequence,ordertypesequence,sequenceid,teamselected, modifieddate);
 		 
 		if(lssamplefile != null)
 		{
@@ -100,8 +102,22 @@ public class Logilaborderssh extends LogilabOrdermastersh {
         this.ac=approvelaccept!=null?approvelaccept:null;
         this.arc = autoregistercount != null ? autoregistercount:null;
         this.ts = teamselected;
+        this.modifieddate=modifieddate;
+		this.modifiedby = modifiedby;
 	}
 
+	public String getModifiedby() {
+		return modifiedby;
+	}
+	public void setModifiedby(String modifiedby) {
+		this.modifiedby = modifiedby;
+	}
+	public Date getModifieddate() {
+		return modifieddate;
+	}
+	public void setModifieddate(Date modifieddate) {
+		this.modifieddate = modifieddate;
+	}
 	public String getOf() {
 		return of;
 	}

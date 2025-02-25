@@ -276,6 +276,9 @@ public class ProtocolService {
 	LSProtocolMasterRepository LSProtocolMasterRepositoryObj;
 
 	@Autowired
+	SequenceTableRepository sequenceTableRepository;
+	
+	@Autowired
 	LsAutoregisterRepository lsautoregisterrepo;
 
 	@Autowired
@@ -4231,8 +4234,15 @@ public class ProtocolService {
 				lSlogilabprotocoldetail.setElnprotocolworkflow(
 						elnprotocolworkflowRepository.findTopByAndLssitemasterOrderByWorkflowcodeAsc(site));
 
+				if(lSlogilabprotocoldetail.getIsDefault() && lSlogilabprotocoldetail.getIsDefault() ) {
+					lSlogilabprotocoldetail.setSequenceid(lSlogilabprotocoldetail.getProtoclordername());
+					LSlogilabprotocoldetailRepository.save(lSlogilabprotocoldetail);
+				}
+				 
+				String widgetname = lSlogilabprotocoldetail.getIsDefault() ?  lSlogilabprotocoldetail.getProtoclordername()  : lSlogilabprotocoldetail.getSequenceid() ;
+				
 				LsActiveWidgets lsActiveWidgets = lSlogilabprotocoldetail.getLsActiveWidgets();
-				lsActiveWidgets.setActivewidgetsdetails(lSlogilabprotocoldetail.getProtoclordername());
+				lsActiveWidgets.setActivewidgetsdetails(widgetname);
 				LSlogilabprotocoldetailRepository.save(lSlogilabprotocoldetail);
 				lsActiveWidgets.setActivewidgetsdetailscode(lSlogilabprotocoldetail.getProtocolordercode());
 				lsActiveWidgets.setActivedatatimestamp(commonfunction.getCurrentUtcTime());
@@ -4243,11 +4253,6 @@ public class ProtocolService {
 //				lSlogilabprotocoldetail.setLstworkflow(lSlogilabprotocoldetail.getLstworkflow());
 			}
 
-			if(lSlogilabprotocoldetail.getIsDefault() && lSlogilabprotocoldetail.getIsDefault() ) {
-				lSlogilabprotocoldetail.setSequenceid(lSlogilabprotocoldetail.getProtoclordername());
-				LSlogilabprotocoldetailRepository.save(lSlogilabprotocoldetail);
-			}
-			
 			mapObj.put("AddedProtocol", lSlogilabprotocoldetail);
 		}
 
@@ -7028,6 +7033,13 @@ public class ProtocolService {
 					String protocolDataJson = gson.toJson(body.get("protocolData"));
 					if (ismultitenant == 1 || ismultitenant == 2) {
 						protocolOrder.setIsmultitenant(ismultitenant);
+						try {
+							protocolOrder.setModifieddate(commonfunction.getCurrentUtcTime());
+							protocolOrder.setModifiedby(lSlogilabprotocoldetail.getModifiedby());
+						} catch (ParseException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 						updateProtocolOrderContent(protocolDataJson, protocolOrder, ismultitenant);
 					} else {
 //						Query query = new Query(Criteria.where("id").is(protocolOrder.getProtocolordercode()));
@@ -9728,6 +9740,14 @@ public class ProtocolService {
 
 		LSlogilabprotocoldetail rtnobj = LSlogilabprotocoldetailRepository
 				.findOne(protocolorders.getProtocolordercode());
+		
+		SequenceTable seqobj =  sequenceTableRepository.findBySequencecodeOrderBySequencecode(2);
+		Boolean Applicationseq = seqobj.getSequenceview().equals(2) ? true : false;
+		
+		if(Applicationseq) {
+			rtnobj.setProtoclordername(rtnobj.getSequenceid());
+		}
+		
 		if (!protocolorders.getIsmultitenant().equals(2) && (rtnobj != null && rtnobj.getLockeduser() == null)
 				&& protocolorders.getComment().equals("Order_Lock")) {
 			if (!protocolorders.getIsmultitenant().equals(2)) {

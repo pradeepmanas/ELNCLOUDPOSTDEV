@@ -14,6 +14,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import com.agaram.eln.primary.model.general.Response;
@@ -62,7 +64,24 @@ public class Reporttemplate {
 	@Transient 
 	private boolean isalreadyLock;
 
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date modifieddate;
+	
+	@Column(name = "modifieduser")
+	private String modifieduser;
 
+	public String getModifieduser() {
+		return modifieduser;
+	}
+	public void setModifieduser(String modifieduser) {
+		this.modifieduser = modifieduser;
+	}
+	public Date getModifieddate() {
+		return modifieddate;
+	}
+	public void setModifieddate(Date modifieddate) {
+		this.modifieddate = modifieddate;
+	}
 	
 	public boolean isIsalreadyLock() {
 		return isalreadyLock;

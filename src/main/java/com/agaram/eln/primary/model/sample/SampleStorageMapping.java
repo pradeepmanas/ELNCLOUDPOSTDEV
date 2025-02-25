@@ -11,6 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.agaram.eln.primary.model.samplestoragelocation.SampleStorageLocation;
 
@@ -30,6 +31,17 @@ public class SampleStorageMapping {
 	@OneToOne
 	private Sample sample;
 	
+	@Transient
+	private String samplename;
+	
+	public String getSamplename() {
+		return samplename;
+	}
+
+	public void setSamplename(String samplename) {
+		this.samplename = samplename;
+	}
+
 	@OneToOne
 	@JoinColumn(name = "samplestoragelocationkey", referencedColumnName = "samplestoragelocationkey")
 	private SampleStorageLocation samplestoragelocationkey;

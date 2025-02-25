@@ -1,15 +1,14 @@
 package com.agaram.eln.primary.repository.sample;
 
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import com.agaram.eln.primary.fetchmodel.inventory.Sampleget;
-import com.agaram.eln.primary.model.material.Elnmaterial;
-import com.agaram.eln.primary.model.material.ElnmaterialInventory;
-import com.agaram.eln.primary.model.material.MaterialCategory;
 import com.agaram.eln.primary.model.sample.Sample;
 import com.agaram.eln.primary.model.sample.SampleCategory;
 import com.agaram.eln.primary.model.sample.SampleType;
@@ -89,4 +88,40 @@ public interface SampleRepository  extends JpaRepository<Sample,Integer>{
 
 	List<Sampleget> findByNstatusAndNsitecodeOrderBySamplecodeDesc(Integer status, Integer nsitecode);
 
+	@Transactional
+	@Query(value = "select s.* from sample s "
+			+ "where s.samplecategory_nsamplecatcode = ?1 and s.nsitecode = ?2 and "
+			+ "s.createddate BETWEEN ?3 AND ?4 and (select count(*) from sampleprojectmap where samplecode = s.samplecode) = 0 Order By samplecode Desc",nativeQuery = true)
+	List<Sample> getSampleOnGeneralProjects(Integer objMaterialCategory, Integer nsiteInteger, Date fromDate, Date toDate);
+
+	@Transactional
+	@Query(value = "select s.* from sample s "
+			+ "where s.samplecategory_nsamplecatcode = ?1 and s.nsitecode = ?2 and "
+			+ "s.createddate BETWEEN ?3 AND ?4 and (select count(*) from sampleprojectmap where samplecode = s.samplecode and lsproject_projectcode in (?5)) > 0 Order By samplecode Desc",nativeQuery = true)
+	List<Sample> getSampleOnProjects(Integer objMaterialCategory, Integer nsiteInteger, Date fromDate, Date toDate, List<Integer> projectcode);
+
+	List<Sample> findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndSamplecodeNotInOrderBySamplecodeDesc(
+			Integer siteCode, Date fromDate, Date toDate, Integer transactionStatus, List<Integer> sampleCodes);
+
+	List<Sample> findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndSampletypeAndSamplecategoryOrderBySamplecodeDesc(
+			Integer siteCode, Date fromDate, Date toDate, Integer transactionStatus, SampleType objSampleType,
+			SampleCategory objSampleCategory);
+
+	List<Sample> findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndSamplecodeNotInAndSampletypeAndSamplecategoryOrderBySamplecodeDesc(
+			Integer siteCode, Date fromDate, Date toDate, Integer transactionStatus, List<Integer> sampleCodes,
+			SampleType objSampleType, SampleCategory objSampleCategory);
+
+	List<Sample> findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndSampletypeOrderBySamplecodeDesc(
+			Integer siteCode, Date fromDate, Date toDate, Integer transactionStatus, SampleType objSampleType);
+
+	List<Sample> findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndSamplecodeNotInAndSampletypeOrderBySamplecodeDesc(
+			Integer siteCode, Date fromDate, Date toDate, Integer transactionStatus, List<Integer> sampleCodes,
+			SampleType objSampleType);
+
+	List<Sample> findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndSamplecategoryOrderBySamplecodeDesc(
+			Integer siteCode, Date fromDate, Date toDate, Integer transactionStatus, SampleCategory objSampleCategory);
+
+	List<Sample> findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndSamplecodeNotInAndSamplecategoryOrderBySamplecodeDesc(
+			Integer siteCode, Date fromDate, Date toDate, Integer transactionStatus, List<Integer> sampleCodes,
+			SampleCategory objSampleCategory);
 }

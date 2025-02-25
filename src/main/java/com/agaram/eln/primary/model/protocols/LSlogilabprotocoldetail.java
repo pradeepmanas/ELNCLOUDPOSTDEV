@@ -313,6 +313,26 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	private Long tasklevelsequence;
 	
 	private String sequenceid;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date modifieddate;
+	
+	@Column(name = "modifiedby")
+	private String modifiedby;
+	
+	public String getModifiedby() {
+		return modifiedby;
+	}
+	public void setModifiedby(String modifiedby) {
+		this.modifiedby = modifiedby;
+	}
+	public Date getModifieddate() {
+		return modifieddate;
+	}
+	public void setModifieddate(Date modifieddate) {
+		this.modifieddate = modifieddate;
+	}
+	
 
 	public String getFileuid() {
 		return fileuid;

@@ -356,6 +356,25 @@ public class LSlogilablimsorderdetail {
 	private Long tasklevelsequence;
 	
 	private String sequenceid;
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date modifieddate;
+	
+	@Column(name = "modifiedby")
+	private String modifiedby;
+	
+	public String getModifiedby() {
+		return modifiedby;
+	}
+	public void setModifiedby(String modifiedby) {
+		this.modifiedby = modifiedby;
+	}
+	public Date getModifieddate() {
+		return modifieddate;
+	}
+	public void setModifieddate(Date modifieddate) {
+		this.modifieddate = modifieddate;
+	}
+	
 	
 	public LSlogilablimsorderdetail() {
 
@@ -860,6 +879,7 @@ public class LSlogilablimsorderdetail {
 	 public interface ordersinterface {
 	        Long getBatchcode();
 	        String getBatchid();
+	        String getSequenceid();
 	        Date getCreatedtimestamp();
 	        String getTestname();
 	        LSuserMasterInterfaceforassign getAssignedto();

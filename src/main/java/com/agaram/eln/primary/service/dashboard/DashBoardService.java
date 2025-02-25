@@ -1463,7 +1463,7 @@ public class DashBoardService {
 									lsOrderDetail.getLockedusername(), lsOrderDetail.getApplicationsequence(),
 									lsOrderDetail.getSitesequence(), lsOrderDetail.getProjectsequence(), 
 									lsOrderDetail.getTasksequence(), lsOrderDetail.getOrdertypesequence(),
-									lsOrderDetail.getSequenceid(),lsOrderDetail.getTeamselected()))
+									lsOrderDetail.getSequenceid(),lsOrderDetail.getTeamselected(), lsOrderDetail.getModifieddate()))
 							.collect(Collectors.toList()));
 				}
 //			} else {
@@ -1985,7 +1985,7 @@ public class DashBoardService {
 								lsOrderDetail.getElnmaterial(), lsOrderDetail.getLockedusername(), lsOrderDetail.getApplicationsequence(),
 								lsOrderDetail.getSitesequence(), lsOrderDetail.getProjectsequence(), 
 								lsOrderDetail.getTasksequence(), lsOrderDetail.getOrdertypesequence(),
-								lsOrderDetail.getSequenceid(),lsOrderDetail.getTeamselected()
+								lsOrderDetail.getSequenceid(),lsOrderDetail.getTeamselected(), lsOrderDetail.getModifieddate()
 
 						)).collect(Collectors.toList());
 			}
@@ -4408,7 +4408,7 @@ public class DashBoardService {
 										protocolrecord.getLsordernotification(), protocolrecord.getLsautoregister(),
 										protocolrecord.getRepeat(), protocolrecord.getSentforapprovel(),
 										protocolrecord.getApprovelaccept(), protocolrecord.getAutoregistercount(),
-										protocolrecord.getLsuserMaster(), protocolrecord.getSequenceid()))
+										protocolrecord.getLsuserMaster(), protocolrecord.getSequenceid(), protocolrecord.getModifiedby(), protocolrecord.getModifieddate()))
 								.collect(Collectors.toList());
 
 //						lstordersprotocol = LSlogilabprotocoldetailRepository

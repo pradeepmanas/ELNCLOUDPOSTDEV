@@ -1689,6 +1689,9 @@ INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate
 SELECT 'IDS_TSK_VISIBLITY', 'IDS_MDL_TEMPLATES', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_SHEETTEMPLATE' ,5
 WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_VISIBLITY' and screenname='IDS_SCN_SHEETTEMPLATE' and usergroupid_usergroupcode = 1); 
 
+ALTER TABLE IF Exists LSlogilabprotocoldetail ADD COLUMN IF NOT EXISTS modifieddate timestamp without time zone;
+ALTER TABLE IF Exists LSlogilabprotocoldetail ADD COLUMN IF NOT EXISTS modifiedby character varying(255);
+
 INSERT INTO lsusergrouprightsmaster(orderno, displaytopic, modulename, screenname, sallow, screate, sdelete, sedit, status, sequenceorder) 
 VALUES (242, 'IDS_TSK_VISIBLITY', 'IDS_MDL_TEMPLATES', 'IDS_SCN_SHEETTEMPLATE', '0', 'NA', 'NA', 'NA', '0,0,0', 5) 
 ON CONFLICT (orderno) DO NOTHING;
@@ -2193,3 +2196,298 @@ where screenname = 'IDS_SCN_REPORTMAPPER' and modulename = 'IDS_MDL_REPORTS' and
 
 update lsusergrouprightsmaster set sequenceorder = 49 
 where screenname = 'IDS_SCN_AUDITTRAILHIS' and modulename = 'IDS_MDL_AUDITTRAIL' and displaytopic = 'IDS_TSK_SCREENVIEW';
+
+ALTER TABLE IF Exists LSlogilablimsorderdetail ADD COLUMN IF NOT EXISTS modifieddate timestamp without time zone;
+ALTER TABLE IF Exists LSlogilablimsorderdetail ADD COLUMN IF NOT EXISTS modifiedby character varying(255);
+
+ALTER TABLE IF Exists Reporttemplate ADD COLUMN IF NOT EXISTS modifieddate timestamp without time zone;
+ALTER TABLE IF Exists Reporttemplate ADD COLUMN IF NOT EXISTS modifieduser character varying(255);
+
+ALTER TABLE IF Exists Reports ADD COLUMN IF NOT EXISTS modifieddate timestamp without time zone;
+ALTER TABLE IF Exists Reports ADD COLUMN IF NOT EXISTS modifieduser character varying(255);
+
+---------------------------------
+--IDS_SCN_MATERIALTYPEPARAMS MGMT
+
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname,sequenceorder) 
+SELECT 'IDS_TSK_SCREENVIEW', 'IDS_MDL_INVENTORY', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_MATERIALTYPEPARAMS' ,null
+WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_SCREENVIEW' and screenname='IDS_SCN_MATERIALTYPEPARAMS' and usergroupid_usergroupcode = 1); 
+
+INSERT INTO lsusergrouprightsmaster(orderno, displaytopic, modulename, screenname, sallow, screate, sdelete, sedit, status, sequenceorder) 
+VALUES (263, 'IDS_TSK_SCREENVIEW', 'IDS_MDL_INVENTORY', 'IDS_SCN_MATERIALTYPEPARAMS', '0', 'NA', 'NA', 'NA', '0,0,0', null) 
+ON CONFLICT (orderno) DO NOTHING;
+
+------------------------------------------------------------
+--Equipment MGMT
+
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname,sequenceorder) 
+SELECT 'IDS_TSK_SCREENVIEW', 'IDS_MDL_INVENTORY', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_EQUIPMENT' ,null
+WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_SCREENVIEW' and screenname='IDS_SCN_EQUIPMENT' and usergroupid_usergroupcode = 1); 
+
+INSERT INTO lsusergrouprightsmaster(orderno, displaytopic, modulename, screenname, sallow, screate, sdelete, sedit, status, sequenceorder) 
+VALUES (264, 'IDS_TSK_SCREENVIEW', 'IDS_MDL_INVENTORY', 'IDS_SCN_EQUIPMENT', '0', 'NA', 'NA', 'NA', '0,0,0', null) 
+ON CONFLICT (orderno) DO NOTHING;
+
+-------------------------------------------------
+----user Righst
+
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname,sequenceorder) 
+SELECT 'IDS_TSK_SCREENVIEW', 'IDS_MDL_SETUP', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_USERRIGHTS' ,null
+WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_SCREENVIEW' and screenname='IDS_SCN_USERRIGHTS' and usergroupid_usergroupcode = 1); 
+
+INSERT INTO lsusergrouprightsmaster(orderno, displaytopic, modulename, screenname, sallow, screate, sdelete, sedit, status, sequenceorder) 
+VALUES (265, 'IDS_TSK_SCREENVIEW', 'IDS_MDL_SETUP', 'IDS_SCN_USERRIGHTS', '0', 'NA', 'NA', 'NA', '0,0,0', null) 
+ON CONFLICT (orderno) DO NOTHING;
+-------------------------------------------
+----PRJ MNGMT
+
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname,sequenceorder) 
+SELECT 'IDS_TSK_SCREENVIEW', 'IDS_MDL_SETUP', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_PROJECTMASTER' ,null
+WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_SCREENVIEW' and screenname='IDS_SCN_PROJECTMASTER' and usergroupid_usergroupcode = 1); 
+
+INSERT INTO lsusergrouprightsmaster(orderno, displaytopic, modulename, screenname, sallow, screate, sdelete, sedit, status, sequenceorder) 
+VALUES (266, 'IDS_TSK_SCREENVIEW', 'IDS_MDL_SETUP', 'IDS_SCN_PROJECTMASTER', '0', 'NA', 'NA', 'NA', '0,0,0', null) 
+ON CONFLICT (orderno) DO NOTHING;
+-------------------------------------------
+----WORKFLOW
+
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname,sequenceorder) 
+SELECT 'IDS_TSK_SCREENVIEW', 'IDS_MDL_SETUP', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_TEMPLATEWORKFLOW' ,null
+WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_SCREENVIEW' and screenname='IDS_SCN_TEMPLATEWORKFLOW' and usergroupid_usergroupcode = 1); 
+
+INSERT INTO lsusergrouprightsmaster(orderno, displaytopic, modulename, screenname, sallow, screate, sdelete, sedit, status, sequenceorder) 
+VALUES (267, 'IDS_TSK_SCREENVIEW', 'IDS_MDL_SETUP', 'IDS_SCN_TEMPLATEWORKFLOW', '0', 'NA', 'NA', 'NA', '0,0,0', null) 
+ON CONFLICT (orderno) DO NOTHING;
+
+---------------------
+update lsusergrouprightsmaster set screenname = 'IDS_SCN_PROJECTMASTER' where screenname in
+('IDS_SCN_PROJECTTEAM','IDS_SCN_TASKMASTER','IDS_SCN_PROJECTMASTER');
+update lsusergrouprights set screenname = 'IDS_SCN_PROJECTMASTER' where screenname in
+('IDS_SCN_PROJECTTEAM','IDS_SCN_TASKMASTER','IDS_SCN_PROJECTMASTER');
+
+update lsusergrouprightsmaster set screenname = 'IDS_SCN_TEMPLATEWORKFLOW' where screenname in
+('IDS_SCN_ORDERWORKLOW','IDS_SCN_TEMPLATEWORKFLOW');
+update lsusergrouprights set screenname = 'IDS_SCN_TEMPLATEWORKFLOW' where screenname in
+('IDS_SCN_ORDERWORKLOW','IDS_SCN_TEMPLATEWORKFLOW');
+------------------------------------------
+----------------------
+update lsusergrouprightsmaster set sequenceorder = 20 where screenname = 'IDS_SCN_MATERIALTYPEPARAMS' and displaytopic = 'IDS_TSK_SCREENVIEW';
+update lsusergrouprightsmaster set sequenceorder = 21 where screenname = 'IDS_SCN_MATERIALTYPEPARAMS' and displaytopic != 'IDS_TSK_SCREENVIEW';
+
+update lsusergrouprightsmaster set sequenceorder = 22 where screenname = 'IDS_SCN_EQUIPMENTMASTER' and displaytopic = 'IDS_TSK_SCREENVIEW';
+update lsusergrouprightsmaster set sequenceorder = 23 where screenname = 'IDS_SCN_EQUIPMENTMASTER' and displaytopic != 'IDS_TSK_SCREENVIEW';
+
+update lsusergrouprightsmaster set sequenceorder = 24 where screenname = 'IDS_SCN_EQUIPMENT' and displaytopic = 'IDS_TSK_SCREENVIEW';
+update lsusergrouprightsmaster set sequenceorder = 25 where screenname = 'IDS_SCN_EQUIPMENT' and displaytopic != 'IDS_TSK_SCREENVIEW';
+---------
+--setup
+update lsusergrouprightsmaster set sequenceorder = 26 where screenname = 'IDS_SCN_USERGROUP' and displaytopic = 'IDS_TSK_SCREENVIEW';
+update lsusergrouprightsmaster set sequenceorder = 27 where screenname = 'IDS_SCN_USERGROUP' and displaytopic != 'IDS_TSK_SCREENVIEW';
+
+update lsusergrouprightsmaster set sequenceorder = 28 where screenname = 'IDS_SCN_USERMASTER' and displaytopic = 'IDS_TSK_SCREENVIEW';
+update lsusergrouprightsmaster set sequenceorder = 29 where screenname = 'IDS_SCN_USERMASTER' and displaytopic != 'IDS_TSK_SCREENVIEW';
+
+update lsusergrouprightsmaster set sequenceorder = 30 where screenname = 'IDS_SCN_USERRIGHTS' and displaytopic = 'IDS_TSK_SCREENVIEW';
+update lsusergrouprightsmaster set sequenceorder = 31 where screenname = 'IDS_SCN_USERRIGHTS' and displaytopic != 'IDS_TSK_SCREENVIEW';
+
+update lsusergrouprightsmaster set sequenceorder = 32 where screenname = 'IDS_SCN_PROJECTMASTER' and displaytopic = 'IDS_TSK_SCREENVIEW';
+update lsusergrouprightsmaster set sequenceorder = 33 where screenname = 'IDS_SCN_PROJECTMASTER' and displaytopic != 'IDS_TSK_SCREENVIEW';
+
+update lsusergrouprightsmaster set sequenceorder = 34 where screenname = 'IDS_SCN_TEMPLATEWORKFLOW' and displaytopic = 'IDS_TSK_SCREENVIEW';
+update lsusergrouprightsmaster set sequenceorder = 35 where screenname = 'IDS_SCN_TEMPLATEWORKFLOW' and displaytopic != 'IDS_TSK_SCREENVIEW';
+
+update lsusergrouprightsmaster set sequenceorder = 36 where screenname = 'IDS_SCN_PARSER' and displaytopic = 'IDS_TSK_SCREENVIEW';
+update lsusergrouprightsmaster set sequenceorder = 37 where screenname = 'IDS_SCN_PARSER' and displaytopic != 'IDS_TSK_SCREENVIEW';
+
+update lsusergrouprightsmaster set sequenceorder = 38 where screenname = 'IDS_SCN_BARCODEMASTER' and displaytopic = 'IDS_TSK_SCREENVIEW';
+update lsusergrouprightsmaster set sequenceorder = 39 where screenname = 'IDS_SCN_BARCODEMASTER' and displaytopic != 'IDS_TSK_SCREENVIEW';
+
+update lsusergrouprightsmaster set sequenceorder = 40 where screenname = 'IDS_SCN_PASSWORDPOLICY' and displaytopic != 'IDS_TSK_SCREENVIEW';
+
+update lsusergrouprightsmaster set sequenceorder = 41 where screenname = 'IDS_SCN_LOGBOOK' and displaytopic = 'IDS_TSK_SCREENVIEW';
+update lsusergrouprightsmaster set sequenceorder = 42 where screenname = 'IDS_SCN_LOGBOOK' and displaytopic != 'IDS_TSK_SCREENVIEW';
+
+update lsusergrouprightsmaster set sequenceorder = 43 where screenname = 'IDS_SCN_REPORTS' and displaytopic = 'IDS_TSK_SCREENVIEW';
+update lsusergrouprightsmaster set sequenceorder = 44 where screenname = 'IDS_SCN_REPORTS' and displaytopic != 'IDS_TSK_SCREENVIEW';
+
+update lsusergrouprightsmaster set sequenceorder = 45 where screenname = 'IDS_SCN_REPORTVIEVER' and displaytopic = 'IDS_TSK_SCREENVIEW';
+update lsusergrouprightsmaster set sequenceorder = 46 where screenname = 'IDS_SCN_REPORTVIEVER' and displaytopic != 'IDS_TSK_SCREENVIEW';
+
+update lsusergrouprightsmaster set sequenceorder = 47 where screenname = 'IDS_SCN_REPORTMAPPER' and displaytopic = 'IDS_TSK_SCREENVIEW';
+update lsusergrouprightsmaster set sequenceorder = 48 where screenname = 'IDS_SCN_REPORTMAPPER' and displaytopic != 'IDS_TSK_SCREENVIEW';
+
+update lsusergrouprightsmaster set sequenceorder = 49 where screenname = 'IDS_SCN_AUDITTRAILHIS' and displaytopic = 'IDS_TSK_SCREENVIEW';
+update lsusergrouprightsmaster set sequenceorder = 50 where screenname = 'IDS_SCN_AUDITTRAILHIS' and displaytopic != 'IDS_TSK_SCREENVIEW';
+
+update lsusergrouprights set sequenceorder = 20 where screenname = 'IDS_SCN_MATERIALTYPEPARAMS' and displaytopic = 'IDS_TSK_SCREENVIEW';
+update lsusergrouprights set sequenceorder = 21 where screenname = 'IDS_SCN_MATERIALTYPEPARAMS' and displaytopic != 'IDS_TSK_SCREENVIEW';
+
+update lsusergrouprights set sequenceorder = 22 where screenname = 'IDS_SCN_EQUIPMENTMASTER' and displaytopic = 'IDS_TSK_SCREENVIEW';
+update lsusergrouprights set sequenceorder = 23 where screenname = 'IDS_SCN_EQUIPMENTMASTER' and displaytopic != 'IDS_TSK_SCREENVIEW';
+
+update lsusergrouprights set sequenceorder = 24 where screenname = 'IDS_SCN_EQUIPMENT' and displaytopic = 'IDS_TSK_SCREENVIEW';
+update lsusergrouprights set sequenceorder = 25 where screenname = 'IDS_SCN_EQUIPMENT' and displaytopic != 'IDS_TSK_SCREENVIEW';
+
+update lsusergrouprights set sequenceorder = 26 where screenname = 'IDS_SCN_USERGROUP' and displaytopic = 'IDS_TSK_SCREENVIEW';
+update lsusergrouprights set sequenceorder = 27 where screenname = 'IDS_SCN_USERGROUP' and displaytopic != 'IDS_TSK_SCREENVIEW';
+
+update lsusergrouprights set sequenceorder = 28 where screenname = 'IDS_SCN_USERMASTER' and displaytopic = 'IDS_TSK_SCREENVIEW';
+update lsusergrouprights set sequenceorder = 29 where screenname = 'IDS_SCN_USERMASTER' and displaytopic != 'IDS_TSK_SCREENVIEW';
+
+update lsusergrouprights set sequenceorder = 30 where screenname = 'IDS_SCN_USERRIGHTS' and displaytopic = 'IDS_TSK_SCREENVIEW';
+update lsusergrouprights set sequenceorder = 31 where screenname = 'IDS_SCN_USERRIGHTS' and displaytopic != 'IDS_TSK_SCREENVIEW';
+
+update lsusergrouprights set sequenceorder = 32 where screenname = 'IDS_SCN_PROJECTMASTER' and displaytopic = 'IDS_TSK_SCREENVIEW';
+update lsusergrouprights set sequenceorder = 33 where screenname = 'IDS_SCN_PROJECTMASTER' and displaytopic != 'IDS_TSK_SCREENVIEW';
+
+update lsusergrouprights set sequenceorder = 34 where screenname = 'IDS_SCN_TEMPLATEWORKFLOW' and displaytopic = 'IDS_TSK_SCREENVIEW';
+update lsusergrouprights set sequenceorder = 35 where screenname = 'IDS_SCN_TEMPLATEWORKFLOW' and displaytopic != 'IDS_TSK_SCREENVIEW';
+
+update lsusergrouprights set sequenceorder = 36 where screenname = 'IDS_SCN_PARSER' and displaytopic = 'IDS_TSK_SCREENVIEW';
+update lsusergrouprights set sequenceorder = 37 where screenname = 'IDS_SCN_PARSER' and displaytopic != 'IDS_TSK_SCREENVIEW';
+
+update lsusergrouprights set sequenceorder = 38 where screenname = 'IDS_SCN_BARCODEMASTER' and displaytopic = 'IDS_TSK_SCREENVIEW';
+update lsusergrouprights set sequenceorder = 39 where screenname = 'IDS_SCN_BARCODEMASTER' and displaytopic != 'IDS_TSK_SCREENVIEW';
+
+update lsusergrouprights set sequenceorder = 40 where screenname = 'IDS_SCN_PASSWORDPOLICY' and displaytopic != 'IDS_TSK_SCREENVIEW';
+
+update lsusergrouprights set sequenceorder = 41 where screenname = 'IDS_SCN_LOGBOOK' and displaytopic = 'IDS_TSK_SCREENVIEW';
+update lsusergrouprights set sequenceorder = 42 where screenname = 'IDS_SCN_LOGBOOK' and displaytopic != 'IDS_TSK_SCREENVIEW';
+
+update lsusergrouprights set sequenceorder = 43 where screenname = 'IDS_SCN_REPORTS' and displaytopic = 'IDS_TSK_SCREENVIEW';
+update lsusergrouprights set sequenceorder = 44 where screenname = 'IDS_SCN_REPORTS' and displaytopic != 'IDS_TSK_SCREENVIEW';
+
+update lsusergrouprights set sequenceorder = 45 where screenname = 'IDS_SCN_REPORTVIEVER' and displaytopic = 'IDS_TSK_SCREENVIEW';
+update lsusergrouprights set sequenceorder = 46 where screenname = 'IDS_SCN_REPORTVIEVER' and displaytopic != 'IDS_TSK_SCREENVIEW';
+
+update lsusergrouprights set sequenceorder = 47 where screenname = 'IDS_SCN_REPORTMAPPER' and displaytopic = 'IDS_TSK_SCREENVIEW';
+update lsusergrouprights set sequenceorder = 48 where screenname = 'IDS_SCN_REPORTMAPPER' and displaytopic != 'IDS_TSK_SCREENVIEW';
+
+update lsusergrouprights set sequenceorder = 49 where screenname = 'IDS_SCN_AUDITTRAILHIS' and displaytopic = 'IDS_TSK_SCREENVIEW';
+update lsusergrouprights set sequenceorder = 50 where screenname = 'IDS_SCN_AUDITTRAILHIS' and displaytopic != 'IDS_TSK_SCREENVIEW';
+
+ALTER TABLE IF Exists elnresultusedsample ADD COLUMN IF NOT EXISTS statuschangesFrom numeric(17,0);
+ALTER TABLE IF Exists elnresultusedsample ADD COLUMN IF NOT EXISTS statuschangesTo numeric(17,0);
+
+DO
+$do$
+DECLARE
+   _kind "char";
+BEGIN
+   SELECT relkind
+   FROM   pg_class
+   WHERE  relname = 'materialprojectmap_materialprojectcode_seq' 
+   INTO  _kind;
+
+   IF NOT FOUND THEN CREATE SEQUENCE materialprojectmap_materialprojectcode_seq;
+   ELSIF _kind = 'S' THEN  
+     
+   ELSE                  
+    
+   END IF;
+END
+$do$;
+
+CREATE TABLE IF NOT EXISTS public.materialprojectmap
+(
+    materialprojectcode integer NOT NULL DEFAULT nextval('materialprojectmap_materialprojectcode_seq'::regclass),
+    nmaterialcode integer,
+    lsproject_projectcode integer,
+    CONSTRAINT materialprojectmap_pkey PRIMARY KEY (materialprojectcode),
+    CONSTRAINT fkc7riy17pf4wng0bbg9q9llyw3 FOREIGN KEY (nmaterialcode)
+        REFERENCES public.elnmaterial (nmaterialcode) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT fkklvbq283b9w92ppdjsw6rg78l FOREIGN KEY (lsproject_projectcode)
+        REFERENCES public.lsprojectmaster (projectcode) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.materialprojectmap
+    OWNER to postgres;
+
+DO
+$do$
+DECLARE
+   _kind "char";
+BEGIN
+   SELECT relkind
+   FROM   pg_class
+   WHERE  relname = 'sampleprojectmap_sampleprojectcode_seq' 
+   INTO  _kind;
+
+   IF NOT FOUND THEN CREATE SEQUENCE sampleprojectmap_sampleprojectcode_seq;
+   ELSIF _kind = 'S' THEN  
+     
+   ELSE                  
+    
+   END IF;
+END
+$do$;
+
+
+CREATE TABLE IF NOT EXISTS public.sampleprojectmap
+(
+    sampleprojectcode integer NOT NULL DEFAULT nextval('sampleprojectmap_sampleprojectcode_seq'::regclass),
+    samplecode integer,
+    lsproject_projectcode integer,
+    CONSTRAINT sampleprojectmap_pkey PRIMARY KEY (sampleprojectcode),
+    CONSTRAINT fkjcqf7x03n2hosv9gamx0mbqcu FOREIGN KEY (samplecode)
+        REFERENCES public.sample (samplecode) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT fkjtdwpobhxb45gvt1ggu9hhmlw FOREIGN KEY (lsproject_projectcode)
+        REFERENCES public.lsprojectmaster (projectcode) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+update lsaudittrailconfigmaster set taskname = 'IDS_TSK_SAVEI' where screenname = 'IDS_SCN_MATERIALINVENTORY' and taskname = 'IDS_TSK_SAVE';
+update lsaudittrailconfiguration set taskname = 'IDS_TSK_SAVEI' where screenname = 'IDS_SCN_MATERIALINVENTORY' and taskname = 'IDS_TSK_SAVE';
+
+update lsaudittrailconfigmaster set taskname = 'IDS_TSK_SAVEM' where screenname = 'IDS_SCN_MATERIAL' and taskname = 'IDS_TSK_SAVE';
+update lsaudittrailconfiguration set taskname = 'IDS_TSK_SAVEM' where screenname = 'IDS_SCN_MATERIAL' and taskname = 'IDS_TSK_SAVE';
+
+update lsaudittrailconfigmaster set taskname = 'IDS_TSK_EDITM' where screenname = 'IDS_SCN_MATERIAL' and taskname = 'IDS_TSK_EDIT';
+update lsaudittrailconfiguration set taskname = 'IDS_TSK_EDITM' where screenname = 'IDS_SCN_MATERIAL' and taskname = 'IDS_TSK_EDIT';
+
+update lsaudittrailconfigmaster set screenname = 'IDS_SCN_MATERIALMGMT' where screenname in('IDS_SCN_MATERIALINVENTORY','IDS_SCN_MATERIAL');
+update lsaudittrailconfiguration set screenname = 'IDS_SCN_MATERIALMGMT' where screenname in('IDS_SCN_MATERIALINVENTORY','IDS_SCN_MATERIAL');
+
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(220,0,'IDS_MDL_INVENTORY',0,'IDS_SCN_SAMPLETYPE','IDS_TSK_EDIT') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(221,0,'IDS_MDL_INVENTORY',0,'IDS_SCN_SAMPLETYPE','IDS_TSK_SAVE') ON CONFLICT(serialno)DO NOTHING;
+
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(222,0,'IDS_MDL_INVENTORY',0,'IDS_SCN_SAMPLECATEGORY','IDS_TSK_EDIT') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(223,0,'IDS_MDL_INVENTORY',0,'IDS_SCN_SAMPLECATEGORY','IDS_TSK_SAVE') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(224,0,'IDS_MDL_INVENTORY',0,'IDS_SCN_SAMPLECATEGORY','IDS_TSK_RETIRE') ON CONFLICT(serialno)DO NOTHING;
+
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(225,0,'IDS_MDL_INVENTORY',0,'IDS_SCN_SAMPLEMGMT','IDS_TSK_EDITS') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(226,0,'IDS_MDL_INVENTORY',0,'IDS_SCN_SAMPLEMGMT','IDS_TSK_SAVES') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(227,0,'IDS_MDL_INVENTORY',0,'IDS_SCN_SAMPLEMGMT','IDS_TSK_OPENDATE') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(228,0,'IDS_MDL_INVENTORY',0,'IDS_SCN_SAMPLEMGMT','IDS_TSK_RELEASE') ON CONFLICT(serialno)DO NOTHING;
+Insert into lsaudittrailconfigmaster (serialno,manualaudittrail,modulename,ordersequnce,screenname,taskname) values(229,0,'IDS_MDL_INVENTORY',0,'IDS_SCN_SAMPLEMGMT','IDS_TSK_DISPOSE') ON CONFLICT(serialno)DO NOTHING;
+
+update lsaudittrailconfigmaster set ordersequnce = 38 where screenname in('IDS_SCN_MATERIALMGMT');
+update lsaudittrailconfigmaster set ordersequnce = 39 where screenname in('IDS_SCN_SAMPLEMGMT');
+update lsaudittrailconfigmaster set ordersequnce = 40 where screenname in('IDS_SCN_SAMPLETYPE');
+update lsaudittrailconfigmaster set ordersequnce = 41 where screenname in('IDS_SCN_SAMPLECATEGORY');
+
+update lsaudittrailconfiguration set ordersequnce = 38 where screenname in('IDS_SCN_MATERIALMGMT');
+update lsaudittrailconfiguration set ordersequnce = 39 where screenname in('IDS_SCN_SAMPLEMGMT');
+update lsaudittrailconfiguration set ordersequnce = 40 where screenname in('IDS_SCN_SAMPLETYPE');
+update lsaudittrailconfiguration set ordersequnce = 41 where screenname in('IDS_SCN_SAMPLECATEGORY');
+
+
+update lsaudittrailconfigmaster set ordersequnce = 42 where screenname in('IDS_SCN_EQUIPMENTTYPE');
+update lsaudittrailconfiguration set ordersequnce = 42 where screenname in('IDS_SCN_EQUIPMENTTYPE');
+
+update lsaudittrailconfigmaster set ordersequnce = 43 where screenname in('IDS_SCN_EQUIPMENTCATEGORY');
+update lsaudittrailconfiguration set ordersequnce = 43 where screenname in('IDS_SCN_EQUIPMENTCATEGORY');
+
+update lsaudittrailconfigmaster set ordersequnce = 44 where screenname in('IDS_SCN_EQUIPMENT');
+update lsaudittrailconfiguration set ordersequnce = 44 where screenname in('IDS_SCN_EQUIPMENT');

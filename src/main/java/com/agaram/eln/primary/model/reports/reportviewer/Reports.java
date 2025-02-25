@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Basic;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -12,6 +13,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import com.agaram.eln.primary.model.general.Response;
@@ -50,6 +53,26 @@ public class Reports {
 	
 	@Transient
 	private boolean isnewversion;
+	
+
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date modifieddate;
+	
+	@Column(name = "modifieduser")
+	private String modifieduser;
+
+	public String getModifieduser() {
+		return modifieduser;
+	}
+	public void setModifieduser(String modifieduser) {
+		this.modifieduser = modifieduser;
+	}
+	public Date getModifieddate() {
+		return modifieddate;
+	}
+	public void setModifieddate(Date modifieddate) {
+		this.modifieddate = modifieddate;
+	}
 
 	public boolean isIsnewversion() {
 		return isnewversion;

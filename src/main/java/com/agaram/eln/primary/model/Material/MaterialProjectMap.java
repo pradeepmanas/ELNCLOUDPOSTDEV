@@ -1,8 +1,5 @@
 package com.agaram.eln.primary.model.material;
 
-import java.util.Date;
-
-import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -13,17 +10,14 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
-import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
-@Table(name = "materialprojecthistory")
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class MaterialProjectHistory {
+@Table(name = "materialprojectmap")
+public class MaterialProjectMap {
+
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Basic(optional = false)
 	@Column(name = "materialprojectcode")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer materialprojectcode;
 	
 	private Integer nmaterialcode;
@@ -31,17 +25,8 @@ public class MaterialProjectHistory {
 	@ManyToOne
 	private LSprojectmaster lsproject;
 	
-	private Date createddate;
-	
-	@ManyToOne
-	private LSuserMaster createby;
-	
-	private String description;
-	
 	@Transient
 	private String materialname;
-
-	
 
 	public String getMaterialname() {
 		return materialname;
@@ -73,30 +58,6 @@ public class MaterialProjectHistory {
 
 	public void setLsproject(LSprojectmaster lsproject) {
 		this.lsproject = lsproject;
-	}
-
-	public Date getCreateddate() {
-		return createddate;
-	}
-
-	public void setCreateddate(Date createddate) {
-		this.createddate = createddate;
-	}
-
-	public LSuserMaster getCreateby() {
-		return createby;
-	}
-
-	public void setCreateby(LSuserMaster createby) {
-		this.createby = createby;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
 	}
 	
 	

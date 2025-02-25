@@ -45,6 +45,8 @@ public class ProtocolOrdersDashboard implements Comparable<ProtocolOrdersDashboa
 	private boolean canuserprocess;
 	private LSprotocolmaster lsprotocolmaster;
 	private String sequenceid;
+	private Date modifieddate;
+
 	
 	public ProtocolOrdersDashboard(Long protocolordercode, Integer Testcode, String protoclordername, String orderflag,
 			Integer protocoltype, Date createdtimestamp, Date completedtimestamp, LSprotocolmaster lsprotocolmaster,
@@ -55,7 +57,7 @@ public class ProtocolOrdersDashboard implements Comparable<ProtocolOrdersDashboa
 			Integer ordercancell, Integer viewoption, Integer orderstarted, LSuserMaster orderstartedby,
 			Date orderstartedon,Integer lockeduser,String lockedusername, Integer versionno,Elnprotocolworkflow elnprotocolworkflow,
 			LSOrdernotification lsordernotification,LsAutoregister lsautoregister,Boolean repeat,
-			Boolean sentforapprovel,String approvelaccept,Integer autoregistercount, LSuserMaster lsuserMaster,String sequenceid) {
+			Boolean sentforapprovel,String approvelaccept,Integer autoregistercount, LSuserMaster lsuserMaster,String sequenceid,Date modifieddate) {
 
 		this.protocolordercode = protocolordercode;
 		this.Testcode = Testcode;
@@ -80,6 +82,7 @@ public class ProtocolOrdersDashboard implements Comparable<ProtocolOrdersDashboa
 		this.elnprotocolworkflow = elnprotocolworkflow;
 		this.lsprotocolmaster=lsprotocolmaster;
 		this.sequenceid = sequenceid;
+		this.modifieddate=modifieddate;
 	}
 	
 	public List<Elnprotocolworkflow> getLstelnprotocolworkflow() {
@@ -306,7 +309,12 @@ public class ProtocolOrdersDashboard implements Comparable<ProtocolOrdersDashboa
 	public void setSequenceid(String sequenceid) {
 		this.sequenceid = sequenceid;
 	}
-
+	public Date getModifieddate() {
+		return modifieddate;
+	}
+	public void setModifieddate(Date modifieddate) {
+		this.modifieddate = modifieddate;
+	}
 	
 	
 }

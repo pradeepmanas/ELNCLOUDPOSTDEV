@@ -326,7 +326,6 @@ public class FileService {
 			Isnew = true;
 			try {
 				objfile.setCreatedate(commonfunction.getCurrentUtcTime());
-				objfile.setModifieddate(commonfunction.getCurrentUtcTime());
 			} catch (ParseException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

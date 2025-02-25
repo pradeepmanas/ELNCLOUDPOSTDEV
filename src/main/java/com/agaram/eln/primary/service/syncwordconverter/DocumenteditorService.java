@@ -399,6 +399,7 @@ public class DocumenteditorService {
 							"reportdocument", 1, null, false);
 					data = (Reporttemplate) reporttemplatemap.get("Reporttemplate");
 					data.setDateModified(commonfunction.getCurrentUtcTime());
+					data.setModifieddate(commonfunction.getCurrentUtcTime());
 					reporttemplateRepository.save(data);
 
 					if (Isnew_Version) {

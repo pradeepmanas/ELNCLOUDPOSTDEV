@@ -146,6 +146,11 @@ public class Elnmaterial implements Serializable{
 	@OrderBy("materialprojectcode DESC")
 	private List<MaterialProjectHistory> materialprojecthistory;
 	
+	@OneToMany
+	@JoinColumn(name="nmaterialcode")
+	@OrderBy("materialprojectcode DESC")
+	private List<MaterialProjectMap> materialprojectmap;
+	
 	@Column(name = "applicationsequence")
 	private Long applicationsequence;
 	
@@ -244,7 +249,7 @@ public class Elnmaterial implements Serializable{
 	}
 
 	public String getExpiryTypeValue() {
-		return this.expirytype == 1 ? "Expiry Date" : (this.expirytype == 0 ? "No Expiry" : "Open Expiry");
+		return this.expirytype != null &&  this.expirytype == 1 ? "Expiry Date" : (this.expirytype != null && this.expirytype == 0 ? "No Expiry" : "Open Expiry");
 	}
 
 	public void setExpiryTypeValue(String expiryTypeValue) {
@@ -533,6 +538,12 @@ public class Elnmaterial implements Serializable{
 	
 	public void setMaterialprojecthistory(List<MaterialProjectHistory> materialprojecthistory) {
 		this.materialprojecthistory = materialprojecthistory;
+	}
+	public List<MaterialProjectMap> getMaterialprojectmap() {
+		return materialprojectmap;
+	}
+	public void setMaterialprojectmap(List<MaterialProjectMap> materialprojectmap) {
+		this.materialprojectmap = materialprojectmap;
 	}
 	
 	

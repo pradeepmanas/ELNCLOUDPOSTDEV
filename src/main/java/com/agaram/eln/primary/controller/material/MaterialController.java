@@ -243,15 +243,15 @@ public class MaterialController {
 	}
 	
 	@PostMapping("/updateAssignedProjectOnMaterial")
-	public void updateAssignedTaskOnMaterial(@RequestBody Map<String, Object> inputMap)throws Exception
+	public ResponseEntity<Object> updateAssignedTaskOnMaterial(@RequestBody Elnmaterial material)throws Exception
 	{
-		objMaterialService.updateAssignedTaskOnMaterial(inputMap);
+		return objMaterialService.updateAssignedTaskOnMaterial(material);
 	}
 	
 	@PostMapping("/getAssignedProjectOnMaterial")
-	public ResponseEntity<Object> getAssignedTaskOnMaterial(@RequestBody Map<String, Object> inputMap)throws Exception
+	public ResponseEntity<Object> getAssignedTaskOnMaterial(@RequestBody Elnmaterial material)throws Exception
 	{
-		return objMaterialService.getAssignedTaskOnMaterial(inputMap);
+		return objMaterialService.getAssignedTaskOnMaterial(material);
 	}
 	
 	@PostMapping("/uploadLinkforMaterial")

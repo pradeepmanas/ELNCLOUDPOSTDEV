@@ -1,9 +1,5 @@
 package com.agaram.eln.primary.model.sample;
 
-
-import java.util.Date;
-
-import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -14,15 +10,14 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
-import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 
 @Entity
-@Table(name = "sampleprojecthistory")
-public class SampleProjectHistory {
+@Table(name = "sampleprojectmap")
+public class SampleProjectMap {
+
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Basic(optional = false)
 	@Column(name = "sampleprojectcode")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer sampleprojectcode;
 	
 	private Integer samplecode;
@@ -30,18 +25,15 @@ public class SampleProjectHistory {
 	@ManyToOne
 	private LSprojectmaster lsproject;
 	
-	private Date createddate;
-	
-	@ManyToOne
-	private LSuserMaster createby;
-	
-	private String description;
-	
 	@Transient
 	private String samplename;
 
 	public String getSamplename() {
 		return samplename;
+	}
+
+	public void setSamplename(String samplename) {
+		this.samplename = samplename;
 	}
 
 	public Integer getSampleprojectcode() {
@@ -52,11 +44,11 @@ public class SampleProjectHistory {
 		this.sampleprojectcode = sampleprojectcode;
 	}
 
-	public Integer getsamplecode() {
+	public Integer getSamplecode() {
 		return samplecode;
 	}
 
-	public void setsamplecode(Integer samplecode) {
+	public void setSamplecode(Integer samplecode) {
 		this.samplecode = samplecode;
 	}
 
@@ -66,30 +58,6 @@ public class SampleProjectHistory {
 
 	public void setLsproject(LSprojectmaster lsproject) {
 		this.lsproject = lsproject;
-	}
-
-	public Date getCreateddate() {
-		return createddate;
-	}
-
-	public void setCreateddate(Date createddate) {
-		this.createddate = createddate;
-	}
-
-	public LSuserMaster getCreateby() {
-		return createby;
-	}
-
-	public void setCreateby(LSuserMaster createby) {
-		this.createby = createby;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
 	}
 	
 	

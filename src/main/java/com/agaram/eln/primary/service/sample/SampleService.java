@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,17 +22,20 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.fetchmodel.inventory.Sampleget;
-import com.agaram.eln.primary.model.material.Elnmaterial;
-import com.agaram.eln.primary.model.material.MaterialCategory;
+import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.material.Period;
 import com.agaram.eln.primary.model.material.Unit;
 import com.agaram.eln.primary.model.sample.DerivedSamples;
+import com.agaram.eln.primary.model.sample.ElnresultUsedSample;
 import com.agaram.eln.primary.model.sample.Sample;
 import com.agaram.eln.primary.model.sample.SampleAttachments;
 import com.agaram.eln.primary.model.sample.SampleCategory;
 import com.agaram.eln.primary.model.sample.SampleLinks;
 import com.agaram.eln.primary.model.sample.SampleProjectHistory;
+import com.agaram.eln.primary.model.sample.SampleProjectMap;
+import com.agaram.eln.primary.model.sample.SampleStorageMapping;
 import com.agaram.eln.primary.model.sample.SampleType;
+import com.agaram.eln.primary.model.samplestoragelocation.SelectedInventoryMapped;
 import com.agaram.eln.primary.model.sequence.SequenceTable;
 import com.agaram.eln.primary.model.sequence.SequenceTableProjectLevel;
 import com.agaram.eln.primary.model.sequence.SequenceTableSite;
@@ -40,10 +44,12 @@ import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.repository.material.PeriodRepository;
 import com.agaram.eln.primary.repository.material.UnitRepository;
 import com.agaram.eln.primary.repository.sample.DerivedSamplesRepository;
+import com.agaram.eln.primary.repository.sample.ElnresultUsedSampleRepository;
 import com.agaram.eln.primary.repository.sample.SampleAttachementsRepository;
 import com.agaram.eln.primary.repository.sample.SampleCategoryRepository;
 import com.agaram.eln.primary.repository.sample.SampleLinkRepository;
 import com.agaram.eln.primary.repository.sample.SampleProjectHistoryRepository;
+import com.agaram.eln.primary.repository.sample.SampleProjectMapRepository;
 import com.agaram.eln.primary.repository.sample.SampleRepository;
 import com.agaram.eln.primary.repository.sample.SampleStorageMappingRepository;
 import com.agaram.eln.primary.repository.sample.SampleTypeRepository;
@@ -54,6 +60,8 @@ import com.agaram.eln.primary.repository.sequence.SequenceTableTaskLevelReposito
 import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
 import com.agaram.eln.primary.service.cloudFileManip.CloudFileManipulationservice;
 import com.agaram.eln.primary.service.fileManipulation.FileManipulationservice;
+import com.agaram.eln.primary.service.material.MaterialCategoryService;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 
@@ -92,8 +100,21 @@ public class SampleService<ParentSample>{
 	private SampleStorageMappingRepository samplestoragemappingrepository;
 	@Autowired
 	private SampleProjectHistoryRepository sampleprojecthistoryrepository;
+	
+	@Autowired
+	ElnresultUsedSampleRepository ElnresultUsedSampleRepository;
+	
 	@Autowired
 	UnitRepository unitRepository;
+	
+	@Autowired
+	MaterialCategoryService MaterialCategoryService;
+	
+	@Autowired
+	SampleStorageMappingRepository sampleStorageMappingRepository;
+	
+	@Autowired
+	SampleProjectMapRepository sampleprojectmaprepository;
 
 	public ResponseEntity<Object> getSampleonCategory(SampleCategory objsamplecat){			
 			List<Sample> lstsample = samplerepository.findBySamplecategoryAndNsitecodeOrderBySamplecodeDesc(objsamplecat,objsamplecat.getNsitecode());
@@ -102,13 +123,30 @@ public class SampleService<ParentSample>{
 public ResponseEntity<Object> getSampleonCategoryFillter(@RequestBody Map<String, Object> inputMap){
 		
 		final ObjectMapper objmapper = new ObjectMapper();
-		
+		Boolean isallproject = (Boolean) inputMap.get("isallproject");
+		Boolean isgeneralproject = (Boolean) inputMap.get("isgeneralproject");
+		List<Integer> objlstProject = objmapper.convertValue(inputMap.get("projects"),
+				new TypeReference<List<Integer>>() {
+				});
 		SampleCategory objsamplecat = objmapper.convertValue(inputMap.get("category"), SampleCategory.class);
 		Date fromdate = objmapper.convertValue(inputMap.get("fromdate"), Date.class);
 		Date todate = objmapper.convertValue(inputMap.get("todate"), Date.class);
 
-		List<Sample> lstsample = samplerepository.findBySamplecategoryAndNsitecodeAndCreateddateBetweenOrderBySamplecodeDesc(
+		List<Sample> lstsample = new ArrayList<Sample>();
+		if(isallproject)
+		{
+			lstsample = samplerepository.findBySamplecategoryAndNsitecodeAndCreateddateBetweenOrderBySamplecodeDesc(
 				objsamplecat,objsamplecat.getNsitecode(),fromdate,todate);
+		}
+		else if(isgeneralproject)
+		{
+			lstsample = samplerepository.getSampleOnGeneralProjects(
+					objsamplecat.getNsamplecatcode(),objsamplecat.getNsitecode(),fromdate,todate);
+		}
+		else {
+			lstsample = samplerepository.getSampleOnProjects(
+					objsamplecat.getNsamplecatcode(),objsamplecat.getNsitecode(),fromdate,todate,objlstProject);
+		}
 		
 		return new ResponseEntity<>(lstsample, HttpStatus.OK);
 	}
@@ -168,7 +206,7 @@ public ResponseEntity<Object> getSampleonCategoryFillter(@RequestBody Map<String
 			
 			if(sequence.contains("{m&") && sequence.contains("$m}"))
 			{
-				SimpleDateFormat month = new SimpleDateFormat("mm");
+				SimpleDateFormat month = new SimpleDateFormat("MM");
 		        String currentMonth = month.format(currentdate);
 		        String namedmonth = sequencetext.substring(sequencetext.indexOf("{m&")+3, sequencetext.indexOf("$m}"));
 		        
@@ -228,6 +266,7 @@ public ResponseEntity<Object> getSampleonCategoryFillter(@RequestBody Map<String
 			
 			objsampl.setSequenceid(sequencetext);
 		}
+		
 	}
 	
 	
@@ -244,7 +283,7 @@ public ResponseEntity<Object> getSampleonCategoryFillter(@RequestBody Map<String
 		}
 		Date currentdate = commonfunction.getCurrentUtcTime();
 		SimpleDateFormat day = new SimpleDateFormat("dd");
-		SimpleDateFormat month = new SimpleDateFormat("mm");
+		SimpleDateFormat month = new SimpleDateFormat("MM");
 		SimpleDateFormat year = new SimpleDateFormat("yyyy");
 		if(seqorder.getSequenceday() == 0)
 		{
@@ -323,7 +362,9 @@ public ResponseEntity<Object> getSampleonCategoryFillter(@RequestBody Map<String
 			});
 			sampleprojecthistoryrepository.save(sample.getSampleprojecthistory());
 			}
-			
+		if(sample.getSampleprojectmap() != null) {
+			sampleprojectmaprepository.save(sample.getSampleprojectmap());
+		}
 		
 		if(sample.getSamplestoragemapping()!=null)
 		{
@@ -374,6 +415,10 @@ public ResponseEntity<Object> getSampleonCategoryFillter(@RequestBody Map<String
 					e.printStackTrace();
 				}
 			});
+		}
+		
+		if(sample.getSampleprojectmap() != null) {
+			sampleprojectmaprepository.save(sample.getSampleprojectmap());
 		}
 		
 		sampleprojecthistoryrepository.save(sample.getSampleprojecthistory());
@@ -462,22 +507,20 @@ public ResponseEntity<Object> getSampleonCategoryFillter(@RequestBody Map<String
 		sampleLinkRepository.delete(sampleLinks);
 		return new ResponseEntity<>(sampleLinks, HttpStatus.OK);
 	}
-	public void updateAssignedProjectOnSample(Map<String, Object> inputMap) {
-		
-		Integer selectedSample = Integer.parseInt(inputMap.get("selectedSample").toString());
-		String task = inputMap.get("task").toString(); 
-		
-		Sample sample = samplerepository.findOne(selectedSample);
-		sample.setAssignedproject(task);
+	public ResponseEntity<Object> updateAssignedProjectOnSample(Sample sam) {
+	
+		Sample sample = samplerepository.findOne(sam.getSamplecode());
+		sample.setSampleprojectmap(sam.getSampleprojectmap());
+		sampleprojectmaprepository.save(sample.getSampleprojectmap());
 		
 		samplerepository.save(sample);
+		return new ResponseEntity<>(sample, HttpStatus.OK);
 	}
 	
-	public ResponseEntity<Object> getAssignedTaskOnSample(Map<String, Object> inputMap) {
-		Integer selectedSample = Integer.parseInt(inputMap.get("selectedSample").toString());
+	public ResponseEntity<Object> getAssignedTaskOnSample(Sample sam) {
 		
-		Sample sample = samplerepository.findOne(selectedSample);
-		return new ResponseEntity<>(sample.getAssignedproject(), HttpStatus.OK);
+		List<SampleProjectMap> lssample = sampleprojectmaprepository.findBySamplecodeOrderBySampleprojectcode(sam.getSamplecode());
+		return new ResponseEntity<>(lssample, HttpStatus.OK);
 	}
 	public ResponseEntity<Object> updatemsampleprojecthistory(SampleProjectHistory[] samplelist)
 	{
@@ -526,7 +569,10 @@ public ResponseEntity<Object> getSampleonCategoryFillter(@RequestBody Map<String
 			throws ParseException {
 
 		Sample objInventory = samplerepository.findBySamplecode(objSample.getSamplecode());
-
+		if(objSample.getPreviousstatus()!=null) {
+			long Ntransactionstatus= objSample.getNtransactionstatus();
+			updatesampleinventorytransactiondetails(objSample.getCreateby(),0,objInventory,Ntransactionstatus,objSample.getPreviousstatus());
+		}
 		if (objSample.getOpenexpiry()) {
 			objInventory.setOpenexpiry(true);
 			objInventory.setExpirydate(objSample.getExpirydate());
@@ -541,9 +587,135 @@ public ResponseEntity<Object> getSampleonCategoryFillter(@RequestBody Map<String
 		samplerepository.save(objInventory);
 		return new ResponseEntity<>(objInventory, HttpStatus.OK);
 	}
-	
+	public void updatesampleinventorytransactiondetails(LSuserMaster createdby ,Integer transactionscreen,Sample objInventory, long ntransactionstatus,long Previousstatus) throws ParseException {
+		ElnresultUsedSample ElnresultUsedSample = new ElnresultUsedSample();
+		ElnresultUsedSample.setCreatedbyusercode(createdby);
+		ElnresultUsedSample.setSamplecode(objInventory.getSamplecode());
+		//ElnresultUsedSample.setNmaterialcategorycode(objInventory.getSamplecategory().getNsamplecatcode());
+		//ElnresultUsedSample.setNinventorycode(objInventory.getNmaterialinventorycode());
+		//ElnresultUsedSample.setNmaterialtypecode(objInventory.getSampletype().getNsampletypecode());
+		ElnresultUsedSample.setOrdercode(ntransactionstatus);
+		ElnresultUsedSample.setTransactionscreen(transactionscreen);
+		ElnresultUsedSample.setJsondata("");
+		ElnresultUsedSample.setTemplatecode(-1);
+		ElnresultUsedSample.setNstatus(1);
+		ElnresultUsedSample.setResponse(new Response());
+		ElnresultUsedSample.setCreateddate(commonfunction.getCurrentUtcTime());
+		ElnresultUsedSample.getResponse().setStatus(true);
+		ElnresultUsedSample.setStatuschangesFrom(Previousstatus);
+		ElnresultUsedSample.setStatuschangesTo(ntransactionstatus);
+		ElnresultUsedSampleRepository.save(ElnresultUsedSample);
+	}
 	public List<Sampleget> getsample(LSuserMaster objClass)
 	{
 		return samplerepository.findByNstatusAndNsitecodeOrderBySamplecodeDesc(1, objClass.getLssitemaster().getSitecode());
+	}
+	
+	public ResponseEntity<Map<String, Object>> ImportDatatoStoreonSample(Map<String, Object> inputMap) throws ParseException {
+		ObjectMapper obj = new ObjectMapper();
+		Integer siteCode = Integer.parseInt((String) inputMap.get("sitecode"));
+		List<String> UnitName = (List<String>) inputMap.get("UnitName");
+		Date currentDate = commonfunction.getCurrentUtcTime();
+		Map<String, Object> responseMap = new HashMap<>();
+		List<Unit> unitvalues = obj.convertValue(inputMap.get("Unit"), new TypeReference<List<Unit>>() {
+		});
+		if (!UnitName.isEmpty()) {
+			List<Unit> existunitData = unitRepository.findByNsitecodeAndSunitnameIgnoreCaseIn(siteCode, UnitName);
+			Map<String, Unit> existUnitListvalues = existunitData.stream()
+					.collect(Collectors.toMap(Unit::getSunitname, unit -> unit));
+			unitvalues = unitvalues.stream().map(item -> {
+				Unit existingUnit = existUnitListvalues.get(item.getSunitname());
+
+				if (existingUnit != null) {
+					return existingUnit;
+				} else {
+					item.setCreatedate(currentDate);
+					return item;
+				}
+			}).collect(Collectors.toList());
+
+			unitRepository.save(unitvalues);
+		}
+
+		List<SampleProjectMap> SampleProjectMapobj = obj.convertValue(inputMap.get("sampleprojectmap"),
+				new TypeReference<List<SampleProjectMap>>() {
+				});
+		final Map<String, List<SampleProjectMap>> customizedSampleProjectMap = new HashMap<>();
+		if (SampleProjectMapobj.size()>0) {
+			sampleprojectmaprepository.save(SampleProjectMapobj);
+			customizedSampleProjectMap.putAll(SampleProjectMapobj.stream()
+					.collect(Collectors.groupingBy(SampleProjectMap::getSamplename, Collectors.toList())));
+		}
+		List<SampleProjectHistory> SampleProjectHistoryMapobj = obj.convertValue(inputMap.get("sampleprojecthistory"),
+				new TypeReference<List<SampleProjectHistory>>() {
+				});
+		final Map<String, List<SampleProjectHistory>> customizedSampleProjectHistoryMap = new HashMap<>();
+		if (SampleProjectHistoryMapobj.size()>0) {
+			SampleProjectHistoryMapobj=SampleProjectHistoryMapobj.stream().map((items) ->{
+				items.setCreateddate(currentDate);
+				return items;
+			}).collect(Collectors.toList());
+			sampleprojecthistoryrepository.save(SampleProjectHistoryMapobj);
+			customizedSampleProjectHistoryMap.putAll(SampleProjectHistoryMapobj.stream()
+					.collect(Collectors.groupingBy(SampleProjectHistory::getSamplename, Collectors.toList())));
+		}
+
+		List<Sample> sampleDatas = obj.convertValue(inputMap.get("Sample"), new TypeReference<List<Sample>>() {
+		});
+		List<String> ElnsampleName = (List<String>) inputMap.get("SampleName");
+		Map<String, Unit> unitfinalmap = unitvalues.stream()
+				.collect(Collectors.toMap(Unit::getSunitname, unit -> unit));
+		if (!sampleDatas.isEmpty()) {
+			List<SampleStorageMapping> selectedStorageLocation = obj.convertValue(
+					inputMap.get("selectedStorageLocation"), new TypeReference<List<SampleStorageMapping>>() {
+					});
+			if (selectedStorageLocation != null) {
+				samplestoragemappingrepository.save(selectedStorageLocation);
+			}
+			Map<String, SampleStorageMapping> selectedStorageLocationobj = selectedStorageLocation.stream()
+					.collect(Collectors.toMap(SampleStorageMapping::getSamplename,
+							SampleStorageMapping -> SampleStorageMapping));
+			Map<String, Long> existMaterialList = MaterialCategoryService.checkDeblicaterecord(ElnsampleName, siteCode,
+					"Sample", "samplename");
+			sampleDatas = sampleDatas.stream().map(itemsv -> {
+				if (itemsv.getUnit() != null && itemsv.getUnit().getSunitname() != null && !unitfinalmap.isEmpty()) {
+					itemsv.setUnit(unitfinalmap.get(itemsv.getUnit().getSunitname()));
+				}
+				String oldSamplename=itemsv.getSamplename();
+				if (existMaterialList.get(itemsv.getSamplename()) > 0) {
+					Long existcount = existMaterialList.get(itemsv.getSamplename()) + 1;
+					itemsv.setSamplename(itemsv.getSamplename() + "(" + existcount + ")");
+				}
+				SequenceTableProjectLevel objprojectseq = new SequenceTableProjectLevel();
+				SequenceTableTaskLevel objtaskseq = new SequenceTableTaskLevel();
+				SequenceTable seqorder = null;
+				try {
+					seqorder = validateandupdatesamplesequencenumber(itemsv, objprojectseq, objtaskseq);
+					GetSampleSequence(itemsv, seqorder, objprojectseq, objtaskseq);
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
+				itemsv.setCreateddate(currentDate);
+				if (selectedStorageLocationobj.get(oldSamplename) != null) {
+					itemsv.setSamplestoragemapping(selectedStorageLocationobj.get(oldSamplename));
+				}
+//				if (existMaterialList.get(oldSamplename) == 0) {
+				if (SampleProjectMapobj.size()>0 
+						&& customizedSampleProjectMap.get(oldSamplename)!=null) {
+					List<SampleProjectMap> mpm = customizedSampleProjectMap.get(oldSamplename);
+					itemsv.setSampleprojectmap(mpm);
+				}
+				if (inputMap.get("sampleprojecthistory")!=null && customizedSampleProjectHistoryMap.get(oldSamplename)!=null) {
+					List<SampleProjectHistory> mpmh = customizedSampleProjectHistoryMap.get(oldSamplename);
+					itemsv.setSampleprojecthistory(mpmh);
+				}
+//				}
+				return itemsv;
+			}).filter(Objects::nonNull).collect(Collectors.toList());
+
+			samplerepository.save(sampleDatas);
+
+		}
+		return new ResponseEntity<>(responseMap, HttpStatus.OK);
 	}
 }

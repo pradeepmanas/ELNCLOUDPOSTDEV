@@ -110,9 +110,17 @@ public class LSsamplefile {
 	private String tagvalues;
 	@Transient
 	private String resultvalues;
+	@Transient
+	private String modifieduser;
 	
 	public String getResultvalues() {
 		return resultvalues;
+	}
+	public String getModifieduser() {
+		return modifieduser;
+	}
+	public void setModifieduser(String modifieduser) {
+		this.modifieduser = modifieduser;
 	}
 	public void setResultvalues(String resultvalues) {
 		this.resultvalues = resultvalues;

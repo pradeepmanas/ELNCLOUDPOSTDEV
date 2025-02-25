@@ -3801,14 +3801,15 @@ public class MaterialInventoryService {
 
 		if (objElnmaterialInventory.getPreviousstatus()!=null) {
 			long Ntransactionstatus= objElnmaterialInventory.getNtransactionstatus();
-			updateinventorytransactiondetails(objElnmaterialInventory.getCreatedby(),0,objInventory,Ntransactionstatus,objElnmaterialInventory.getPreviousstatus());
+			ElnmaterialInventory obj=new ElnmaterialInventory();
+			updateinventorytransactiondetails(objElnmaterialInventory.getCreatedby(),0,objInventory,Ntransactionstatus,objElnmaterialInventory.getPreviousstatus(),obj);
 		}
 
 		elnmaterialInventoryReppository.save(objInventory);
 		return new ResponseEntity<>(objInventory, HttpStatus.OK);
 	}
 	
-	public void updateinventorytransactiondetails(LSuserMaster createdby ,Integer transactionscreen,ElnmaterialInventory objInventory, long ntransactionstatus,long Previousstatus) throws ParseException {
+	public void updateinventorytransactiondetails(LSuserMaster createdby ,Integer transactionscreen,ElnmaterialInventory objInventory, long ntransactionstatus,long Previousstatus,ElnmaterialInventory openinventory) throws ParseException {
 		ElnresultUsedMaterial ElnresultUsedMaterial = new ElnresultUsedMaterial();
 		ElnresultUsedMaterial.setCreatedbyusercode(createdby);
 		ElnresultUsedMaterial.setNmaterialcode(objInventory.getMaterial().getNmaterialcode());
@@ -3825,6 +3826,15 @@ public class MaterialInventoryService {
 		ElnresultUsedMaterial.getResponse().setStatus(true);
 		ElnresultUsedMaterial.setStatuschangesFrom(Previousstatus);
 		ElnresultUsedMaterial.setStatuschangesTo(ntransactionstatus);
+		
+		if(Previousstatus==-2L) {
+			ElnresultUsedMaterial.setJsondata(openinventory.getSinventoryid());
+			ElnresultUsedMaterial.setQtyleft(openinventory.getSavailablequantity());
+			double quantityused=Double.parseDouble(objInventory.getSavailablequantity());
+			ElnresultUsedMaterial.setNqtyused(quantityused);
+		}
+		
+		
 		elnresultUsedMaterialRepository.save(ElnresultUsedMaterial);
 	}
 
@@ -3894,6 +3904,10 @@ public class MaterialInventoryService {
 				+ getfnFormat(objElnmaterialInventory2.getNmaterialinventorycode(), sformattype);
 
 		objElnmaterialInventory2.setSinventoryid(stridformat);
+		if (objElnmaterialInventory.getPreviousstatus()!=null) {
+			long Ntransactionstatus =28L;
+			updateinventorytransactiondetails(objElnmaterialInventory.getCreatedby(),0,objInventory,Ntransactionstatus,-2L,objElnmaterialInventory2);
+		}
 
 		elnmaterialInventoryReppository.save(objElnmaterialInventory2);
 
@@ -4239,16 +4253,12 @@ public class MaterialInventoryService {
 		List<ElnresultUsedSample> Elnresult = new ArrayList<>();
 		if (resultusedsample.getSamplecode() != null) {
 
-			if (resultusedsample.getTransactionscreen() != -1 && resultusedsample.getTransactionscreen() != 0) {
+			if (resultusedsample.getTransactionscreen() != -1) {
 				Elnresult = ElnresultUsedSampleRepository
 						.findBySamplecodeInAndCreateddateBetweenAndTransactionscreenOrderByNelnresultusedsamplecodeDesc(
 								resultusedsample.getSamplecode(), fromdate, todate,
 								resultusedsample.getTransactionscreen());
 			}
-//			else if(resultusedsample.getTransactionscreen() == 5)
-//			{
-//				Elnresult = ElnresultUsedSampleRepository.findBySamplecodeInAndCreateddateBetweenAndShowfullcommentIsNotNull(resultusedsample.getSamplecode(),fromdate,todate);
-//			}
 			else {
 				Elnresult = ElnresultUsedSampleRepository
 						.findBySamplecodeInAndCreateddateBetweenOrderByNelnresultusedsamplecodeDesc(

@@ -54,6 +54,8 @@ public class LogilabOrdermastersh implements Comparable<LogilabOrdermastersh> {
 	private Long ose;
 	private String sid;
 	private Boolean ts;
+	private Date modifieddate;
+
 
 	public LogilabOrdermastersh(Long batchcode, String batchid, LSworkflow lsworkflow, String testname, LSfile lsfile,
 			LSsamplemaster lssamplemaster, LSprojectmaster lsprojectmaster, Integer filetype, String orderflag,
@@ -62,7 +64,7 @@ public class LogilabOrdermastersh implements Comparable<LogilabOrdermastersh> {
 			Integer testcode, Integer approvelstatus, LSOrdernotification lsordernotification, Integer ordersaved,
 			Boolean repeat, LsAutoregister lsautoregisterorders, Boolean sentforapprovel, String approvelaccept,
 			Integer autoregistercount, Elnmaterial elnmaterial, String lockedusername, Long applicationsequence,
-			Long sitesequence, Long projectsequence, Long tasksequence, Long ordertypesequence,String sequenceid,Boolean teamselected) {
+			Long sitesequence, Long projectsequence, Long tasksequence, Long ordertypesequence,String sequenceid,Boolean teamselected,Date modifieddate) {
 		this.bc = batchcode;
 		this.bi = batchid;
 		this.wc = lsworkflow != null ? lsworkflow.getWorkflowcode() : null;
@@ -100,8 +102,15 @@ public class LogilabOrdermastersh implements Comparable<LogilabOrdermastersh> {
 		this.ose = ordertypesequence;
 		this.sid = sequenceid;
 		this.ts = teamselected;
+		this.modifieddate=modifieddate;
 	}
 
+	public Date getModifieddate() {
+		return modifieddate;
+	}
+	public void setModifieddate(Date modifieddate) {
+		this.modifieddate = modifieddate;
+	}
 	public String getLoc() {
 		return loc;
 	}

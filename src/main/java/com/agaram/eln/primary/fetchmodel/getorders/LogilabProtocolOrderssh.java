@@ -77,6 +77,8 @@ public class LogilabProtocolOrderssh implements Comparable<LogilabProtocolOrders
 	private Long tse;
 	private Long ose;
 	private String sid;
+	private Date modifieddate;
+	private String modifiedby;
 	
 	public LogilabProtocolOrderssh(Long protocolordercode, Integer Testcode, String protoclordername, String orderflag,
 			Integer protocoltype, Date createdtimestamp, Date completedtimestamp, LSprotocolmaster lsprotocolmaster,
@@ -88,7 +90,7 @@ public class LogilabProtocolOrderssh implements Comparable<LogilabProtocolOrders
 			Date orderstartedon,Integer lockeduser,String lockedusername, Integer versionno,Elnprotocolworkflow elnprotocolworkflow,
 			LSOrdernotification lsordernotification,LsAutoregister lsautoregister,Boolean repeat,
 			Boolean sentforapprovel,String approvelaccept,Integer autoregistercount, LSuserMaster lsuserMaster, LStestmasterlocal lstestmasterlocal, 
-			Long applicationsequence, Long sitesequence, Long projectsequence, Long tasksequence, Long ordertypesequence,String sequenceid) {
+			Long applicationsequence, Long sitesequence, Long projectsequence, Long tasksequence, Long ordertypesequence,String sequenceid,String modifiedby,Date modifieddate) {
 
 		this.pc = protocolordercode;
 		this.tc = Testcode;
@@ -138,6 +140,21 @@ public class LogilabProtocolOrderssh implements Comparable<LogilabProtocolOrders
 		this.tse = tasksequence;
 		this.ose = ordertypesequence;
 		this.sid = sequenceid;
+		this.modifieddate=modifieddate;
+		this.modifiedby = modifiedby;
+	}
+	
+	public String getModifiedby() {
+		return modifiedby;
+	}
+	public void setModifiedby(String modifiedby) {
+		this.modifiedby = modifiedby;
+	}
+	public Date getModifieddate() {
+		return modifieddate;
+	}
+	public void setModifieddate(Date modifieddate) {
+		this.modifieddate = modifieddate;
 	}
 	
 	@Override

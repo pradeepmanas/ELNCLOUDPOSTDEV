@@ -96,7 +96,6 @@ public class DocumentViewerService {
         	
         	data.setDatecreated(commonfunction.getCurrentUtcTime());
         	data.setDatemodified(commonfunction.getCurrentUtcTime());
-        	
         	reportsRepository.save(data);
         	
         	if(data.getIsmultitenant() == 1) {
@@ -125,6 +124,8 @@ public class DocumentViewerService {
         }       
         
         data.setDatemodified(commonfunction.getCurrentUtcTime());
+        data.setModifieddate(commonfunction.getCurrentUtcTime());
+
         response.setStatus(true);
         
         if(data.isIsnewversion()) {

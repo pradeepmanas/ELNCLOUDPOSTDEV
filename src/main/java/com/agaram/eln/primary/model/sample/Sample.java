@@ -81,6 +81,17 @@ public class Sample implements Serializable{
 	@Column(name = "sequenceid")
 	private String sequenceid;
 	
+	@Transient
+	private Long previousstatus;
+
+	public Long getPreviousstatus() {
+		return previousstatus;
+	}
+
+	public void setPreviousstatus(Long previousstatus) {
+		this.previousstatus = previousstatus;
+	}
+	
 	@OneToMany
 	@JoinColumn(name="samplecode")
 	private List<DerivedSamples> parentsamples;
@@ -140,6 +151,10 @@ public class Sample implements Serializable{
 	@OrderBy("sampleprojectcode DESC")
 	private List<SampleProjectHistory> sampleprojecthistory;
 	
+	@OneToMany
+	@JoinColumn(name="samplecode")
+	@OrderBy("sampleprojectcode DESC")
+	private List<SampleProjectMap> sampleprojectmap;
 	
 	public Integer getQuantity() {
 		return quantity;
@@ -429,6 +444,14 @@ public class Sample implements Serializable{
 
 	public void setNqtynotification(Double nqtynotification) {
 		this.nqtynotification = nqtynotification;
+	}
+
+	public List<SampleProjectMap> getSampleprojectmap() {
+		return sampleprojectmap;
+	}
+
+	public void setSampleprojectmap(List<SampleProjectMap> sampleprojectmap) {
+		this.sampleprojectmap = sampleprojectmap;
 	}
 
 }

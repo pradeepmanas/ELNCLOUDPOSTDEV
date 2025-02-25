@@ -74,6 +74,8 @@ public class Logilabprotocolorders implements Comparable<Logilabprotocolorders> 
 	private Integer autoregistercount;
 	private LSuserMaster lsuserMaster;
 	private String sequenceid;
+	private Date modifieddate;
+	private String modifiedby;
 	
 	public Logilabprotocolorders(Long protocolordercode, Integer Testcode, String protoclordername, String orderflag,
 			Integer protocoltype, Date createdtimestamp, Date completedtimestamp, LSprotocolmaster lsprotocolmaster,
@@ -85,7 +87,7 @@ public class Logilabprotocolorders implements Comparable<Logilabprotocolorders> 
 			Integer ordercancell, Integer viewoption, Integer orderstarted, LSuserMaster orderstartedby,
 			Date orderstartedon,Integer lockeduser,String lockedusername, Integer versionno,Elnprotocolworkflow elnprotocolworkflow,
 			LSOrdernotification lsordernotification,LsAutoregister lsautoregister,Boolean repeat,
-			Boolean sentforapprovel,String approvelaccept,Integer autoregistercount, LSuserMaster lsuserMaster,String sequenceid) {
+			Boolean sentforapprovel,String approvelaccept,Integer autoregistercount, LSuserMaster lsuserMaster,String sequenceid,String modifiedby,Date modifieddate) {
 
 		this.protocolordercode = protocolordercode;
 		this.Testcode = Testcode;
@@ -131,6 +133,8 @@ public class Logilabprotocolorders implements Comparable<Logilabprotocolorders> 
 		this.autoregistercount=autoregistercount;
 		this.lsuserMaster = lsuserMaster!=null? new LSuserMaster(lsuserMaster.getUsercode(),lsuserMaster.getUsername(),lsuserMaster.getLssitemaster()):null;
 		this.sequenceid =sequenceid;
+		this.modifieddate=modifieddate;
+		this.modifiedby = modifiedby;
 	}
 
 	public List<Elnprotocolworkflow> getLstelnprotocolworkflow() {
@@ -159,6 +163,18 @@ public class Logilabprotocolorders implements Comparable<Logilabprotocolorders> 
 		this.lstelnprotocolworkflow = null;
 	}
 
+	public String getModifiedby() {
+		return modifiedby;
+	}
+	public void setModifiedby(String modifiedby) {
+		this.modifiedby = modifiedby;
+	}
+	public Date getModifieddate() {
+		return modifieddate;
+	}
+	public void setModifieddate(Date modifieddate) {
+		this.modifieddate = modifieddate;
+	}
 	public Elnprotocolworkflow getElnprotocolworkflow() {
 		return elnprotocolworkflow;
 	}

@@ -98,14 +98,14 @@ public class SampleController {
 		return objSampleService.deleteLinkforSample(SampleLinks);
 	}
 	@PostMapping("/updateAssignedProjectOnSample")
-	public void updateAssignedProjectOnSample(@RequestBody Map<String, Object> inputMap)throws Exception
+	public ResponseEntity<Object> updateAssignedProjectOnSample(@RequestBody Sample sam)throws Exception
 	{
-		objSampleService.updateAssignedProjectOnSample(inputMap);
+		return objSampleService.updateAssignedProjectOnSample(sam);
 	}
 	@PostMapping("/getAssignedTaskOnSample")
-	public ResponseEntity<Object> getAssignedTaskOnSample(@RequestBody Map<String, Object> inputMap)throws Exception
+	public ResponseEntity<Object> getAssignedTaskOnSample(@RequestBody Sample sam)throws Exception
 	{
-		return objSampleService.getAssignedTaskOnSample(inputMap);
+		return objSampleService.getAssignedTaskOnSample(sam);
 	}
 	
 	@PostMapping("/updatemsampleprojecthistory")
@@ -132,6 +132,10 @@ public class SampleController {
 		return objSampleService.updateSampleExpiry(objSample);
 	}
 
-	
+	@PostMapping(value = "/ImportDatatoStoreonSample")
+	public ResponseEntity<Map<String, Object>>ImportDatatoStoreonSample(@RequestBody Map<String, Object> inputMap) throws ParseException{
+		return objSampleService.ImportDatatoStoreonSample(inputMap);
+		
+	}
 	
 }

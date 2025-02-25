@@ -4366,6 +4366,16 @@ public class InstrumentService {
 			orderDetail.setOrdersaved(1);
 			lslogilablimsorderdetailRepository.save(orderDetail);
 		}
+		if(orderDetail.getBatchcode() != null) {
+			try {
+				orderDetail.setModifieddate(commonfunction.getCurrentUtcTime());
+				orderDetail.setModifiedby(objfile.getModifieduser());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			lslogilablimsorderdetailRepository.save(orderDetail);
+		}
 
 		if (objfile.isDoversion() && versionexist) {
 
@@ -9474,7 +9484,7 @@ public class InstrumentService {
 					lsOrderDetail.getVersionno(), lsOrderDetail.getElnprotocolworkflow(),
 					lsOrderDetail.getLsordernotification(), lsOrderDetail.getLsautoregister(),
 					lsOrderDetail.getRepeat(), lsOrderDetail.getSentforapprovel(), lsOrderDetail.getApprovelaccept(),
-					lsOrderDetail.getAutoregistercount(), lsOrderDetail.getLsuserMaster(), lsOrderDetail.getSequenceid()))
+					lsOrderDetail.getAutoregistercount(), lsOrderDetail.getLsuserMaster(), lsOrderDetail.getSequenceid(), lsOrderDetail.getModifiedby(), lsOrderDetail.getModifieddate()))
 					.collect(Collectors.toList()));
 
 		}
@@ -11238,7 +11248,7 @@ public class InstrumentService {
 					lsOrderDetail.getVersionno(), lsOrderDetail.getElnprotocolworkflow(),
 					lsOrderDetail.getLsordernotification(), lsOrderDetail.getLsautoregister(),
 					lsOrderDetail.getRepeat(), lsOrderDetail.getSentforapprovel(), lsOrderDetail.getApprovelaccept(),
-					lsOrderDetail.getAutoregistercount(), lsOrderDetail.getLsuserMaster(), lsOrderDetail.getSequenceid()))
+					lsOrderDetail.getAutoregistercount(), lsOrderDetail.getLsuserMaster(), lsOrderDetail.getSequenceid(), lsOrderDetail.getModifiedby(),lsOrderDetail.getModifieddate()))
 					.collect(Collectors.toList()));
 
 		}
