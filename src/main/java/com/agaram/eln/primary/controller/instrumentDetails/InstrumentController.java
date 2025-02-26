@@ -1179,7 +1179,8 @@ public class InstrumentController {
 		int multitenant = (int) obj.get("multitenant");
 		String tenant = (String) obj.get("tenant");
 		String fileid = (String) obj.get("fileid");
-		return instrumentService.downloadsheetfilefordocx(multitenant,tenant,fileid);
+		String screenname = (String) obj.get("screenname");
+		return instrumentService.downloadsheetfilefordocx(multitenant,tenant,fileid,screenname);
 	}
 	
 	@RequestMapping("/deletefilesforfolder/{directorycode}/{filefor}/{tenantid}/{ismultitenant}/{usercode}/{sitecode}/{createddate}/{fileviewfor}")

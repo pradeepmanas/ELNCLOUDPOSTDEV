@@ -58,6 +58,8 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.data.mongodb.gridfs.GridFsTemplate;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.mail.MailSendException;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -72,6 +74,7 @@ import com.agaram.eln.config.CustomMultipartFile;
 //import com.agaram.eln.primary.commonfunction.Constants;
 import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.config.TenantContext;
+import com.agaram.eln.primary.fetchmodel.getorders.LogilabProtocolOrderssh;
 import com.agaram.eln.primary.fetchmodel.getorders.Logilabprotocolorders;
 import com.agaram.eln.primary.model.cfr.LScfttransaction;
 import com.agaram.eln.primary.model.cloudFileManip.CloudUserSignature;
@@ -6366,6 +6369,7 @@ public class ProtocolService {
 		map.put("extension", "." + objfile.getExtension());
 		map.put("link", originurl + "/protocol/downloadprotocolfile/" + objfile.getFileid() + "/"
 				+ TenantContext.getCurrentTenant() + "/" + objfile.getFilename() + "/" + objfile.getExtension());
+		map.put("fileid", objfile.getFileid());	
 		return map;
 	}
 
@@ -10688,6 +10692,12 @@ public class ProtocolService {
 		ByteArrayInputStream bis = new ByteArrayInputStream(data);
 
 		return bis;
+	}
+	
+	public ResponseEntity<Object> GetAllorders(LSuserMaster objuser)
+	{
+		List<LogilabProtocolOrderssh> lstorders = new ArrayList<LogilabProtocolOrderssh>();
+		return new ResponseEntity<>(lstorders, HttpStatus.OK);
 	}
 	
 }

@@ -10226,12 +10226,12 @@ public class InstrumentService {
 		}
 	}
 
-	public Map<String, Object> downloadsheetfilefordocx(Integer multitenant, String tenant, String fileid)
+	public Map<String, Object> downloadsheetfilefordocx(Integer multitenant, String tenant, String fileid, String screenname)
 			throws Exception {
 		Map<String, Object> mapObj = new HashMap<>();
 
 		if (multitenant == 1) {
-			String containerName = tenant + "sheetfolderfiles";
+			String containerName = screenname.equals("Sheet") ? tenant + "sheetfolderfiles" : tenant + "protocolfiles";
 			byte[] documentBytes = objCloudFileManipulationservice.retrieveCloudReportFile(containerName,
 					fileid);
 			MockMultipartFile mockMultipartFile = new MockMultipartFile("tempFileName", documentBytes);

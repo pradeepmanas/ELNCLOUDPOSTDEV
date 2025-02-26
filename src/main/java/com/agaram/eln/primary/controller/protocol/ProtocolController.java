@@ -1343,5 +1343,9 @@ public class ProtocolController {
 		return new ResponseEntity<>(new InputStreamResource(bis), header, HttpStatus.OK);
 	}
 	
-	
+	@RequestMapping("/GetAllorders")
+	public ResponseEntity<Object> GetAllorders(@RequestBody LSuserMaster objuser)
+	{
+		return ProtocolMasterService.GetAllorders(objuser);
+	}
 }
