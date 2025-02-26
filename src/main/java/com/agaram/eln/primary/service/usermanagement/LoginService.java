@@ -1991,16 +1991,17 @@ public class LoginService {
 						} else {
 							objuser.setLsusergroup(objaadsgroup);
 //							LSMultiusergroup.setDefaultusergroup(objaadsgroup.getUsergroupcode());
-							LSMultiusergroup.setDefaultusergroup(objaadsgroup.getUsergroupcode());
+//							LSMultiusergroup.setDefaultusergroup(objaadsgroup.getUsergroupcode());
+							LSMultiusergroup.setDefaultusergroup(1);
 							LSMultiusergroup.setLsusergroup(objaadsgroup);
 							if(!existingUser1.isEmpty()) {
 								LSMultiusergroup.setUsercode(existingUser1.get(0).getUsercode());	
 							}
 						}
 
-						multisiteobj.setLssiteMaster(objuser.getLssitemaster());						
-						if(!existingUser1.isEmpty()) {
-							multisiteobj.setDefaultsiteMaster(1);
+						multisiteobj.setLssiteMaster(objuser.getLssitemaster());
+						multisiteobj.setDefaultsiteMaster(1);						if(!existingUser1.isEmpty()) {
+							
 							multisiteobj.setUsercode(existingUser1.get(0).getUsercode());	
 						}
 						
@@ -2011,6 +2012,7 @@ public class LoginService {
 						objuser.setLockcount(0);
 						objuser.setUserretirestatus(0);
 						objuser.setPassword(objuser.getToken());
+						objuser.setEmailid(objuser.getUsername());
 
 						Response objResponse = new Response();
 						objResponse.setStatus(true);

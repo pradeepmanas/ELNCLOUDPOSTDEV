@@ -92,6 +92,7 @@ import com.agaram.eln.primary.repository.sequence.SequenceTableSiteRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
 import com.agaram.eln.primary.service.cloudFileManip.CloudFileManipulationservice;
 import com.agaram.eln.primary.service.fileManipulation.FileManipulationservice;
+import com.agaram.eln.primary.service.protocol.Commonservice;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -154,6 +155,8 @@ public class MaterialService {
 	private SampleProjectHistoryRepository SampleProjectHistoryRepository;
 	@Autowired
 	private MaterialProjectMapRepository materialprojectmapRepository;
+	@Autowired
+	private Commonservice commonService;
 
 	public ResponseEntity<Object> getMaterialcombo(Integer nmaterialtypecode, Integer nsitecode) {
 
@@ -1288,8 +1291,8 @@ public class MaterialService {
 		Elnmaterial objMaterial = elnmaterialRepository.findOne(obj.getNmaterialcode());
 
 		if (objElnmaterial == null) {
-
-			// objMaterial.setAssignedproject(obj.getAssignedproject());
+			
+			 objMaterial.setAssignedproject(obj.getAssignedproject());
 			objMaterial.setElnmaterialchemdiagref(obj.getElnmaterialchemdiagref());
 			objMaterial.setModifiedby(obj.getModifiedby());
 			objMaterial.setModifieddate(obj.getModifieddate());
@@ -1299,6 +1302,10 @@ public class MaterialService {
 			objMaterial.setOpenexpiryperiod(obj.getOpenexpiryperiod());
 			objMaterial.setOpenexpiryvalue(obj.getOpenexpiryvalue());
 			objMaterial.setQuarantine(obj.getQuarantine());
+			if (obj.getMaterialprojectmap() != null && obj.getMaterialprojectmap().size()>0) {
+				objMaterial.setMaterialprojectmap(obj.getMaterialprojectmap());
+				materialprojectmapRepository.save(objMaterial.getMaterialprojectmap());
+			}
 			if (obj.getMaterialprojecthistory() != null) {
 				obj.getMaterialprojecthistory().forEach(history -> {
 					try {
@@ -1310,6 +1317,7 @@ public class MaterialService {
 				});
 				materialprojecthistoryrepository.save(obj.getMaterialprojecthistory());
 			}
+		
 			elnmaterialRepository.save(objMaterial);
 			obj.getResponse().setInformation("IDS_SAVE_SUCCEED");
 			obj.getResponse().setStatus(true);
@@ -2182,6 +2190,7 @@ public class MaterialService {
 		objattachment.setNmaterialtypecode(nmaterialtypecode);
 		objattachment.setNstatus(1);
 		objattachment.setNsitecode(nsitecode);
+		objattachment.setFilesize(commonService.formatFileSize(file.getSize()));
 
 		if (objAttach != null && objAttach.getlsMaterialAttachments() != null) {
 			objAttach.getlsMaterialAttachments().add(objattachment);
@@ -2306,7 +2315,8 @@ public class MaterialService {
 	}
 
 	public ResponseEntity<Object> getLinksOnMaterial(MaterialLinks materiallink) {
-		return new ResponseEntity<>(materiallinksrepository.findAll(), HttpStatus.OK);
+		List<MaterialLinks> objFilels = materiallinksrepository.findByNmaterialcode(materiallink.getNmaterialcode());
+		return new ResponseEntity<>(objFilels, HttpStatus.OK);
 	}
 
 	public ResponseEntity<Object> deleteLinkforMaterial(MaterialLinks materiallink) {

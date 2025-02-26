@@ -55,6 +55,7 @@ import com.agaram.eln.primary.model.sample.ElnresultUsedSample;
 import com.agaram.eln.primary.model.sample.Sample;
 import com.agaram.eln.primary.model.sheetManipulation.LStestmasterlocal;
 import com.agaram.eln.primary.model.usermanagement.LSnotification;
+import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.repository.equipment.ElnresultEquipmentRepository;
 import com.agaram.eln.primary.repository.equipment.EquipmentHistoryRepository;
@@ -616,7 +617,7 @@ public class TransactionService {
 				.convertValue(inputMap.get("selectedMaterialInventory"), ElnmaterialInventory.class);
 		final Map<String, Object> objResultMap = (Map<String, Object>) inputMap.get("resultObject");
 		final LStestmasterlocal objTest = new LStestmasterlocal();
-
+		LSprojectmaster projectcode = Objmapper.convertValue(objResultMap.get("projectcode"), LSprojectmaster.class);
 		objTest.setTestcode((Integer) objResultMap.get("testcode"));
 
 		ElnmaterialInventory objInventory = elnmaterialInventoryRepository
@@ -645,8 +646,11 @@ public class TransactionService {
 				resultUsedMaterial.setTestcode(null);
 			}
 		}
+		if (projectcode.getProjectcode()!=null) {
+			resultUsedMaterial.setProjectcode(projectcode);
+		}
 //		resultUsedMaterial.setCreateddate(cft.getTransactiondate());
-		resultUsedMaterial.setCreatedbyusercode(objUser);
+			resultUsedMaterial.setCreatedbyusercode(objUser);
 		resultUsedMaterial.setNqtyissued(getIssuedQty);
 		resultUsedMaterial.setNqtyleft(getQtyLeft);
 		resultUsedMaterial.setNqtyused(getUsedQty);
@@ -707,6 +711,12 @@ public class TransactionService {
 
 		objTest.setTestcode((Integer) objResultMap.get("testcode"));
 
+		LSprojectmaster projectcode = Objmapper.convertValue(objResultMap.get("projectcode"), LSprojectmaster.class);
+		ElnresultUsedMaterial resultUsedMaterial = new ElnresultUsedMaterial();
+		if (projectcode.getProjectcode()!=null) {
+			resultUsedMaterial.setProjectcode(projectcode);
+		}
+		
 		ElnmaterialInventory objInventory = elnmaterialInventoryRepository
 				.findByNmaterialinventorycode(objInventoryFromMap.getNmaterialinventorycode());
 
@@ -715,7 +725,7 @@ public class TransactionService {
 		LSuserMaster objUser = new LSuserMaster();
 		objUser.setUsercode(cft.getLsuserMaster());
 
-		ElnresultUsedMaterial resultUsedMaterial = new ElnresultUsedMaterial();
+		
 
 		if ((Integer.parseInt(objResultMap.get("transactionscreen").toString()) == 2) && getUsedQty != null) {
 			getIssuedQty = Double.parseDouble(objInventory.getSavailablequantity()) + getUsedQty;
@@ -1997,6 +2007,7 @@ public class TransactionService {
 		final LStestmasterlocal objTest = new LStestmasterlocal();
 		Integer ActionType = Integer.parseInt(inputMap.get("ActionType").toString());
 		objTest.setTestcode((Integer) objResultMap.get("testcode"));
+		LSprojectmaster projectcode = Objmapper.convertValue(objResultMap.get("projectcode"), LSprojectmaster.class);
 
 		Sample objSampleobj = SampleRepository.findBySamplecode(objSample.getSamplecode());
 
@@ -2019,7 +2030,7 @@ public class TransactionService {
 			getQtyLeft = getIssuedQty + usedQuantity;
 			response.setStatus(true);
 		}
-	
+
 		ElnresultUsedSample.setResponse(response);
 		if (response.getStatus()) {
 			int qtyLeftAsInt = getQtyLeft.intValue();
@@ -2033,6 +2044,12 @@ public class TransactionService {
 				} else {
 					ElnresultUsedSample.setTestcode(null);
 				}
+			}
+			if(projectcode.getProjectcode()!=null) {
+				ElnresultUsedSample.setProjectcode(projectcode);
+			}
+			if(ActionType!=null) {
+				ElnresultUsedSample.setIsreturn(ActionType);
 			}
 			ElnresultUsedSample.setSamplecode(objSampleobj.getSamplecode());
 			ElnresultUsedSample.setSamlename(objSampleobj.getSamplename());
@@ -2059,7 +2076,7 @@ public class TransactionService {
 			}
 			ElnresultUsedSample.setQtyleft(getQtyLeft.toString());
 
-			ElnresultUsedSample.setIsreturn(0);
+			
 			ElnresultUsedSampleRepository.save(ElnresultUsedSample);
 			SampleRepository.save(objSampleobj);
 
@@ -2071,7 +2088,7 @@ public class TransactionService {
 					lsnotificationRepository.save(lstLSnotifications);
 				}
 			}
-		}else {
+		} else {
 			ElnresultUsedSample.setNqtyleft(getIssuedQty);
 		}
 

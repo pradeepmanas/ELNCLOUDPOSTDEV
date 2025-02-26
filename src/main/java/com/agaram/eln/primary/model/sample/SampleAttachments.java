@@ -50,7 +50,18 @@ public class SampleAttachments {
 
 	@Column(columnDefinition = "varchar(250)", name = "fileid")
 	private String fileid;
+	
+	@Column(name = "filesize")
+	private String filesize;
+	
+	public String getFilesize() {
+		return filesize;
+	}
 
+	public void setFilesize(String filesize) {
+		this.filesize = filesize;
+	}
+	
 	public LSuserMaster getCreateby() {
 		return createby;
 	}

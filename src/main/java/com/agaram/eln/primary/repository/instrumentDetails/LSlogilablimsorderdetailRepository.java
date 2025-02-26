@@ -3181,9 +3181,182 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 			LSuserMaster objuser3, int p, boolean c);
 
 
-	//Object countByOrderflagAndLsprojectmasterIn(List<LSusersteam> lstteam, int i, Date currentdate);
+	@Transactional
+	@Modifying
+	@Query(value = "WITH TeamProjects AS ( " +
+	        "   SELECT DISTINCT lsprojectmaster_projectcode " +
+	        "   FROM LSlogilablimsorderdetail " +
+	        "   WHERE lsprojectmaster_projectcode IN ( " +
+	        "       SELECT projectcode " +
+	        "       FROM LSprojectmaster " +
+	        "       WHERE lsusersteam_teamcode IN ( " +
+	        "           SELECT DISTINCT teamcode " +
+	        "           FROM LSuserteammapping " +
+	        "           WHERE lsuserMaster_usercode = ?5 AND teamcode IS NOT NULL) " +
+	        "       AND status = 1 " +
+	        ") " +
+	        ") " +
+	        "SELECT * FROM LSlogilablimsorderdetail o " +
+	        "WHERE"+
+	        "(o.orderflag = ?1 AND createdtimestamp BETWEEN ?3 AND ?4 " +
+	        "AND ( " +
+	        "   (filetype = ?2 AND (o.Approvelstatus != ?11 OR o.Approvelstatus IS NULL)) " +
+	        
+	        "   OR "+
+	        "   (lsprojectmaster_projectcode IS NULL AND ordercancell IS NULL AND assignedto_usercode IS NULL AND createdtimestamp BETWEEN ?3 AND ?4 " +
+			 "       AND (o.Approvelstatus != ?11 OR o.Approvelstatus IS NULL) " +
+			 "       AND (viewoption = ?8 AND teamselected = true AND batchcode IN ?13)"+ 
+			 "   ) " +
+			 
+			 "   OR "+
+	        "   (lsprojectmaster_projectcode IS NULL AND ordercancell IS NULL AND assignedto_usercode IS NULL AND createdtimestamp BETWEEN ?3 AND ?4" +
+	        "       AND (o.Approvelstatus != ?11 OR o.Approvelstatus IS NULL) " +
+	        "       AND ((viewoption = ?6 AND lsusermaster_usercode = ?5) OR " +
+	        "             (viewoption = ?7 AND lsusermaster_usercode = ?5) OR " +
+	        "             (viewoption = ?8 AND lsusermaster_usercode IN (?9) AND teamselected = false)"+
+	        "           ) " +
+	        "   ) " +
+	   
+	        "   OR (lsusermaster_usercode = ?5 AND assignedto_usercode != ?5 AND assignedto_usercode IS NOT NULL AND (o.Approvelstatus != ?11 OR o.Approvelstatus IS NULL)) " +
+	        "   OR (assignedto_usercode = ?5 AND (o.Approvelstatus != ?11 OR o.Approvelstatus IS NULL)) " +
+	        "   OR (o.lsprojectmaster_projectcode IN (SELECT lsprojectmaster_projectcode FROM TeamProjects) " +
+	        "       AND ordercancell IS NULL AND assignedto_usercode IS NULL AND (o.Approvelstatus != ?11 OR o.Approvelstatus IS NULL)) " +
+	        "   OR (o.lsprojectmaster_projectcode IN (SELECT lsprojectmaster_projectcode FROM TeamProjects) " +
+	        "       AND lsusermaster_usercode = ?5 AND ordercancell IS NULL AND (o.Approvelstatus != ?11 OR o.Approvelstatus IS NULL)) " +
+	        "   OR (lsprojectmaster_projectcode IS NULL AND elnmaterial_nmaterialcode IN " +
+	        "       (SELECT DISTINCT elnmaterial_nmaterialcode " +
+	        "        FROM lslogilablimsorderdetail " +
+	        "        WHERE elnmaterial_nmaterialcode IN " +
+	        "              (SELECT m.nmaterialcode " +
+	        "               FROM elnmaterial m " +
+	        "               WHERE m.nsitecode = ?10)) " +
+	        "       AND ordercancell IS NULL AND assignedto_usercode IS NULL AND lsusermaster_usercode != ?5 " +
+	        "       AND (o.Approvelstatus != ?11 OR o.Approvelstatus IS NULL)"+
+	        "		AND (viewoption != ?6 AND viewoption != ?7 AND viewoption != ?8)"+
+	        "	) " +
+	        ")) " +
+	      "OR "+
+	        "( " +
+	        "    (o.orderflag = ?12 AND filetype = ?2 AND createdtimestamp BETWEEN ?3 AND ?4 AND assignedto_usercode IS NULL) " +
+	        "    OR (o.orderflag = ?12 AND lsprojectmaster_projectcode IS NULL AND " +
+	        "        ("+
+			"		((viewoption = ?6 AND lsusermaster_usercode = ?5) OR " +
+            "             (viewoption = ?7 AND lsusermaster_usercode = ?5) OR " +
+            "             (viewoption = ?8 AND lsusermaster_usercode IN (?9) AND teamselected = false)"+
+            "       ) " +
+	        "         AND createdtimestamp BETWEEN ?3 AND ?4 AND " +
+	        "         ((approvelstatus != ?11 AND ordercancell IS NULL AND assignedto_usercode IS NULL) " +
+	        "         OR (approvelstatus IS NULL AND ordercancell IS NULL AND assignedto_usercode IS NULL))"+
+	        "		) " +
+	        "    ) " +
+	        
+			  "    OR (o.orderflag = ?12 AND lsprojectmaster_projectcode IS NULL AND " +
+			  "        ("+
+			  "         (viewoption = ?8 AND batchcode IN ?13 AND teamselected = true)"+
+			  "         AND createdtimestamp BETWEEN ?3 AND ?4 AND " +
+			  "         ((approvelstatus != ?11 AND ordercancell IS NULL AND assignedto_usercode IS NULL) " +
+			  "         OR (approvelstatus IS NULL AND ordercancell IS NULL AND assignedto_usercode IS NULL))"+
+			  "		) " +
+			  "    ) " +
+  
+  
+	        "    OR (o.orderflag = ?12 AND " +
+	        "        ((lsusermaster_usercode = ?5 AND assignedto_usercode != ?5 AND createdtimestamp BETWEEN ?3 AND ?4 AND assignedto_usercode IS NOT NULL) " +
+	        "         OR (assignedto_usercode = ?5 AND createdtimestamp BETWEEN ?3 AND ?4)) " +
+	        "    ) " +
+	        "    OR (o.orderflag = ?12 AND " +
+	        "        (o.lsprojectmaster_projectcode IN ( " +
+	        "            SELECT lsprojectmaster_projectcode FROM LSlogilablimsorderdetail " +
+	        "            WHERE lsprojectmaster_projectcode IN ( " +
+	        "                SELECT DISTINCT projectcode FROM LSprojectmaster " +
+	        "                WHERE lsusersteam_teamcode IN ( " +
+	        "                    SELECT teamcode FROM LSuserteammapping " +
+	        "                    WHERE lsuserMaster_usercode = ?5 AND teamcode IS NOT NULL" +
+	        "                ) AND status = 1 " +
+	        "            )" +
+	        "        ) AND createdtimestamp BETWEEN ?3 AND ?4 " +
+	        "        AND approvelstatus != ?11 AND ordercancell IS NULL AND assignedto_usercode IS NULL) " +
+	        "    ) " +
+	        "    OR (o.orderflag = ?12 AND lsprojectmaster_projectcode IS NULL AND elnmaterial_nmaterialcode IN (" +
+	        "            SELECT DISTINCT elnmaterial_nmaterialcode FROM lslogilablimsorderdetail WHERE elnmaterial_nmaterialcode IN (" +
+	        "                SELECT m.nmaterialcode FROM elnmaterial m WHERE m.nsitecode = ?10 " +
+	        "            ) " +
+	        "            AND createdtimestamp BETWEEN ?3 AND ?4 " +
+	        "            AND approvelstatus IS NULL AND ordercancell IS NULL AND assignedto_usercode IS NULL " +
+	        "            AND lsusermaster_usercode != ?5 " +
+	        "			 AND viewoption != ?6 AND viewoption != ?7 AND viewoption != ?8"+
+	        "        ) " +
+	        "    ) " +
+	        "    OR (o.orderflag = ?12 AND lsprojectmaster_projectcode IS NULL AND elnmaterial_nmaterialcode IN (" +
+	        "            SELECT DISTINCT elnmaterial_nmaterialcode FROM lslogilablimsorderdetail WHERE elnmaterial_nmaterialcode IN (" +
+	        "                SELECT m.nmaterialcode FROM elnmaterial m WHERE m.nsitecode = ?10 " +
+	        "            ) " +
+	        "            AND createdtimestamp BETWEEN ?3 AND ?4 " +
+	        "            AND approvelstatus != ?11 AND ordercancell IS NULL AND assignedto_usercode IS NULL " +
+	        "            AND lsusermaster_usercode != ?5 " +
+	        "			 AND viewoption != ?6 AND viewoption != ?7 AND viewoption != ?8"+
+	        "        ) " +
+	        "    ) " +
+	        ") " +
+	        "  OR(" + 
+	        
+		  " (lsprojectmaster_projectcode IS NULL AND "
+			+ "("+
+				"(viewoption = ?8 AND batchcode IN ?13 AND lsusermaster_usercode IN (?9) AND teamselected = true)"
+				+ "AND createdtimestamp BETWEEN ?3 AND ?4 AND approvelstatus =?11 AND assignedto_usercode IS NULL"+
+			"	)"
+			+ ")"
+	
+	        + "OR (lsprojectmaster_projectcode IS NULL AND "
+			+ "        ("+
+			"((viewoption = ?6 AND lsusermaster_usercode = ?5) OR " +
+			"             (viewoption = ?7 AND lsusermaster_usercode = ?5) OR " +
+			"             (viewoption = ?8 AND lsusermaster_usercode IN (?9) AND teamselected = false)"+
+			"       ) " 
+			+ "   AND createdtimestamp BETWEEN ?3 AND ?4 AND approvelstatus =?11 AND assignedto_usercode IS NULL"+
+			"		)"
+			+ ")"
+			+" OR (lsusermaster_usercode = ?5 AND  assignedto_usercode != ?5 AND createdtimestamp BETWEEN ?3 AND ?4 AND assignedto_usercode IS NULL AND approvelstatus =?11)"
+			+ "OR(assignedto_usercode = ?5 AND createdtimestamp BETWEEN ?3 AND ?4 AND approvelstatus =?11)"
+			+ "OR(approvelstatus =?11 AND o.lsprojectmaster_projectcode IN (SELECT lsprojectmaster_projectcode FROM TeamProjects ) AND createdtimestamp BETWEEN ?3 AND ?4 AND assignedto_usercode IS NULL)"
+			+ ")" +
 
-
-//	public List<LogilabOrdermastersh> findByLsprojectmasterOrderByBatchcodeDesc(LSprojectmaster lstproject);
+			" OR (" 
+				+ " (lsprojectmaster_projectcode IS NULL AND "
+				+ " ("+
+				"(viewoption = ?8 AND batchcode IN ?13 AND teamselected = true)"
+				+ " AND createdtimestamp BETWEEN ?3 AND ?4 AND ordercancell =?6 AND assignedto_usercode IS NULL "+
+				")"
+				+ ")"
+				+"OR(lsprojectmaster_projectcode IS NULL AND "
+				+ "        ("+
+				"((viewoption = ?6 AND lsusermaster_usercode = ?5 AND createdtimestamp BETWEEN ?3 AND ?4 AND ordercancell =?6 AND assignedto_usercode IS NULL) OR " +
+				"             (viewoption = ?7 AND lsusermaster_usercode = ?5 AND createdtimestamp BETWEEN ?3 AND ?4 AND ordercancell =?6 AND assignedto_usercode IS NULL) OR " +
+				"             (viewoption = ?8 AND lsusermaster_usercode IN (?9) AND teamselected = false AND createdtimestamp BETWEEN ?3 AND ?4 AND ordercancell =?6 AND assignedto_usercode IS NULL)"+
+				"       ) " 
+				+ ")"
+				+ ")"
+			+"OR (ordercancell =?6 AND o.lsprojectmaster_projectcode IN (SELECT lsprojectmaster_projectcode FROM TeamProjects ) AND createdtimestamp BETWEEN ?3 AND ?4 AND assignedto_usercode IS NULL)"
+			+"OR(lsusermaster_usercode = ?5 AND assignedto_usercode = ?5 AND createdtimestamp BETWEEN ?3 AND ?4 AND assignedto_usercode IS NOT NULL AND ordercancell =?6)"
+			+"OR(assignedto_usercode = ?5 AND createdtimestamp BETWEEN ?3 AND ?4 AND ordercancell =?6 )"+
+			")" +
+	        "ORDER BY batchcode DESC " , nativeQuery = true)
+	List<LSlogilablimsorderdetail> getLSlogilablimsorderdetaildashboardforallorders(
+	        String orderFlag,
+	        int fileType,
+	        Date fromDate,
+	        Date toDate,
+	        LSuserMaster user,
+	        int viewOption1,
+	        int viewOption2,
+	        int viewOption3,
+	        List<LSuserMaster> userNotify,
+	        LSSiteMaster siteMaster,
+	        Integer approvalStatus,
+	        String completedOrderFlag,
+	        List<Long> selectedbatchcode);
+	
+	
+	List<LogilabOrdermastersh> findByCreatedtimestampBetweenAndSitecodeOrderByBatchcodeDesc(Date fromdate, Date todate, Integer site);
 
 }

@@ -56,6 +56,8 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -612,6 +614,9 @@ public class InstrumentService {
 	
 	@Autowired
 	private SequenceTableTaskLevelRepository sequencetabletasklevelrepository;
+	
+	@Autowired
+	private Commonservice commonService;
 	
 	@Autowired
 	private LsOrderLinkRepository lsorderlinkrepository;
@@ -5884,6 +5889,8 @@ public class InstrumentService {
 		objattachment.setBatchcode(objorder.getBatchcode());
 		objattachment.setIslargefile(islargefile);
 		objattachment.setVersion(0);
+		objattachment.setFilesize(commonService.formatFileSize(file.getSize()));
+
 
 		LSuserMaster username = lsuserMasterRepository.findByusercode(usercode);
 		String name = username.getUsername();
@@ -5965,7 +5972,8 @@ public class InstrumentService {
 		objattachment.setBatchcode(objorder.getBatchcode());
 		objattachment.setIslargefile(islargefile);
 		objattachment.setVersion(0);
-
+		objattachment.setFilesize(commonService.formatFileSize(file.getSize()));
+		
 		LSuserMaster username = lsuserMasterRepository.findByusercode(usercode);
 		String name = username.getUsername();
 		LScfttransaction list = new LScfttransaction();
@@ -7910,13 +7918,17 @@ public class InstrumentService {
 		Integer filetype = objdir.getFiletype();
 
 		List<LSusersteam> userteams = objdir.getLsusersteam();
-		List<LSSelectedTeam> selectedteamorders  = LSSelectedTeamRepository.findByUserteamIn(userteams);
-	
-		List<Long> selectedteambatchCodeList = selectedteamorders.stream()
-			    .map(LSSelectedTeam::getBatchcode)
-			    .filter(Objects::nonNull) // Omit null batch codes
-			    .distinct()
-			    .collect(Collectors.toList());
+		
+		List<LSSelectedTeam> selectedteamorders  = new ArrayList<LSSelectedTeam>();
+		selectedteamorders = userteams != null ? LSSelectedTeamRepository.findByUserteamIn(userteams) : selectedteamorders;
+		
+		List<Long> selectedteambatchCodeList = (!selectedteamorders.isEmpty() && selectedteamorders != null )
+			    ? selectedteamorders.stream()
+			        .map(LSSelectedTeam::getBatchcode)
+			        .filter(Objects::nonNull)
+			        .distinct()
+			        .collect(Collectors.toList())
+			    : Collections.singletonList(-1L);
 		
 		if (filetype != null && filetype == -1) {
 			if (objdir.getLstuserMaster() == null) {
@@ -8938,9 +8950,12 @@ public class InstrumentService {
 		Integer testcode = objorder.getTestcode();
 		Integer filetype = objorder.getFiletype();
 
-		List<LSSelectedTeam> selectedteamorders = LSSelectedTeamRepository.findByUserteamInAndCreatedtimestampBetween(lstteam,fromdate,todate);
+		List<LSSelectedTeam> selectedteamorders  = new ArrayList<LSSelectedTeam>();
+		selectedteamorders = lstteam != null ? LSSelectedTeamRepository.findByUserteamInAndCreatedtimestampBetween(lstteam,fromdate,todate) : selectedteamorders;
+		
+	//	List<LSSelectedTeam> selectedteamorders = LSSelectedTeamRepository.findByUserteamInAndCreatedtimestampBetween(lstteam,fromdate,todate);
 
-		List<Long> selectedteambatchCodeList = (selectedteamorders != null && !selectedteamorders.isEmpty())
+		List<Long> selectedteambatchCodeList = (!selectedteamorders.isEmpty() && selectedteamorders != null)
 			    ? selectedteamorders.stream()
 			        .map(LSSelectedTeam::getBatchcode)
 			        .filter(Objects::nonNull)
@@ -11861,5 +11876,29 @@ public class InstrumentService {
 		return selectedteam;
 	}
 	
+	public ResponseEntity<Object> GetAllorders(LSuserMaster objuser)
+	{
+		List<LogilabOrdermastersh> lstorders = new ArrayList<LogilabOrdermastersh>();
+		Date fromdate = objuser.getObjuser().getFromdate();
+		Date todate = objuser.getObjuser().getTodate();
+		
+		List<LSuserteammapping> teammapping = lsuserteammappingRepository.findByLsuserMasterAndTeamcodeNotNull(objuser);
+		List<LSusersteam> userteamlist = lsusersteamRepository.findByLsuserteammappingIn(teammapping);
+		List<LSSelectedTeam> selectedorders = LSSelectedTeamRepository.findByUserteamInAndCreatedtimestampBetween(userteamlist,fromdate,todate);
+		List<Long> selectedteambatchCodeList = new ArrayList<>();
+		selectedteambatchCodeList = selectedteambatchCodeList.isEmpty() ? Collections.singletonList(-1L) : selectedteambatchCodeList;
+		if (selectedorders != null && !selectedorders.isEmpty()) {		
+			selectedteambatchCodeList = selectedorders.stream()
+		        .map(LSSelectedTeam::getBatchcode)
+		        .filter(Objects::nonNull)
+		        .distinct()
+		        .collect(Collectors.toList());
+		}
+//		lstorders = lslogilablimsorderdetailRepository.getLSlogilablimsorderdetaildashboardforallorders("N",
+//				0, fromdate, todate, objuser, 1, 2, 3, objuser.getUsernotify(), objuser.getLssitemaster(),
+//				 3,"R",selectedteambatchCodeList);
+		lstorders = lslogilablimsorderdetailRepository.findByCreatedtimestampBetweenAndSitecodeOrderByBatchcodeDesc(fromdate, todate,objuser.getLssitemaster().getSitecode());
+		return new ResponseEntity<>(lstorders, HttpStatus.OK);
+	}
 
 }

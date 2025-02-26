@@ -321,4 +321,16 @@ public class Commonservice {
 		obj.add(objFile);
 		return CompletableFuture.completedFuture(obj);
 	}
+
+	public String formatFileSize(long sizeInBytes) {
+		if (sizeInBytes < 1024) {
+			return sizeInBytes + " Bytes";
+		} else if (sizeInBytes < 1024 * 1024) {
+			return (int) (sizeInBytes / 1024) + " KB";
+		} else if (sizeInBytes < 1024 * 1024 * 1024) {
+			return (int) (sizeInBytes / (1024 * 1024)) + " MB";
+		} else {
+			return (int) (sizeInBytes / (1024 * 1024 * 1024)) + " GB";
+		}
+	}
 }

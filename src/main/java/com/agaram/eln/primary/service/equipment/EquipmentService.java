@@ -127,6 +127,10 @@ public class EquipmentService {
 		List<Equipment> lstEquipment = equipmentRepository
 				.findByNsitecodeAndCreateddateBetweenOrderByNequipmentcodeDesc(nsiteInteger,fromDate,toDate);
 		
+		lstEquipment.forEach(item -> {
+			item.setSequenceid( item.getSequenceid() == null ? item.getSequipmentname() : item.getSequenceid());
+		});
+		
 		List<InstrumentType> lstCmmType = insttypeRepository.findAll();
 		List<Parity> lstParity = parityRepository.findAll();
 		List<ResultSampleFrom> lstRSIDFrom = resultSampleFromRepository.findAll();

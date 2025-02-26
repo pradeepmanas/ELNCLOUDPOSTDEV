@@ -1467,5 +1467,11 @@ public class InstrumentController {
 
 		return instrumentService.Getprotoselectedteam(protocolordercode);
 	}
+	
+	@RequestMapping("/GetAllorders")
+	public ResponseEntity<Object> GetAllorders(@RequestBody LSuserMaster objuser)
+	{
+		return instrumentService.GetAllorders(objuser);
+	}
 
 }

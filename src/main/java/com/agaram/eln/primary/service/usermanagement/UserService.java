@@ -1039,7 +1039,11 @@ public class UserService {
 		List<LSMultiusergroup> userobj = LSMultiusergroupRepositery
 				.findBylsusergroup(objRights.get(0).getUsergroupid());
 
-		List<Integer> objnotifyuser = userobj.stream().map(LSMultiusergroup::getUsercode).collect(Collectors.toList());
+		List<Integer> objnotifyuser = userobj.stream()
+			    .filter(obj ->  obj.getUsercode() != null) // Ensure both are not null
+			    .map(LSMultiusergroup::getUsercode)
+			    .collect(Collectors.toList());
+;
 		List<LSuserMaster> objuser = lsuserMasterRepository.findByUsercodeInAndUserretirestatusNot(objnotifyuser, 1);
 		try {
 			for (int i = 0; i < objuser.size(); i++) {
@@ -2090,13 +2094,14 @@ public class UserService {
 					existingUsers = lsuserMasterRepository.findByUsernameIgnoreCaseAndUsercodeInAndUserretirestatusNot(objclass.getUsername(),
 							usercode,1);
 				} else {
-					existingUsers = lsuserMasterRepository.findByUsernameIgnoreCaseAndUsercodeInAndUsercodeNot(
-							objclass.getUsername(), usercode, objclass.getUsercode());
+					existingUsers = lsuserMasterRepository.findByUsernameIgnoreCaseAndUsercodeInAndUsercodeNotAndUserstatusNotAndUserretirestatusNot(
+							objclass.getUsername(), usercode, objclass.getUsercode(),"D",1);
 				}
 
 				if (!existingUsers.isEmpty()) {
 					retobj.put("sitemaster", LSSiteMasterRepository.findBysitecode(tempobj.getSitecode()));
 					retobj.put("username", objclass.getUsername());
+//					retobj.put("loginform", objclass.getLoginfrom());
 //		            retobj.put("message", "username already exists");
 					usernameExists = true;
 					break;
@@ -2115,7 +2120,16 @@ public class UserService {
 								.findBylssitemasterInAndUsergroupnameNotOrderByUsergroupcodeDesc(sitecode, ""));
 						usernameExists = true;
 //						break;
-					}					
+					}	
+					if(!isnewuser) {
+						existingUsers = lsuserMasterRepository.findByUsernameIgnoreCaseAndUsercodeInAndUsercodeNotAndUserstatusNotAndUserretirestatusNotAndLoginfrom(
+								objclass.getUsername(), usercode, objclass.getUsercode(),"D",1,"1");	
+						if (existingUsers.isEmpty()) {
+							retobj.put("listofusergroup", lSusergroupRepository
+									.findBylssitemasterInAndUsergroupnameNotOrderByUsergroupcodeDesc(sitecode, ""));
+						}
+					}	
+					
 				}
 				
 			}
@@ -2394,7 +2408,7 @@ public class UserService {
 				return lsusergroup;
 			} else {
 				item.setCreatedon(currentDate);
-				item.setModifiedon(currentDate);
+				//item.setModifiedon(currentDate);
 			}
 			return item;
 		}).collect(Collectors.toList());

@@ -115,6 +115,7 @@ import com.agaram.eln.primary.repository.sequence.SequenceTableSiteRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
 import com.agaram.eln.primary.service.cloudFileManip.CloudFileManipulationservice;
 import com.agaram.eln.primary.service.fileManipulation.FileManipulationservice;
+import com.agaram.eln.primary.service.protocol.Commonservice;
 import com.agaram.eln.primary.service.samplestoragelocation.SampleStorageLocationService;
 import com.fasterxml.jackson.core.JsonParseException;
 //import java.util.concurrent.atomic.AtomicInteger;
@@ -185,6 +186,9 @@ public class MaterialInventoryService {
 	MaterialChemicalDiagRepository MaterialChemicalDiagRepository;
 	@Autowired
 	private MaterialInventoryLinksRepository materialInventoryLinksRepository;
+	@Autowired
+	private Commonservice commonService;
+	
 
 	@Autowired
 	private ElnresultUsedMaterialRepository elnresultUsedMaterialRepository;
@@ -2943,6 +2947,7 @@ public class MaterialInventoryService {
 		objattachment.setCreateby(lsuserMasterRepository.findByusercode(usercode));
 		objattachment.setCreatedate(currentdate);
 		objattachment.setNmaterialinventorycode(objmaterialinv.getNmaterialinventorycode());
+		objattachment.setFilesize(commonService.formatFileSize(file.getSize()));
 		if (objmaterialinv != null && objmaterialinv.getLsOrderattachments() != null) {
 			objmaterialinv.getLsOrderattachments().add(objattachment);
 		} else {

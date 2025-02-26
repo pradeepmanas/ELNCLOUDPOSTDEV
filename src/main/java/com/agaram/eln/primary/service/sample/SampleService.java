@@ -61,6 +61,7 @@ import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
 import com.agaram.eln.primary.service.cloudFileManip.CloudFileManipulationservice;
 import com.agaram.eln.primary.service.fileManipulation.FileManipulationservice;
 import com.agaram.eln.primary.service.material.MaterialCategoryService;
+import com.agaram.eln.primary.service.protocol.Commonservice;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -100,6 +101,8 @@ public class SampleService<ParentSample>{
 	private SampleStorageMappingRepository samplestoragemappingrepository;
 	@Autowired
 	private SampleProjectHistoryRepository sampleprojecthistoryrepository;
+	@Autowired
+	private Commonservice commonService;
 	
 	@Autowired
 	ElnresultUsedSampleRepository ElnresultUsedSampleRepository;
@@ -147,6 +150,10 @@ public ResponseEntity<Object> getSampleonCategoryFillter(@RequestBody Map<String
 			lstsample = samplerepository.getSampleOnProjects(
 					objsamplecat.getNsamplecatcode(),objsamplecat.getNsitecode(),fromdate,todate,objlstProject);
 		}
+		
+		lstsample.forEach((item)->{
+			item.setSequenceid(item.getSequenceid() == null ? item.getSamplename() : item.getSequenceid());
+		});
 		
 		return new ResponseEntity<>(lstsample, HttpStatus.OK);
 	}
@@ -396,6 +403,11 @@ public ResponseEntity<Object> getSampleonCategoryFillter(@RequestBody Map<String
 		objSample.setNtransactionstatus(sample.getNtransactionstatus());
 		objSample.setUnit(sample.getUnit());
 		objSample.setDateofcollection(sample.getDateofcollection());
+		
+		if(sample.getSampleprojectmap() != null  && sample.getSampleprojectmap().size()>0){
+			objSample.setSampleprojectmap(sample.getSampleprojectmap());
+			sampleprojectmaprepository.save(sample.getSampleprojectmap());
+		}
 		if(sample.getSamplestoragemapping()!=null)
 		{
 			objSample.setSamplestoragemapping(sample.getSamplestoragemapping());
@@ -417,9 +429,7 @@ public ResponseEntity<Object> getSampleonCategoryFillter(@RequestBody Map<String
 			});
 		}
 		
-		if(sample.getSampleprojectmap() != null) {
-			sampleprojectmaprepository.save(sample.getSampleprojectmap());
-		}
+	
 		
 		sampleprojecthistoryrepository.save(sample.getSampleprojecthistory());
 		samplerepository.save(objSample);
@@ -473,6 +483,8 @@ public ResponseEntity<Object> getSampleonCategoryFillter(@RequestBody Map<String
 		objattachment.setNsampletypecode(nsampletypecode);
 		objattachment.setNstatus(1);
 		objattachment.setNsitecode(nsitecode);
+		objattachment.setFilesize(commonService.formatFileSize(file.getSize()));
+
 
 		if (objAttach != null && objAttach.getlsSampleAttachments() != null) {
 			objAttach.getlsSampleAttachments().add(objattachment);

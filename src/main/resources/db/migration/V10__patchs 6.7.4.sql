@@ -2450,6 +2450,10 @@ TABLESPACE pg_default;
 update lsaudittrailconfigmaster set taskname = 'IDS_TSK_SAVEI' where screenname = 'IDS_SCN_MATERIALINVENTORY' and taskname = 'IDS_TSK_SAVE';
 update lsaudittrailconfiguration set taskname = 'IDS_TSK_SAVEI' where screenname = 'IDS_SCN_MATERIALINVENTORY' and taskname = 'IDS_TSK_SAVE';
 
+ALTER TABLE IF Exists materialattachments ADD COLUMN IF NOT EXISTS filesize character varying(255);
+ALTER TABLE IF Exists sampleattachments ADD COLUMN IF NOT EXISTS filesize character varying(255);
+ALTER TABLE IF Exists LsOrderattachments ADD COLUMN IF NOT EXISTS filesize character varying(255);
+
 update lsaudittrailconfigmaster set taskname = 'IDS_TSK_SAVEM' where screenname = 'IDS_SCN_MATERIAL' and taskname = 'IDS_TSK_SAVE';
 update lsaudittrailconfiguration set taskname = 'IDS_TSK_SAVEM' where screenname = 'IDS_SCN_MATERIAL' and taskname = 'IDS_TSK_SAVE';
 
@@ -2491,3 +2495,35 @@ update lsaudittrailconfiguration set ordersequnce = 43 where screenname in('IDS_
 
 update lsaudittrailconfigmaster set ordersequnce = 44 where screenname in('IDS_SCN_EQUIPMENT');
 update lsaudittrailconfiguration set ordersequnce = 44 where screenname in('IDS_SCN_EQUIPMENT');
+
+ALTER TABLE IF Exists elnresultusedmaterial ADD COLUMN IF NOT EXISTS projectcode_projectcode integer;
+
+DO
+$do$
+declare
+  multiusergroupcount integer :=0;
+begin
+SELECT count(*) into multiusergroupcount FROM
+information_schema.table_constraints WHERE constraint_name='fkameey010g7fyy7bj0ei0ap9yw'
+AND table_name='elnresultusedmaterial';
+ IF multiusergroupcount =0 THEN
+    ALTER TABLE ONLY elnresultusedmaterial ADD CONSTRAINT fkameey010g7fyy7bj0ei0ap9yw FOREIGN KEY (projectcode_projectcode) REFERENCES lsprojectmaster (projectcode);
+   END IF;
+END
+$do$; 
+
+ALTER TABLE IF Exists elnresultusedsample ADD COLUMN IF NOT EXISTS projectcode_projectcode integer;
+
+DO
+$do$
+declare
+  multiusergroupcount integer :=0;
+begin
+SELECT count(*) into multiusergroupcount FROM
+information_schema.table_constraints WHERE constraint_name='fke49yii2hebe35lfk3d2nnqath'
+AND table_name='elnresultusedsample';
+ IF multiusergroupcount =0 THEN
+    ALTER TABLE ONLY elnresultusedsample ADD CONSTRAINT fke49yii2hebe35lfk3d2nnqath FOREIGN KEY (projectcode_projectcode) REFERENCES lsprojectmaster (projectcode);
+   END IF;
+END
+$do$;

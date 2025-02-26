@@ -17,6 +17,7 @@ import javax.persistence.Transient;
 
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.sheetManipulation.LStestmasterlocal;
+import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 
 @Entity
@@ -91,6 +92,17 @@ public class ElnresultUsedMaterial {
 	@ManyToOne
 	private LStestmasterlocal testcode;
 	
+	@ManyToOne
+	private LSprojectmaster projectcode;
+	
+	public LSprojectmaster getProjectcode() {
+		return projectcode;
+	}
+
+	public void setProjectcode(LSprojectmaster projectcode) {
+		this.projectcode = projectcode;
+	}
+
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createddate;
 	

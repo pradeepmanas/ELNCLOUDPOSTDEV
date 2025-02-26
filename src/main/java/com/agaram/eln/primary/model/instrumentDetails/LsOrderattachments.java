@@ -86,6 +86,17 @@ public class LsOrderattachments {
 	@Transient
 	LScfttransaction objsilentaudit;
 	
+	@Column(name = "filesize")
+	private String filesize;
+
+	public String getFilesize() {
+		return filesize;
+	}
+
+	public void setFilesize(String filesize) {
+		this.filesize = filesize;
+	}
+	
 	public LScfttransaction getObjsilentaudit() {
 		return objsilentaudit;
 	}

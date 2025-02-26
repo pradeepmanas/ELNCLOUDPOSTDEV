@@ -32,6 +32,7 @@ import com.agaram.eln.primary.model.material.Unit;
 import com.agaram.eln.primary.model.samplestoragelocation.SelectedInventoryMapped;
 import com.agaram.eln.primary.model.sheetManipulation.LStestmasterlocal;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
+import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -90,6 +91,19 @@ public class ElnresultUsedSample {
 	
 	private Long statuschangesTo;
 	
+	@ManyToOne
+	private LSprojectmaster projectcode;
+	
+	
+	
+	public LSprojectmaster getProjectcode() {
+		return projectcode;
+	}
+
+	public void setProjectcode(LSprojectmaster projectcode) {
+		this.projectcode = projectcode;
+	}
+
 	public Long getStatuschangesFrom() {
 		return statuschangesFrom;
 	}
