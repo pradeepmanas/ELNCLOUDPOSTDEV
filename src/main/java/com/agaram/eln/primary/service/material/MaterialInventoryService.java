@@ -3172,6 +3172,7 @@ public class MaterialInventoryService {
 				objInv.setNtransactionstatus(ntransStatus);
 				objInv.setInventoryname(objInv.getInventoryname());
 				objInv.setCreatedby(objInv.getCreatedby());
+				objInv.setOpenexpiryselect(false);
 				if(isdefault) {
 	                	objInv.setSequenceid(objInv.getSinventoryid());
 	        	}
@@ -3792,24 +3793,28 @@ public class MaterialInventoryService {
 
 		ElnmaterialInventory objInventory = elnmaterialInventoryReppository
 				.findByNmaterialinventorycode(objElnmaterialInventory.getNmaterialinventorycode());
-
+		
+		if (objElnmaterialInventory.getJsondata() != null && !objElnmaterialInventory.getJsondata().isEmpty()) {
+		    objInventory.setJsondata(objElnmaterialInventory.getJsondata());
+		}
+		
+		if (objElnmaterialInventory.getPreviousstatus()!=null) {
+			long Ntransactionstatus= objElnmaterialInventory.getNtransactionstatus();
+			ElnmaterialInventory obj=new ElnmaterialInventory();
+			updateinventorytransactiondetails(objElnmaterialInventory.getCreatedby(),0,objInventory,Ntransactionstatus,objElnmaterialInventory.getPreviousstatus(),obj);
+		}
 		if (objElnmaterialInventory.getIsexpiry()) {
 			objInventory.setIsexpiry(true);
 			objInventory.setExpirydate(objElnmaterialInventory.getExpirydate());
 			objInventory.setNtransactionstatus(objElnmaterialInventory.getNtransactionstatus());
+			objInventory.setOpenexpiryselect(objElnmaterialInventory.getOpenexpiryselect());
 			elnmaterialInventoryReppository.save(objInventory);
 			return new ResponseEntity<>(objInventory, HttpStatus.OK);
 		}
 
 		objInventory.setNstatus(objElnmaterialInventory.getNstatus());
 		objInventory.setNtransactionstatus(objElnmaterialInventory.getNtransactionstatus());
-
-		if (objElnmaterialInventory.getPreviousstatus()!=null) {
-			long Ntransactionstatus= objElnmaterialInventory.getNtransactionstatus();
-			ElnmaterialInventory obj=new ElnmaterialInventory();
-			updateinventorytransactiondetails(objElnmaterialInventory.getCreatedby(),0,objInventory,Ntransactionstatus,objElnmaterialInventory.getPreviousstatus(),obj);
-		}
-
+		objInventory.setOpenexpiryselect(objElnmaterialInventory.getOpenexpiryselect());
 		elnmaterialInventoryReppository.save(objInventory);
 		return new ResponseEntity<>(objInventory, HttpStatus.OK);
 	}

@@ -646,7 +646,7 @@ public class TransactionService {
 				resultUsedMaterial.setTestcode(null);
 			}
 		}
-		if (projectcode.getProjectcode()!=null) {
+		if (projectcode !=null && projectcode.getProjectcode()!=null) {
 			resultUsedMaterial.setProjectcode(projectcode);
 		}
 //		resultUsedMaterial.setCreateddate(cft.getTransactiondate());
@@ -713,7 +713,7 @@ public class TransactionService {
 
 		LSprojectmaster projectcode = Objmapper.convertValue(objResultMap.get("projectcode"), LSprojectmaster.class);
 		ElnresultUsedMaterial resultUsedMaterial = new ElnresultUsedMaterial();
-		if (projectcode.getProjectcode()!=null) {
+		if (projectcode!=null &&projectcode.getProjectcode()!=null) {
 			resultUsedMaterial.setProjectcode(projectcode);
 		}
 		
@@ -729,6 +729,7 @@ public class TransactionService {
 
 		if ((Integer.parseInt(objResultMap.get("transactionscreen").toString()) == 2) && getUsedQty != null) {
 			getIssuedQty = Double.parseDouble(objInventory.getSavailablequantity()) + getUsedQty;
+			resultUsedMaterial.setNqtyissued(Double.parseDouble(objInventory.getSavailablequantity()));
 			objInventory.setSavailablequantity(getIssuedQty.toString());
 
 		} else {
@@ -2045,7 +2046,7 @@ public class TransactionService {
 					ElnresultUsedSample.setTestcode(null);
 				}
 			}
-			if(projectcode.getProjectcode()!=null) {
+			if (projectcode!=null &&projectcode.getProjectcode()!=null) {
 				ElnresultUsedSample.setProjectcode(projectcode);
 			}
 			if(ActionType!=null) {

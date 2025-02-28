@@ -157,7 +157,9 @@ public class MaterialService {
 	private MaterialProjectMapRepository materialprojectmapRepository;
 	@Autowired
 	private Commonservice commonService;
-
+	@Autowired
+	private SequenceTableRepository sequenceTableRepository;
+	
 	public ResponseEntity<Object> getMaterialcombo(Integer nmaterialtypecode, Integer nsitecode) {
 
 		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
@@ -1223,7 +1225,14 @@ public class MaterialService {
 		}
 		return objInv;
 	}
+	
+	public void updatesequencefordefault(List<Elnmaterial> objInv) {
 
+		String seqid = "Mat"+objInv.get(0).getNmaterialcode();
+		objInv.get(0).setSequenceid(seqid);
+		elnmaterialRepository.save(objInv.get(0));
+	}
+	
 	public void updatesequence(Integer sequenceno, Elnmaterial objInv) {
 
 		if (objInv.getApplicationsequence() != null) {
@@ -1238,11 +1247,18 @@ public class MaterialService {
 
 	public ResponseEntity<Object> createElnMaterial(Elnmaterial obj) throws ParseException, JsonProcessingException {
 
+		SequenceTable seqobj =  sequenceTableRepository.findBySequencecodeOrderBySequencecode(3);
+		Boolean Applicationseq = seqobj.getSequenceview().equals(1) ? true : false;
+		
+		List<Elnmaterial> matlist = new ArrayList<Elnmaterial>();
+		
 		Elnmaterial objElnmaterial = elnmaterialRepository.findByNsitecodeAndSmaterialnameIgnoreCaseAndMaterialcategory(
 				obj.getNsitecode(), obj.getSmaterialname(), obj.getMaterialcategory());
 		SequenceTableProjectLevel objprojectseq = new SequenceTableProjectLevel();
 		SequenceTableTaskLevel objtaskseq = new SequenceTableTaskLevel();
-		SequenceTable seqorder = validateandupdatematerialsequencenumber(obj, objprojectseq, objtaskseq);
+		SequenceTable seqorder = null;
+		
+		if(!Applicationseq) seqorder = validateandupdatematerialsequencenumber(obj, objprojectseq, objtaskseq);
 
 		obj.setResponse(new Response());
 
@@ -1253,7 +1269,9 @@ public class MaterialService {
 
 			obj.setCreateby(objMaster);
 			obj.setCreateddate(commonfunction.getCurrentUtcTime());
-			GetSequences(obj, seqorder, objprojectseq, objtaskseq);
+			
+			if(!Applicationseq) GetSequences(obj, seqorder, objprojectseq, objtaskseq);
+			
 			if (obj.getMaterialprojecthistory() != null) {
 				obj.getMaterialprojecthistory().forEach(history -> {
 					try {
@@ -1268,8 +1286,11 @@ public class MaterialService {
 			if (obj.getMaterialprojectmap() != null) {
 				materialprojectmapRepository.save(obj.getMaterialprojectmap());
 			}
-			elnmaterialRepository.save(obj);
-			updatesequence(3, obj);
+			matlist.add( elnmaterialRepository.save(obj)) ;
+			
+			if(Applicationseq) updatesequencefordefault(matlist);
+			if(!Applicationseq) updatesequence(3, obj);
+			
 			obj.getResponse().setInformation("IDS_SAVE_SUCCEED");
 			obj.getResponse().setStatus(true);
 

@@ -149,13 +149,23 @@ public class LSprotocolmaster implements Comparable<LSprotocolmaster> {
 
 	public void setProtocoldatainfo(String protocoldatainfo) {
 		this.protocoldatainfo = protocoldatainfo;
-	}
+	}	
 
 	@Transient
-	private LSworkflow currentStep;
-	
+	private LSworkflow currentStep;	
+
 	@Transient
 	private Integer activekey;
+	
+	@Column(name = "task")
+	private String task;
+	
+	public String getTask() {
+		return task;
+	}
+	public void setTask(String task) {
+		this.task = task;
+	}
 	
 	public Integer getActivekey() {
 		return activekey;

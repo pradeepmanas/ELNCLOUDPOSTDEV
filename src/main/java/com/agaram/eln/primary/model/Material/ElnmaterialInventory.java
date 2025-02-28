@@ -78,6 +78,7 @@ public class ElnmaterialInventory {
 	private Date receiveddate;
 	
 	private Double nqtynotification;
+	private Boolean openexpiryselect;
 	
 	@Transient
 	private Boolean isDefault ;
@@ -410,7 +411,15 @@ public class ElnmaterialInventory {
 		this.inventoryname = inventoryname;
 	}
 	
-	 public interface InventoryInterface {
+	 public Boolean getOpenexpiryselect() {
+		return openexpiryselect;
+	}
+
+	public void setOpenexpiryselect(Boolean openexpiryselect) {
+		this.openexpiryselect = openexpiryselect;
+	}
+
+	public interface InventoryInterface {
 		  Integer getNmaterialinventorycode();
 		  String getSavailablequantity();
 	 }

@@ -1707,6 +1707,11 @@ public class ProtocolService {
 				newProtocolMasterObj.setLstest(lstprojecttest);
 				LSprotocolmastertestRepository.save(newProtocolMasterObj.getLstest());
 			}
+			if(argObj.containsKey("testcode") && argObj.get("testcode") != null) {
+				int testcode = (int) argObj.get("testcode");
+				LStestmasterlocal lstest = lstestmasterlocalRepository.findBytestcode(testcode);
+				newProtocolMasterObj.setTask(lstest.getTestname());
+			}
 			
 
 			LSProtocolMasterRepositoryObj.save(newProtocolMasterObj);
@@ -10697,6 +10702,10 @@ public class ProtocolService {
 	public ResponseEntity<Object> GetAllorders(LSuserMaster objuser)
 	{
 		List<LogilabProtocolOrderssh> lstorders = new ArrayList<LogilabProtocolOrderssh>();
+		Date fromdate = objuser.getObjuser().getFromdate();
+		Date todate = objuser.getObjuser().getTodate();
+		lstorders = LSlogilabprotocoldetailRepository.findBySitecodeAndCreatedtimestampBetweenOrderByCreatedtimestampDesc(
+				objuser.getLssitemaster().getSitecode(), fromdate, todate);
 		return new ResponseEntity<>(lstorders, HttpStatus.OK);
 	}
 	

@@ -110,6 +110,7 @@ public class Sample implements Serializable{
 	private String openexpiryperiod;
 	private Integer ntransactionstatus; 
 	private Double nqtynotification;
+	private Boolean openexpiryselect;
 	
 	@Column(name = "trackconsumption")
 	private Integer trackconsumption;
@@ -452,6 +453,14 @@ public class Sample implements Serializable{
 
 	public void setSampleprojectmap(List<SampleProjectMap> sampleprojectmap) {
 		this.sampleprojectmap = sampleprojectmap;
+	}
+
+	public Boolean getOpenexpiryselect() {
+		return openexpiryselect;
+	}
+
+	public void setOpenexpiryselect(Boolean openexpiryselect) {
+		this.openexpiryselect = openexpiryselect;
 	}
 
 }

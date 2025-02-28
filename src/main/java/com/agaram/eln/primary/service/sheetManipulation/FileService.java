@@ -62,6 +62,7 @@ import com.agaram.eln.primary.model.sheetManipulation.LSfiletest;
 import com.agaram.eln.primary.model.sheetManipulation.LSfileversion;
 import com.agaram.eln.primary.model.sheetManipulation.LSsheetupdates;
 import com.agaram.eln.primary.model.sheetManipulation.LSsheetworkflow;
+import com.agaram.eln.primary.model.sheetManipulation.LStestmasterlocal;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.Lsfilesharedby;
 import com.agaram.eln.primary.model.sheetManipulation.Lsfileshareto;
@@ -267,6 +268,9 @@ public class FileService {
 	
 	@Autowired
 	private SampleService sampleservice;
+	@Autowired
+	private com.agaram.eln.primary.repository.sheetManipulation.LStestmasterlocalRepository LStestmasterlocalRepository;
+	
 	
 //	@Autowired
 //	private BarcodeMasterRepository barcodeMasterRepository;
@@ -320,7 +324,7 @@ public class FileService {
 			}
 
 			Isnew = false;
-			objfile.setModifieddate(commonfunction.getCurrentUtcTime());
+//			objfile.setModifieddate(commonfunction.getCurrentUtcTime());
 		} else {
 
 			Isnew = true;
@@ -364,6 +368,10 @@ public class FileService {
 		if(objfile.getFilecode() != null){
 			LSfile clsFile = lSfileRepository.findByfilecode(objfile.getFilecode());
 			objfile.setResultsheet(clsFile.getResultsheet());
+		}
+		if(objfile.getTestcode() != null) {
+			LStestmasterlocal lstest = LStestmasterlocalRepository.findBytestcode(objfile.getTestcode());
+			objfile.setTask(lstest.getTestname());
 		}
 
 		objfile.setFilecontent(null);
@@ -1958,8 +1966,13 @@ public class FileService {
 	public LSfile updatefilename(LSfile objfile) throws ParseException {
 
 		LSfile fileByName = lSfileRepository.findByfilecode(objfile.getFilecode());
-		if (lSfileRepository.findByFilecodeNotAndLssitemasterAndFilenameuserIgnoreCase(objfile.getFilecode(),
-				objfile.getLssitemaster(), objfile.getFilenameuser()).isEmpty()) {
+		
+		
+		LSfile fileobj = lSfileRepository.findByFilecodeNotAndLssitemasterAndFilenameuserIgnoreCaseAndViewoption(objfile.getFilecode(),
+				objfile.getLssitemaster(), objfile.getFilenameuser(),objfile.getViewoption());
+		
+		if (fileobj == null)
+		{
 			if (fileByName.getFilecode() != null) {
 				fileByName.setFilenameuser(objfile.getFilenameuser());
 				fileByName.setCategory(objfile.getCategory());
@@ -1985,7 +1998,8 @@ public class FileService {
 
 				return objfile;
 			}
-		} else {
+		} 
+		else {
 			objfile.setResponse(new Response());
 			objfile.getResponse().setStatus(false);
 			objfile.getResponse().setInformation("IDS_MSG_SHEETNAMEEXIST");

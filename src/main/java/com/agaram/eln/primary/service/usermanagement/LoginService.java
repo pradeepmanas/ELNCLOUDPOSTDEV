@@ -903,9 +903,7 @@ public class LoginService {
 		objExitinguser = lSuserMasterRepository
 				.findByUsernameIgnoreCaseAndUsercodeInAndLoginfromAndUserretirestatusNot(username, usercode, "0", 1);
 		objExitinguser.stream().map(items -> {
-			items.setMultiusergroupcode(items.getMultiusergroupcode().stream().filter(
-					values -> values.getLsusergroup().getLssitemaster() == Integer.parseInt(objuser.getsSiteCode()))
-					.collect(Collectors.toList()));
+			items.setMultiusergroupcode(items.getMultiusergroupcode());
 			return items;
 		}).collect(Collectors.toList());
 
@@ -1168,6 +1166,7 @@ public class LoginService {
 		}
 	}
 
+	
 	@SuppressWarnings({ "unused" })
 	public LSuserMaster ChangePassword(LoggedUser objuser) {
 		LSuserMaster objExitinguser = new LSuserMaster();
@@ -1181,7 +1180,12 @@ public class LoginService {
 		String username = objuser.getsUsername();
 		LSSiteMaster objsite = lSSiteMasterRepository
 				.findBysitecode(objuser.getLsusermaster().getLssitemaster().getSitecode());
-		objExitinguser = lSuserMasterRepository.findByusernameAndLssitemaster(username, objsite);
+	
+		if(objuser.getUserID()!=null) {
+			objExitinguser = lSuserMasterRepository.findByusercodeAndLssitemaster(objuser.getUserID(), objsite);
+		}else {
+			objExitinguser = lSuserMasterRepository.findByusernameAndLssitemaster(username, objsite);
+		}
 		LSPasswordPolicy passHistorycount = LSPasswordPolicyRepository
 				.findByLssitemaster(objExitinguser.getLssitemaster());
 
@@ -1635,6 +1639,24 @@ public class LoginService {
 		lSSiteMasterRepository.save(objClass);
 		objClass.getResponse().setStatus(true);
 		objClass.getResponse().setInformation("");
+		
+		LSPasswordPolicy objpolicy = new LSPasswordPolicy();		
+		objpolicy.setComplexpasswrd(0);
+		objpolicy.setDbbased(null);
+		objpolicy.setIdletime(15);
+		objpolicy.setIdletimeshowcheck(1);
+		objpolicy.setLockpolicy(5);
+		objpolicy.setMaxpasswrdlength(10);
+		objpolicy.setMincapitalchar(0);
+		objpolicy.setMinnumericchar(0);
+		objpolicy.setMinpasswrdlength(4);
+		objpolicy.setMinsmallchar(0);
+		objpolicy.setMinspecialchar(0);
+		objpolicy.setPasswordexpiry(90);
+		objpolicy.setPasswordhistory(5);
+		objpolicy.setLssitemaster(objClass);
+		
+		LSPasswordPolicyRepository.save(objpolicy);
 
 		return objClass;
 	}

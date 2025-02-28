@@ -56,6 +56,8 @@ public class LSfile {
 	@Transient
 	private String fileString;
 	@Transient
+	private Integer testcode;
+	@Transient
 	private Integer isfinalstep;
 	@OneToMany
 	@JoinColumn(name="filecode")
@@ -82,6 +84,16 @@ public class LSfile {
 	
 	@Column(name = "modifiedbyuser")
 	private String modifiedbyuser;
+
+	@Column(name = "task")
+	private String task;
+	
+	public String getTask() {
+		return task;
+	}
+	public void setTask(String task) {
+		this.task = task;
+	}
 	
 	public String getModifiedbyuser() {
 		return modifiedbyuser;
@@ -328,6 +340,12 @@ public class LSfile {
 	}
 	public void setFileString(String fileString) {
 		this.fileString = fileString;
+	}
+	public Integer getTestcode() {
+		return testcode;
+	}
+	public void setTestcode(Integer testcode) {
+		this.testcode = testcode;
 	}
 	public List<LSfileparameter> getLsparameter() {
 		return lsparameter;

@@ -2,6 +2,9 @@ package com.agaram.eln.primary.fetchmodel.gettemplate;
 
 
 import java.util.Date;
+
+import javax.persistence.Column;
+
 import com.agaram.eln.primary.model.sheetManipulation.LSsheetworkflow;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 
@@ -25,12 +28,15 @@ public class Sheettemplateget {
 	private Integer retirestatus;
 	private Date modifieddate;
 	private String modifiedbyuser;
+	private String task;
+	
+
 //	private List<LSfileversion> lstfileversion;
 //	private LSfileversion lsfileversion;
 
 	public Sheettemplateget(Integer filecode, String filenameuser, Date createdate, LSuserMaster createby,
 			LSuserMaster modifiedby, Integer approved, Integer rejected,Integer retirestatus, Integer versionno,String category,LSsheetworkflow lssheetworkflow,
-			Integer viewoption,Date modifieddate,String modifiedbyuser
+			Integer viewoption,Date modifieddate,String modifiedbyuser,String task
 //			,LSfileversion lsfileversion
 			) {
 		
@@ -64,6 +70,7 @@ public class Sheettemplateget {
 		this.lssheetworkflowname=lssheetworkflow!=null?lssheetworkflow.getWorkflowname():null;
 		this.modifieddate=modifieddate;
 		this.modifiedbyuser=modifiedbyuser;
+		this.task = task;
 //		this.lsfileversion = lsfileversion;
 	}
 
@@ -90,6 +97,12 @@ public class Sheettemplateget {
 //		this.lsfileversion = null;
 //	}
 	
+	public String getTask() {
+		return task;
+	}
+	public void setTask(String task) {
+		this.task = task;
+	}
 	
 	public Date getModifieddate() {
 		return modifieddate;

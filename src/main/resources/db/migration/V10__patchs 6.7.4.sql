@@ -2369,6 +2369,8 @@ update lsusergrouprights set sequenceorder = 50 where screenname = 'IDS_SCN_AUDI
 ALTER TABLE IF Exists elnresultusedsample ADD COLUMN IF NOT EXISTS statuschangesFrom numeric(17,0);
 ALTER TABLE IF Exists elnresultusedsample ADD COLUMN IF NOT EXISTS statuschangesTo numeric(17,0);
 
+UPDATE lsfields SET isactive = 0 WHERE fieldcode = 60;
+
 DO
 $do$
 DECLARE
@@ -2527,3 +2529,13 @@ AND table_name='elnresultusedsample';
    END IF;
 END
 $do$;
+
+
+ALTER TABLE IF Exists LSfile ADD COLUMN IF NOT EXISTS task character varying(255);
+ALTER TABLE IF Exists LSprotocolmaster ADD COLUMN IF NOT EXISTS task character varying(255);
+
+ALTER TABLE IF EXISTS sample ADD COLUMN IF NOT EXISTS openexpiryselect Boolean;
+update sample set openexpiryselect = false where openexpiryselect IS NULL;
+
+ALTER TABLE IF Exists elnmaterialinventory ADD COLUMN IF NOT EXISTS openexpiryselect Boolean;
+update elnmaterialinventory set openexpiryselect = false where openexpiryselect IS NULL;

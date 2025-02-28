@@ -2512,6 +2512,7 @@ List<Logilabprotocolorders> findByLsprojectmasterInAndElnmaterialAndTestcodeAndC
 
 	Long countBySitecode(Integer integer);
 
-
+	List<LogilabProtocolOrderssh> findBySitecodeAndCreatedtimestampBetweenOrderByCreatedtimestampDesc(
+			 Integer sitecode, Date fromdate,Date todate);
 	}
 

@@ -88,6 +88,8 @@ public class SampleService<ParentSample>{
 	@Autowired
 	private SampleLinkRepository sampleLinkRepository;
 	@Autowired
+	private SequenceTableRepository sequenceTableRepository;
+	@Autowired
 	private SequenceTableProjectLevelRepository sequencetableprojectlevelrepository;
 	@Autowired
 	private SequenceTableTaskLevelRepository sequencetabletasklevelrepository;
@@ -152,7 +154,10 @@ public ResponseEntity<Object> getSampleonCategoryFillter(@RequestBody Map<String
 		}
 		
 		lstsample.forEach((item)->{
-			item.setSequenceid(item.getSequenceid() == null ? item.getSamplename() : item.getSequenceid());
+			if(item.getSequenceid() == null) {
+				item.setSequenceid(item.getSamplename());
+				samplerepository.save(item);
+			}
 		});
 		
 		return new ResponseEntity<>(lstsample, HttpStatus.OK);
@@ -325,6 +330,13 @@ public ResponseEntity<Object> getSampleonCategoryFillter(@RequestBody Map<String
 		return seqorder;
 	}
 	
+	public void updatesequencefordefault(List<Sample> samplelist ) {
+		 
+		String sequence = "Sam_"+samplelist.get(0).getSamplecode();
+		samplelist.get(0).setSequenceid(sequence);
+		samplerepository.save(samplelist.get(0));
+	}
+	
 	public void updatesequence(Integer sequenceno, Sample objsample ) {
 		 
 		//long sitecodeInt = objsample.getNsitecode();
@@ -344,10 +356,17 @@ public ResponseEntity<Object> getSampleonCategoryFillter(@RequestBody Map<String
 		SequenceTableProjectLevel objprojectseq = new SequenceTableProjectLevel();
 		SequenceTableTaskLevel objtaskseq = new SequenceTableTaskLevel();
 		SequenceTable seqorder = null;
-		try {
-			seqorder = validateandupdatesamplesequencenumber(sample, objprojectseq, objtaskseq);
-		} catch (ParseException e) {
-			e.printStackTrace();
+		
+		SequenceTable seqobj =  sequenceTableRepository.findBySequencecodeOrderBySequencecode(5);
+		Boolean Applicationseq = seqobj.getSequenceview().equals(1) ? true : false;
+		
+		List<Sample> samplelist = new ArrayList<Sample>();
+		if(!Applicationseq) {
+			try {
+				seqorder = validateandupdatesamplesequencenumber(sample, objprojectseq, objtaskseq);
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
 		}
 		boolean isrest = false;
 		if(sample.getDerivedtype() == 3)
@@ -355,8 +374,8 @@ public ResponseEntity<Object> getSampleonCategoryFillter(@RequestBody Map<String
 			derivedsamplesrepository.save(sample.getParentsamples());
 		}
 		
+		if (!Applicationseq) GetSampleSequence(sample, seqorder, objprojectseq, objtaskseq);
 		
-			GetSampleSequence(sample,seqorder, objprojectseq, objtaskseq);
 			if(sample.getSampleprojecthistory() != null) {				
 			
 			sample.getSampleprojecthistory().forEach(history -> {
@@ -378,8 +397,13 @@ public ResponseEntity<Object> getSampleonCategoryFillter(@RequestBody Map<String
 			samplestoragemappingrepository.save(sample.getSamplestoragemapping());
 		}
 		
-		samplerepository.save(sample);
-		updatesequence(5,sample);
+		samplelist.add(samplerepository.save(sample)) ;
+		
+		if (!Applicationseq) updatesequence(5,sample);
+
+		if(Applicationseq) updatesequencefordefault(samplelist);
+
+		
 		return new ResponseEntity<>(sample, HttpStatus.OK);
 	}
 	
@@ -587,12 +611,14 @@ public ResponseEntity<Object> getSampleonCategoryFillter(@RequestBody Map<String
 		}
 		if (objSample.getOpenexpiry()) {
 			objInventory.setOpenexpiry(true);
+			objInventory.setOpenexpiryselect(objSample.getOpenexpiryselect());
 			objInventory.setExpirydate(objSample.getExpirydate());
 			objInventory.setNtransactionstatus(objSample.getNtransactionstatus());
 			samplerepository.save(objInventory);
 			return new ResponseEntity<>(objInventory, HttpStatus.OK);
 		}
 		objInventory.setOpenexpiry(objSample.getOpenexpiry());
+		objInventory.setOpenexpiryselect(objSample.getOpenexpiryselect());
 		objInventory.setNstatus(objSample.getNstatus());
 		objInventory.setNtransactionstatus(objSample.getNtransactionstatus());
 

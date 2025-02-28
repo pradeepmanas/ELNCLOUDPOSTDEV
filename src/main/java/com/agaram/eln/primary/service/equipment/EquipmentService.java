@@ -128,7 +128,11 @@ public class EquipmentService {
 				.findByNsitecodeAndCreateddateBetweenOrderByNequipmentcodeDesc(nsiteInteger,fromDate,toDate);
 		
 		lstEquipment.forEach(item -> {
-			item.setSequenceid( item.getSequenceid() == null ? item.getSequipmentname() : item.getSequenceid());
+			///item.setSequenceid( item.getSequenceid() == null ? item.getSequipmentname() : item.getSequenceid());
+			if(item.getSequenceid() == null) {
+				item.setSequenceid(item.getSequipmentname());
+				equipmentRepository.save(item);//
+			}
 		});
 		
 		List<InstrumentType> lstCmmType = insttypeRepository.findAll();

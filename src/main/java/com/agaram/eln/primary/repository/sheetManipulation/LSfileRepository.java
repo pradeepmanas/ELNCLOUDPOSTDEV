@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
+import org.json.JSONObject;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -467,6 +468,9 @@ public interface LSfileRepository extends JpaRepository<LSfile, Integer>{
 			List<LSuserMaster> lstteamuser, List<LSfiletest> lsfiletest2, int n, int o, int p, int q, int r,
 			LSuserMaster objLoggeduser, List<LSfiletest> lsfiletest3, int s, int t, int u, int v, int w,
 			List<LSuserMaster> lstteamuser2, List<LSfiletest> lsfiletest4, int x, int y, int z, int a, int b);
+
+	public LSfile findByFilecodeNotAndLssitemasterAndFilenameuserIgnoreCaseAndViewoption(Integer filecode,
+			LSSiteMaster lssitemaster, String filenameuser, Integer viewoption);
 
 
 }
