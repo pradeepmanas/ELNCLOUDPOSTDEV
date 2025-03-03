@@ -425,14 +425,31 @@ public class BaseMasterService {
 			return objClass;
 		}
 
-		else if (objClass.getProjectcode() != null
-				&& lSprojectmasterRepository.findByProjectnameIgnoreCaseAndStatusAndProjectcodeNotAndLssitemaster(
-						objClass.getProjectname(), 1, objClass.getProjectcode(), objClass.getLssitemaster()) != null) {
-			objClass.getResponse().setStatus(false);
-			objClass.getResponse().setInformation("ID_EXIST");
-			return objClass;
-		}
+//		else if (objClass.getProjectcode() != null
+//				&& lSprojectmasterRepository.findByProjectnameIgnoreCaseAndStatusAndProjectcodeNotAndLssitemaster(
+//						objClass.getProjectname(), 1, objClass.getProjectcode(), objClass.getLssitemaster()) != null) {
+//			objClass.getResponse().setStatus(false);
+//			objClass.getResponse().setInformation("ID_EXIST");
+//			return objClass;
+//		}
 		   
+		   
+		   if(objClass.getProjectcode() != null) {
+			   
+			  LSprojectmaster projobj =lSprojectmasterRepository.findByProjectnameIgnoreCaseAndStatusAndProjectcodeNotAndLssitemaster(
+						objClass.getProjectname(), 1, objClass.getProjectcode(), objClass.getLssitemaster());
+			  
+			  if(projobj != null && projobj.getProjectname().equals(objClass.getProjectname()) && !projobj.getDuedate().equals(objClass.getDuedate())) {
+				  
+					  objClass.getResponse().setStatus(false);
+					  objClass.getResponse().setInformation("ID_EXIST");
+					  return objClass;
+				 
+			  }
+	   
+			   
+		   }
+					
 		else if (objClass.getProjectcode() != null
 				&& lSprojectmasterRepository.findByProjectidIgnoreCaseAndStatusAndLssitemaster(
 						objClass.getProjectid(), 1,objClass.getLssitemaster()) != null) {

@@ -1937,9 +1937,16 @@ public class MaterialService {
 			}
 		}
 
+		List<MaterialType> lstMaterialTypesFilter = materialTypeRepository.findByNsitecodeOrderByNmaterialtypecodeDesc(nsiteInteger);
+		List<MaterialCategory> lstCategoriesFilter = materialCategoryRepository.findByNsitecodeOrderByNmaterialcatcodeDesc(nsiteInteger);
+
+
 		objmap.put("lstMaterial", lstElnmaterials);
 		objmap.put("lstCategories", lstCategories);
 		objmap.put("lstType", lstMaterialTypes);
+		objmap.put("lstCategoriesFilter", lstMaterialTypesFilter);
+		objmap.put("lstTypeFilter", lstMaterialTypesFilter);
+
 
 		List<Unit> lstUnits = unitRepository.findByNsitecodeAndNstatusOrderByNunitcodeDesc(nsiteInteger, 1);
 		List<Section> lstSec = sectionRepository.findByNsitecodeAndNstatusOrderByNsectioncodeDesc(nsiteInteger, 1);

@@ -4239,8 +4239,8 @@ public class MaterialInventoryService {
 
 		List<Elnmaterial> material = elnMaterialRepository.findByNmaterialcodeIn(lstMaterial);
 		List<ElnmaterialInventory> inventoryItems = elnmaterialInventoryReppository
-				.findByMaterialInAndReusablecountIsNullOrMaterialInAndReusablecountNotOrderByNmaterialinventorycodeDesc(
-						material, material, 0);
+				.findByMaterialInAndReusablecountIsNullAndNtransactionstatusNotAndNstatusNotOrMaterialInAndReusablecountNotAndNtransactionstatusNotAndNstatusNotOrderByNmaterialinventorycodeDesc(
+						material,-1,-1, material, 0,-1,-1);
 
 		objmap.put("lstELNmaterial", lstMaterial);
 		objmap.put("lstELNInventory", inventoryItems);

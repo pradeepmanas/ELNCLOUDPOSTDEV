@@ -9721,8 +9721,8 @@ public class InstrumentService {
 		Date todate = objorder.getTodate();
 		Integer protocoltype = objorder.getProtocoltype();
 
-	//	SequenceTable seqobj =  sequenceTableRepository.findBySequencecodeOrderBySequencecode(2);
-	//	Boolean Applicationseq = seqobj.getSequenceview().equals(2) ? true : false;
+		SequenceTable seqobj =  sequenceTableRepository.findBySequencecodeOrderBySequencecode(2);
+		Boolean Applicationseq = seqobj.getSequenceview().equals(2) ? true : false;
 		
 		List<LSprotocolselectedteam> selectedteamorders = lsprotoselectedteamRepo.findByUserteamInAndCreatedtimestampBetween(lstteam,fromdate,todate);
 
@@ -10742,7 +10742,9 @@ public class InstrumentService {
 
 	public LSlogilablimsorderdetail cancelprotocolorder(LSlogilablimsorderdetail body) {
 
+		
 		LSlogilablimsorderdetail obj = lslogilablimsorderdetailRepository.findByBatchid(body.getBatchid());
+		
 		obj.setOrdercancell(body.getOrdercancell());
 		lslogilablimsorderdetailRepository.save(obj);
 		try {
@@ -11851,18 +11853,5 @@ public class InstrumentService {
 		return selectedteam;
 	}
 	
-	public LSlogilablimsorderdetail updatesequenceondefault(LSlogilablimsorderdetail objorder) {
-//		List<Equipment> objEquipments = equipmentRepository.findByNequipmentcode(obj.getNequipmentcode());
-//
-//		if(!objEquipments.isEmpty()) {
-//			objEquipments.get(0).setSequenceid(objEquipments.get(0).getSequipmentid());
-//			equipmentRepository.save(objEquipments);
-//			}
-		LSlogilablimsorderdetail orderdetails = lslogilablimsorderdetailRepository.findByBatchcodeOrderByBatchcodeDesc(objorder.getBatchcode());
-		if(orderdetails!=null) {
-			orderdetails.setSequenceid(orderdetails.getBatchid());
-			orderdetails = logilablimsorderdetailsRepository.save(orderdetails);
-		}
-		return orderdetails;
-	}
+
 }

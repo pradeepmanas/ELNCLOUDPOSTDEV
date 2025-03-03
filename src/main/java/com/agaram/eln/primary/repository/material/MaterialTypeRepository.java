@@ -46,4 +46,5 @@ public interface MaterialTypeRepository extends JpaRepository<MaterialType, Inte
 			List<String> materialtypename);
 	public List<MaterialType> findByNmaterialtypecodeNotAndNsitecodeOrNmaterialtypecodeNotAndNdefaultstatusOrderByNmaterialtypecodeDesc(
 			int i, Integer nsitecode, int j, int k);
+	public List<MaterialType> findByNsitecodeOrderByNmaterialtypecodeDesc(Integer nsiteInteger);
 } 
