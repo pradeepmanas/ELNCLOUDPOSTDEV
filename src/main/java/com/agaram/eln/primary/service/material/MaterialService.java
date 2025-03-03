@@ -159,7 +159,7 @@ public class MaterialService {
 	private Commonservice commonService;
 	@Autowired
 	private SequenceTableRepository sequenceTableRepository;
-	
+
 	public ResponseEntity<Object> getMaterialcombo(Integer nmaterialtypecode, Integer nsitecode) {
 
 		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
@@ -257,19 +257,14 @@ public class MaterialService {
 		Date todate = objmapper.convertValue(inputMap.get("todate"), Date.class);
 
 		List<Elnmaterial> lstMaterial = new ArrayList<Elnmaterial>();
-		if(isallproject)
-		{
+		if (isallproject) {
 			lstMaterial = elnmaterialRepository
-				.findByMaterialcategoryAndNsitecodeAndCreateddateBetweenOrderByNmaterialcodeDesc(objCategory,
-						objCategory.getNsitecode(), fromdate, todate);
-		}
-		else if(isgeneralproject)
-		{
+					.findByMaterialcategoryAndNsitecodeAndCreateddateBetweenOrderByNmaterialcodeDesc(objCategory,
+							objCategory.getNsitecode(), fromdate, todate);
+		} else if (isgeneralproject) {
 			lstMaterial = elnmaterialRepository.getMaterialOnGeneralProjects(objCategory.getNmaterialcatcode(),
 					objCategory.getNsitecode(), fromdate, todate);
-		}
-		else 
-		{
+		} else {
 			lstMaterial = elnmaterialRepository.getMaterialOnProjects(objCategory.getNmaterialcatcode(),
 					objCategory.getNsitecode(), fromdate, todate, objlstProject);
 		}
@@ -1225,14 +1220,14 @@ public class MaterialService {
 		}
 		return objInv;
 	}
-	
+
 	public void updatesequencefordefault(List<Elnmaterial> objInv) {
 
-		String seqid = "Mat"+objInv.get(0).getNmaterialcode();
+		String seqid = "Mat" + objInv.get(0).getNmaterialcode();
 		objInv.get(0).setSequenceid(seqid);
 		elnmaterialRepository.save(objInv.get(0));
 	}
-	
+
 	public void updatesequence(Integer sequenceno, Elnmaterial objInv) {
 
 		if (objInv.getApplicationsequence() != null) {
@@ -1247,18 +1242,19 @@ public class MaterialService {
 
 	public ResponseEntity<Object> createElnMaterial(Elnmaterial obj) throws ParseException, JsonProcessingException {
 
-		SequenceTable seqobj =  sequenceTableRepository.findBySequencecodeOrderBySequencecode(3);
+		SequenceTable seqobj = sequenceTableRepository.findBySequencecodeOrderBySequencecode(3);
 		Boolean Applicationseq = seqobj.getSequenceview().equals(1) ? true : false;
-		
+
 		List<Elnmaterial> matlist = new ArrayList<Elnmaterial>();
-		
+
 		Elnmaterial objElnmaterial = elnmaterialRepository.findByNsitecodeAndSmaterialnameIgnoreCaseAndMaterialcategory(
 				obj.getNsitecode(), obj.getSmaterialname(), obj.getMaterialcategory());
 		SequenceTableProjectLevel objprojectseq = new SequenceTableProjectLevel();
 		SequenceTableTaskLevel objtaskseq = new SequenceTableTaskLevel();
 		SequenceTable seqorder = null;
-		
-		if(!Applicationseq) seqorder = validateandupdatematerialsequencenumber(obj, objprojectseq, objtaskseq);
+
+		if (!Applicationseq)
+			seqorder = validateandupdatematerialsequencenumber(obj, objprojectseq, objtaskseq);
 
 		obj.setResponse(new Response());
 
@@ -1269,9 +1265,10 @@ public class MaterialService {
 
 			obj.setCreateby(objMaster);
 			obj.setCreateddate(commonfunction.getCurrentUtcTime());
-			
-			if(!Applicationseq) GetSequences(obj, seqorder, objprojectseq, objtaskseq);
-			
+
+			if (!Applicationseq)
+				GetSequences(obj, seqorder, objprojectseq, objtaskseq);
+
 			if (obj.getMaterialprojecthistory() != null) {
 				obj.getMaterialprojecthistory().forEach(history -> {
 					try {
@@ -1286,11 +1283,13 @@ public class MaterialService {
 			if (obj.getMaterialprojectmap() != null) {
 				materialprojectmapRepository.save(obj.getMaterialprojectmap());
 			}
-			matlist.add( elnmaterialRepository.save(obj)) ;
-			
-			if(Applicationseq) updatesequencefordefault(matlist);
-			if(!Applicationseq) updatesequence(3, obj);
-			
+			matlist.add(elnmaterialRepository.save(obj));
+
+			if (Applicationseq)
+				updatesequencefordefault(matlist);
+			if (!Applicationseq)
+				updatesequence(3, obj);
+
 			obj.getResponse().setInformation("IDS_SAVE_SUCCEED");
 			obj.getResponse().setStatus(true);
 
@@ -1312,8 +1311,8 @@ public class MaterialService {
 		Elnmaterial objMaterial = elnmaterialRepository.findOne(obj.getNmaterialcode());
 
 		if (objElnmaterial == null) {
-			
-			 objMaterial.setAssignedproject(obj.getAssignedproject());
+
+			objMaterial.setAssignedproject(obj.getAssignedproject());
 			objMaterial.setElnmaterialchemdiagref(obj.getElnmaterialchemdiagref());
 			objMaterial.setModifiedby(obj.getModifiedby());
 			objMaterial.setModifieddate(obj.getModifieddate());
@@ -1323,7 +1322,7 @@ public class MaterialService {
 			objMaterial.setOpenexpiryperiod(obj.getOpenexpiryperiod());
 			objMaterial.setOpenexpiryvalue(obj.getOpenexpiryvalue());
 			objMaterial.setQuarantine(obj.getQuarantine());
-			if (obj.getMaterialprojectmap() != null && obj.getMaterialprojectmap().size()>0) {
+			if (obj.getMaterialprojectmap() != null && obj.getMaterialprojectmap().size() > 0) {
 				objMaterial.setMaterialprojectmap(obj.getMaterialprojectmap());
 				materialprojectmapRepository.save(objMaterial.getMaterialprojectmap());
 			}
@@ -1338,7 +1337,7 @@ public class MaterialService {
 				});
 				materialprojecthistoryrepository.save(obj.getMaterialprojecthistory());
 			}
-		
+
 			elnmaterialRepository.save(objMaterial);
 			obj.getResponse().setInformation("IDS_SAVE_SUCCEED");
 			obj.getResponse().setStatus(true);
@@ -2004,6 +2003,17 @@ public class MaterialService {
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
 	}
 
+	public List<Integer> getmaterialcode(Object projectData, ObjectMapper obj) {
+		LSprojectmaster project = !projectData.toString().isEmpty()
+				? obj.convertValue(projectData, LSprojectmaster.class)
+				: new LSprojectmaster();
+		List<MaterialProjectHistory> MaterialProjectHistory1 = materialprojecthistoryrepository
+				.findByLsproject(project);
+		List<Integer> nmaterialcode = MaterialProjectHistory1.stream().map(MaterialProjectHistory::getNmaterialcode)
+				.collect(Collectors.toList());
+		return nmaterialcode;
+	}
+
 	public ResponseEntity<Object> getElnMaterialOnProtocol(ElnresultUsedMaterial inputMap) throws ParseException {
 
 		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
@@ -2014,20 +2024,21 @@ public class MaterialService {
 		Boolean isFilter = (Boolean) inputMap.getCustomobject().get("isFilter");
 		ObjectMapper obj = new ObjectMapper();
 		if (!isFilter) {
-			if (ScreenType == 1) {
-				lstMaterial = elnmaterialRepository.findByNsitecodeAndCreateddateBetweenOrderByNmaterialcodeDesc(
-						nsiteInteger, inputMap.getFromdate(), inputMap.getTodate());
 
-			} else {
-			
+			if (ScreenType != 1) {
 				List<Integer> nmaterialcode = new ArrayList<>();
 				if (inputMap.getCustomobject().get("project") != null) {
 					Object projectData = inputMap.getCustomobject().get("project");
-					LSprojectmaster project = obj.convertValue(projectData, LSprojectmaster.class);
-					List<MaterialProjectHistory> MaterialProjectHistory1 = materialprojecthistoryrepository
-							.findByLsproject(project);
-					nmaterialcode = MaterialProjectHistory1.stream().map(MaterialProjectHistory::getNmaterialcode)
-							.collect(Collectors.toList());
+
+					if (!projectData.toString().isEmpty()) {
+						nmaterialcode = getmaterialcode(projectData, obj);
+//						LSprojectmaster project = !projectData.toString().isEmpty()? obj.convertValue(projectData, LSprojectmaster.class):new LSprojectmaster();
+//						List<MaterialProjectHistory> MaterialProjectHistory1 = materialprojecthistoryrepository
+//								.findByLsproject(project);
+//						nmaterialcode = MaterialProjectHistory1.stream().map(MaterialProjectHistory::getNmaterialcode)
+//								.collect(Collectors.toList());
+					}
+
 				}
 				if (ScreenType == 2) {
 					lstMaterial = elnmaterialRepository
@@ -2035,13 +2046,23 @@ public class MaterialService {
 									nsiteInteger, inputMap.getFromdate(), inputMap.getTodate(), nmaterialcode);
 
 				} else {
-					lstMaterial = elnmaterialRepository
-							.findByNsitecodeAndCreateddateBetweenAndNmaterialcodeNotInOrderByNmaterialcodeDesc(
-									nsiteInteger, inputMap.getFromdate(), inputMap.getTodate(), nmaterialcode);
-					lstMaterial.addAll(elnmaterialRepository
-							.findByNsitecodeAndCreateddateBetweenAndNmaterialcodeInOrderByNmaterialcodeDesc(
-									nsiteInteger, inputMap.getFromdate(), inputMap.getTodate(), nmaterialcode));
+					if (!nmaterialcode.isEmpty()) {
+						lstMaterial = elnmaterialRepository
+								.findByNsitecodeAndCreateddateBetweenAndNmaterialcodeNotInOrderByNmaterialcodeDesc(
+										nsiteInteger, inputMap.getFromdate(), inputMap.getTodate(), nmaterialcode);
+						lstMaterial.addAll(elnmaterialRepository
+								.findByNsitecodeAndCreateddateBetweenAndNmaterialcodeInOrderByNmaterialcodeDesc(
+										nsiteInteger, inputMap.getFromdate(), inputMap.getTodate(), nmaterialcode));
+					} else {
+						ScreenType = 1;
+					}
+
 				}
+			}
+			if (ScreenType == 1) {
+				lstMaterial = elnmaterialRepository.findByNsitecodeAndCreateddateBetweenOrderByNmaterialcodeDesc(
+						nsiteInteger, inputMap.getFromdate(), inputMap.getTodate());
+
 			}
 		} else {
 			Object materialtype = inputMap.getCustomobject().get("materialtype");
@@ -2052,73 +2073,104 @@ public class MaterialService {
 					new TypeReference<MaterialCategory>() {
 					});
 
-			if (ScreenType == 1) {
-
-				if (objmaterialtype.getNmaterialtypecode() != null && objMaterialCategory.getNmaterialcatcode() != null) {
-					lstMaterial = elnmaterialRepository.findByNsitecodeAndCreateddateBetweenAndMaterialtypeAndMaterialcategoryOrderByNmaterialcodeDesc(
-							nsiteInteger, inputMap.getFromdate(), inputMap.getTodate(),objmaterialtype,objMaterialCategory);
-				} else if (objmaterialtype.getNmaterialtypecode() != null) {
-					lstMaterial = elnmaterialRepository.findByNsitecodeAndCreateddateBetweenAndMaterialtypeOrderByNmaterialcodeDesc(
-							nsiteInteger, inputMap.getFromdate(), inputMap.getTodate(),objmaterialtype);
-				} else {
-					lstMaterial = elnmaterialRepository.findByNsitecodeAndCreateddateBetweenAndMaterialcategoryOrderByNmaterialcodeDesc(
-							nsiteInteger, inputMap.getFromdate(), inputMap.getTodate(),objMaterialCategory);
-				}
-
-			} else {
+			if (ScreenType != 1) {
 				List<Integer> nmaterialcode = new ArrayList<>();
 				if (inputMap.getCustomobject().get("project") != null) {
 					Object projectData = inputMap.getCustomobject().get("project");
-					LSprojectmaster project = obj.convertValue(projectData, LSprojectmaster.class);
-					List<MaterialProjectHistory> MaterialProjectHistory1 = materialprojecthistoryrepository
-							.findByLsproject(project);
-					nmaterialcode = MaterialProjectHistory1.stream().map(MaterialProjectHistory::getNmaterialcode)
-							.collect(Collectors.toList());
+					if (!projectData.toString().isEmpty()) {
+						nmaterialcode = getmaterialcode(projectData, obj);
+					}
 				}
-				if (objmaterialtype.getNmaterialtypecode() != null && objMaterialCategory.getNmaterialcatcode() != null) {
+
+				if (objmaterialtype.getNmaterialtypecode() != null
+						&& objMaterialCategory.getNmaterialcatcode() != null) {
 
 					if (ScreenType == 2) {
 						lstMaterial = elnmaterialRepository
 								.findByNsitecodeAndCreateddateBetweenAndNmaterialcodeInAndMaterialtypeAndMaterialcategoryOrderByNmaterialcodeDesc(
-										nsiteInteger, inputMap.getFromdate(), inputMap.getTodate(), nmaterialcode,objmaterialtype,objMaterialCategory);
+										nsiteInteger, inputMap.getFromdate(), inputMap.getTodate(), nmaterialcode,
+										objmaterialtype, objMaterialCategory);
 
 					} else {
-						lstMaterial = elnmaterialRepository
-								.findByNsitecodeAndCreateddateBetweenAndNmaterialcodeNotInAndMaterialtypeAndMaterialcategoryOrderByNmaterialcodeDesc(
-										nsiteInteger, inputMap.getFromdate(), inputMap.getTodate(), nmaterialcode,objmaterialtype,objMaterialCategory);
-						lstMaterial.addAll(elnmaterialRepository
-								.findByNsitecodeAndCreateddateBetweenAndNmaterialcodeInAndMaterialtypeAndMaterialcategoryOrderByNmaterialcodeDesc(
-										nsiteInteger, inputMap.getFromdate(), inputMap.getTodate(), nmaterialcode,objmaterialtype,objMaterialCategory));
+						if (!nmaterialcode.isEmpty()) {
+							lstMaterial = elnmaterialRepository
+									.findByNsitecodeAndCreateddateBetweenAndNmaterialcodeNotInAndMaterialtypeAndMaterialcategoryOrderByNmaterialcodeDesc(
+											nsiteInteger, inputMap.getFromdate(), inputMap.getTodate(), nmaterialcode,
+											objmaterialtype, objMaterialCategory);
+							lstMaterial.addAll(elnmaterialRepository
+									.findByNsitecodeAndCreateddateBetweenAndNmaterialcodeInAndMaterialtypeAndMaterialcategoryOrderByNmaterialcodeDesc(
+											nsiteInteger, inputMap.getFromdate(), inputMap.getTodate(), nmaterialcode,
+											objmaterialtype, objMaterialCategory));
+						} else {
+							ScreenType = 1;
+						}
 					}
 				} else if (objmaterialtype.getNmaterialtypecode() != null) {
 					if (ScreenType == 2) {
 						lstMaterial = elnmaterialRepository
 								.findByNsitecodeAndCreateddateBetweenAndNmaterialcodeInAndMaterialtypeOrderByNmaterialcodeDesc(
-										nsiteInteger, inputMap.getFromdate(), inputMap.getTodate(), nmaterialcode,objmaterialtype,objMaterialCategory);
+										nsiteInteger, inputMap.getFromdate(), inputMap.getTodate(), nmaterialcode,
+										objmaterialtype, objMaterialCategory);
 
 					} else {
-						lstMaterial = elnmaterialRepository
-								.findByNsitecodeAndCreateddateBetweenAndNmaterialcodeNotInAndMaterialtypeOrderByNmaterialcodeDesc(
-										nsiteInteger, inputMap.getFromdate(), inputMap.getTodate(), nmaterialcode,objmaterialtype,objMaterialCategory);
-						lstMaterial.addAll(elnmaterialRepository
-								.findByNsitecodeAndCreateddateBetweenAndNmaterialcodeInAndMaterialtypeOrderByNmaterialcodeDesc(
-										nsiteInteger, inputMap.getFromdate(), inputMap.getTodate(), nmaterialcode,objmaterialtype,objMaterialCategory));
+						if (!nmaterialcode.isEmpty()) {
+							lstMaterial = elnmaterialRepository
+									.findByNsitecodeAndCreateddateBetweenAndNmaterialcodeNotInAndMaterialtypeOrderByNmaterialcodeDesc(
+											nsiteInteger, inputMap.getFromdate(), inputMap.getTodate(), nmaterialcode,
+											objmaterialtype, objMaterialCategory);
+							lstMaterial.addAll(elnmaterialRepository
+									.findByNsitecodeAndCreateddateBetweenAndNmaterialcodeInAndMaterialtypeOrderByNmaterialcodeDesc(
+											nsiteInteger, inputMap.getFromdate(), inputMap.getTodate(), nmaterialcode,
+											objmaterialtype, objMaterialCategory));
+						} else {
+							ScreenType = 1;
+						}
 					}
 				} else {
 					if (ScreenType == 2) {
 						lstMaterial = elnmaterialRepository
 								.findByNsitecodeAndCreateddateBetweenAndNmaterialcodeInAndMaterialcategoryOrderByNmaterialcodeDesc(
-										nsiteInteger, inputMap.getFromdate(), inputMap.getTodate(), nmaterialcode,objMaterialCategory);
+										nsiteInteger, inputMap.getFromdate(), inputMap.getTodate(), nmaterialcode,
+										objMaterialCategory);
 
 					} else {
-						lstMaterial = elnmaterialRepository
-								.findByNsitecodeAndCreateddateBetweenAndNmaterialcodeNotInAndMaterialcategoryOrderByNmaterialcodeDesc(
-										nsiteInteger, inputMap.getFromdate(), inputMap.getTodate(), nmaterialcode,objMaterialCategory);
-						lstMaterial.addAll(elnmaterialRepository
-								.findByNsitecodeAndCreateddateBetweenAndNmaterialcodeInAndMaterialcategoryOrderByNmaterialcodeDesc(
-										nsiteInteger, inputMap.getFromdate(), inputMap.getTodate(), nmaterialcode,objMaterialCategory));
+						if (!nmaterialcode.isEmpty()) {
+							lstMaterial = elnmaterialRepository
+									.findByNsitecodeAndCreateddateBetweenAndNmaterialcodeNotInAndMaterialcategoryOrderByNmaterialcodeDesc(
+											nsiteInteger, inputMap.getFromdate(), inputMap.getTodate(), nmaterialcode,
+											objMaterialCategory);
+							lstMaterial.addAll(elnmaterialRepository
+									.findByNsitecodeAndCreateddateBetweenAndNmaterialcodeInAndMaterialcategoryOrderByNmaterialcodeDesc(
+											nsiteInteger, inputMap.getFromdate(), inputMap.getTodate(), nmaterialcode,
+											objMaterialCategory));
+						} else {
+							ScreenType = 1;
+						}
 					}
 				}
+
+			}
+
+			if (ScreenType == 1) {
+
+				if (objmaterialtype.getNmaterialtypecode() != null
+						&& objMaterialCategory.getNmaterialcatcode() != null) {
+					lstMaterial = elnmaterialRepository
+							.findByNsitecodeAndCreateddateBetweenAndMaterialtypeAndMaterialcategoryOrderByNmaterialcodeDesc(
+									nsiteInteger, inputMap.getFromdate(), inputMap.getTodate(), objmaterialtype,
+									objMaterialCategory);
+				} else if (objmaterialtype.getNmaterialtypecode() != null) {
+					lstMaterial = elnmaterialRepository
+							.findByNsitecodeAndCreateddateBetweenAndMaterialtypeOrderByNmaterialcodeDesc(nsiteInteger,
+									inputMap.getFromdate(), inputMap.getTodate(), objmaterialtype);
+				} else {
+					lstMaterial = elnmaterialRepository
+							.findByNsitecodeAndCreateddateBetweenAndMaterialcategoryOrderByNmaterialcodeDesc(
+									nsiteInteger, inputMap.getFromdate(), inputMap.getTodate(), objMaterialCategory);
+				}
+
+			} else {
+
 			}
 		}
 
@@ -2359,6 +2411,14 @@ public class MaterialService {
 		return new ResponseEntity<>(materiallist, HttpStatus.OK);
 	}
 
+	public List<Integer> getsamplecode(Object projectData, ObjectMapper obj) {
+		LSprojectmaster project = obj.convertValue(projectData, LSprojectmaster.class);
+		List<SampleProjectHistory> sampleProjectHistoryList = SampleProjectHistoryRepository.findByLsproject(project);
+		List<Integer> sampleCodes = sampleProjectHistoryList.stream().map(SampleProjectHistory::getsamplecode)
+				.collect(Collectors.toList());
+		return sampleCodes;
+	}
+
 	public ResponseEntity<Object> getSampleList(ElnresultUsedSample inputMap) throws ParseException {
 		Integer screenType = Integer.parseInt(inputMap.getCustomobject().get("ScreenType").toString());
 		Map<String, Object> objMap = new LinkedHashMap<>();
@@ -2367,24 +2427,16 @@ public class MaterialService {
 		Date fromDate = inputMap.getFromdate();
 		Date toDate = inputMap.getTodate();
 		Integer transactionStatus = 28;
-//		String commonQueryPart = " ORDER BY Samplecode DESC";
 		Boolean isFilter = (Boolean) inputMap.getCustomobject().get("isFilter");
+		List<Integer> sampleCodes = new ArrayList<>();
 		if (!isFilter) {
-			if (screenType == 1) {
-				lstSample = SampleRepository
-						.findByNsitecodeAndCreateddateBetweenAndNtransactionstatusOrderBySamplecodeDesc(siteCode,
-								fromDate, toDate, transactionStatus);
-
-			} else {
-				List<Integer> sampleCodes = new ArrayList<>();
+			if (screenType != 1) {
 				if (inputMap.getCustomobject().get("project") != null) {
 					ObjectMapper obj = new ObjectMapper();
 					Object projectData = inputMap.getCustomobject().get("project");
-					LSprojectmaster project = obj.convertValue(projectData, LSprojectmaster.class);
-					List<SampleProjectHistory> sampleProjectHistoryList = SampleProjectHistoryRepository
-							.findByLsproject(project);
-					sampleCodes = sampleProjectHistoryList.stream().map(SampleProjectHistory::getsamplecode)
-							.collect(Collectors.toList());
+					if (!projectData.toString().isEmpty()) {
+						sampleCodes = getsamplecode(projectData, obj);
+					}
 				}
 
 				if (screenType == 2) {
@@ -2392,14 +2444,24 @@ public class MaterialService {
 							.findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndSamplecodeInOrderBySamplecodeDesc(
 									siteCode, fromDate, toDate, transactionStatus, sampleCodes);
 				} else {
-					lstSample = SampleRepository
-							.findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndSamplecodeNotInOrderBySamplecodeDesc(
-									siteCode, fromDate, toDate, transactionStatus, sampleCodes);
+					if (!sampleCodes.isEmpty()) {
+						lstSample = SampleRepository
+								.findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndSamplecodeNotInOrderBySamplecodeDesc(
+										siteCode, fromDate, toDate, transactionStatus, sampleCodes);
 
-					lstSample.addAll(SampleRepository
-							.findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndSamplecodeInOrderBySamplecodeDesc(
-									siteCode, fromDate, toDate, transactionStatus, sampleCodes));
+						lstSample.addAll(SampleRepository
+								.findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndSamplecodeInOrderBySamplecodeDesc(
+										siteCode, fromDate, toDate, transactionStatus, sampleCodes));
+					} else {
+						screenType = 1;
+					}
 				}
+			}
+			if (screenType == 1) {
+				lstSample = SampleRepository
+						.findByNsitecodeAndCreateddateBetweenAndNtransactionstatusOrderBySamplecodeDesc(siteCode,
+								fromDate, toDate, transactionStatus);
+
 			}
 		} else if (isFilter) {
 			ObjectMapper objMaper = new ObjectMapper();
@@ -2412,93 +2474,96 @@ public class MaterialService {
 				SampleCategory objSampleCategory = objMaper.convertValue(samplecat,
 						new TypeReference<SampleCategory>() {
 						});
-				if (screenType == 1) {
-					lstSample = SampleRepository
-							.findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndSampletypeAndSamplecategoryOrderBySamplecodeDesc(
-									siteCode, fromDate, toDate, transactionStatus, objSampleType, objSampleCategory);
-				} else {
-					List<Integer> sampleCodes = new ArrayList<>();
+
+				if (screenType != 1) {
 					if (inputMap.getCustomobject().get("project") != null) {
 						ObjectMapper obj = new ObjectMapper();
 						Object projectData = inputMap.getCustomobject().get("project");
-						LSprojectmaster project = obj.convertValue(projectData, LSprojectmaster.class);
-						List<SampleProjectHistory> sampleProjectHistoryList = SampleProjectHistoryRepository
-								.findByLsproject(project);
-						sampleCodes = sampleProjectHistoryList.stream().map(SampleProjectHistory::getsamplecode)
-								.collect(Collectors.toList());
+						if (!projectData.toString().isEmpty()) {
+							sampleCodes = getsamplecode(projectData, obj);
+						}
 					}
-
 					if (screenType == 2) {
 						lstSample = SampleRepository
 								.findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndSamplecodeInAndSampletypeAndSamplecategoryOrderBySamplecodeDesc(
 										siteCode, fromDate, toDate, transactionStatus, sampleCodes, objSampleType,
 										objSampleCategory);
 					} else {
-						lstSample = SampleRepository
-								.findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndSamplecodeNotInAndSampletypeAndSamplecategoryOrderBySamplecodeDesc(
-										siteCode, fromDate, toDate, transactionStatus, sampleCodes, objSampleType,
-										objSampleCategory);
+						if (!sampleCodes.isEmpty()) {
+							lstSample = SampleRepository
+									.findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndSamplecodeNotInAndSampletypeAndSamplecategoryOrderBySamplecodeDesc(
+											siteCode, fromDate, toDate, transactionStatus, sampleCodes, objSampleType,
+											objSampleCategory);
 
-						lstSample.addAll(SampleRepository
-								.findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndSamplecodeInAndSampletypeAndSamplecategoryOrderBySamplecodeDesc(
-										siteCode, fromDate, toDate, transactionStatus, sampleCodes, objSampleType,
-										objSampleCategory));
+							lstSample.addAll(SampleRepository
+									.findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndSamplecodeInAndSampletypeAndSamplecategoryOrderBySamplecodeDesc(
+											siteCode, fromDate, toDate, transactionStatus, sampleCodes, objSampleType,
+											objSampleCategory));
+						} else {
+							screenType = 1;
+						}
 					}
 				}
+				if (screenType == 1) {
+					lstSample = SampleRepository
+							.findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndSampletypeAndSamplecategoryOrderBySamplecodeDesc(
+									siteCode, fromDate, toDate, transactionStatus, objSampleType, objSampleCategory);
+				}
+
 			} else if (inputMap.getCustomobject().get("sampletype") != null) {
 				Object sampletype = inputMap.getCustomobject().get("sampletype");
 				SampleType objSampleType = objMaper.convertValue(sampletype, new TypeReference<SampleType>() {
 				});
+
+				if (screenType != 1) {
+
+					if (inputMap.getCustomobject().get("project") != null) {
+						ObjectMapper obj = new ObjectMapper();
+						Object projectData = inputMap.getCustomobject().get("project");
+						if (!projectData.toString().isEmpty()) {
+							sampleCodes = getsamplecode(projectData, obj);
+						}
+					}
+
+					if (screenType == 2) {
+						lstSample = SampleRepository
+								.findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndSamplecodeInAndSampletypeOrderBySamplecodeDesc(
+										siteCode, fromDate, toDate, transactionStatus, sampleCodes, objSampleType);
+					} else {
+						if (!sampleCodes.isEmpty()) {
+							lstSample = SampleRepository
+									.findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndSamplecodeNotInAndSampletypeOrderBySamplecodeDesc(
+											siteCode, fromDate, toDate, transactionStatus, sampleCodes, objSampleType);
+
+							lstSample.addAll(SampleRepository
+									.findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndSamplecodeInAndSampletypeOrderBySamplecodeDesc(
+											siteCode, fromDate, toDate, transactionStatus, sampleCodes, objSampleType));
+						} else {
+							screenType = 1;
+						}
+					}
+				}
+
 				if (screenType == 1) {
 					lstSample = SampleRepository
 							.findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndSampletypeOrderBySamplecodeDesc(
 									siteCode, fromDate, toDate, transactionStatus, objSampleType);
 
-				} else {
-					List<Integer> sampleCodes = new ArrayList<>();
-					if (inputMap.getCustomobject().get("project") != null) {
-						ObjectMapper obj = new ObjectMapper();
-						Object projectData = inputMap.getCustomobject().get("project");
-						LSprojectmaster project = obj.convertValue(projectData, LSprojectmaster.class);
-						List<SampleProjectHistory> sampleProjectHistoryList = SampleProjectHistoryRepository
-								.findByLsproject(project);
-						sampleCodes = sampleProjectHistoryList.stream().map(SampleProjectHistory::getsamplecode)
-								.collect(Collectors.toList());
-					}
-
-					if (screenType == 2) {
-						lstSample = SampleRepository
-								.findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndSamplecodeInAndSampletypeOrderBySamplecodeDesc(
-										siteCode, fromDate, toDate, transactionStatus, sampleCodes, objSampleType);
-					} else {
-						lstSample = SampleRepository
-								.findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndSamplecodeNotInAndSampletypeOrderBySamplecodeDesc(
-										siteCode, fromDate, toDate, transactionStatus, sampleCodes, objSampleType);
-
-						lstSample.addAll(SampleRepository
-								.findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndSamplecodeInAndSampletypeOrderBySamplecodeDesc(
-										siteCode, fromDate, toDate, transactionStatus, sampleCodes, objSampleType));
-					}
 				}
+
 			} else if (inputMap.getCustomobject().get("samplecategories") != null) {
 				Object samplecat = inputMap.getCustomobject().get("samplecategories");
 				SampleCategory objSampleCategory = objMaper.convertValue(samplecat,
 						new TypeReference<SampleCategory>() {
 						});
-				if (screenType == 1) {
-					lstSample = SampleRepository
-							.findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndSamplecategoryOrderBySamplecodeDesc(
-									siteCode, fromDate, toDate, transactionStatus, objSampleCategory);
-				} else {
-					List<Integer> sampleCodes = new ArrayList<>();
+
+				if (screenType != 1) {
 					if (inputMap.getCustomobject().get("project") != null) {
 						ObjectMapper obj = new ObjectMapper();
 						Object projectData = inputMap.getCustomobject().get("project");
-						LSprojectmaster project = obj.convertValue(projectData, LSprojectmaster.class);
-						List<SampleProjectHistory> sampleProjectHistoryList = SampleProjectHistoryRepository
-								.findByLsproject(project);
-						sampleCodes = sampleProjectHistoryList.stream().map(SampleProjectHistory::getsamplecode)
-								.collect(Collectors.toList());
+						if (!projectData.toString().isEmpty()) {
+							sampleCodes = getsamplecode(projectData, obj);
+						}
 					}
 
 					if (screenType == 2) {
@@ -2506,13 +2571,25 @@ public class MaterialService {
 								.findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndSamplecodeInAndSamplecategoryOrderBySamplecodeDesc(
 										siteCode, fromDate, toDate, transactionStatus, sampleCodes, objSampleCategory);
 					} else {
-						lstSample = SampleRepository
-								.findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndSamplecodeNotInAndSamplecategoryOrderBySamplecodeDesc(
-										siteCode, fromDate, toDate, transactionStatus, sampleCodes, objSampleCategory);
-						lstSample.addAll(SampleRepository
-								.findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndSamplecodeInAndSamplecategoryOrderBySamplecodeDesc(
-										siteCode, fromDate, toDate, transactionStatus, sampleCodes, objSampleCategory));
+						if (!sampleCodes.isEmpty()) {
+							lstSample = SampleRepository
+									.findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndSamplecodeNotInAndSamplecategoryOrderBySamplecodeDesc(
+											siteCode, fromDate, toDate, transactionStatus, sampleCodes,
+											objSampleCategory);
+							lstSample.addAll(SampleRepository
+									.findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndSamplecodeInAndSamplecategoryOrderBySamplecodeDesc(
+											siteCode, fromDate, toDate, transactionStatus, sampleCodes,
+											objSampleCategory));
+						} else {
+							screenType = 1;
+						}
 					}
+				}
+
+				if (screenType == 1) {
+					lstSample = SampleRepository
+							.findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndSamplecategoryOrderBySamplecodeDesc(
+									siteCode, fromDate, toDate, transactionStatus, objSampleCategory);
 				}
 			}
 
