@@ -79,6 +79,13 @@ public class BarcodeMasterController {
 			throws NumberFormatException, IOException, ParseException, PrintException {
 		return barcodemasterservice.printBarcode(inputMap);
 	}
+	
+	@PostMapping("/printBarcodeonMultipleSample")
+	public Map<String, Object> printBarcodeonMultipleSample(@RequestBody Map<String, Object> inputMap) 
+			throws NumberFormatException, IOException, ParseException, PrintException
+	{
+		return barcodemasterservice.printBarcodeonMultipleSample(inputMap);
+	}
 
 	@PostMapping("/updateBarcodeMaster")
 	public ResponseEntity<Object> updateBarcodeMaster(@RequestBody Map<String, Object> inputMap) throws Exception {

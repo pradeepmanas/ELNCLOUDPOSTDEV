@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.agaram.eln.primary.model.reports.reportdesigner.Reporttemplate;
 import com.agaram.eln.primary.model.reports.reportviewer.Reports;
+import com.agaram.eln.primary.model.syncwordconverter.CustomParameter;
 import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.service.syncwordconverter.DocumentViewerService;
 
@@ -36,6 +37,12 @@ public class DocumentViewerController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
+	@PostMapping("/api/wordeditor/SystemClipboard")
+	public String systemClipboard(@RequestBody CustomParameter param) {
+		return documentViewerService.systemClipboard(param);
+	}
     
     @RequestMapping(value = "/getReportData")
 	protected ResponseEntity<Reports> getReportData(@RequestBody Reports template) throws ServletException, IOException {

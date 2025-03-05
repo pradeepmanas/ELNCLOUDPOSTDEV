@@ -53,12 +53,11 @@ import com.agaram.eln.primary.model.material.MaterialType;
 import com.agaram.eln.primary.model.material.Period;
 import com.agaram.eln.primary.model.material.Section;
 import com.agaram.eln.primary.model.material.Unit;
-import com.agaram.eln.primary.model.protocols.LSprotocolmaster;
 import com.agaram.eln.primary.model.sample.ElnresultUsedSample;
 import com.agaram.eln.primary.model.sample.Sample;
 import com.agaram.eln.primary.model.sample.SampleAttachments;
 import com.agaram.eln.primary.model.sample.SampleCategory;
-import com.agaram.eln.primary.model.sample.SampleProjectHistory;
+import com.agaram.eln.primary.model.sample.SampleProjectMap;
 import com.agaram.eln.primary.model.sample.SampleType;
 import com.agaram.eln.primary.model.sequence.SequenceTable;
 import com.agaram.eln.primary.model.sequence.SequenceTableProjectLevel;
@@ -86,6 +85,7 @@ import com.agaram.eln.primary.repository.material.SectionRepository;
 import com.agaram.eln.primary.repository.material.UnitRepository;
 import com.agaram.eln.primary.repository.sample.SampleAttachementsRepository;
 import com.agaram.eln.primary.repository.sample.SampleProjectHistoryRepository;
+import com.agaram.eln.primary.repository.sample.SampleProjectMapRepository;
 import com.agaram.eln.primary.repository.sample.SampleRepository;
 import com.agaram.eln.primary.repository.sequence.SequenceTableRepository;
 import com.agaram.eln.primary.repository.sequence.SequenceTableSiteRepository;
@@ -159,6 +159,9 @@ public class MaterialService {
 	private Commonservice commonService;
 	@Autowired
 	private SequenceTableRepository sequenceTableRepository;
+	
+	@Autowired
+	private SampleProjectMapRepository SampleProjectMapRepository;
 
 	public ResponseEntity<Object> getMaterialcombo(Integer nmaterialtypecode, Integer nsitecode) {
 
@@ -1944,9 +1947,8 @@ public class MaterialService {
 		objmap.put("lstMaterial", lstElnmaterials);
 		objmap.put("lstCategories", lstCategories);
 		objmap.put("lstType", lstMaterialTypes);
-		objmap.put("lstCategoriesFilter", lstMaterialTypesFilter);
+		objmap.put("lstCategoriesFilter", lstCategoriesFilter);
 		objmap.put("lstTypeFilter", lstMaterialTypesFilter);
-
 
 		List<Unit> lstUnits = unitRepository.findByNsitecodeAndNstatusOrderByNunitcodeDesc(nsiteInteger, 1);
 		List<Section> lstSec = sectionRepository.findByNsitecodeAndNstatusOrderByNsectioncodeDesc(nsiteInteger, 1);
@@ -2014,9 +2016,9 @@ public class MaterialService {
 		LSprojectmaster project = !projectData.toString().isEmpty()
 				? obj.convertValue(projectData, LSprojectmaster.class)
 				: new LSprojectmaster();
-		List<MaterialProjectHistory> MaterialProjectHistory1 = materialprojecthistoryrepository
+		List<MaterialProjectMap> MaterialProjectMapobj = materialprojectmapRepository
 				.findByLsproject(project);
-		List<Integer> nmaterialcode = MaterialProjectHistory1.stream().map(MaterialProjectHistory::getNmaterialcode)
+		List<Integer> nmaterialcode = MaterialProjectMapobj.stream().map(MaterialProjectMap::getNmaterialcode)
 				.collect(Collectors.toList());
 		return nmaterialcode;
 	}
@@ -2420,8 +2422,8 @@ public class MaterialService {
 
 	public List<Integer> getsamplecode(Object projectData, ObjectMapper obj) {
 		LSprojectmaster project = obj.convertValue(projectData, LSprojectmaster.class);
-		List<SampleProjectHistory> sampleProjectHistoryList = SampleProjectHistoryRepository.findByLsproject(project);
-		List<Integer> sampleCodes = sampleProjectHistoryList.stream().map(SampleProjectHistory::getsamplecode)
+		List<SampleProjectMap> SampleProjectMapobj = SampleProjectMapRepository.findByLsproject(project);
+		List<Integer> sampleCodes = SampleProjectMapobj.stream().map(SampleProjectMap::getSamplecode)
 				.collect(Collectors.toList());
 		return sampleCodes;
 	}

@@ -1433,9 +1433,9 @@ ON CONFLICT (orderno) DO NOTHING;
 ---Template overview Recent Template -- name change only
 -------------------------------------------
 ---inventory parameters
-update lsusergrouprights set sdelete = '1' where displaytopic = 'IDS_SCN_MATERIALTYPEPARAMS' and usergroupid_usergroupcode = 1 and sdelete = 'NA';
-update lsusergrouprights set sdelete = '0' where displaytopic = 'IDS_SCN_MATERIALTYPEPARAMS' and usergroupid_usergroupcode != 1 and sdelete = 'NA';
-update lsusergrouprightsmaster set sdelete = '0' where displaytopic = 'IDS_SCN_MATERIALTYPEPARAMS';
+-- update lsusergrouprights set sdelete = '1' where displaytopic = 'IDS_SCN_MATERIALTYPEPARAMS' and usergroupid_usergroupcode = 1 and sdelete = 'NA';
+-- update lsusergrouprights set sdelete = '0' where displaytopic = 'IDS_SCN_MATERIALTYPEPARAMS' and usergroupid_usergroupcode != 1 and sdelete = 'NA';
+-- update lsusergrouprightsmaster set sdelete = '0' where displaytopic = 'IDS_SCN_MATERIALTYPEPARAMS';
 -----------------------------------------------
 ---SAMPLE CAT--
 INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname,sequenceorder) 
@@ -2270,6 +2270,8 @@ update lsusergrouprightsmaster set screenname = 'IDS_SCN_TEMPLATEWORKFLOW' where
 update lsusergrouprights set screenname = 'IDS_SCN_TEMPLATEWORKFLOW' where screenname in
 ('IDS_SCN_ORDERWORKLOW','IDS_SCN_TEMPLATEWORKFLOW');
 ------------------------------------------
+update lsusergrouprightsmaster set screenname = 'IDS_SCN_MATERIALMGMT' where screenname in ('IDS_SCN_MATERIALINVENTORY','IDS_SCN_MATERIAL');
+update lsusergrouprights set screenname = 'IDS_SCN_MATERIALMGMT' where screenname in ('IDS_SCN_MATERIALINVENTORY','IDS_SCN_MATERIAL');
 ----------------------
 update lsusergrouprightsmaster set sequenceorder = 20 where screenname = 'IDS_SCN_MATERIALTYPEPARAMS' and displaytopic = 'IDS_TSK_SCREENVIEW';
 update lsusergrouprightsmaster set sequenceorder = 21 where screenname = 'IDS_SCN_MATERIALTYPEPARAMS' and displaytopic != 'IDS_TSK_SCREENVIEW';
@@ -2488,7 +2490,6 @@ update lsaudittrailconfiguration set ordersequnce = 39 where screenname in('IDS_
 update lsaudittrailconfiguration set ordersequnce = 40 where screenname in('IDS_SCN_SAMPLETYPE');
 update lsaudittrailconfiguration set ordersequnce = 41 where screenname in('IDS_SCN_SAMPLECATEGORY');
 
-
 update lsaudittrailconfigmaster set ordersequnce = 42 where screenname in('IDS_SCN_EQUIPMENTTYPE');
 update lsaudittrailconfiguration set ordersequnce = 42 where screenname in('IDS_SCN_EQUIPMENTTYPE');
 
@@ -2497,6 +2498,9 @@ update lsaudittrailconfiguration set ordersequnce = 43 where screenname in('IDS_
 
 update lsaudittrailconfigmaster set ordersequnce = 44 where screenname in('IDS_SCN_EQUIPMENT');
 update lsaudittrailconfiguration set ordersequnce = 44 where screenname in('IDS_SCN_EQUIPMENT');
+
+--delete from lsusergrouprights where displaytopic in('IDS_SCN_MATERIALINVENTORY','IDS_SCN_MATERIAL');
+--delete from lsusergrouprightsmaster where displaytopic in('IDS_SCN_MATERIALINVENTORY','IDS_SCN_MATERIAL');
 
 ALTER TABLE IF Exists elnresultusedmaterial ADD COLUMN IF NOT EXISTS projectcode_projectcode integer;
 
@@ -2529,7 +2533,6 @@ AND table_name='elnresultusedsample';
    END IF;
 END
 $do$;
-
 
 ALTER TABLE IF Exists LSfile ADD COLUMN IF NOT EXISTS task character varying(255);
 ALTER TABLE IF Exists LSprotocolmaster ADD COLUMN IF NOT EXISTS task character varying(255);

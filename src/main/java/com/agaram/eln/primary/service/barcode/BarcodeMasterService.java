@@ -43,6 +43,7 @@ import com.agaram.eln.primary.model.barcode.Printer;
 import com.agaram.eln.primary.model.general.Response;
 import com.agaram.eln.primary.model.material.ElnmaterialInventory;
 import com.agaram.eln.primary.model.material.MaterialCategory;
+import com.agaram.eln.primary.model.material.Unit;
 import com.agaram.eln.primary.model.sample.Sample;
 import com.agaram.eln.primary.model.sample.SampleCategory;
 import com.agaram.eln.primary.model.sheetManipulation.LSfile;
@@ -58,6 +59,7 @@ import com.agaram.eln.primary.service.cloudFileManip.CloudFileManipulationservic
 import com.agaram.eln.primary.service.fileManipulation.FileManipulationservice;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonArray;
@@ -347,7 +349,25 @@ public class BarcodeMasterService {
 		return data;
 	}
 
-
+	private List<String> updatesamplecontent(String data, Integer samplecode, String path, String username,List<Sample> sampleObj)
+			throws ParseException {
+		List<String> lstdata = new ArrayList<String>();
+		if (sampleObj != null) {
+			for (Sample element : sampleObj) {
+				Date currentdata = commonfunction.getCurrentUtcTime();
+				DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd ");
+				String replaceddata = data.replace("$sampleid$", element.getSequenceid())
+						.replace("$samplename$", element.getSamplename())
+						.replace("$storagepath$", element.getSamplestoragemapping().getStoragepath())
+						.replace("$generatedby$", username).replace("$generateddate$", dateFormat.format(currentdata));
+				
+				lstdata.add(replaceddata);
+			}
+			
+		}
+		return lstdata;
+	}
+	
 	private String readFromInputStream(InputStream inputStream) throws IOException {
 		StringBuilder resultStringBuilder = new StringBuilder();
 		try (BufferedReader br = new BufferedReader(new InputStreamReader(inputStream))) {
@@ -397,6 +417,9 @@ public class BarcodeMasterService {
 		case 1:
 			data = updatematerialcontent(data, primarykey, path, username);
 			break;
+		case 3:
+			data = updatesamplecontent(data, primarykey, path, username);
+			break;
 		}
 
 //		UUID objGUID = UUID.randomUUID();
@@ -421,6 +444,61 @@ public class BarcodeMasterService {
 //        }
 
 		returnmap.put("data", data);
+
+		return returnmap;
+	}
+	
+	public Map<String, Object> printBarcodeonMultipleSample(Map<String, Object> inputMap)
+			throws IOException, NumberFormatException, ParseException, PrintException {
+		Map<String, Object> returnmap = new HashMap<String, Object>();
+		String sprintername = (String) inputMap.get("sprintername");
+		Integer barcodeid = (Integer) inputMap.get("barcode");
+		Integer ismultitenant = (Integer) inputMap.get("ismultitenant");
+		String tenant = (String) inputMap.get("tenant");
+		Integer screen = (Integer) inputMap.get("screen");
+		Integer primarykey = (Integer) inputMap.get("primarykey");
+		String path = (String) inputMap.get("path");
+		String username = (String) inputMap.get("username");
+		ObjectMapper obj = new ObjectMapper();
+		
+
+		BarcodeMaster barcode = barcodemasterrepository.findOne(barcodeid);
+		InputStream stream = null;
+		if (ismultitenant == 1 || ismultitenant == 2) {
+			stream = cloudFileManipulationservice.retrieveCloudFile(barcode.getBarcodefileid(),
+					tenant + "barcodefiles");
+		} else {
+			GridFSDBFile gridFsFile = null;
+
+			try {
+				gridFsFile = retrieveLargeFile(barcode.getBarcodefileid());
+				stream = gridFsFile.getInputStream();
+			} catch (IllegalStateException e) {
+
+				e.printStackTrace();
+			} catch (IOException e) {
+
+				e.printStackTrace();
+			}
+		}
+
+		String data = readFromInputStream(stream);
+		
+		List<String> lstdata = new ArrayList<String>();
+
+		switch (screen) {
+//		case 1:
+//			data = updatematerialcontent(data, primarykey, path, username);
+//			break;
+		case 3:
+			List<Sample> samples = obj.convertValue(inputMap.get("records"), new TypeReference<List<Sample>>() {
+			});
+			lstdata = updatesamplecontent(data, primarykey, path, username,samples);
+			break;
+		}
+
+
+		returnmap.put("data", lstdata);
 
 		return returnmap;
 	}

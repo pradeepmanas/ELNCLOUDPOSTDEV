@@ -78,8 +78,8 @@ public class DocumenteditorService {
 	@Autowired
 	Commonservice commonservice;
 
-	@Autowired
-	private MongoDbFactory mongoDbFactory;
+//	@Autowired
+//	private MongoDbFactory mongoDbFactory;
 
 	@Autowired
 	public ReporttemplateRepository reporttemplateRepository;

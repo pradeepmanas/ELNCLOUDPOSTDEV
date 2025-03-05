@@ -118,9 +118,14 @@ public interface LSprojectmasterRepository extends JpaRepository<LSprojectmaster
 	public List<LSprojectmaster> findByLsusersteamInAndStatusAndDuedate(List<LSusersteam> lstteam, int i,
 			String string);
 
-	public Object findByProjectidIgnoreCaseAndStatusAndLssitemaster(String projectid, int i, LSSiteMaster lssitemaster);
 
 	public Object findByProjectidIgnoreCaseAndLssitemaster(String projectname, LSSiteMaster lssitemaster);
+
+	public Object findByProjectidIgnoreCaseAndStatusAndLssitemaster(String projectid, int i, LSSiteMaster lssitemaster);
+
+
+	public Object findByProjectidIgnoreCaseAndStatusAndProjectcodeNotAndLssitemaster(String projectid, int i,
+			Integer projectcode, LSSiteMaster lssitemaster);
 
 	
 

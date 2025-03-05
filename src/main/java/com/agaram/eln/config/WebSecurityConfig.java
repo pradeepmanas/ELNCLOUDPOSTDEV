@@ -127,8 +127,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements A
 	                "/Freeuserlogin/Setpassword","/Freeuserlogin/Resetpassword","/Freeuserlogin/Loginfreeuserwithname",
 	                "/Login/verifyRecaptcha",	                
 	                "/DashBoardDemo/Getdashboardordercount",
-	                "/DashBoardDemo/Getdashboardorders","/documenteditor/api/wordeditor/Import","/smartdevice/Getdata","/documenteditor/Import"
-	                ,"/documenteditor/api/wordeditor/RestrictEditing","/documenteditor/api/wordeditor/SystemClipboard",
+	                "/DashBoardDemo/Getdashboardorders",
+	                "/documenteditor/api/wordeditor/Import",
+	                "/smartdevice/Getdata","/documenteditor/Import"
+	                ,"/documenteditor/api/wordeditor/RestrictEditing",
+	                "/documenteditor/api/wordeditor/SystemClipboard",
+	                "/documentviewer/api/wordeditor/SystemClipboard",
 	                "/Freeuserlogin/GetStartSkip",
 	                "/iotconnect/getInstcategory","/iotconnect/getInstruments","/iotconnect/getRCPortdata","/Instrument/uploadfilesprotocolfolder","/Instrument/uploadfilessheetfolder","/Freeuserlogin/ValidateEmail",
 	                "/Freeuserlogin/Sentotpmail","/iotconnect/getpreferencedata","/Login/LoginonIOT","/iotconnect/getOrdersBasedOnmethod",

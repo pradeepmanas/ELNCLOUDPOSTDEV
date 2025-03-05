@@ -1,8 +1,11 @@
 package com.agaram.eln.primary.service.syncwordconverter;
 
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
@@ -10,6 +13,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.ImageWriter;
+import javax.imageio.spi.IIORegistry;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -24,6 +32,7 @@ import com.agaram.eln.primary.model.reports.reportdesigner.ReportTemplateMapping
 import com.agaram.eln.primary.model.reports.reportdesigner.Reporttemplate;
 import com.agaram.eln.primary.model.reports.reportviewer.Reports;
 import com.agaram.eln.primary.model.reports.reportviewer.ReportsVersion;
+import com.agaram.eln.primary.model.syncwordconverter.CustomParameter;
 import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.repository.reports.reportdesigner.ReportTemplateMappingRepository;
 import com.agaram.eln.primary.repository.reports.reportviewer.ReportsRepository;
@@ -33,6 +42,14 @@ import com.agaram.eln.primary.service.protocol.Commonservice;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.gridfs.GridFSDBFile;
+import com.syncfusion.ej2.wordprocessor.FormatType;
+import com.syncfusion.ej2.wordprocessor.MetafileImageParsedEventArgs;
+import com.syncfusion.ej2.wordprocessor.MetafileImageParsedEventHandler;
+import com.syncfusion.ej2.wordprocessor.WordProcessorHelper;
+import com.syncfusion.javahelper.system.collections.generic.ListSupport;
+import com.syncfusion.javahelper.system.io.StreamSupport;
+import com.syncfusion.javahelper.system.reflection.AssemblySupport;
+import com.twelvemonkeys.imageio.plugins.tiff.TIFFImageReaderSpi;
 
 @Service
 public class DocumentViewerService {
@@ -313,4 +330,130 @@ public class DocumentViewerService {
         }
         return objfile;
     }
+
+	public String systemClipboard(CustomParameter param) {
+		if (param.content != null && param.content != "") {
+			try {
+				MetafileImageParsedEventHandler metafileImageParsedEvent = new MetafileImageParsedEventHandler() {
+
+					ListSupport<MetafileImageParsedEventHandler> delegateList = new ListSupport<MetafileImageParsedEventHandler>(
+							MetafileImageParsedEventHandler.class);
+
+					// Represents event handling for MetafileImageParsedEventHandlerCollection.
+					public void invoke(Object sender, MetafileImageParsedEventArgs args) throws Exception {
+						onMetafileImageParsed(sender, args);
+					}
+
+					// Represents the method that handles MetafileImageParsed event.
+					public void dynamicInvoke(Object... args) throws Exception {
+						onMetafileImageParsed((Object) args[0], (MetafileImageParsedEventArgs) args[1]);
+					}
+
+					// Represents the method that handles MetafileImageParsed event to add
+					// collection item.
+					public void add(MetafileImageParsedEventHandler delegate) throws Exception {
+						if (delegate != null)
+							delegateList.add(delegate);
+					}
+
+					// Represents the method that handles MetafileImageParsed event to remove
+					// collection
+					// item.
+					public void remove(MetafileImageParsedEventHandler delegate) throws Exception {
+						if (delegate != null)
+							delegateList.remove(delegate);
+					}
+				};
+				// Hooks MetafileImageParsed event.
+				WordProcessorHelper.MetafileImageParsed.add("OnMetafileImageParsed", metafileImageParsedEvent);
+				String json = WordProcessorHelper.loadString(param.content, getFormatType(param.type.toLowerCase()));
+				// Unhooks MetafileImageParsed event.
+				WordProcessorHelper.MetafileImageParsed.remove("OnMetafileImageParsed", metafileImageParsedEvent);
+				return json;
+			} catch (Exception e) {
+				return "";
+			}
+		}
+		return "";
+	}
+	
+	// Converts Metafile to raster image.
+		private static void onMetafileImageParsed(Object sender, MetafileImageParsedEventArgs args) throws Exception {
+			if (args.getIsMetafile()) {
+				// You can write your own method definition for converting Metafile to raster
+				// image using any third-party image converter.
+				args.setImageStream(convertMetafileToRasterImage(args.getMetafileStream()));
+			} else {
+				InputStream inputStream = StreamSupport.toStream(args.getMetafileStream());
+				// Use ByteArrayOutputStream to collect data into a byte array
+				ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+
+				// Read data from the InputStream and write it to the ByteArrayOutputStream
+				byte[] buffer = new byte[1024];
+				int bytesRead;
+				while ((bytesRead = inputStream.read(buffer)) != -1) {
+					byteArrayOutputStream.write(buffer, 0, bytesRead);
+				}
+
+				// Convert the ByteArrayOutputStream to a byte array
+				byte[] tiffData = byteArrayOutputStream.toByteArray();
+				// Read TIFF image from byte array
+				ByteArrayInputStream tiffInputStream = new ByteArrayInputStream(tiffData);
+				IIORegistry.getDefaultInstance().registerServiceProvider(new TIFFImageReaderSpi());
+
+				// Create ImageReader and ImageWriter instances
+				ImageReader tiffReader = ImageIO.getImageReadersByFormatName("TIFF").next();
+				ImageWriter pngWriter = ImageIO.getImageWritersByFormatName("PNG").next();
+
+				// Set up input and output streams
+				tiffReader.setInput(ImageIO.createImageInputStream(tiffInputStream));
+				ByteArrayOutputStream pngOutputStream = new ByteArrayOutputStream();
+				pngWriter.setOutput(ImageIO.createImageOutputStream(pngOutputStream));
+
+				// Read the TIFF image and write it as a PNG
+				BufferedImage image = tiffReader.read(0);
+				pngWriter.write(image);
+				pngWriter.dispose();
+				byte[] jpgData = pngOutputStream.toByteArray();
+				InputStream jpgStream = new ByteArrayInputStream(jpgData);
+				args.setImageStream(StreamSupport.toStream(jpgStream));
+			}
+		}
+		
+		private static StreamSupport convertMetafileToRasterImage(StreamSupport ImageStream) throws Exception {
+			// Here we are loading a default raster image as fallback.
+			StreamSupport imgStream = getManifestResourceStream("ImageNotFound.jpg");
+			return imgStream;
+			// To do : Write your own logic for converting Metafile to raster image using
+			// any third-party image converter(Syncfusion doesn't provide any image
+			// converter).
+		}
+		
+		private static StreamSupport getManifestResourceStream(String fileName) throws Exception {
+			AssemblySupport assembly = AssemblySupport.getExecutingAssembly();
+			return assembly.getManifestResourceStream("ImageNotFound.jpg");
+		}
+	
+	static FormatType getFormatType(String format) {
+		switch (format) {
+		case ".dotx":
+		case ".docx":
+		case ".docm":
+		case ".dotm":
+			return FormatType.Docx;
+		case ".dot":
+		case ".doc":
+			return FormatType.Doc;
+		case ".rtf":
+			return FormatType.Rtf;
+		case ".txt":
+			return FormatType.Txt;
+		case ".xml":
+			return FormatType.WordML;
+		case ".html":
+			return FormatType.Html;
+		default:
+			return FormatType.Docx;
+		}
+	}
 }

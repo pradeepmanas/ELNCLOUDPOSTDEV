@@ -627,7 +627,7 @@ public class TransactionService {
 		Double getIssuedQty = Double.parseDouble(objInventory.getSavailablequantity().toString());
 		Double getUsedQty = Double.parseDouble(objResultMap.get("usedQuantity").toString());
 		ElnresultUsedMaterial resultUsedMaterial = new ElnresultUsedMaterial();
-		if (getIssuedQty <= getUsedQty) {
+		if (getIssuedQty < getUsedQty) {
 			resultUsedMaterial.setResponse(new Response());
 			resultUsedMaterial.getResponse().setStatus(false);
 			return new ResponseEntity<>(resultUsedMaterial, HttpStatus.OK);
