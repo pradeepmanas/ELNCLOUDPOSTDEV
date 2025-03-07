@@ -304,6 +304,9 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	@Transient
 	private String content;
 
+	@Column(columnDefinition = "varchar(250)", name = "Tittle")
+	private String Tittle;
+	
 	private Long applicationsequence;
 	private Long sitesequence;
 	private Long projectsequence;
@@ -1214,4 +1217,11 @@ public class LSlogilabprotocoldetail implements Comparable<LSlogilabprotocoldeta
 	public void setLsprotocolselectedTeam(List<LSprotocolselectedteam> lsprotocolselectedTeam) {
 		this.lsprotocolselectedTeam = lsprotocolselectedTeam;
 	}
+	public String getTittle() {
+		return Tittle;
+	}
+	public void setTittle(String tittle) {
+		Tittle = tittle;
+	}
+	
 }

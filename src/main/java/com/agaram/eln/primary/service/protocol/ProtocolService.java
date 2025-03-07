@@ -6435,12 +6435,19 @@ public class ProtocolService {
 		return bis;
 	}
 
-	public ByteArrayInputStream downloadprotocolfile(String fileid, String tenant) {
+	public ByteArrayInputStream downloadprotocolfile(String fileid, String tenant, String ontabkey) {
 
 		byte[] data = null;
+		String containerName = "";
+		if (ontabkey.equals("protocolfile")) {
+			containerName = tenant + "protocolfiles";
+		} else if (ontabkey.equals("sheet")) {
+			containerName = tenant + "sheetfolderfiles";
+		} else {
+			containerName = tenant + "protocolfolderfiles";
+		}
 		try {
-			data = StreamUtils
-					.copyToByteArray(cloudFileManipulationservice.retrieveCloudFile(fileid, tenant + "protocolfiles"));
+			data = StreamUtils.copyToByteArray(cloudFileManipulationservice.retrieveCloudFile(fileid, containerName));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

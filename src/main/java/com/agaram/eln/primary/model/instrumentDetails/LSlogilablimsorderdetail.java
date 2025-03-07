@@ -149,6 +149,8 @@ public class LSlogilablimsorderdetail {
 	
 	private Integer sitecode;
 	
+	@Column(columnDefinition = "varchar(250)", name = "Tittle")
+	private String Tittle;
 	
     public Integer getSitecode() {
 		return sitecode;
@@ -1318,6 +1320,14 @@ public class LSlogilablimsorderdetail {
 
 		public void setLsselectedTeam(List<LSSelectedTeam> lsselectedTeam) {
 			this.lsselectedTeam = lsselectedTeam;
+		}
+
+		public String getTittle() {
+			return Tittle;
+		}
+
+		public void setTittle(String tittle) {
+			Tittle = tittle;
 		}
 		
 		

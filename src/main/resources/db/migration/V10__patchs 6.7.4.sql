@@ -2542,3 +2542,8 @@ update sample set openexpiryselect = false where openexpiryselect IS NULL;
 
 ALTER TABLE IF Exists elnmaterialinventory ADD COLUMN IF NOT EXISTS openexpiryselect Boolean;
 update elnmaterialinventory set openexpiryselect = false where openexpiryselect IS NULL;
+
+delete from LSaudittrailconfiguration where lsusermaster_usercode IS NOT NULL and EXISTS (select * from LSaudittrailconfiguration where lsusermaster_usercode IS NOT NULL);
+
+ALTER TABLE IF Exists lslogilablimsorderdetail ADD COLUMN IF NOT EXISTS Tittle varchar(250);
+ALTER TABLE IF Exists LSlogilabprotocoldetail ADD COLUMN IF NOT EXISTS Tittle varchar(250);

@@ -1180,7 +1180,8 @@ public class InstrumentController {
 		String tenant = (String) obj.get("tenant");
 		String fileid = (String) obj.get("fileid");
 		String screenname = (String) obj.get("screenname");
-		return instrumentService.downloadsheetfilefordocx(multitenant,tenant,fileid,screenname);
+		String ontabkey = (String) obj.get("ontabkey");
+		return instrumentService.downloadsheetfilefordocx(multitenant,tenant,fileid,screenname,ontabkey);
 	}
 	
 	@RequestMapping("/deletefilesforfolder/{directorycode}/{filefor}/{tenantid}/{ismultitenant}/{usercode}/{sitecode}/{createddate}/{fileviewfor}")

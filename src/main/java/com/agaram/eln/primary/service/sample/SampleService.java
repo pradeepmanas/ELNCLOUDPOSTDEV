@@ -23,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.agaram.eln.primary.commonfunction.commonfunction;
 import com.agaram.eln.primary.fetchmodel.inventory.Sampleget;
 import com.agaram.eln.primary.model.general.Response;
+import com.agaram.eln.primary.model.masters.Lslogbooks;
 import com.agaram.eln.primary.model.material.Period;
 import com.agaram.eln.primary.model.material.Unit;
 import com.agaram.eln.primary.model.sample.DerivedSamples;
@@ -601,30 +602,62 @@ public ResponseEntity<Object> getSampleonCategoryFillter(@RequestBody Map<String
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
 	}
 
-	public ResponseEntity<Object> updateSampleExpiry(Sample objSample)
-			throws ParseException {
+//	public ResponseEntity<Object> updateSampleExpiry(Sample objSample)
+//			throws ParseException {
+//
+//		Sample objInventory = samplerepository.findBySamplecode(objSample.getSamplecode());
+//		if(objSample.getPreviousstatus()!=null) {
+//			long Ntransactionstatus= objSample.getNtransactionstatus();
+//			updatesampleinventorytransactiondetails(objSample.getCreateby(),0,objInventory,Ntransactionstatus,objSample.getPreviousstatus());
+//		}
+//		if (objSample.getOpenexpiry()) {
+//			objInventory.setOpenexpiry(true);
+//			objInventory.setOpenexpiryselect(objSample.getOpenexpiryselect());
+//			objInventory.setExpirydate(objSample.getExpirydate());
+//			objInventory.setNtransactionstatus(objSample.getNtransactionstatus());
+//			samplerepository.save(objInventory);
+//			return new ResponseEntity<>(objInventory, HttpStatus.OK);
+//		}
+//		objInventory.setOpenexpiry(objSample.getOpenexpiry());
+//		objInventory.setOpenexpiryselect(objSample.getOpenexpiryselect());
+//		objInventory.setNstatus(objSample.getNstatus());
+//		objInventory.setNtransactionstatus(objSample.getNtransactionstatus());
+//
+//		samplerepository.save(objInventory);
+//		return new ResponseEntity<>(objInventory, HttpStatus.OK);
+//	}
+	
+	public List<Sample> updateSampleExpiry(Sample[] objSampleList) throws ParseException {
+	    List<Sample> updatedSamples = new ArrayList<>();
+	    
+	    List<Sample> lstsample = Arrays.asList(objSampleList);
+	    for (Sample objSample : lstsample) {
+	        Sample objInventory = samplerepository.findBySamplecode(objSample.getSamplecode());
 
-		Sample objInventory = samplerepository.findBySamplecode(objSample.getSamplecode());
-		if(objSample.getPreviousstatus()!=null) {
-			long Ntransactionstatus= objSample.getNtransactionstatus();
-			updatesampleinventorytransactiondetails(objSample.getCreateby(),0,objInventory,Ntransactionstatus,objSample.getPreviousstatus());
-		}
-		if (objSample.getOpenexpiry()) {
-			objInventory.setOpenexpiry(true);
-			objInventory.setOpenexpiryselect(objSample.getOpenexpiryselect());
-			objInventory.setExpirydate(objSample.getExpirydate());
-			objInventory.setNtransactionstatus(objSample.getNtransactionstatus());
-			samplerepository.save(objInventory);
-			return new ResponseEntity<>(objInventory, HttpStatus.OK);
-		}
-		objInventory.setOpenexpiry(objSample.getOpenexpiry());
-		objInventory.setOpenexpiryselect(objSample.getOpenexpiryselect());
-		objInventory.setNstatus(objSample.getNstatus());
-		objInventory.setNtransactionstatus(objSample.getNtransactionstatus());
+	        if (objInventory != null) {
+	            if (objSample.getPreviousstatus() != null) {
+	                long Ntransactionstatus = objSample.getNtransactionstatus();
+	                updatesampleinventorytransactiondetails(
+	                    objSample.getCreateby(), 0, objInventory, Ntransactionstatus, objSample.getPreviousstatus()
+	                );
+	            }
 
-		samplerepository.save(objInventory);
-		return new ResponseEntity<>(objInventory, HttpStatus.OK);
+	            objInventory.setOpenexpiry(objSample.getOpenexpiry());
+	            objInventory.setOpenexpiryselect(objSample.getOpenexpiryselect());
+	            objInventory.setNstatus(objSample.getNstatus());
+	            objInventory.setNtransactionstatus(objSample.getNtransactionstatus());
+	            objInventory.setExpirydate(objSample.getExpirydate());
+
+	            updatedSamples.add(objInventory);
+	        }
+	    }
+
+	    // Save all updated records in a single batch operation
+	    samplerepository.save(updatedSamples);
+
+	    return updatedSamples;
 	}
+
 	public void updatesampleinventorytransactiondetails(LSuserMaster createdby ,Integer transactionscreen,Sample objInventory, long ntransactionstatus,long Previousstatus) throws ParseException {
 		ElnresultUsedSample ElnresultUsedSample = new ElnresultUsedSample();
 		ElnresultUsedSample.setCreatedbyusercode(createdby);

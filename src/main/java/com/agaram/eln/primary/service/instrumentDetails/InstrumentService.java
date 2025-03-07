@@ -10226,14 +10226,25 @@ public class InstrumentService {
 		}
 	}
 
-	public Map<String, Object> downloadsheetfilefordocx(Integer multitenant, String tenant, String fileid, String screenname)
-			throws Exception {
+	public Map<String, Object> downloadsheetfilefordocx(Integer multitenant, String tenant, String fileid,
+			String screenname, String ontabkey) throws Exception {
 		Map<String, Object> mapObj = new HashMap<>();
-
+		String containerName = "";
 		if (multitenant == 1) {
-			String containerName = screenname.equals("Sheet") ? tenant + "sheetfolderfiles" : tenant + "protocolfiles";
-			byte[] documentBytes = objCloudFileManipulationservice.retrieveCloudReportFile(containerName,
-					fileid);
+			if (screenname.equals("Sheet")) {
+				containerName = tenant + "sheetfolderfiles";
+			} else if (screenname.equals("Protocol")) {
+				containerName = tenant + "protocolfolderfiles";
+			} else {
+				if (ontabkey.isEmpty()) {
+					containerName = tenant + "protocolfiles";
+				} else if (ontabkey.equals("sheet")) {
+					containerName = tenant + "sheetfolderfiles";
+				} else {
+					containerName = tenant + "protocolfolderfiles";
+				}
+			}
+			byte[] documentBytes = objCloudFileManipulationservice.retrieveCloudReportFile(containerName, fileid);
 			MockMultipartFile mockMultipartFile = new MockMultipartFile("tempFileName", documentBytes);
 			Map<String, String> mapObj1 = documenteditorService.importFile(mockMultipartFile);
 			mapObj.put("templatecontent", mapObj1);

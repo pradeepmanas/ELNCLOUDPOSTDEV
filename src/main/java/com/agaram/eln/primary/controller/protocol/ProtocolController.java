@@ -522,12 +522,12 @@ public class ProtocolController {
 	    return new ResponseEntity<>(new InputStreamResource(bis), header, HttpStatus.OK);
 	}
 	
-	@RequestMapping(value = "downloadprotocolfile/{fileid}/{tenant}/{filename}/{extension}", method = RequestMethod.GET)
+	@RequestMapping(value = "downloadprotocolfile/{fileid}/{tenant}/{filename}/{extension}/{ontabkey}", method = RequestMethod.GET)
 	@GetMapping
 	public ResponseEntity<InputStreamResource> downloadprotocolfile(@PathVariable String fileid
-			, @PathVariable String tenant, @PathVariable String filename, @PathVariable String extension) throws IllegalStateException, IOException {
+			, @PathVariable String tenant, @PathVariable String filename, @PathVariable String extension,@PathVariable String ontabkey) throws IllegalStateException, IOException {
 		
-		ByteArrayInputStream bis = ProtocolMasterService.downloadprotocolfile(fileid, tenant);
+		ByteArrayInputStream bis = ProtocolMasterService.downloadprotocolfile(fileid, tenant,ontabkey);
 		
 	    HttpHeaders header = new HttpHeaders();
 	    String mediatype = commonfunction.getMIMEtypeonextension(extension);

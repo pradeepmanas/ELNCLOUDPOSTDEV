@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -128,7 +129,7 @@ public class SampleController {
 	}
 	
 	@RequestMapping(value = "/updateSampleExpiry", method = RequestMethod.POST)
-	public ResponseEntity<Object> updateSampleExpiry(@RequestBody Sample objSample) throws Exception {
+	public List<Sample> updateSampleExpiry(@RequestBody Sample[] objSample) throws Exception {
 		return objSampleService.updateSampleExpiry(objSample);
 	}
 
