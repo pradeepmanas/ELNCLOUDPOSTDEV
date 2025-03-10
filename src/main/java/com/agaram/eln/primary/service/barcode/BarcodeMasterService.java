@@ -391,7 +391,7 @@ public class BarcodeMasterService {
 				DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd ");
 				String replaceddata = data.replace("$sampleid$", element.getSequenceid())
 						.replace("$samplename$", element.getSamplename())
-						.replace("$storagepath$", element.getSamplestoragemapping().getStoragepath())
+//						.replace("$storagepath$", element.getSamplestoragemapping().getStoragepath())
 						.replace("$generatedby$", username).replace("$generateddate$", dateFormat.format(currentdata));
 				if(element.getSamplestoragemapping()!=null && element.getSamplestoragemapping().getStoragepath()!=null) {
 					replaceddata=replaceddata.replace("$storagepath$", element.getSamplestoragemapping().getStoragepath());
