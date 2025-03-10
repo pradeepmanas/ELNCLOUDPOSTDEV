@@ -56,6 +56,7 @@ import com.agaram.eln.primary.model.jwt.JwtResponse;
 import com.agaram.eln.primary.model.masters.Lsrepositoriesdata;
 import com.agaram.eln.primary.model.multitenant.DataSourceConfig;
 import com.agaram.eln.primary.model.protocols.LSlogilabprotocoldetail;
+import com.agaram.eln.primary.model.sequence.SequenceTable;
 import com.agaram.eln.primary.model.sheetManipulation.Notification;
 import com.agaram.eln.primary.model.usermanagement.LSMultisites;
 import com.agaram.eln.primary.model.usermanagement.LSMultiusergroup;
@@ -76,6 +77,7 @@ import com.agaram.eln.primary.repository.instrumentDetails.LSordernotificationRe
 import com.agaram.eln.primary.repository.masters.LsrepositoriesdataRepository;
 import com.agaram.eln.primary.repository.multitenant.DataSourceConfigRepository;
 import com.agaram.eln.primary.repository.protocol.LSlogilabprotocoldetailRepository;
+import com.agaram.eln.primary.repository.sequence.SequenceTableRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.NotificationRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSMultisitesRepositery;
 import com.agaram.eln.primary.repository.usermanagement.LSMultiusergroupRepositery;
@@ -168,6 +170,9 @@ public class LoginService {
 
 	@Autowired
 	private LSordernotificationRepository lsordernotificationrepo;
+	
+	@Autowired
+	private SequenceTableRepository sequenceTableRepository;
 //	
 //	@Autowired
 //	private InstrumentService instrumentservice;
@@ -903,7 +908,9 @@ public class LoginService {
 		objExitinguser = lSuserMasterRepository
 				.findByUsernameIgnoreCaseAndUsercodeInAndLoginfromAndUserretirestatusNot(username, usercode, "0", 1);
 		objExitinguser.stream().map(items -> {
-			items.setMultiusergroupcode(items.getMultiusergroupcode());
+			items.setMultiusergroupcode(items.getMultiusergroupcode().stream().filter(
+					values -> values.getLsusergroup().getLssitemaster() == Integer.parseInt(objuser.getsSiteCode()))
+					.collect(Collectors.toList()));
 			return items;
 		}).collect(Collectors.toList());
 
@@ -2514,11 +2521,30 @@ public class LoginService {
 		LSOrdernotification notobj = lsordernotificationrepo.findByBatchcodeAndScreen(objNotification.getBatchcode(), objNotification.getScreen());	
 		LSlogilablimsorderdetail order = null;
 		LSlogilabprotocoldetail protocolorder = null;
+		String batchid = null;
+		String protocolordername = null;
+		String Details = null;
 		
 		if(objNotification.getScreen().equals("sheetorder")) {
 		    order = lslogilablimsorderdetailRepository.findByBatchcodeOrderByBatchcodeDesc(objNotification.getBatchcode());
+		    
+			SequenceTable seqobj =  sequenceTableRepository.findBySequencecodeOrderBySequencecode(1);
+			Boolean Applicationseq = seqobj.getSequenceview().equals(2) ? true : false;
+			batchid = Applicationseq 
+					?  order.getSequenceid() != null 
+						? order.getSequenceid() : order.getBatchid() 
+					: order.getBatchid();
+			
 		}else {
 		    protocolorder = lslogilabprotocoldetailRepository.findByProtocolordercode(objNotification.getBatchcode());
+
+			SequenceTable seqobj =  sequenceTableRepository.findBySequencecodeOrderBySequencecode(2);
+			Boolean Applicationseq = seqobj.getSequenceview().equals(2) ? true : false;
+			protocolordername = Applicationseq 
+					?  protocolorder.getSequenceid() != null
+						? protocolorder.getSequenceid() : protocolorder.getProtoclordername()
+					: protocolorder.getProtoclordername();
+		
 		}
 		
 		int cancel;
@@ -2537,11 +2563,19 @@ public class LoginService {
 		
 		LSnotification LSnotification = new LSnotification();
 		
-		String Details = "{\"ordercode\" :\"" + objNotification.getBatchcode() 
-	    + "\",\"order\" :\"" + objNotification.getBatchid() 
-	    + "\",\"date\" :\"" + duedate 
-	    + "\",\"screen\":\"" + objNotification.getScreen() 
-		+ "\"}";
+		if(objNotification.getScreen().equals("sheetorder")) {
+			Details = "{\"ordercode\" :\"" + objNotification.getBatchcode() 
+			    + "\",\"order\" :\"" + batchid 
+			    + "\",\"date\" :\"" + duedate 
+			    + "\",\"screen\":\"" + objNotification.getScreen() 
+				+ "\"}";
+		}else {
+			Details = "{\"ordercode\" :\"" + objNotification.getBatchcode() 
+		    + "\",\"order\" :\"" + protocolordername 
+		    + "\",\"date\" :\"" + duedate 
+		    + "\",\"screen\":\"" + objNotification.getScreen() 
+			+ "\"}";
+		}
 		
 		String path = objNotification.getScreen().equals("sheetorder") ? "/registertask" : "/Protocolorder";
 		
@@ -2609,12 +2643,14 @@ public class LoginService {
 							lstnotifications.add(LSnotification1);				
 					        }
 					
-		
 						LSnotificationRepository.save(lstnotifications);
 						lsordernotificationrepo.save(ordernotifylist);
 						notifyoverduedays(objNotification);
 						
 		}
+		batchid = null;
+		protocolordername = null;
+		Details = null;	
 	}
 
 	public void overduenotification(LSOrdernotification objNotification) throws ParseException {
@@ -2622,11 +2658,29 @@ public class LoginService {
 		LSOrdernotification notobj = lsordernotificationrepo.findByBatchcodeAndScreen(objNotification.getBatchcode(), objNotification.getScreen());	
 		LSlogilablimsorderdetail order = null;
 		LSlogilabprotocoldetail protocolorder = null;
+		String batchid = null;
+		String protocolordername = null;
+		String Details = null;
 		
 		if(objNotification.getScreen().equals("sheetorder")) {
 		    order = lslogilablimsorderdetailRepository.findByBatchcodeOrderByBatchcodeDesc(objNotification.getBatchcode());
+
+			SequenceTable seqobj =  sequenceTableRepository.findBySequencecodeOrderBySequencecode(1);
+			Boolean Applicationseq = seqobj.getSequenceview().equals(2) ? true : false;
+			batchid = Applicationseq 
+					?  order.getSequenceid() != null 
+						? order.getSequenceid() : order.getBatchid() 
+					: order.getBatchid();
 		}else {
 		    protocolorder = lslogilabprotocoldetailRepository.findByProtocolordercode(objNotification.getBatchcode());
+
+			SequenceTable seqobj =  sequenceTableRepository.findBySequencecodeOrderBySequencecode(2);
+			Boolean Applicationseq = seqobj.getSequenceview().equals(2) ? true : false;
+
+			protocolordername = Applicationseq 
+					?  protocolorder.getSequenceid() != null
+						? protocolorder.getSequenceid() : protocolorder.getProtoclordername()
+					: protocolorder.getProtoclordername();
 		}
 		
 		int cancel;
@@ -2646,13 +2700,21 @@ public class LoginService {
 		
 		String path = objNotification.getScreen().equals("sheetorder") ? "/registertask" : "/Protocolorder";
 		
-		String Details = "{\"ordercode\" :\"" + objNotification.getBatchcode() 
-	    + "\",\"order\" :\"" + objNotification.getBatchid()
-	    + "\",\"days\" :\"" + objNotification.getOverduedays()
-	    + "\",\"date\" :\"" + duedate
-	    + "\",\"screen\":\"" + objNotification.getScreen() 
-		+ "\"}";
-		
+		if(objNotification.getScreen().equals("sheetorder")) {
+			 Details = "{\"ordercode\" :\"" + objNotification.getBatchcode() 
+			    + "\",\"order\" :\"" + batchid
+			    + "\",\"days\" :\"" + objNotification.getOverduedays()
+			    + "\",\"date\" :\"" + duedate
+			    + "\",\"screen\":\"" + objNotification.getScreen() 
+				+ "\"}";
+		}else {
+			Details = "{\"ordercode\" :\"" + objNotification.getBatchcode() 
+			    + "\",\"order\" :\"" + protocolordername
+			    + "\",\"days\" :\"" + objNotification.getOverduedays()
+			    + "\",\"date\" :\"" + duedate
+			    + "\",\"screen\":\"" + objNotification.getScreen() 
+				+ "\"}";
+		}
 		if(order==null) {
 			 cancel = protocolorder.getOrdercancell() == null ? 0 : protocolorder.getOrdercancell();
 			 approvelstatus = protocolorder.getApprovelstatus()== null ? 0 :protocolorder.getApprovelstatus();
@@ -2727,6 +2789,9 @@ public class LoginService {
 			LSnotificationRepository.save(lstnotifications);
 			lsordernotificationrepo.save(ordernotifylist);
 			notifyoverduedays(objNotification);
+			batchid = null;
+			protocolordername = null;
+			Details = null;
 		}
 	}
 	
@@ -2775,11 +2840,28 @@ public class LoginService {
 		LSOrdernotification notobj = lsordernotificationrepo.findByBatchcodeAndScreen(objNotification.getBatchcode(), objNotification.getScreen());	
 		LSlogilablimsorderdetail order = null;
 		LSlogilabprotocoldetail protocolorder = null;
+		String batchid = null;
+		String protocolordername = null;
+		String Details = null;
 			
 		if(objNotification.getScreen().equals("sheetorder")) {
 		    order = lslogilablimsorderdetailRepository.findByBatchcodeOrderByBatchcodeDesc(objNotification.getBatchcode());
+
+			SequenceTable seqobj =  sequenceTableRepository.findBySequencecodeOrderBySequencecode(1);
+			Boolean Applicationseq = seqobj.getSequenceview().equals(2) ? true : false;
+			batchid = Applicationseq 
+					?  order.getSequenceid() != null 
+						? order.getSequenceid() : order.getBatchid() 
+					: order.getBatchid();			
 		}else {
 			protocolorder = lslogilabprotocoldetailRepository.findByProtocolordercode(objNotification.getBatchcode());
+
+			SequenceTable seqobj =  sequenceTableRepository.findBySequencecodeOrderBySequencecode(2);
+			Boolean Applicationseq = seqobj.getSequenceview().equals(2) ? true : false;
+			protocolordername = Applicationseq 
+					?  protocolorder.getSequenceid() != null
+						? protocolorder.getSequenceid() : protocolorder.getProtoclordername()
+					: protocolorder.getProtoclordername();
 		}
 			
 		int cancel;
@@ -2794,11 +2876,20 @@ public class LoginService {
 		List<LSnotification> lstnotifications = new ArrayList<LSnotification>();
 		LSnotification LSnotification = new LSnotification();
 		
-		String Details = "{\"ordercode\" :\"" + objNotification.getBatchcode() 
-        + "\",\"order\" :\"" + objNotification.getBatchid() 
-        + "\",\"date\" :\"" + cautiondate
-        + "\",\"screen\":\"" + objNotification.getScreen() 
-		+ "\"}";
+		if(objNotification.getScreen().equals("sheetorder")) {
+			 Details = "{\"ordercode\" :\"" + objNotification.getBatchcode() 
+		        + "\",\"order\" :\"" + batchid 
+		        + "\",\"date\" :\"" + cautiondate
+		        + "\",\"screen\":\"" + objNotification.getScreen() 
+				+ "\"}";
+		 }
+		else {
+			 Details = "{\"ordercode\" :\"" + objNotification.getBatchcode() 
+		        + "\",\"order\" :\"" + protocolordername 
+		        + "\",\"date\" :\"" + cautiondate
+		        + "\",\"screen\":\"" + objNotification.getScreen() 
+				+ "\"}";
+		}
         String path = objNotification.getScreen().equals("sheetorder") ? "/registertask" : "/Protocolorder"; 
 
 
@@ -2874,6 +2965,9 @@ public class LoginService {
 			LSnotificationRepository.save(lstnotifications);
 			lsordernotificationrepo.save(ordernotifylist);
 			notifyoverduedays(objNotification);
+			batchid = null;
+			protocolordername = null;
+			Details = null;
 		 }
 	}
 
@@ -2899,15 +2993,50 @@ public class LoginService {
 
 		LSuserMaster objLSuserMaster = userService.getUserOnCode(LSuserMaster);
 
+		
 		List<LSnotification> lstnotifications = new ArrayList<LSnotification>();
 		codelist.stream()
 				.filter(notification -> notification.getStatus() == 1).map(notification -> {
 
 					LSnotification LSnotification = new LSnotification();
+
+					String batchid = null;
+					String Details = null;
+					String protocolordername = null;
+							
+					LSlogilablimsorderdetail order = null;
+					LSlogilabprotocoldetail protocolorder = null;
 					
-					String Details = "{\"ordercode\" :\"" + notification.getOrderid() + "\",\"order\" :\""
-							+ notification.getBatchid() + "\",\"description\":\"" + notification.getDescription() + "\",\"screen\":\"" + notification.getScreen() 
-							+ "\"}";
+					if(notification.getScreen().equals("Sheet Order")) {
+					    order = lslogilablimsorderdetailRepository.findByBatchcodeOrderByBatchcodeDesc(notification.getOrderid());
+
+						SequenceTable seqobj =  sequenceTableRepository.findBySequencecodeOrderBySequencecode(1);
+						Boolean Applicationseq = seqobj.getSequenceview().equals(2) ? true : false;
+						batchid = Applicationseq 
+								?  order.getSequenceid() != null 
+									? order.getSequenceid() : order.getBatchid() 
+								: order.getBatchid();
+									
+						Details = "{\"ordercode\" :\"" + notification.getOrderid() + "\",\"order\" :\""
+									 + notification.getBatchid() + "\",\"description\":\"" + notification.getDescription() + "\",\"screen\":\"" + notification.getScreen() 
+								     + "\"}";
+									
+					}else {
+						protocolorder = lslogilabprotocoldetailRepository.findByProtocolordercode(notification.getOrderid());
+
+						SequenceTable seqobj =  sequenceTableRepository.findBySequencecodeOrderBySequencecode(2);
+						Boolean Applicationseq = seqobj.getSequenceview().equals(2) ? true : false;
+						protocolordername = Applicationseq 
+								?  protocolorder.getSequenceid() != null
+									? protocolorder.getSequenceid() : protocolorder.getProtoclordername()
+								: protocolorder.getProtoclordername();
+									
+					    Details = "{\"ordercode\" :\"" + notification.getOrderid() + "\",\"order\" :\""
+									+ notification.getBatchid() + "\",\"description\":\"" + notification.getDescription() + "\",\"screen\":\"" + notification.getScreen() 
+									+ "\"}";
+									
+					}
+
 							
 					LSnotification.setIsnewnotification(1);
 					LSnotification.setNotification("CAUTIONALERT");

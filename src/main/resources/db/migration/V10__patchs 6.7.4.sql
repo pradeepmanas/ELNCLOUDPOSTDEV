@@ -2260,6 +2260,52 @@ VALUES (267, 'IDS_TSK_SCREENVIEW', 'IDS_MDL_SETUP', 'IDS_SCN_TEMPLATEWORKFLOW', 
 ON CONFLICT (orderno) DO NOTHING;
 
 ---------------------
+
+---sheet order
+
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname,sequenceorder) 
+SELECT 'IDS_TSK_REGISTER', 'IDS_MDL_ORDERS', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_SHEETORDERS' ,4
+WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_REGISTER' and screenname='IDS_SCN_SHEETORDERS' and usergroupid_usergroupcode = 1); 
+
+
+INSERT INTO lsusergrouprightsmaster(orderno, displaytopic, modulename, screenname, sallow, screate, sdelete, sedit, status, sequenceorder) 
+VALUES (268, 'IDS_TSK_REGISTER', 'IDS_MDL_ORDERS', 'IDS_SCN_SHEETORDERS', '0', 'NA', 'NA', 'NA', '0,0,0', 4) 
+ON CONFLICT (orderno) DO NOTHING;
+
+-------------------------------------------
+
+---Protocol order
+
+INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname,sequenceorder) 
+SELECT 'IDS_TSK_REGISTER', 'IDS_MDL_ORDERS', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_PROTOCOLORDERS' ,6
+WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_REGISTER' and screenname='IDS_SCN_PROTOCOLORDERS' and usergroupid_usergroupcode = 1); 
+
+
+INSERT INTO lsusergrouprightsmaster(orderno, displaytopic, modulename, screenname, sallow, screate, sdelete, sedit, status, sequenceorder) 
+VALUES (269, 'IDS_TSK_REGISTER', 'IDS_MDL_ORDERS', 'IDS_SCN_PROTOCOLORDERS', '0', 'NA', 'NA', 'NA', '0,0,0', 6) 
+ON CONFLICT (orderno) DO NOTHING;
+
+-------------------------------------------
+-----------Dashboard
+-- INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname,sequenceorder) 
+-- SELECT 'IDS_TSK_REGISTER', 'IDS_MDL_DASHBOARD', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_DASHBOARD' ,2
+-- WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_REGISTER' and screenname='IDS_SCN_DASHBOARD' and usergroupid_usergroupcode = 1); 
+
+
+-- INSERT INTO lsusergrouprightsmaster(orderno, displaytopic, modulename, screenname, sallow, screate, sdelete, sedit, status, sequenceorder) 
+-- VALUES (270, 'IDS_TSK_REGISTER', 'IDS_MDL_DASHBOARD', 'IDS_SCN_DASHBOARD', '0', 'NA', 'NA', 'NA', '0,0,0', 2) 
+-- ON CONFLICT (orderno) DO NOTHING;
+
+-- INSERT into lsusergrouprights(displaytopic,modulename,createdby, sallow, screate, sdelete, sedit,lssitemaster_sitecode, usergroupid_usergroupcode,screenname,sequenceorder) 
+-- SELECT 'IDS_TSK_REGISTER', 'IDS_MDL_ORDERS', 'administrator', '1', 'NA', 'NA', 'NA', 1,1,'IDS_SCN_DASHBOARD' ,2
+-- WHERE NOT EXISTS (select * from lsusergrouprights where displaytopic = 'IDS_TSK_REGISTER' and screenname='IDS_SCN_DASHBOARD' and usergroupid_usergroupcode = 1); 
+
+
+-- INSERT INTO lsusergrouprightsmaster(orderno, displaytopic, modulename, screenname, sallow, screate, sdelete, sedit, status, sequenceorder) 
+-- VALUES (271, 'IDS_TSK_REGISTER', 'IDS_MDL_ORDERS', 'IDS_SCN_DASHBOARD', '0', 'NA', 'NA', 'NA', '0,0,0', 2) 
+-- ON CONFLICT (orderno) DO NOTHING;
+--------------------------------------------
+-------------------------------------------------
 update lsusergrouprightsmaster set screenname = 'IDS_SCN_PROJECTMASTER' where screenname in
 ('IDS_SCN_PROJECTTEAM','IDS_SCN_TASKMASTER','IDS_SCN_PROJECTMASTER');
 update lsusergrouprights set screenname = 'IDS_SCN_PROJECTMASTER' where screenname in
@@ -2547,3 +2593,5 @@ delete from LSaudittrailconfiguration where lsusermaster_usercode IS NOT NULL an
 
 ALTER TABLE IF Exists lslogilablimsorderdetail ADD COLUMN IF NOT EXISTS Tittle varchar(250);
 ALTER TABLE IF Exists LSlogilabprotocoldetail ADD COLUMN IF NOT EXISTS Tittle varchar(250);
+
+update screenmaster set screenname='IDS_SCN_INVENTORY' where screenname='IDS_SCN_MATERIALTYPE' and EXISTS (select * from screenmaster where screenname='IDS_SCN_MATERIALTYPE');

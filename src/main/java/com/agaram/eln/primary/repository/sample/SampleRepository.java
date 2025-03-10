@@ -7,11 +7,14 @@ import javax.transaction.Transactional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.agaram.eln.primary.fetchmodel.inventory.Sampleget;
+import com.agaram.eln.primary.model.material.Elnmaterial;
 import com.agaram.eln.primary.model.sample.Sample;
 import com.agaram.eln.primary.model.sample.SampleCategory;
 import com.agaram.eln.primary.model.sample.SampleType;
+import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 
 public interface SampleRepository  extends JpaRepository<Sample,Integer>{
 
@@ -33,24 +36,15 @@ public interface SampleRepository  extends JpaRepository<Sample,Integer>{
 	List<Sample> findByNsitecodeAndNtransactionstatusAndOpenexpiryAndExpirydateBetween(
 			Integer lssitemaster, int i, boolean b, Date currentDate, Date endDate);
 
-	List<Sample> findByNsitecodeAndCreateddateBetweenAndNtransactionstatusOrderBySamplecodeDesc(Integer sitecode,
-			Date fromdate, Date todate, int i);
 
 	List<Sample> findBySamplecategoryAndNsitecodeAndCreateddateBetweenOrderBySamplecodeDesc(
 			SampleCategory objsamplecat, Integer nsiteInteger, Date fromdate, Date todate);
-
-	List<Sample> findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndSamplecodeInOrderBySamplecodeDesc(
-			Integer siteCode, Date fromDate, Date toDate, Integer transactionStatus, List<Integer> sampleCodes);
 
 	List<Sample> findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndAssignedprojectAndTrackconsumptionNotAndQuantityGreaterThanOrNsitecodeAndCreateddateBetweenAndNtransactionstatusAndAssignedprojectIsNullAndTrackconsumptionNotAndQuantityGreaterThanOrNsitecodeAndCreateddateBetweenAndNtransactionstatusAndAssignedprojectAndTrackconsumptionAndQuantityGreaterThanOrNsitecodeAndCreateddateBetweenAndNtransactionstatusAndAssignedprojectIsNullAndTrackconsumptionAndQuantityGreaterThanOrderBySamplecodeDesc(
 			Integer siteCode, Date fromDate, Date toDate, Integer transactionStatus, String string, int i, int j,
 			Integer siteCode2, Date fromDate2, Date toDate2, Integer transactionStatus2, int k, int l,
 			Integer siteCode3, Date fromDate3, Date toDate3, Integer transactionStatus3, String string2, int m, int n,
 			Integer siteCode4, Date fromDate4, Date toDate4, Integer transactionStatus4, int o, int p);
-
-	List<Sample> findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndSamplecodeInAndSampletypeOrderBySamplecodeDesc(
-			Integer siteCode, Date fromDate, Date toDate, Integer transactionStatus, List<Integer> sampleCodes,
-			SampleType objSampleType);
 
 	List<Sample> findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndAssignedprojectAndTrackconsumptionNotAndQuantityGreaterThanAndSampletypeOrNsitecodeAndCreateddateBetweenAndNtransactionstatusAndAssignedprojectIsNullAndTrackconsumptionNotAndQuantityGreaterThanAndSampletypeOrNsitecodeAndCreateddateBetweenAndNtransactionstatusAndAssignedprojectAndTrackconsumptionAndQuantityGreaterThanAndSampletypeOrNsitecodeAndCreateddateBetweenAndNtransactionstatusAndAssignedprojectIsNullAndTrackconsumptionAndQuantityGreaterThanAndSampletypeOrderBySamplecodeDesc(
 			Integer siteCode, Date fromDate, Date toDate, Integer transactionStatus, String string, int i, int j,
@@ -67,9 +61,6 @@ public interface SampleRepository  extends JpaRepository<Sample,Integer>{
 			SampleCategory objSampleCategory3, Integer siteCode4, Date fromDate4, Date toDate4,
 			Integer transactionStatus4, int o, int p, SampleCategory objSampleCategory4);
 
-	List<Sample> findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndSamplecodeInAndSamplecategoryOrderBySamplecodeDesc(
-			Integer siteCode, Date fromDate, Date toDate, Integer transactionStatus, List<Integer> sampleCodes,
-			SampleCategory objSampleCategory);
 
 	List<Sample> findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndAssignedprojectAndTrackconsumptionNotAndQuantityGreaterThanAndSampletypeAndSamplecategoryOrNsitecodeAndCreateddateBetweenAndNtransactionstatusAndAssignedprojectIsNullAndTrackconsumptionNotAndQuantityGreaterThanAndSampletypeAndSamplecategoryOrNsitecodeAndCreateddateBetweenAndNtransactionstatusAndAssignedprojectAndTrackconsumptionAndQuantityGreaterThanAndSampletypeAndSamplecategoryOrNsitecodeAndCreateddateBetweenAndNtransactionstatusAndAssignedprojectIsNullAndTrackconsumptionAndQuantityGreaterThanAndSampletypeAndSamplecategoryOrderBySamplecodeDesc(
 			Integer siteCode, Date fromDate, Date toDate, Integer transactionStatus, String string, int i, int j,
@@ -79,12 +70,6 @@ public interface SampleRepository  extends JpaRepository<Sample,Integer>{
 			SampleType objSampleType3, SampleCategory objSampleCategory3, Integer siteCode4, Date fromDate4,
 			Date toDate4, Integer transactionStatus4, int o, int p, SampleType objSampleType4,
 			SampleCategory objSampleCategory4);
-
-	List<Sample> findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndSamplecodeInAndSampletypeAndSamplecategoryOrderBySamplecodeDesc(
-			Integer siteCode, Date fromDate, Date toDate, Integer transactionStatus, List<Integer> sampleCodes,
-			SampleType objSampleType, SampleCategory objSampleCategory);
-
-
 
 	List<Sampleget> findByNstatusAndNsitecodeOrderBySamplecodeDesc(Integer status, Integer nsitecode);
 
@@ -100,28 +85,145 @@ public interface SampleRepository  extends JpaRepository<Sample,Integer>{
 			+ "s.createddate BETWEEN ?3 AND ?4 and (select count(*) from sampleprojectmap where samplecode = s.samplecode and lsproject_projectcode in (?5)) > 0 Order By samplecode Desc",nativeQuery = true)
 	List<Sample> getSampleOnProjects(Integer objMaterialCategory, Integer nsiteInteger, Date fromDate, Date toDate, List<Integer> projectcode);
 
-	List<Sample> findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndSamplecodeNotInOrderBySamplecodeDesc(
-			Integer siteCode, Date fromDate, Date toDate, Integer transactionStatus, List<Integer> sampleCodes);
-
-	List<Sample> findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndSampletypeAndSamplecategoryOrderBySamplecodeDesc(
-			Integer siteCode, Date fromDate, Date toDate, Integer transactionStatus, SampleType objSampleType,
-			SampleCategory objSampleCategory);
-
-	List<Sample> findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndSamplecodeNotInAndSampletypeAndSamplecategoryOrderBySamplecodeDesc(
-			Integer siteCode, Date fromDate, Date toDate, Integer transactionStatus, List<Integer> sampleCodes,
-			SampleType objSampleType, SampleCategory objSampleCategory);
-
-	List<Sample> findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndSampletypeOrderBySamplecodeDesc(
-			Integer siteCode, Date fromDate, Date toDate, Integer transactionStatus, SampleType objSampleType);
-
-	List<Sample> findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndSamplecodeNotInAndSampletypeOrderBySamplecodeDesc(
-			Integer siteCode, Date fromDate, Date toDate, Integer transactionStatus, List<Integer> sampleCodes,
-			SampleType objSampleType);
-
-	List<Sample> findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndSamplecategoryOrderBySamplecodeDesc(
-			Integer siteCode, Date fromDate, Date toDate, Integer transactionStatus, SampleCategory objSampleCategory);
-
 	List<Sample> findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndSamplecodeNotInAndSamplecategoryOrderBySamplecodeDesc(
 			Integer siteCode, Date fromDate, Date toDate, Integer transactionStatus, List<Integer> sampleCodes,
 			SampleCategory objSampleCategory);
+	
+	@Query("SELECT e FROM Sample e WHERE e.nsitecode = :nsitecode "
+	        + "AND e.createddate BETWEEN :fromDate AND :toDate "
+	        + "AND e.ntransactionstatus = :ntransactionstatus "
+	        + "AND e.samplecode NOT IN (SELECT m.samplecode FROM SampleProjectMap m) "
+	        + "AND e.sampletype.nsampletypecode IN "
+	        + "(SELECT c.nsampletypecode FROM SampleType c WHERE c.nstatus = 1) "
+	        + "AND e.samplecategory.nsamplecatcode IN "
+	        + "(SELECT t.nsamplecatcode FROM SampleCategory t WHERE t.nstatus = 1) "
+	        + "ORDER BY e.samplecode DESC")
+	List<Sample> findElnmaterialsWithoutProjectMaps(
+	        @Param("nsitecode") Integer nsitecode,
+	        @Param("fromDate") Date fromDate,
+	        @Param("toDate") Date toDate,
+	        @Param("ntransactionstatus") Integer transactionStatus);
+	
+	
+	@Query("SELECT e FROM Sample e WHERE e.nsitecode = :nsitecode "
+	        + "AND e.createddate BETWEEN :fromDate AND :toDate "
+	        + "AND e.ntransactionstatus = :ntransactionstatus "
+	        + "AND e.samplecode IN (SELECT m.samplecode FROM SampleProjectMap m WHERE lsproject =:project)"
+	        + "AND e.sampletype.nsampletypecode IN "
+	        + "(SELECT c.nsampletypecode FROM SampleType c WHERE c.nstatus = 1) "
+	        + "AND e.samplecategory.nsamplecatcode IN "
+	        + "(SELECT t.nsamplecatcode FROM SampleCategory t WHERE t.nstatus = 1) "
+	        + "ORDER BY e.samplecode DESC")
+	List<Sample> findElnmaterialsWithProjectMaps(
+	        @Param("nsitecode") Integer nsitecode,
+	        @Param("fromDate") Date fromDate,
+	        @Param("toDate") Date toDate,
+	        @Param("ntransactionstatus") Integer transactionStatus,@Param("project") LSprojectmaster project);
+
+	@Query("SELECT e FROM Sample e WHERE e.nsitecode = :nsitecode "
+	        + "AND e.createddate BETWEEN :fromDate AND :toDate "
+	        + "AND e.ntransactionstatus = :ntransactionstatus "
+	        + "AND e.samplecode IN (SELECT m.samplecode FROM SampleProjectMap m WHERE lsproject =:project)"
+	        + "AND e.sampletype.nsampletypecode IN "
+	        + "(SELECT c.nsampletypecode FROM SampleType c WHERE c.nstatus = 1) "
+	        + "AND e.samplecategory.nsamplecatcode IN "
+	        + "(SELECT t.nsamplecatcode FROM SampleCategory t WHERE t.nstatus = 1) "
+	        + "AND e.sampletype = :objSampleType "
+	        + "AND e.samplecategory = :objSampleCategory "
+	        + "ORDER BY e.samplecode DESC")
+	List<Sample> findElnmaterialsWithProjectMapsforfilter(
+	        @Param("nsitecode") Integer nsitecode,
+	        @Param("fromDate") Date fromDate,
+	        @Param("toDate") Date toDate,
+	        @Param("ntransactionstatus") Integer transactionStatus,@Param("project") LSprojectmaster project,@Param("objSampleType") SampleType objSampleType,
+	        @Param("objSampleCategory") SampleCategory objSampleCategory);
+	
+	
+	@Query("SELECT e FROM Sample e WHERE e.nsitecode = :nsitecode "
+	        + "AND e.createddate BETWEEN :fromDate AND :toDate "
+	        + "AND e.ntransactionstatus = :ntransactionstatus "
+	        + "AND e.samplecode NOT IN (SELECT m.samplecode FROM SampleProjectMap m) "
+	        + "AND e.sampletype.nsampletypecode IN "
+	        + "(SELECT c.nsampletypecode FROM SampleType c WHERE c.nstatus = 1) "
+	        + "AND e.samplecategory.nsamplecatcode IN "
+	        + "(SELECT t.nsamplecatcode FROM SampleCategory t WHERE t.nstatus = 1) "
+	        + "AND e.sampletype = :objSampleType "
+	        + "AND e.samplecategory = :objSampleCategory "
+	        + "ORDER BY e.samplecode DESC")
+	List<Sample> findElnmaterialsWithoutProjectMapsforfilter(
+	        @Param("nsitecode") Integer nsitecode,
+	        @Param("fromDate") Date fromDate,
+	        @Param("toDate") Date toDate,
+	        @Param("ntransactionstatus") Integer transactionStatus,@Param("objSampleType") SampleType objSampleType,
+	        @Param("objSampleCategory") SampleCategory objSampleCategory);
+	
+	
+	@Query("SELECT e FROM Sample e WHERE e.nsitecode = :nsitecode "
+	        + "AND e.createddate BETWEEN :fromDate AND :toDate "
+	        + "AND e.ntransactionstatus = :ntransactionstatus "
+	        + "AND e.samplecode IN (SELECT m.samplecode FROM SampleProjectMap m WHERE lsproject =:project)"
+	        + "AND e.sampletype.nsampletypecode IN "
+	        + "(SELECT c.nsampletypecode FROM SampleType c WHERE c.nstatus = 1) "
+	        + "AND e.samplecategory.nsamplecatcode IN "
+	        + "(SELECT t.nsamplecatcode FROM SampleCategory t WHERE t.nstatus = 1) "
+	        + "AND e.sampletype = :objSampleType "
+	        + "ORDER BY e.samplecode DESC")
+	List<Sample> findElnmaterialsWithProjectMapsforfiltersampletype(
+	        @Param("nsitecode") Integer nsitecode,
+	        @Param("fromDate") Date fromDate,
+	        @Param("toDate") Date toDate,
+	        @Param("ntransactionstatus") Integer transactionStatus,@Param("project") LSprojectmaster project,@Param("objSampleType") SampleType objSampleType
+	       );
+
+	@Query("SELECT e FROM Sample e WHERE e.nsitecode = :nsitecode "
+	        + "AND e.createddate BETWEEN :fromDate AND :toDate "
+	        + "AND e.ntransactionstatus = :ntransactionstatus "
+	        + "AND e.samplecode NOT IN (SELECT m.samplecode FROM SampleProjectMap m) "
+	        + "AND e.sampletype.nsampletypecode IN "
+	        + "(SELECT c.nsampletypecode FROM SampleType c WHERE c.nstatus = 1) "
+	        + "AND e.samplecategory.nsamplecatcode IN "
+	        + "(SELECT t.nsamplecatcode FROM SampleCategory t WHERE t.nstatus = 1) "
+	        + "AND e.sampletype = :objSampleType "
+	        + "ORDER BY e.samplecode DESC")
+	List<Sample> findElnmaterialsWithoutProjectMapsforfilterforsampletype(
+	        @Param("nsitecode") Integer nsitecode,
+	        @Param("fromDate") Date fromDate,
+	        @Param("toDate") Date toDate,
+	        @Param("ntransactionstatus") Integer transactionStatus,@Param("objSampleType") SampleType objSampleType
+	        );
+	
+	@Query("SELECT e FROM Sample e WHERE e.nsitecode = :nsitecode "
+	        + "AND e.createddate BETWEEN :fromDate AND :toDate "
+	        + "AND e.ntransactionstatus = :ntransactionstatus "
+	        + "AND e.samplecode IN (SELECT m.samplecode FROM SampleProjectMap m WHERE lsproject =:project)"
+	        + "AND e.sampletype.nsampletypecode IN "
+	        + "(SELECT c.nsampletypecode FROM SampleType c WHERE c.nstatus = 1) "
+	        + "AND e.samplecategory.nsamplecatcode IN "
+	        + "(SELECT t.nsamplecatcode FROM SampleCategory t WHERE t.nstatus = 1) "
+	        + "AND e.samplecategory = :objSampleCategory "
+	        + "ORDER BY e.samplecode DESC")
+	List<Sample> findElnmaterialsWithProjectMapsforfilterforsamplecat(
+	        @Param("nsitecode") Integer nsitecode,
+	        @Param("fromDate") Date fromDate,
+	        @Param("toDate") Date toDate,
+	        @Param("ntransactionstatus") Integer transactionStatus,@Param("project") LSprojectmaster project,
+	        @Param("objSampleCategory") SampleCategory objSampleCategory);
+	
+	
+	@Query("SELECT e FROM Sample e WHERE e.nsitecode = :nsitecode "
+	        + "AND e.createddate BETWEEN :fromDate AND :toDate "
+	        + "AND e.ntransactionstatus = :ntransactionstatus "
+	        + "AND e.samplecode NOT IN (SELECT m.samplecode FROM SampleProjectMap m) "
+	        + "AND e.sampletype.nsampletypecode IN "
+	        + "(SELECT c.nsampletypecode FROM SampleType c WHERE c.nstatus = 1) "
+	        + "AND e.samplecategory.nsamplecatcode IN "
+	        + "(SELECT t.nsamplecatcode FROM SampleCategory t WHERE t.nstatus = 1) "
+	        + "AND e.samplecategory = :objSampleCategory "
+	        + "ORDER BY e.samplecode DESC")
+	List<Sample> findElnmaterialsWithoutProjectMapsforfilterforsamplecat(
+	        @Param("nsitecode") Integer nsitecode,
+	        @Param("fromDate") Date fromDate,
+	        @Param("toDate") Date toDate,
+	        @Param("ntransactionstatus") Integer transactionStatus,
+	        @Param("objSampleCategory") SampleCategory objSampleCategory);
 }

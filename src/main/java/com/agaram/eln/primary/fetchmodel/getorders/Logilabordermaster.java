@@ -57,7 +57,7 @@ public class Logilabordermaster implements Comparable<Logilabordermaster> {
 			LStestmasterlocal lstestmasterlocal, Integer ordercancell, Integer viewoption, LSuserMaster lsuserMaster,
 			Integer testcode, Integer approvelstatus, LSOrdernotification lsordernotification, Integer ordersaved,
 			Boolean repeat, LsAutoregister lsautoregisterorders, Boolean sentforapprovel, String approvelaccept,
-			Integer autoregistercount, Elnmaterial elnmaterial,String sequenceid,Boolean teamselected) {
+			Integer autoregistercount, Elnmaterial elnmaterial,Boolean teamselected,String sequenceid) {
 		
 		this.batchcode = batchcode;
 		this.batchid = batchid;

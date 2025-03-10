@@ -2645,6 +2645,14 @@ public class ProtocolService {
 		LSuserMaster createby = lsusermasterRepository.findByusercode(LsProto.getCreateby());
 		LSnotification objnotify = new LSnotification();
 
+		String protocolordername = "";
+		SequenceTable seqobj =  sequenceTableRepository.findBySequencecodeOrderBySequencecode(2);
+		Boolean Applicationseq = seqobj.getSequenceview().equals(2) ? true : false;
+		protocolordername = Applicationseq 
+				?  objClass.getSequenceid() != null
+					? objClass.getSequenceid() : objClass.getProtoclordername()
+				: objClass.getProtoclordername();
+		
 //		for (int k = 0; k < objClass.getLsworkflow().getLsworkflowgroupmapping().size(); k++) {
 //			List<LSMultiusergroup> userobj = lsMultiusergroupRepositery
 //					.findBylsusergroup(objClass.getLsworkflow().getLsworkflowgroupmapping().get(k).getLsusergroup());
@@ -2679,7 +2687,7 @@ public class ProtocolService {
 
 					if (Notifiction != "") {
 						Details = "{\"ordercode\":\"" + objClass.getProtocolordercode() + "\", \"order\":\""
-								+ objClass.getProtoclordername() + "\", \"user\":\""
+								+ protocolordername + "\", \"user\":\""
 								+ objClass.getLsuserMaster().getUsername() + "\", \"comment\":\""
 								+ objClass.getComment() + "\"}";
 
@@ -2721,7 +2729,7 @@ public class ProtocolService {
 					}
 					if (Notifiction != "") {
 						Details = "{\"ordercode\":\"" + objClass.getProtocolordercode() + "\", \"order\":\""
-								+ objClass.getProtoclordername() + "\", \"user\":\""
+								+ protocolordername + "\", \"user\":\""
 								+ objClass.getLsuserMaster().getUsername() + "\", \"comment\":\""
 								+ objClass.getComment() + "\"}";
 
@@ -2754,6 +2762,15 @@ public class ProtocolService {
 
 //		LSuserMaster obj = lsusermasterRepository.findByusercode(objClass.getObjLoggeduser().getUsercode());
 
+		String protocolordername = "";
+		SequenceTable seqobj =  sequenceTableRepository.findBySequencecodeOrderBySequencecode(2);
+		Boolean Applicationseq = seqobj.getSequenceview().equals(2) ? true : false;
+		protocolordername = Applicationseq 
+				?  objClass.getSequenceid() != null
+					? objClass.getSequenceid() : objClass.getProtoclordername()
+				: objClass.getProtoclordername();
+		
+
 		LSusersteam objteam = lsusersteamRepository
 				.findByteamcode(objClass.getLsprojectmaster().getLsusersteam().getTeamcode());
 		String previousworkflowname = previousworkflow != null ? previousworkflow.getWorkflowname() : "";
@@ -2770,7 +2787,7 @@ public class ProtocolService {
 		}
 
 		Details = "{\"ordercode\":\"" + objClass.getProtocolordercode() + "\", \"order\":\""
-				+ objClass.getProtoclordername() + "\", \"previousworkflow\":\"" + previousworkflowname
+				+ protocolordername + "\", \"previousworkflow\":\"" + previousworkflowname
 				+ "\", \"currentworkflow\":\""
 				+ objClass.getLsprotocolorderworkflowhistory()
 						.get(objClass.getLsprotocolorderworkflowhistory().size() - 1).getElnprotocolworkflow()
@@ -2805,6 +2822,15 @@ public class ProtocolService {
 
 		String Details = "";
 		String Notifiction = "";
+		
+		String protocolordername = "";
+		SequenceTable seqobj =  sequenceTableRepository.findBySequencecodeOrderBySequencecode(2);
+		Boolean Applicationseq = seqobj.getSequenceview().equals(2) ? true : false;
+		protocolordername = Applicationseq 
+				?  objClass.getSequenceid() != null
+					? objClass.getSequenceid() : objClass.getProtoclordername()
+				: objClass.getProtoclordername();
+		
 
 		LSuserMaster obj = lsusermasterRepository.findByusercode(objClass.getLsuserMaster().getUsercode());
 		LSuserMaster createby = lsusermasterRepository.findByusercode(objClass.getCreateby());
@@ -2815,14 +2841,14 @@ public class ProtocolService {
 				Notifiction = "PROTOCOLORDERCOMPLETED";
 
 				Details = "{\"ordercode\":\"" + objClass.getProtocolordercode() + "\", \"order\":\""
-						+ objClass.getProtoclordername() + "\", \"completeduser\":\""
+						+ protocolordername + "\", \"completeduser\":\""
 						+ objClass.getLsuserMaster().getUsername() + "\"}";
 
 			} else {
 				Notifiction = "PROTOCOLORDERCREATIONANDASSIGN";
 
 				Details = "{\"ordercode\":\"" + objClass.getProtocolordercode() + "\", \"order\":\""
-						+ objClass.getProtoclordername() + "\", \"previousworkflow\":\"" + "" + "\", \"assignedby\":\""
+						+ protocolordername + "\", \"previousworkflow\":\"" + "" + "\", \"assignedby\":\""
 						+ objClass.getCreatedbyusername() + "\", \"previousworkflowcode\":\"" + -1
 						+ "\", \"currentworkflow\":\"" + objClass.getElnprotocolworkflow().getWorkflowname()
 						+ "\", \"currentworkflowcode\":\"" + objClass.getElnprotocolworkflow().getWorkflowcode()
@@ -2852,7 +2878,7 @@ public class ProtocolService {
 					Notifiction = "PROTOCOLORDERCOMPLETED";
 
 					Details = "{\"ordercode\":\"" + objClass.getProtocolordercode() + "\", \"order\":\""
-							+ objClass.getProtoclordername() + "\", \"currentworkflow\":\""
+							+ protocolordername + "\", \"currentworkflow\":\""
 							+ objClass.getElnprotocolworkflow().getWorkflowname() + "\", \"completeduser\":\""
 							+ objClass.getLsuserMaster().getUsername() + "\"}";
 
@@ -2860,7 +2886,7 @@ public class ProtocolService {
 					Notifiction = "PROTOCOLORDERCREATION";
 
 					Details = "{\"ordercode\":\"" + objClass.getProtocolordercode() + "\", \"order\":\""
-							+ objClass.getProtoclordername() + "\", \"previousworkflow\":\"" + ""
+							+ protocolordername + "\", \"previousworkflow\":\"" + ""
 							+ "\", \"previousworkflowcode\":\"" + -1 + "\", \"currentworkflow\":\""
 							+ objClass.getElnprotocolworkflow().getWorkflowname() + "\", \"currentworkflowcode\":\""
 							+ objClass.getElnprotocolworkflow().getWorkflowcode() + "\"}";
@@ -6846,6 +6872,7 @@ public class ProtocolService {
 				String protocolDataJson = gson.toJson(body.get("protocolData"));
 				try {
 					protocolMaster.setLastmodified(commonfunction.getCurrentUtcTime());
+					protocolMaster.setModifiedby(lSprotocolmaster.getModifiedby());
 				} catch (ParseException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -6925,11 +6952,14 @@ public class ProtocolService {
 		Map<String, Object> mapObj = new HashMap<String, Object>();
 		Response response = new Response();
 		ObjectMapper object = new ObjectMapper();
-
+		
+		LSlogilabprotocoldetail lSlogilabprotocoldetail = new LSlogilabprotocoldetail();
+		LSlogilabprotocoldetail protocolOrder = new LSlogilabprotocoldetail();
+		
 		if (body.get("ProtocolOrder") != null) {
-			LSlogilabprotocoldetail lSlogilabprotocoldetail = object.convertValue(body.get("ProtocolOrder"),
+		   lSlogilabprotocoldetail = object.convertValue(body.get("ProtocolOrder"),
 					LSlogilabprotocoldetail.class);
-			LSlogilabprotocoldetail protocolOrder = LSlogilabprotocoldetailRepository
+		   protocolOrder = LSlogilabprotocoldetailRepository
 					.findByProtocolordercode(lSlogilabprotocoldetail.getProtocolordercode());
 			Integer ismultitenant = object.convertValue(body.get("ismultitenant"), Integer.class);
 			int sitecode = object.convertValue(body.get("sitecode"), Integer.class);
@@ -7094,15 +7124,26 @@ public class ProtocolService {
 
 		// comments nottification
 		LSuserMaster lsuserfrom = object.convertValue(body.get("lsuserMaster"), LSuserMaster.class);
+		
 		if (lsuserfrom != null) {
 			@SuppressWarnings("unchecked")
 			List<LinkedHashMap<String, String>> notifyto = (List<LinkedHashMap<String, String>>) body.get("notifyto");
 			for (LinkedHashMap<String, String> to : notifyto) {
+				
+				String protocolordername = "";
+				SequenceTable seqobj =  sequenceTableRepository.findBySequencecodeOrderBySequencecode(2);
+				Boolean Applicationseq = seqobj.getSequenceview().equals(2) ? true : false;
+				//protocolordername = Applicationseq ?  protocolOrder.getSequenceid() :  (String) body.get("protoclordername");
+				protocolordername = Applicationseq 
+						?  protocolOrder.getSequenceid() != null
+							? protocolOrder.getSequenceid() : (String) body.get("protoclordername")
+						: protocolOrder.getProtoclordername();
+				
 				if (to != null) {
 					Integer usercode = Integer.parseInt(to.get("value"));
 					LSuserMaster createby = lsusermasterRepository.findByUsercode(usercode);
 					String Details = "{\"ordercode\":\"" + body.get("protocolordercode") + "\", \"order\":\""
-							+ body.get("protoclordername") + "\", \"screen\": \"" + to.get("screen") + "\" }";
+							+ protocolordername + "\", \"screen\": \"" + to.get("screen") + "\" }";
 
 					LSnotification objnotify = new LSnotification();
 					objnotify.setNotifationfrom(lsuserfrom);
@@ -7736,6 +7777,7 @@ public class ProtocolService {
 	}
 
 	public Lsprotocolordershareto Insertshareprotocolorder(Lsprotocolordershareto objprotocolordershareto) {
+		
 		Lsprotocolordershareto existingshare = lsprotocolordersharetoRepository
 				.findBySharebyunifiedidAndSharetounifiedidAndProtocoltypeAndShareprotocolordercode(
 						objprotocolordershareto.getSharebyunifiedid(), objprotocolordershareto.getSharetounifiedid(),
@@ -10409,10 +10451,18 @@ public class ProtocolService {
 	public void sendnotification(LSlogilabprotocoldetail objdir, String Notification, String screen,
 			LSuserMaster notifyto, LSuserMaster notifyfrom) throws ParseException {
 
+		String protocolordername = "";
+		SequenceTable seqobj =  sequenceTableRepository.findBySequencecodeOrderBySequencecode(2);
+		Boolean Applicationseq = seqobj.getSequenceview().equals(2) ? true : false;
+		protocolordername = Applicationseq 
+				?  objdir.getSequenceid() != null
+					? objdir.getSequenceid() : objdir.getProtoclordername()
+				: objdir.getProtoclordername();
+		
 		LSnotification LSnotification = new LSnotification();
 
 		String Details = "{\"ordercode\" :\"" + objdir.getProtocolordercode() + "\",\"order\" :\""
-				+ objdir.getProtoclordername() + "\",\"user\":\"" + objdir.getLsuserMaster().getUsername()
+				+ protocolordername + "\",\"user\":\"" + objdir.getLsuserMaster().getUsername()
 				+ "\",\"notifyto\":\"" + objdir.getAssignedto().getUsername() + "\"}";
 
 		LSnotification.setIsnewnotification(1);

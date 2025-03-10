@@ -50,6 +50,7 @@ import org.bson.BsonBinarySubType;
 import org.bson.types.Binary;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.env.Environment;
@@ -2246,15 +2247,20 @@ public class InstrumentService {
 	}
 
 	public void updatenotificationfororder(LSlogilablimsorderdetail objorder) {
+		
+			String batchid = "";
+			SequenceTable seqobj =  sequenceTableRepository.findBySequencecodeOrderBySequencecode(1);
+			Boolean Applicationseq = seqobj.getSequenceview().equals(2) ? true : false;
+			batchid = Applicationseq 
+					?  objorder.getSequenceid() != null 
+						? objorder.getSequenceid() : objorder.getBatchid() 
+					: objorder.getBatchid();
+			
 		try {
 			String Details = "";
 			String Notifiction = "";
 			if (objorder != null && objorder.getLsprojectmaster() != null
 					&& objorder.getLsprojectmaster().getLsusersteam() != null && objorder.getAssignedto() == null) {
-//				LSusersteam objteam = lsusersteamRepository
-//						.findByteamcode(objorder.getLsprojectmaster().getLsusersteam().getTeamcode());
-
-//				LSuserMaster obj = lsuserMasterRepository.findByusercode(objorder.getObjLoggeduser().getUsercode());
 
 				if (lsusersteamRepository.findByteamcode(objorder.getLsprojectmaster().getLsusersteam().getTeamcode())
 						.getLsuserteammapping() != null
@@ -2266,7 +2272,7 @@ public class InstrumentService {
 						Notifiction = "ORDERCOMPLETED";
 
 						Details = "{\"ordercode\":\"" + objorder.getBatchcode() + "\", \"order\":\""
-								+ objorder.getBatchid() + "\", \"previousworkflow\":\"" + ""
+								+ batchid + "\", \"previousworkflow\":\"" + ""
 								+ "\", \"previousworkflowcode\":\"" + -1 + "\", \"currentworkflow\":\""
 								+ objorder.getLsworkflow().getWorkflowname() + "\", \"completeduser\":\""
 								+ objorder.getObjLoggeduser().getUsername() + "\", \"currentworkflowcode\":\""
@@ -2275,7 +2281,7 @@ public class InstrumentService {
 						Notifiction = "ORDERCREATION";
 
 						Details = "{\"ordercode\":\"" + objorder.getBatchcode() + "\", \"order\":\""
-								+ objorder.getBatchid() + "\", \"previousworkflow\":\"" + ""
+								+ batchid + "\", \"previousworkflow\":\"" + ""
 								+ "\", \"previousworkflowcode\":\"" + -1 + "\", \"currentworkflow\":\""
 								+ objorder.getLsworkflow().getWorkflowname() + "\", \"currentworkflowcode\":\""
 								+ objorder.getLsworkflow().getWorkflowcode() + "\"}";
@@ -2310,7 +2316,7 @@ public class InstrumentService {
 				if (objorder.getOrderflag().equalsIgnoreCase("R")) {
 					Notifiction = "ORDERCOMPLETEDASSIGN";
 
-					Details = "{\"ordercode\":\"" + objorder.getBatchcode() + "\", \"order\":\"" + objorder.getBatchid()
+					Details = "{\"ordercode\":\"" + objorder.getBatchcode() + "\", \"order\":\"" + batchid
 							+ "\", \"previousworkflow\":\"" + "" + "\", \"previousworkflowcode\":\"" + -1
 							+ "\", \"currentworkflow\":\"" + objorder.getLsworkflow().getWorkflowname()
 							+ "\", \"assignedto\":\"" + objorder.getAssignedto().getUsername()
@@ -2320,7 +2326,7 @@ public class InstrumentService {
 				} else {
 
 					Notifiction = "ORDERCREATIONANDASSIGN";
-					Details = "{\"ordercode\":\"" + objorder.getBatchcode() + "\", \"order\":\"" + objorder.getBatchid()
+					Details = "{\"ordercode\":\"" + objorder.getBatchcode() + "\", \"order\":\"" + batchid
 							+ "\", \"previousworkflow\":\"" + "" + "\", \"previousworkflowcode\":\"" + -1
 							+ "\", \"currentworkflow\":\"" + objorder.getLsworkflow().getWorkflowname()
 							+ "\", \"assignedto\":\"" + objorder.getAssignedto().getUsername() + "\", \"assignedby\":\""
@@ -2343,6 +2349,7 @@ public class InstrumentService {
 			}
 			Details = null;
 			Notifiction = null;
+			batchid = null;
 		} catch (Exception e) {
 
 		}
@@ -2566,6 +2573,15 @@ public class InstrumentService {
 	}
 
 	public void updatenotificationfororderworkflow(LSlogilablimsorderdetail objorder, LSworkflow previousworkflow) {
+		
+		String batchid = "";
+		SequenceTable seqobj =  sequenceTableRepository.findBySequencecodeOrderBySequencecode(1);
+		Boolean Applicationseq = seqobj.getSequenceview().equals(2) ? true : false;
+		batchid = Applicationseq 
+				?  objorder.getSequenceid() != null 
+					? objorder.getSequenceid() : objorder.getBatchid() 
+				: objorder.getBatchid();
+		
 		try {
 			String Details = "";
 			String Notifiction = "";
@@ -2592,7 +2608,7 @@ public class InstrumentService {
 					Notifiction = "ORDERFINALAPPROVAL";
 				}
 
-				Details = "{\"ordercode\":\"" + objorder.getBatchcode() + "\", \"order\":\"" + objorder.getBatchid()
+				Details = "{\"ordercode\":\"" + objorder.getBatchcode() + "\", \"order\":\"" + batchid
 						+ "\", \"previousworkflow\":\"" + previousworkflowname + "\", \"previousworkflowcode\":\""
 						+ perviousworkflowcode + "\", \"currentworkflow\":\""
 						+ objorder.getLsworkflow().getWorkflowname() + "\", \"currentworkflowcode\":\""
@@ -2621,9 +2637,18 @@ public class InstrumentService {
 		} catch (Exception e) {
 
 		}
+		batchid = null;
 	}
 
 	public void updatenotificationfororder(LSlogilablimsorderdetail objorder, String currentworkflow) {
+		String batchid = "";
+		SequenceTable seqobj =  sequenceTableRepository.findBySequencecodeOrderBySequencecode(1);
+		Boolean Applicationseq = seqobj.getSequenceview().equals(2) ? true : false;
+		batchid = Applicationseq 
+				?  objorder.getSequenceid() != null 
+					? objorder.getSequenceid() : objorder.getBatchid() 
+				: objorder.getBatchid();
+		
 		try {
 			if (objorder != null && objorder.getLsprojectmaster() != null
 					&& objorder.getLsprojectmaster().getLsusersteam() != null) {
@@ -2638,12 +2663,12 @@ public class InstrumentService {
 						if (objorder.getApprovelstatus() == 1) {
 							Notifiction = "ORDERAPPROVED";
 							Details = "{\"ordercode\":\"" + objorder.getBatchcode() + "\", \"order\":\""
-									+ objorder.getBatchid() + "\", \"currentworkflow\":\"" + currentworkflow
+									+ batchid + "\", \"currentworkflow\":\"" + currentworkflow
 									+ "\", \"movedworkflow\":\"" + objorder.getLsworkflow().getWorkflowname() + "\"}";
 						} else if (objorder.getApprovelstatus() == 3) {
 							Notifiction = "ORDERREJECTED";
 							Details = "{\"ordercode\":\"" + objorder.getBatchcode() + "\", \"order\":\""
-									+ objorder.getBatchid() + "\", \"workflowname\":\""
+									+ batchid + "\", \"workflowname\":\""
 									+ objorder.getLsworkflow().getWorkflowname() + "\"}";
 						}
 					}
@@ -2673,6 +2698,7 @@ public class InstrumentService {
 		} catch (Exception e) {
 
 		}
+		batchid = null;
 	}
 
 	public LSactivity InsertActivities(LSactivity objActivity) {
@@ -5314,6 +5340,14 @@ public class InstrumentService {
 		LSuserMaster obj = lsuserMasterRepository.findByusercode(objorder.getObjLoggeduser().getUsercode());
 		LSnotification objnotify = new LSnotification();
 
+		String batchid = "";
+		SequenceTable seqobj =  sequenceTableRepository.findBySequencecodeOrderBySequencecode(1);
+		Boolean Applicationseq = seqobj.getSequenceview().equals(2) ? true : false;
+		batchid = Applicationseq 
+				?  objorder.getSequenceid() != null 
+					? objorder.getSequenceid() : objorder.getBatchid() 
+				: objorder.getBatchid();
+		
 		try {
 			for (int k = 0; k < objorder.getLsworkflow().getLsworkflowgroupmapping().size(); k++) {
 //				List<LSMultiusergroup> userobj = lsMultiusergroupRepositery
@@ -5347,7 +5381,7 @@ public class InstrumentService {
 							}
 
 							Details = "{\"ordercode\":\"" + objorder.getBatchcode() + "\", \"order\":\""
-									+ objorder.getBatchid() + "\", \"user\":\"" + obj.getUsername()
+									+ batchid + "\", \"user\":\"" + obj.getUsername()
 									+ "\", \"comment\":\"" + objorder.getComment() + "\", \"workflowname\":\""
 									+ objorder.getLsworkflow().getWorkflowname() + "\"}";
 
@@ -5380,7 +5414,7 @@ public class InstrumentService {
 							}
 
 							Details = "{\"ordercode\":\"" + objorder.getBatchcode() + "\", \"order\":\""
-									+ objorder.getBatchid() + "\", \"user\":\"" + obj.getUsername()
+									+ batchid + "\", \"user\":\"" + obj.getUsername()
 									+ "\", \"comment\":\"" + objorder.getComment() + "\"}";
 							objnotify.setNotifationfrom(obj);
 							objnotify.setNotificationdate(commonfunction.getCurrentUtcTime());
@@ -5404,6 +5438,8 @@ public class InstrumentService {
 		}
 		Details = null;
 		Notification = null;
+		batchid = null;
+
 	}
 
 	public boolean Updatesamplefileversion(LSsamplefile objfile) {
@@ -6505,6 +6541,7 @@ public class InstrumentService {
 	}
 
 	public Lsordershareto Insertshareorder(Lsordershareto objordershareto) {
+		
 		Lsordershareto existingshare = lsordersharetoRepository
 				.findBySharebyunifiedidAndSharetounifiedidAndOrdertypeAndSharebatchcode(
 						objordershareto.getSharebyunifiedid(), objordershareto.getSharetounifiedid(),
@@ -6535,7 +6572,9 @@ public class InstrumentService {
 		objnotify.setNotificationfor(1);
 		lsnotificationRepository.save(objnotify);
 
+//		batchid = null;
 		return objordershareto;
+		
 	}
 
 	public Map<String, Object> Insertshareorderby(Lsordersharedby objordershareby) {
@@ -10796,6 +10835,14 @@ public class InstrumentService {
 		String Details = "";
 		String Notifiction = "";
 
+		String batchid = "";
+		SequenceTable seqobj =  sequenceTableRepository.findBySequencecodeOrderBySequencecode(1);
+		Boolean Applicationseq = seqobj.getSequenceview().equals(2) ? true : false;
+		batchid = Applicationseq 
+				?  objorder.getSequenceid() != null 
+					? objorder.getSequenceid() : objorder.getBatchid() 
+				: objorder.getBatchid();
+		
 		int workflowcode = objorder.getLsworkflow() != null ? objorder.getLsworkflow().getWorkflowcode() : -1;
 		String workflowname = objorder.getLsworkflow() != null ? objorder.getLsworkflow().getWorkflowname() : "";
 
@@ -10810,7 +10857,7 @@ public class InstrumentService {
 
 				Notifiction = "ORDERCANCEL";
 
-				Details = "{\"ordercode\":\"" + objorder.getBatchcode() + "\", \"order\":\"" + objorder.getBatchid()
+				Details = "{\"ordercode\":\"" + objorder.getBatchcode() + "\", \"order\":\"" + batchid
 						+ "\", \"currentworkflow\":\"" + workflowname + "\", \"currentworkflowcode\":\"" + workflowcode
 						+ "\", \"notifyFor\":\"" + 2 + "\", \"user\":\"" + objorder.getObjLoggeduser().getUsername()
 						+ "\"}";
@@ -10844,7 +10891,7 @@ public class InstrumentService {
 
 		Notifiction = "ORDERCANCEL";
 
-		Details = "{\"ordercode\":\"" + objorder.getBatchcode() + "\", \"order\":\"" + objorder.getBatchid()
+		Details = "{\"ordercode\":\"" + objorder.getBatchcode() + "\", \"order\":\"" + batchid
 				+ "\", \"currentworkflow\":\"" + workflowname + "\", \"currentworkflowcode\":\"" + workflowcode
 				+ "\", \"notifyFor\":\"" + 1 + "\", \"user\":\"" + objorder.getObjLoggeduser().getUsername() + "\"}";
 
@@ -10860,7 +10907,9 @@ public class InstrumentService {
 		objnotify.setNotificationfor(1);
 
 		lsnotificationRepository.save(objnotify);
-	}
+		batchid = null;
+		
+}
 
 	public Map<String, Object> removemultifilessheetfolderonprotocol(LSprotocolfolderfiles[] files, Long directorycode,
 			String filefor, String tenantid, Integer ismultitenant, Integer usercode, Integer sitecode,
@@ -11581,10 +11630,17 @@ public class InstrumentService {
 
 	public void sendnotification(LSlogilablimsorderdetail objdir, String Notification, String screen,
 			LSuserMaster notifyfrom, LSuserMaster notifyto) throws ParseException {
-
+		String batchid = "";
+		SequenceTable seqobj =  sequenceTableRepository.findBySequencecodeOrderBySequencecode(1);
+		Boolean Applicationseq = seqobj.getSequenceview().equals(2) ? true : false;
+		batchid = Applicationseq 
+				?  objdir.getSequenceid() != null 
+					? objdir.getSequenceid() : objdir.getBatchid() 
+				: objdir.getBatchid();
+		
 		LSnotification LSnotification = new LSnotification();
 
-		String Details = "{\"ordercode\" :\"" + objdir.getBatchcode() + "\",\"order\" :\"" + objdir.getBatchid()
+		String Details = "{\"ordercode\" :\"" + objdir.getBatchcode() + "\",\"order\" :\"" + batchid
 				+ "\",\"user\":\"" + objdir.getLsuserMaster().getUsername() + "\",\"notifyto\":\""
 				+ objdir.getAssignedto().getUsername() + "\"}";
 
@@ -11600,6 +11656,7 @@ public class InstrumentService {
 		LSnotification.setNotificationfor(1);
 
 		lsnotificationRepository.save(LSnotification);
+		batchid = null;
 
 	}
 

@@ -68,6 +68,7 @@ import com.agaram.eln.primary.model.protocols.LSlogilabprotocoldetail;
 import com.agaram.eln.primary.model.protocols.LSprotocolmaster;
 import com.agaram.eln.primary.model.protocols.LSprotocolstep;
 import com.agaram.eln.primary.model.protocols.LSprotocolworkflow;
+import com.agaram.eln.primary.model.sequence.SequenceTable;
 import com.agaram.eln.primary.model.sheetManipulation.LSfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplefile;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplefileversion;
@@ -295,7 +296,8 @@ public class StarterRunner {
 		orderobj.setApproved(rs.getInt("approved"));
 		orderobj.setRepeat(rs.getBoolean("repeat"));
 		orderobj.setFiletype(rs.getInt("filetype"));
-
+		orderobj.setSequenceid(rs.getString("sequenceid"));
+		
 		LSworkflow lstworkflow = new LSworkflow();
 		lstworkflow.setWorkflowcode(rs.getInt("lsworkflow_workflowcode"));
 		orderobj.setLsworkflow(lstworkflow);
@@ -487,6 +489,21 @@ public class StarterRunner {
 		return ordernot;
 	}
 
+	public SequenceTable mapResultSetToSequence (ResultSet rs) throws SQLException {
+		SequenceTable seq = new SequenceTable();
+		seq.setApplicationsequence(rs.getLong("applicationsequence"));
+		seq.setResetperiod(rs.getInt("resetperiod"));
+		seq.setScreenname(rs.getString("screenname"));
+		seq.setSeperator(rs.getString("seperator"));
+		seq.setSequencecode(rs.getInt("sequencecode"));
+		seq.setSequenceday(rs.getInt("sequenceday"));
+		seq.setSequenceformat(rs.getString("sequenceformat"));
+		seq.setSequencemonth(rs.getInt("sequencemonth"));
+		seq.setSequenceview(rs.getInt("sequenceview"));
+		seq.setSequenceyear(rs.getInt("sequenceyear"));
+		
+		return seq;
+	}
 	public LsAutoregister mapResultSetToLsAutoregister(ResultSet rs) throws SQLException, ParseException {
 		LsAutoregister lsautoregister = new LsAutoregister();
 		lsautoregister.setAutocreatedate(rs.getTimestamp("autocreatedate"));
@@ -2921,15 +2938,61 @@ public class StarterRunner {
 		}
 	}
 
+	public SequenceTable getsequence (LSOrdernotification objNotification, HikariConfig configuration) throws SQLException {
+		
+		SequenceTable Sequence = null;
+
+		try (HikariDataSource dataSource = new HikariDataSource(configuration);
+				Connection con = dataSource.getConnection()) {
+			
+			if (objNotification.getScreen().equals("sheetorder")) {
+				String sequencequery = "SELECT * FROM sequencetable where sequencecode = 1";
+				try (PreparedStatement pst = con.prepareStatement(sequencequery)) {
+	
+					try (ResultSet rs = pst.executeQuery()) {
+						while (rs.next()) {
+							Sequence = mapResultSetToSequence(rs);
+						}
+					} catch (SQLException e) {
+						e.printStackTrace(); // Consider logging this properly
+					}
+					sequencequery = "";
+			    }
+			}else {
+				String sequencequery = "SELECT * FROM sequencetable where sequencecode = 2";
+				try (PreparedStatement pst = con.prepareStatement(sequencequery)) {
+	
+					pst.setLong(1, objNotification.getBatchcode());
+	
+					try (ResultSet rs = pst.executeQuery()) {
+						while (rs.next()) {
+							Sequence = mapResultSetToSequence(rs);
+						}
+					} catch (SQLException e) {
+						e.printStackTrace(); // Consider logging this properly
+					}
+					sequencequery = "";
+			    }
+			}
+			con.close();
+			return Sequence;
+		}
+	}
+	
 	public void executecautiondatenotification(LSOrdernotification objNotification, HikariConfig configuration)
 			throws ParseException, InterruptedException, SQLException {
 
 		LSlogilablimsorderdetail order = null;
 		LSlogilabprotocoldetail protocolorder = null;
+		SequenceTable Sequence = null;
+		String batchid = null;
+		String protocolordername = null;
 
 		try (HikariDataSource dataSource = new HikariDataSource(configuration);
 				Connection con = dataSource.getConnection()) {
 
+			Sequence = getsequence(objNotification,configuration);
+			
 			if (objNotification.getScreen().equals("sheetorder")) {
 				String orderobj = "SELECT * FROM lslogilablimsorderdetail WHERE batchcode=?";
 				try (PreparedStatement pst = con.prepareStatement(orderobj)) {
@@ -2940,7 +3003,12 @@ public class StarterRunner {
 					try (ResultSet rs = pst.executeQuery()) {
 						while (rs.next()) {
 							order = mapResultSetToLslogilabOrder(rs);
+							Boolean Applicationseq = Sequence.getSequenceview().equals(2) ? true : false;
 
+							 batchid = Applicationseq 
+								?  order.getSequenceid() != null 
+									? order.getSequenceid() : order.getBatchid() 
+								: order.getBatchid();
 						}
 					} catch (SQLException e) {
 						e.printStackTrace(); // Consider logging this properly
@@ -2959,6 +3027,11 @@ public class StarterRunner {
 						while (rs.next()) {
 							protocolorder = mapResultSetToOrderLSlogilabprotocoldetail(rs);
 
+							Boolean Applicationseq = Sequence.getSequenceview().equals(2) ? true : false;
+							protocolordername = Applicationseq 
+									?  protocolorder.getSequenceid() != null
+										? protocolorder.getSequenceid() : protocolorder.getProtoclordername()
+									: protocolorder.getProtoclordername();
 						}
 					} catch (SQLException e) {
 						e.printStackTrace(); // Consider logging this properly
@@ -2974,7 +3047,8 @@ public class StarterRunner {
 		int approvelstatus;
 		int completed;
 		int isassigned;
-
+		String Details = null;
+		
 		LSuserMaster assigneduser = new LSuserMaster();
 
 		if (order == null) {
@@ -3018,9 +3092,16 @@ public class StarterRunner {
 				LocalDateTime cautionTime = LocalDateTime.ofInstant(caution, ZoneId.systemDefault());
 				LocalDate cautiondate = cautionTime.toLocalDate();
 
-				String Details = "{\"ordercode\" :\"" + objNotification.getBatchcode() + "\",\"order\" :\""
-						+ objNotification.getBatchid() + "\",\"date\" :\"" + cautiondate + "\",\"screen\":\""
-						+ objNotification.getScreen() + "\"}";
+				if(objNotification.getScreen().equals("sheetorder")) {
+					Details = "{\"ordercode\" :\"" + objNotification.getBatchcode() + "\",\"order\" :\""
+							+ batchid + "\",\"date\" :\"" + cautiondate + "\",\"screen\":\""
+							+ objNotification.getScreen() + "\"}";
+				}else {
+					Details = "{\"ordercode\" :\"" + objNotification.getBatchcode() + "\",\"order\" :\""
+							+ protocolordername + "\",\"date\" :\"" + cautiondate + "\",\"screen\":\""
+							+ objNotification.getScreen() + "\"}";
+				}
+				
 				String path = objNotification.getScreen().equals("sheetorder") ? "/registertask" : "/Protocolorder";
 
 				String notification = "ORDERCAUTIONALERT";
@@ -3044,7 +3125,9 @@ public class StarterRunner {
 				con.close();
 			}
 		}
-		// notifyoverduedays(objNotification,configuration);
+		batchid = null;
+		protocolordername = null;
+		Details = null;
 	}
 
 	public void executeduedatenotification(LSOrdernotification objNotification, HikariConfig configuration)
@@ -3052,10 +3135,15 @@ public class StarterRunner {
 
 		LSlogilablimsorderdetail order = null;
 		LSlogilabprotocoldetail protocolorder = null;
+		SequenceTable Sequence = null;
+		String batchid = null;
+		String protocolordername = null; 
 
 		try (HikariDataSource dataSource = new HikariDataSource(configuration);
 				Connection con = dataSource.getConnection()) {
 
+			Sequence = getsequence(objNotification,configuration);
+			
 			if (objNotification.getScreen().equals("sheetorder")) {
 				String orderobj = "SELECT * FROM lslogilablimsorderdetail WHERE batchcode=?";
 				try (PreparedStatement pst = con.prepareStatement(orderobj)) {
@@ -3066,7 +3154,13 @@ public class StarterRunner {
 					try (ResultSet rs = pst.executeQuery()) {
 						while (rs.next()) {
 							order = mapResultSetToLslogilabOrder(rs);
+							Boolean Applicationseq = Sequence.getSequenceview().equals(2) ? true : false;
 
+							 batchid = Applicationseq 
+								?  order.getSequenceid() != null 
+									? order.getSequenceid() : order.getBatchid() 
+								: order.getBatchid();
+						
 						}
 					} catch (SQLException e) {
 						e.printStackTrace(); // Consider logging this properly
@@ -3084,7 +3178,12 @@ public class StarterRunner {
 					try (ResultSet rs = pst.executeQuery()) {
 						while (rs.next()) {
 							protocolorder = mapResultSetToOrderLSlogilabprotocoldetail(rs);
-
+							Boolean Applicationseq = Sequence.getSequenceview().equals(2) ? true : false;
+							protocolordername = Applicationseq 
+									?  protocolorder.getSequenceid() != null
+										? protocolorder.getSequenceid() : protocolorder.getProtoclordername()
+									: protocolorder.getProtoclordername();
+						
 						}
 					} catch (SQLException e) {
 						e.printStackTrace(); // Consider logging this properly
@@ -3101,7 +3200,8 @@ public class StarterRunner {
 		int approvelstatus;
 		int completed;
 		int isassigned;
-
+		String Details = null;
+				
 		LSuserMaster assigneduser = new LSuserMaster();
 		if (order == null) {
 			cancel = protocolorder.getOrdercancell() == null ? 0 : protocolorder.getOrdercancell();
@@ -3113,6 +3213,8 @@ public class StarterRunner {
 			} else {
 				isassigned = 0;
 			}
+
+			
 		} else {
 			cancel = order.getOrdercancell() == null ? 0 : order.getOrdercancell();
 			approvelstatus = order.getApprovelstatus() == null ? 0 : order.getApprovelstatus();
@@ -3139,10 +3241,18 @@ public class StarterRunner {
 				LocalDateTime dueTime = LocalDateTime.ofInstant(due, ZoneId.systemDefault());
 				LocalDate duedate = dueTime.toLocalDate();
 
-				String Details = "{\"ordercode\" :\"" + objNotification.getBatchcode() + "\",\"order\" :\""
-						+ objNotification.getBatchid() + "\",\"date\" :\"" + duedate + "\",\"screen\":\""
-						+ objNotification.getScreen() + "\"}";
-
+				if(objNotification.getScreen().equals("sheetorder")) {
+					Details = "{\"ordercode\" :\"" + objNotification.getBatchcode() + "\",\"order\" :\""
+							+ batchid + "\",\"date\" :\"" + duedate + "\",\"screen\":\""
+							+ objNotification.getScreen() + "\"}";
+					
+				}else {
+					Details = "{\"ordercode\" :\"" + objNotification.getBatchcode() + "\",\"order\" :\""
+							+ protocolordername + "\",\"date\" :\"" + duedate + "\",\"screen\":\""
+							+ objNotification.getScreen() + "\"}";
+					
+				}
+				
 				String path = objNotification.getScreen().equals("sheetorder") ? "/registertask" : "/Protocolorder";
 				String notification = "ORDERONDUEALERT";
 				String updateString = "UPDATE LSORDERNOTIFICATION SET duestatus = 0 WHERE notificationcode = ?";
@@ -3169,6 +3279,9 @@ public class StarterRunner {
 				con.close();
 			}
 		}
+		batchid = null;
+		protocolordername = null;
+		Details = null;
 	}
 
 	public void insernotification(HikariConfig configuration, String Details, String notification, String path,
@@ -3229,11 +3342,17 @@ public class StarterRunner {
 
 		LSlogilablimsorderdetail order = null;
 		LSlogilabprotocoldetail protocolorder = null;
+		SequenceTable Sequence = null;
+		String Details = null;
+		String batchid = null;
+		String protocolordername = null;
 
 		try (HikariDataSource dataSource = new HikariDataSource(configuration);
 				Connection con = dataSource.getConnection()) {
 			if (objNotification.getScreen().equals("sheetorder")) {
 
+				Sequence = getsequence(objNotification, configuration);
+				
 				String orderobj = "SELECT * FROM lslogilablimsorderdetail WHERE batchcode=?";
 				try (PreparedStatement pst = con.prepareStatement(orderobj)) {
 
@@ -3243,7 +3362,12 @@ public class StarterRunner {
 					try (ResultSet rs = pst.executeQuery()) {
 						while (rs.next()) {
 							order = mapResultSetToLslogilabOrder(rs);
-
+							
+							Boolean Applicationseq = Sequence.getSequenceview().equals(2) ? true : false;
+							 batchid = Applicationseq 
+								?  order.getSequenceid() != null 
+									? order.getSequenceid() : order.getBatchid() 
+								: order.getBatchid();
 						}
 					} catch (SQLException e) {
 						e.printStackTrace(); // Consider logging this properly
@@ -3262,6 +3386,12 @@ public class StarterRunner {
 						while (rs.next()) {
 							protocolorder = mapResultSetToOrderLSlogilabprotocoldetail(rs);
 
+							Boolean Applicationseq = Sequence.getSequenceview().equals(2) ? true : false;
+							protocolordername = Applicationseq 
+									?  protocolorder.getSequenceid() != null
+										? protocolorder.getSequenceid() : protocolorder.getProtoclordername()
+									: protocolorder.getProtoclordername();
+										
 						}
 					} catch (SQLException e) {
 						e.printStackTrace(); // Consider logging this properly
@@ -3319,10 +3449,16 @@ public class StarterRunner {
 				LocalDateTime dueTime = LocalDateTime.ofInstant(due, ZoneId.systemDefault());
 				LocalDate duedate = dueTime.toLocalDate();
 
-				String Details = "{\"ordercode\" :\"" + objNotification.getBatchcode() + "\",\"order\" :\""
-						+ objNotification.getBatchid() + "\",\"days\" :\"" + objNotification.getOverduedays()
-						+ "\",\"date\" :\"" + duedate + "\",\"screen\":\"" + objNotification.getScreen() + "\"}";
-
+				if(objNotification.getScreen().equals("sheetorder")) {
+					Details = "{\"ordercode\" :\"" + objNotification.getBatchcode() + "\",\"order\" :\""
+							+ batchid + "\",\"days\" :\"" + objNotification.getOverduedays()
+							+ "\",\"date\" :\"" + duedate + "\",\"screen\":\"" + objNotification.getScreen() + "\"}";
+				}else {
+					Details = "{\"ordercode\" :\"" + objNotification.getBatchcode() + "\",\"order\" :\""
+							+ protocolordername + "\",\"days\" :\"" + objNotification.getOverduedays()
+							+ "\",\"date\" :\"" + duedate + "\",\"screen\":\"" + objNotification.getScreen() + "\"}";
+				}
+			   
 				String path = objNotification.getScreen().equals("sheetorder") ? "/registertask" : "/Protocolorder";
 				String notification = "ORDEROVERDUEALERT";
 				String update = "UPDATE LSORDERNOTIFICATION SET overduestatus = 0 , isduedateexhausted = true WHERE notificationcode = ?";
@@ -3345,7 +3481,10 @@ public class StarterRunner {
 				con.close();
 			}
 		}
-		// notifyoverduedays(objNotification,configuration);
+		batchid = null;
+		protocolordername = null;
+		Details = null;
+		
 	}
 
 	public void notifyoverduedays(LSOrdernotification objNotification, HikariConfig configuration)

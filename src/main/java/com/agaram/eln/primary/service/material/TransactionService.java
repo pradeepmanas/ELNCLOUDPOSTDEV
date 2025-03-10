@@ -53,6 +53,7 @@ import com.agaram.eln.primary.model.material.ResultUsedMaterial;
 import com.agaram.eln.primary.model.material.Unit;
 import com.agaram.eln.primary.model.sample.ElnresultUsedSample;
 import com.agaram.eln.primary.model.sample.Sample;
+import com.agaram.eln.primary.model.sequence.SequenceTable;
 import com.agaram.eln.primary.model.sheetManipulation.LStestmasterlocal;
 import com.agaram.eln.primary.model.usermanagement.LSnotification;
 import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
@@ -73,6 +74,7 @@ import com.agaram.eln.primary.repository.material.MaterialTypeRepository;
 import com.agaram.eln.primary.repository.material.ResultUsedMaterialRepository;
 import com.agaram.eln.primary.repository.sample.ElnresultUsedSampleRepository;
 import com.agaram.eln.primary.repository.sample.SampleRepository;
+import com.agaram.eln.primary.repository.sequence.SequenceTableRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LStestmasterlocalRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSnotificationRepository;
 import com.fasterxml.jackson.core.JsonParseException;
@@ -142,6 +144,9 @@ public class TransactionService {
 	@Autowired
 	ElnmaterialInventoryRepository elnmaterialInventoryReppository;
 
+	@Autowired
+	SequenceTableRepository sequenceTableRepository;
+	
 	public ResponseEntity<Object> getLoadOnInventoryData(Map<String, Object> inputMap) {
 
 		Map<String, Object> rtnMap = new HashMap<String, Object>();
@@ -627,7 +632,7 @@ public class TransactionService {
 		Double getIssuedQty = Double.parseDouble(objInventory.getSavailablequantity().toString());
 		Double getUsedQty = Double.parseDouble(objResultMap.get("usedQuantity").toString());
 		ElnresultUsedMaterial resultUsedMaterial = new ElnresultUsedMaterial();
-		if (getIssuedQty < getUsedQty) {
+		if (getIssuedQty < getUsedQty || objInventory.getMaterialcategory().getNstatus()==-1 || objInventory.getMaterialtype().getNstatus()==-1) {
 			resultUsedMaterial.setResponse(new Response());
 			resultUsedMaterial.getResponse().setStatus(false);
 			return new ResponseEntity<>(resultUsedMaterial, HttpStatus.OK);
@@ -842,6 +847,16 @@ public class TransactionService {
 	public List<LSnotification> updateNotificationOnInventory(ElnmaterialInventory objInventory, String task,
 			LScfttransaction cft, Double getQtyLeft, Date date) {
 
+		String sinventoryid = "";
+		SequenceTable seqobj =  sequenceTableRepository.findBySequencecodeOrderBySequencecode(3);
+		Boolean Applicationseq = seqobj.getSequenceview().equals(2) ? true : false;
+		
+		sinventoryid = Applicationseq 
+				? objInventory.getSequenceid() == null 
+						? objInventory.getSinventoryid() 
+						: objInventory.getSequenceid() 
+				: objInventory.getSinventoryid();
+		
 		List<LSnotification> lstnotifications = new ArrayList<LSnotification>();
 
 		List<ElnresultUsedMaterial> objLstTransactions = objInventory.getResultusedmaterial();
@@ -864,15 +879,15 @@ public class TransactionService {
 
 				if (task.equals("INVENTORYQTYNOTIFICATION")) {
 
-					details = "{\"inventoryid\":\"" + objInventory.getSinventoryid() + "\",  " + "\"qtyleft\":\""
+					details = "{\"inventoryid\":\"" + sinventoryid + "\",  " + "\"qtyleft\":\""
 							+ getQtyLeft + "\",  " + "\"notificationamount\":\"" + objInventory.getNqtynotification()
 							+ "\"}";
 
 				} else if (task.equals("EXPIRYDATE")) {
-					details = "{\"inventoryid\":\"" + objInventory.getSinventoryid() + "\",  " + "\"daysleft\":\""
+					details = "{\"inventoryid\":\"" + sinventoryid + "\",  " + "\"daysleft\":\""
 							+ date + "\"}";
 				} else {
-					details = "{\"inventoryid\":\"" + objInventory.getSinventoryid() + "\",  " + "\"daysleft\":\""
+					details = "{\"inventoryid\":\"" + sinventoryid + "\",  " + "\"daysleft\":\""
 							+ getQtyLeft + "\"}";
 				}
 
@@ -894,6 +909,7 @@ public class TransactionService {
 				return lstnotifications;
 			}
 		}
+		sinventoryid = null;
 		return lstnotifications;
 	}
 
@@ -1219,7 +1235,16 @@ public class TransactionService {
 
 	public List<LSnotification> updateNotificationOnELNSample(Sample objsample, String task, LScfttransaction cft,
 			double getQtyLeft, Date date) {
-
+		
+		String samplename = "";
+		SequenceTable seqobj =  sequenceTableRepository.findBySequencecodeOrderBySequencecode(5);
+		Boolean Applicationseq = seqobj.getSequenceview().equals(2) ? true : false;
+		
+		samplename = Applicationseq 
+				 ? objsample.getSequenceid() == null 
+				        ? objsample.getSamplename() : objsample.getSequenceid()
+				 : objsample.getSamplename();
+		
 		List<LSnotification> lstnotifications = new ArrayList<LSnotification>();
 
 		List<ElnresultUsedSample> objLstTransactions = ElnresultUsedSampleRepository
@@ -1243,15 +1268,15 @@ public class TransactionService {
 
 				if (task.equals("INVENTORYQTYNOTIFICATION")) {
 
-					details = "{\"inventoryid\":\"" + objsample.getSamplename() + "\",  " + "\"qtyleft\":\""
+					details = "{\"inventoryid\":\"" + samplename + "\",  " + "\"qtyleft\":\""
 							+ getQtyLeft + "\",  " + "\"notificationamount\":\"" + objsample.getNqtynotification()
 							+ "\"}";
 
 				} else if (task.equals("EXPIRYDATE")) {
-					details = "{\"inventoryid\":\"" + objsample.getSamplename() + "\",  " + "\"daysleft\":\"" + date
+					details = "{\"inventoryid\":\"" + samplename + "\",  " + "\"daysleft\":\"" + date
 							+ "\"}";
 				} else {
-					details = "{\"inventoryid\":\"" + objsample.getSamplename() + "\",  " + "\"daysleft\":\""
+					details = "{\"inventoryid\":\"" + samplename + "\",  " + "\"daysleft\":\""
 							+ getQtyLeft + "\"}";
 				}
 
@@ -1287,15 +1312,15 @@ public class TransactionService {
 
 					if (task.equals("INVENTORYQTYNOTIFICATION")) {
 
-						details = "{\"inventoryid\":\"" + objsample.getSamplename() + "\",  " + "\"qtyleft\":\""
+						details = "{\"inventoryid\":\"" + samplename + "\",  " + "\"qtyleft\":\""
 								+ getQtyLeft + "\",  " + "\"notificationamount\":\"" + objsample.getNqtynotification()
 								+ "\"}";
 
 					} else if (task.equals("EXPIRYDATE")) {
-						details = "{\"inventoryid\":\"" + objsample.getSamplename() + "\",  " + "\"daysleft\":\"" + date
+						details = "{\"inventoryid\":\"" + samplename + "\",  " + "\"daysleft\":\"" + date
 								+ "\"}";
 					} else {
-						details = "{\"inventoryid\":\"" + objsample.getSamplename() + "\",  " + "\"daysleft\":\""
+						details = "{\"inventoryid\":\"" + samplename + "\",  " + "\"daysleft\":\""
 								+ getQtyLeft + "\"}";
 					}
 
@@ -1319,6 +1344,7 @@ public class TransactionService {
 			}
 
 		}
+		samplename = null;
 		return lstnotifications;
 
 	}
@@ -1326,6 +1352,15 @@ public class TransactionService {
 	public List<LSnotification> updateNotificationOnELNInventory(ElnmaterialInventory objInventory, String task,
 			LScfttransaction cft, Double getQtyLeft, Date date) {
 
+		String sinventoryid = "";
+		SequenceTable seqobj =  sequenceTableRepository.findBySequencecodeOrderBySequencecode(3);
+		Boolean Applicationseq = seqobj.getSequenceview().equals(2) ? true : false;
+		
+		sinventoryid = Applicationseq 
+				? objInventory.getSequenceid() == null 
+					? objInventory.getSinventoryid() : objInventory.getSequenceid()
+				: objInventory.getSinventoryid();
+		
 		List<LSnotification> lstnotifications = new ArrayList<LSnotification>();
 
 		List<ElnresultUsedMaterial> objLstTransactions = objInventory.getResultusedmaterial();
@@ -1348,15 +1383,15 @@ public class TransactionService {
 
 				if (task.equals("INVENTORYQTYNOTIFICATION")) {
 
-					details = "{\"inventoryid\":\"" + objInventory.getSinventoryid() + "\",  " + "\"qtyleft\":\""
+					details = "{\"inventoryid\":\"" + sinventoryid + "\",  " + "\"qtyleft\":\""
 							+ getQtyLeft + "\",  " + "\"notificationamount\":\"" + objInventory.getNqtynotification()
 							+ "\"}";
 
 				} else if (task.equals("EXPIRYDATE")) {
-					details = "{\"inventoryid\":\"" + objInventory.getSinventoryid() + "\",  " + "\"daysleft\":\""
+					details = "{\"inventoryid\":\"" + sinventoryid + "\",  " + "\"daysleft\":\""
 							+ date + "\"}";
 				} else {
-					details = "{\"inventoryid\":\"" + objInventory.getSinventoryid() + "\",  " + "\"daysleft\":\""
+					details = "{\"inventoryid\":\"" + sinventoryid + "\",  " + "\"daysleft\":\""
 							+ getQtyLeft + "\"}";
 				}
 
@@ -1392,15 +1427,15 @@ public class TransactionService {
 
 					if (task.equals("INVENTORYQTYNOTIFICATION")) {
 
-						details = "{\"inventoryid\":\"" + objInventory.getSinventoryid() + "\",  " + "\"qtyleft\":\""
+						details = "{\"inventoryid\":\"" + sinventoryid + "\",  " + "\"qtyleft\":\""
 								+ getQtyLeft + "\",  " + "\"notificationamount\":\""
 								+ objInventory.getNqtynotification() + "\"}";
 
 					} else if (task.equals("EXPIRYDATE")) {
-						details = "{\"inventoryid\":\"" + objInventory.getSinventoryid() + "\",  " + "\"daysleft\":\""
+						details = "{\"inventoryid\":\"" + sinventoryid + "\",  " + "\"daysleft\":\""
 								+ date + "\"}";
 					} else {
-						details = "{\"inventoryid\":\"" + objInventory.getSinventoryid() + "\",  " + "\"daysleft\":\""
+						details = "{\"inventoryid\":\"" + sinventoryid + "\",  " + "\"daysleft\":\""
 								+ getQtyLeft + "\"}";
 					}
 
@@ -2020,7 +2055,7 @@ public class TransactionService {
 		ElnresultUsedSample ElnresultUsedSample = new ElnresultUsedSample();
 		if (ActionType == 0) {
 			double usedQuantity = Double.parseDouble(objResultMap.get("usedQuantity").toString());
-			if (getIssuedQty >= usedQuantity) {
+			if (getIssuedQty >= usedQuantity && objSampleobj.getSamplecategory().getNstatus()!=-1 && objSampleobj.getSampletype().getNstatus()!=-1) {
 				getQtyLeft = getIssuedQty - usedQuantity;
 				response.setStatus(true);
 			} else {

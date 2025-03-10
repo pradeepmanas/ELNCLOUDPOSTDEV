@@ -159,7 +159,7 @@ public class MaterialService {
 	private Commonservice commonService;
 	@Autowired
 	private SequenceTableRepository sequenceTableRepository;
-	
+
 	@Autowired
 	private SampleProjectMapRepository SampleProjectMapRepository;
 
@@ -1940,9 +1940,10 @@ public class MaterialService {
 			}
 		}
 
-		List<MaterialType> lstMaterialTypesFilter = materialTypeRepository.findByNsitecodeOrderByNmaterialtypecodeDesc(nsiteInteger);
-		List<MaterialCategory> lstCategoriesFilter = materialCategoryRepository.findByNsitecodeOrderByNmaterialcatcodeDesc(nsiteInteger);
-
+		List<MaterialType> lstMaterialTypesFilter = materialTypeRepository
+				.findByNsitecodeOrderByNmaterialtypecodeDesc(nsiteInteger);
+		List<MaterialCategory> lstCategoriesFilter = materialCategoryRepository
+				.findByNsitecodeOrderByNmaterialcatcodeDesc(nsiteInteger);
 
 		objmap.put("lstMaterial", lstElnmaterials);
 		objmap.put("lstCategories", lstCategories);
@@ -2012,17 +2013,6 @@ public class MaterialService {
 		return new ResponseEntity<>(objmap, HttpStatus.OK);
 	}
 
-	public List<Integer> getmaterialcode(Object projectData, ObjectMapper obj) {
-		LSprojectmaster project = !projectData.toString().isEmpty()
-				? obj.convertValue(projectData, LSprojectmaster.class)
-				: new LSprojectmaster();
-		List<MaterialProjectMap> MaterialProjectMapobj = materialprojectmapRepository
-				.findByLsproject(project);
-		List<Integer> nmaterialcode = MaterialProjectMapobj.stream().map(MaterialProjectMap::getNmaterialcode)
-				.collect(Collectors.toList());
-		return nmaterialcode;
-	}
-
 	public ResponseEntity<Object> getElnMaterialOnProtocol(ElnresultUsedMaterial inputMap) throws ParseException {
 
 		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
@@ -2035,42 +2025,29 @@ public class MaterialService {
 		if (!isFilter) {
 
 			if (ScreenType != 1) {
-				List<Integer> nmaterialcode = new ArrayList<>();
+				LSprojectmaster project = null;
 				if (inputMap.getCustomobject().get("project") != null) {
 					Object projectData = inputMap.getCustomobject().get("project");
-
-					if (!projectData.toString().isEmpty()) {
-						nmaterialcode = getmaterialcode(projectData, obj);
-//						LSprojectmaster project = !projectData.toString().isEmpty()? obj.convertValue(projectData, LSprojectmaster.class):new LSprojectmaster();
-//						List<MaterialProjectHistory> MaterialProjectHistory1 = materialprojecthistoryrepository
-//								.findByLsproject(project);
-//						nmaterialcode = MaterialProjectHistory1.stream().map(MaterialProjectHistory::getNmaterialcode)
-//								.collect(Collectors.toList());
-					}
+					project = !projectData.toString().isEmpty() ? obj.convertValue(projectData, LSprojectmaster.class)
+							: null;
 
 				}
 				if (ScreenType == 2) {
-					lstMaterial = elnmaterialRepository
-							.findByNsitecodeAndCreateddateBetweenAndNmaterialcodeInOrderByNmaterialcodeDesc(
-									nsiteInteger, inputMap.getFromdate(), inputMap.getTodate(), nmaterialcode);
-
-				} else {
-					if (!nmaterialcode.isEmpty()) {
-						lstMaterial = elnmaterialRepository
-								.findByNsitecodeAndCreateddateBetweenAndNmaterialcodeNotInOrderByNmaterialcodeDesc(
-										nsiteInteger, inputMap.getFromdate(), inputMap.getTodate(), nmaterialcode);
-						lstMaterial.addAll(elnmaterialRepository
-								.findByNsitecodeAndCreateddateBetweenAndNmaterialcodeInOrderByNmaterialcodeDesc(
-										nsiteInteger, inputMap.getFromdate(), inputMap.getTodate(), nmaterialcode));
-					} else {
-						ScreenType = 1;
+					if (project != null) {
+						lstMaterial = elnmaterialRepository.findElnmaterialsWithProjectMaps(nsiteInteger,
+								inputMap.getFromdate(), inputMap.getTodate(), project);
 					}
-
+				} else {
+					if (project != null) {
+						lstMaterial = elnmaterialRepository.findElnmaterialsWithProjectMaps(nsiteInteger,
+								inputMap.getFromdate(), inputMap.getTodate(), project);
+					}
+						ScreenType = 1;
 				}
 			}
 			if (ScreenType == 1) {
-				lstMaterial = elnmaterialRepository.findByNsitecodeAndCreateddateBetweenOrderByNmaterialcodeDesc(
-						nsiteInteger, inputMap.getFromdate(), inputMap.getTodate());
+				lstMaterial.addAll(elnmaterialRepository.findElnmaterialsWithoutProjectMaps(nsiteInteger,
+						inputMap.getFromdate(), inputMap.getTodate()));
 
 			}
 		} else {
@@ -2083,78 +2060,67 @@ public class MaterialService {
 					});
 
 			if (ScreenType != 1) {
-				List<Integer> nmaterialcode = new ArrayList<>();
+
+				LSprojectmaster project = null;
 				if (inputMap.getCustomobject().get("project") != null) {
 					Object projectData = inputMap.getCustomobject().get("project");
-					if (!projectData.toString().isEmpty()) {
-						nmaterialcode = getmaterialcode(projectData, obj);
-					}
-				}
+					project = !projectData.toString().isEmpty() ? obj.convertValue(projectData, LSprojectmaster.class)
+							: null;
 
+				}
 				if (objmaterialtype.getNmaterialtypecode() != null
 						&& objMaterialCategory.getNmaterialcatcode() != null) {
 
 					if (ScreenType == 2) {
-						lstMaterial = elnmaterialRepository
-								.findByNsitecodeAndCreateddateBetweenAndNmaterialcodeInAndMaterialtypeAndMaterialcategoryOrderByNmaterialcodeDesc(
-										nsiteInteger, inputMap.getFromdate(), inputMap.getTodate(), nmaterialcode,
-										objmaterialtype, objMaterialCategory);
+						if (project != null) {
+							lstMaterial = elnmaterialRepository.findElnmaterialsWithProjectMapsforfilter(nsiteInteger,
+									inputMap.getFromdate(), inputMap.getTodate(), project, objmaterialtype,
+									objMaterialCategory);
+						}
 
 					} else {
-						if (!nmaterialcode.isEmpty()) {
-							lstMaterial = elnmaterialRepository
-									.findByNsitecodeAndCreateddateBetweenAndNmaterialcodeNotInAndMaterialtypeAndMaterialcategoryOrderByNmaterialcodeDesc(
-											nsiteInteger, inputMap.getFromdate(), inputMap.getTodate(), nmaterialcode,
-											objmaterialtype, objMaterialCategory);
-							lstMaterial.addAll(elnmaterialRepository
-									.findByNsitecodeAndCreateddateBetweenAndNmaterialcodeInAndMaterialtypeAndMaterialcategoryOrderByNmaterialcodeDesc(
-											nsiteInteger, inputMap.getFromdate(), inputMap.getTodate(), nmaterialcode,
-											objmaterialtype, objMaterialCategory));
-						} else {
-							ScreenType = 1;
+
+						ScreenType = 1;
+						if (project != null) {
+							lstMaterial.addAll(elnmaterialRepository.findElnmaterialsWithProjectMapsforfilter(
+									nsiteInteger, inputMap.getFromdate(), inputMap.getTodate(), project,
+									objmaterialtype, objMaterialCategory));
 						}
 					}
 				} else if (objmaterialtype.getNmaterialtypecode() != null) {
 					if (ScreenType == 2) {
-						lstMaterial = elnmaterialRepository
-								.findByNsitecodeAndCreateddateBetweenAndNmaterialcodeInAndMaterialtypeOrderByNmaterialcodeDesc(
-										nsiteInteger, inputMap.getFromdate(), inputMap.getTodate(), nmaterialcode,
-										objmaterialtype, objMaterialCategory);
+						if (project != null) {
+							lstMaterial = elnmaterialRepository.findElnmaterialsWithProjectMapsforfilterformattype(
+									nsiteInteger, inputMap.getFromdate(), inputMap.getTodate(), project,
+									objmaterialtype);
+						}
 
 					} else {
-						if (!nmaterialcode.isEmpty()) {
-							lstMaterial = elnmaterialRepository
-									.findByNsitecodeAndCreateddateBetweenAndNmaterialcodeNotInAndMaterialtypeOrderByNmaterialcodeDesc(
-											nsiteInteger, inputMap.getFromdate(), inputMap.getTodate(), nmaterialcode,
-											objmaterialtype, objMaterialCategory);
-							lstMaterial.addAll(elnmaterialRepository
-									.findByNsitecodeAndCreateddateBetweenAndNmaterialcodeInAndMaterialtypeOrderByNmaterialcodeDesc(
-											nsiteInteger, inputMap.getFromdate(), inputMap.getTodate(), nmaterialcode,
-											objmaterialtype, objMaterialCategory));
-						} else {
-							ScreenType = 1;
+
+						ScreenType = 1;
+						if (project != null) {
+							lstMaterial.addAll(elnmaterialRepository.findElnmaterialsWithProjectMapsforfilterformattype(
+									nsiteInteger, inputMap.getFromdate(), inputMap.getTodate(), project,
+									objmaterialtype));
 						}
 					}
 				} else {
 					if (ScreenType == 2) {
-						lstMaterial = elnmaterialRepository
-								.findByNsitecodeAndCreateddateBetweenAndNmaterialcodeInAndMaterialcategoryOrderByNmaterialcodeDesc(
-										nsiteInteger, inputMap.getFromdate(), inputMap.getTodate(), nmaterialcode,
-										objMaterialCategory);
+						if (project != null) {
+							lstMaterial = elnmaterialRepository.findElnmaterialsWithProjectMapsforfilterformatcat(
+									nsiteInteger, inputMap.getFromdate(), inputMap.getTodate(), project,
+									objMaterialCategory);
+						}
 
 					} else {
-						if (!nmaterialcode.isEmpty()) {
-							lstMaterial = elnmaterialRepository
-									.findByNsitecodeAndCreateddateBetweenAndNmaterialcodeNotInAndMaterialcategoryOrderByNmaterialcodeDesc(
-											nsiteInteger, inputMap.getFromdate(), inputMap.getTodate(), nmaterialcode,
-											objMaterialCategory);
-							lstMaterial.addAll(elnmaterialRepository
-									.findByNsitecodeAndCreateddateBetweenAndNmaterialcodeInAndMaterialcategoryOrderByNmaterialcodeDesc(
-											nsiteInteger, inputMap.getFromdate(), inputMap.getTodate(), nmaterialcode,
-											objMaterialCategory));
-						} else {
-							ScreenType = 1;
+
+						ScreenType = 1;
+						if (project != null) {
+							lstMaterial.addAll(elnmaterialRepository.findElnmaterialsWithProjectMapsforfilterformatcat(
+									nsiteInteger, inputMap.getFromdate(), inputMap.getTodate(), project,
+									objMaterialCategory));
 						}
+
 					}
 				}
 
@@ -2164,18 +2130,14 @@ public class MaterialService {
 
 				if (objmaterialtype.getNmaterialtypecode() != null
 						&& objMaterialCategory.getNmaterialcatcode() != null) {
-					lstMaterial = elnmaterialRepository
-							.findByNsitecodeAndCreateddateBetweenAndMaterialtypeAndMaterialcategoryOrderByNmaterialcodeDesc(
-									nsiteInteger, inputMap.getFromdate(), inputMap.getTodate(), objmaterialtype,
-									objMaterialCategory);
+					lstMaterial.addAll(elnmaterialRepository.findElnmaterialsWithoutProjectMapsforfilter(nsiteInteger,
+							inputMap.getFromdate(), inputMap.getTodate(), objmaterialtype, objMaterialCategory));
 				} else if (objmaterialtype.getNmaterialtypecode() != null) {
-					lstMaterial = elnmaterialRepository
-							.findByNsitecodeAndCreateddateBetweenAndMaterialtypeOrderByNmaterialcodeDesc(nsiteInteger,
-									inputMap.getFromdate(), inputMap.getTodate(), objmaterialtype);
+					lstMaterial.addAll(elnmaterialRepository.findElnmaterialsWithoutProjectMapsforfilterformaterialtype(
+							nsiteInteger, inputMap.getFromdate(), inputMap.getTodate(), objmaterialtype));
 				} else {
-					lstMaterial = elnmaterialRepository
-							.findByNsitecodeAndCreateddateBetweenAndMaterialcategoryOrderByNmaterialcodeDesc(
-									nsiteInteger, inputMap.getFromdate(), inputMap.getTodate(), objMaterialCategory);
+					lstMaterial.addAll(elnmaterialRepository.findElnmaterialsWithoutProjectMapsforfilterforcat(
+							nsiteInteger, inputMap.getFromdate(), inputMap.getTodate(), objMaterialCategory));
 				}
 
 			} else {
@@ -2420,13 +2382,6 @@ public class MaterialService {
 		return new ResponseEntity<>(materiallist, HttpStatus.OK);
 	}
 
-	public List<Integer> getsamplecode(Object projectData, ObjectMapper obj) {
-		LSprojectmaster project = obj.convertValue(projectData, LSprojectmaster.class);
-		List<SampleProjectMap> SampleProjectMapobj = SampleProjectMapRepository.findByLsproject(project);
-		List<Integer> sampleCodes = SampleProjectMapobj.stream().map(SampleProjectMap::getSamplecode)
-				.collect(Collectors.toList());
-		return sampleCodes;
-	}
 
 	public ResponseEntity<Object> getSampleList(ElnresultUsedSample inputMap) throws ParseException {
 		Integer screenType = Integer.parseInt(inputMap.getCustomobject().get("ScreenType").toString());
@@ -2437,38 +2392,35 @@ public class MaterialService {
 		Date toDate = inputMap.getTodate();
 		Integer transactionStatus = 28;
 		Boolean isFilter = (Boolean) inputMap.getCustomobject().get("isFilter");
-		List<Integer> sampleCodes = new ArrayList<>();
+//		List<Integer> sampleCodes = new ArrayList<>();
+		ObjectMapper obj = new ObjectMapper();
+		LSprojectmaster project = null;
+		if (inputMap.getCustomobject().get("project") != null) {
+			Object projectData = inputMap.getCustomobject().get("project");
+			project = !projectData.toString().isEmpty() ? obj.convertValue(projectData, LSprojectmaster.class)
+					: null;
+
+		}
 		if (!isFilter) {
 			if (screenType != 1) {
-				if (inputMap.getCustomobject().get("project") != null) {
-					ObjectMapper obj = new ObjectMapper();
-					Object projectData = inputMap.getCustomobject().get("project");
-					if (!projectData.toString().isEmpty()) {
-						sampleCodes = getsamplecode(projectData, obj);
-					}
-				}
-
 				if (screenType == 2) {
-					lstSample = SampleRepository
-							.findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndSamplecodeInOrderBySamplecodeDesc(
-									siteCode, fromDate, toDate, transactionStatus, sampleCodes);
-				} else {
-					if (!sampleCodes.isEmpty()) {
+					if(project!=null) {
 						lstSample = SampleRepository
-								.findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndSamplecodeNotInOrderBySamplecodeDesc(
-										siteCode, fromDate, toDate, transactionStatus, sampleCodes);
-
-						lstSample.addAll(SampleRepository
-								.findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndSamplecodeInOrderBySamplecodeDesc(
-										siteCode, fromDate, toDate, transactionStatus, sampleCodes));
-					} else {
-						screenType = 1;
+								.findElnmaterialsWithProjectMaps(siteCode,
+										fromDate, toDate, transactionStatus,project);
+					}
+				} else {
+					screenType = 1;
+					if(project!=null) {
+						lstSample = SampleRepository
+								.findElnmaterialsWithProjectMaps(siteCode,
+										fromDate, toDate, transactionStatus,project);
 					}
 				}
 			}
 			if (screenType == 1) {
 				lstSample = SampleRepository
-						.findByNsitecodeAndCreateddateBetweenAndNtransactionstatusOrderBySamplecodeDesc(siteCode,
+						.findElnmaterialsWithoutProjectMaps(siteCode,
 								fromDate, toDate, transactionStatus);
 
 			}
@@ -2485,38 +2437,27 @@ public class MaterialService {
 						});
 
 				if (screenType != 1) {
-					if (inputMap.getCustomobject().get("project") != null) {
-						ObjectMapper obj = new ObjectMapper();
-						Object projectData = inputMap.getCustomobject().get("project");
-						if (!projectData.toString().isEmpty()) {
-							sampleCodes = getsamplecode(projectData, obj);
-						}
-					}
 					if (screenType == 2) {
+						if(project!=null) {
 						lstSample = SampleRepository
-								.findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndSamplecodeInAndSampletypeAndSamplecategoryOrderBySamplecodeDesc(
-										siteCode, fromDate, toDate, transactionStatus, sampleCodes, objSampleType,
+								.findElnmaterialsWithProjectMapsforfilter(
+										siteCode, fromDate, toDate, transactionStatus, project, objSampleType,
 										objSampleCategory);
+						}
 					} else {
-						if (!sampleCodes.isEmpty()) {
-							lstSample = SampleRepository
-									.findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndSamplecodeNotInAndSampletypeAndSamplecategoryOrderBySamplecodeDesc(
-											siteCode, fromDate, toDate, transactionStatus, sampleCodes, objSampleType,
-											objSampleCategory);
-
+						screenType = 1;
+						if(project!=null) {
 							lstSample.addAll(SampleRepository
-									.findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndSamplecodeInAndSampletypeAndSamplecategoryOrderBySamplecodeDesc(
-											siteCode, fromDate, toDate, transactionStatus, sampleCodes, objSampleType,
+									.findElnmaterialsWithProjectMapsforfilter(
+											siteCode, fromDate, toDate, transactionStatus, project, objSampleType,
 											objSampleCategory));
-						} else {
-							screenType = 1;
 						}
 					}
 				}
 				if (screenType == 1) {
-					lstSample = SampleRepository
-							.findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndSampletypeAndSamplecategoryOrderBySamplecodeDesc(
-									siteCode, fromDate, toDate, transactionStatus, objSampleType, objSampleCategory);
+					lstSample.addAll(SampleRepository
+							.findElnmaterialsWithoutProjectMapsforfilter(
+									siteCode, fromDate, toDate, transactionStatus, objSampleType, objSampleCategory));
 				}
 
 			} else if (inputMap.getCustomobject().get("sampletype") != null) {
@@ -2525,38 +2466,27 @@ public class MaterialService {
 				});
 
 				if (screenType != 1) {
-
-					if (inputMap.getCustomobject().get("project") != null) {
-						ObjectMapper obj = new ObjectMapper();
-						Object projectData = inputMap.getCustomobject().get("project");
-						if (!projectData.toString().isEmpty()) {
-							sampleCodes = getsamplecode(projectData, obj);
-						}
-					}
-
 					if (screenType == 2) {
+						if(project!=null) {
 						lstSample = SampleRepository
-								.findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndSamplecodeInAndSampletypeOrderBySamplecodeDesc(
-										siteCode, fromDate, toDate, transactionStatus, sampleCodes, objSampleType);
+								.findElnmaterialsWithProjectMapsforfiltersampletype(
+										siteCode, fromDate, toDate, transactionStatus, project, objSampleType);
+						}
 					} else {
-						if (!sampleCodes.isEmpty()) {
-							lstSample = SampleRepository
-									.findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndSamplecodeNotInAndSampletypeOrderBySamplecodeDesc(
-											siteCode, fromDate, toDate, transactionStatus, sampleCodes, objSampleType);
+						screenType = 1;
+						if(project!=null) {
 
 							lstSample.addAll(SampleRepository
-									.findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndSamplecodeInAndSampletypeOrderBySamplecodeDesc(
-											siteCode, fromDate, toDate, transactionStatus, sampleCodes, objSampleType));
-						} else {
-							screenType = 1;
+									.findElnmaterialsWithProjectMapsforfiltersampletype(
+											siteCode, fromDate, toDate, transactionStatus, project, objSampleType));
 						}
 					}
 				}
 
 				if (screenType == 1) {
-					lstSample = SampleRepository
-							.findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndSampletypeOrderBySamplecodeDesc(
-									siteCode, fromDate, toDate, transactionStatus, objSampleType);
+					lstSample.addAll(SampleRepository
+							.findElnmaterialsWithoutProjectMapsforfilterforsampletype(
+									siteCode, fromDate, toDate, transactionStatus, objSampleType));
 
 				}
 
@@ -2567,37 +2497,25 @@ public class MaterialService {
 						});
 
 				if (screenType != 1) {
-					if (inputMap.getCustomobject().get("project") != null) {
-						ObjectMapper obj = new ObjectMapper();
-						Object projectData = inputMap.getCustomobject().get("project");
-						if (!projectData.toString().isEmpty()) {
-							sampleCodes = getsamplecode(projectData, obj);
-						}
-					}
-
 					if (screenType == 2) {
+						if(project!=null) {
 						lstSample = SampleRepository
-								.findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndSamplecodeInAndSamplecategoryOrderBySamplecodeDesc(
-										siteCode, fromDate, toDate, transactionStatus, sampleCodes, objSampleCategory);
+								.findElnmaterialsWithProjectMapsforfilterforsamplecat(
+										siteCode, fromDate, toDate, transactionStatus, project, objSampleCategory);
+						}
 					} else {
-						if (!sampleCodes.isEmpty()) {
-							lstSample = SampleRepository
-									.findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndSamplecodeNotInAndSamplecategoryOrderBySamplecodeDesc(
-											siteCode, fromDate, toDate, transactionStatus, sampleCodes,
-											objSampleCategory);
+						screenType = 1;
+						if(project!=null) {
 							lstSample.addAll(SampleRepository
-									.findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndSamplecodeInAndSamplecategoryOrderBySamplecodeDesc(
-											siteCode, fromDate, toDate, transactionStatus, sampleCodes,
-											objSampleCategory));
-						} else {
-							screenType = 1;
+									.findElnmaterialsWithProjectMapsforfilterforsamplecat(
+											siteCode, fromDate, toDate, transactionStatus, project, objSampleCategory));
 						}
 					}
 				}
 
 				if (screenType == 1) {
 					lstSample = SampleRepository
-							.findByNsitecodeAndCreateddateBetweenAndNtransactionstatusAndSamplecategoryOrderBySamplecodeDesc(
+							.findElnmaterialsWithoutProjectMapsforfilterforsamplecat(
 									siteCode, fromDate, toDate, transactionStatus, objSampleCategory);
 				}
 			}

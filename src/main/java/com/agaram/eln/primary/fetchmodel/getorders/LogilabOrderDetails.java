@@ -47,6 +47,7 @@ public class LogilabOrderDetails extends Logilaborders {
 	private List<Lsbatchdetails> lsbatchdetails;
 	private List<LsOrderattachments> lsOrderattachments;
     private List<ELNFileAttachments> elnfileAttachments;
+    private String sequenceid;
  
 	public LogilabOrderDetails(Long batchcode, String batchid, String orderflag, Integer approvelstatus,
 			Integer lockeduser, Integer testcode, String testname, LSsamplemaster lssamplemaster,
@@ -57,7 +58,7 @@ public class LogilabOrderDetails extends Logilaborders {
 			Integer viewoption, Elnmaterial elnmaterial, MaterialInventory materialinventory, String lockedusername,
 			Integer activeuser, Integer approved,LSOrdernotification lsordernotification, 
 			Integer ordersaved,Boolean repeat,LsAutoregister lsautoregisterorders,Boolean sentforapprovel,
-			String approvelaccept,Integer autoregistercount,String sequenceid,Boolean teamselected
+			String approvelaccept,Integer autoregistercount,Boolean teamselected,String sequenceid
 //			,
 //			List<Lsorderworkflowhistory> lsorderworkflowhistory
 	) {
@@ -65,7 +66,7 @@ public class LogilabOrderDetails extends Logilaborders {
 				lsprojectmaster, lsfile, filetype, lsuserMaster, assignedto, lssamplefile, lsworkflow, createdtimestamp,
 				completedtimestamp, lsrepositoriesdata, lsrepositories, keyword, directorycode, lstestmasterlocal,
 				ordercancell, viewoption, elnmaterial, materialinventory, approved, lsordernotification, ordersaved,
-				repeat, lsautoregisterorders, sentforapprovel, approvelaccept, autoregistercount,sequenceid,teamselected);
+				repeat, lsautoregisterorders, sentforapprovel, approvelaccept, autoregistercount,teamselected,sequenceid);
 
 		this.lockedusername = lockedusername;
 		this.activeuser = activeuser;
@@ -74,6 +75,7 @@ public class LogilabOrderDetails extends Logilaborders {
 		this.lssamplefile = lssamplefile;
 		this.lstestmasterlocal = lstestmasterlocal;
 		this.lsworkflow =lsworkflow ;
+		this.sequenceid = sequenceid;
 		
 //		this.lsorderworkflowhistory.addAll(lsorderworkflowhistory);
 	}
@@ -220,6 +222,14 @@ public class LogilabOrderDetails extends Logilaborders {
 
 	public void setLsOrderattachments(List<LsOrderattachments> lsOrderattachments) {
 		this.lsOrderattachments = lsOrderattachments;
+	}
+
+	public String getSequenceid() {
+		return sequenceid;
+	}
+
+	public void setSequenceid(String sequenceid) {
+		this.sequenceid = sequenceid;
 	}
 
 }

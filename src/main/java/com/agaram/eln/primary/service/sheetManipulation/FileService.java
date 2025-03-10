@@ -324,7 +324,7 @@ public class FileService {
 			}
 
 			Isnew = false;
-//			objfile.setModifieddate(commonfunction.getCurrentUtcTime());
+			objfile.setModifieddate(commonfunction.getCurrentUtcTime());
 		} else {
 
 			Isnew = true;

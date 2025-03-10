@@ -594,39 +594,47 @@ public interface LogilablimsorderdetailsRepository extends JpaRepository<LSlogil
     "WHERE " +
     "    (" +
     "        o.orderflag = ?1 " +
-    "        AND filetype = ?2 " +
-    "        AND createdtimestamp BETWEEN ?3 AND ?4 " +
-    "        AND assignedto_usercode IS NULL " +
+    "        AND o.filetype = ?2 " +
+    "        AND o.createdtimestamp BETWEEN ?3 AND ?4 " +
+    "        AND o.assignedto_usercode IS NULL " +
     "    ) " +
     "    OR (" +
     "        o.orderflag = ?1 " +
-    "        AND lsprojectmaster_projectcode IS NULL " +
+    "        AND o.lsprojectmaster_projectcode IS NULL " +
     "        AND ((" +
-    "            (viewoption = ?7 OR viewoption = ?8 OR (viewoption = ?9 AND teamselected=false)) " +
-    "            AND lsusermaster_usercode = ?5 " +
-    "            AND createdtimestamp BETWEEN ?3 AND ?4 " +
+    "            (o.viewoption = ?7 OR o.viewoption = ?8 OR (o.viewoption = ?9 AND o.teamselected = false)) " +
+    "            AND o.lsusermaster_usercode = ?5 " +
+    "            AND o.createdtimestamp BETWEEN ?3 AND ?4 " +
     "            AND (" +
-    "                (approvelstatus != ?6 AND ordercancell IS NULL AND assignedto_usercode IS NULL) " +
-    "                OR (approvelstatus IS NULL AND ordercancell IS NULL AND assignedto_usercode IS NULL) " +
+    "                (o.approvelstatus != ?9 AND o.ordercancell IS NULL AND o.assignedto_usercode IS NULL) " +
+    "                OR (o.approvelstatus IS NULL AND o.ordercancell IS NULL AND o.assignedto_usercode IS NULL) " +
     "            ) " +
     "        ) " +
-    "		OR (" +
-    	    " (viewoption = ?9 AND teamselected=true AND batchcode IN ?12) " +
-    	  
-    	    " AND createdtimestamp BETWEEN ?3 AND ?4 " +
-    	    " AND (" +
-    	    " (approvelstatus != ?6 AND ordercancell IS NULL AND assignedto_usercode IS NULL) " +
-    	    " OR (approvelstatus IS NULL AND ordercancell IS NULL AND assignedto_usercode IS NULL) " +
-    	    " ) " +
-    	    ")) " +
+    "        OR (" +
+    "            (o.viewoption = ?9 AND o.teamselected = true AND o.batchcode IN (?12)) " +
+    "            AND o.createdtimestamp BETWEEN ?3 AND ?4 " +
+    "            AND (" +
+    "                (o.approvelstatus != ?6 AND o.ordercancell IS NULL AND o.assignedto_usercode IS NULL) " +
+    "                OR (o.approvelstatus IS NULL AND o.ordercancell IS NULL AND o.assignedto_usercode IS NULL) " +
+    "            ) " +
+    "        ) " +
     "    ) " +
-    "ORDER BY batchcode DESC " +
-    "OFFSET ?10 ROWS FETCH NEXT ?11 ROWS ONLY", nativeQuery = true
+    "    OR (" +
+    "        o.orderflag = ?1 " +
+    "        AND o.lsprojectmaster_projectcode IN (?13) " +
+    "        AND o.createdtimestamp BETWEEN ?3 AND ?4 " +
+    "        AND (" +
+    "            (o.approvelstatus != ?6 AND o.ordercancell IS NULL AND o.assignedto_usercode IS NULL) " +
+    "            OR (o.approvelstatus IS NULL AND o.ordercancell IS NULL AND o.assignedto_usercode IS NULL) " +
+    "        ) " +
+    "    )) " +
+    "ORDER BY o.batchcode DESC " +
+    "LIMIT ?11 OFFSET ?10",
+    nativeQuery = true
 )
-
 	List<LSlogilablimsorderdetail> getLSlogilablimsorderdetaildashboardforcompleted(String string, int i, Date fromdate,
 			Date todate,LSuserMaster objuser , int j, int k, int l, int m,int n,
-			Integer pageperorder,List<Long> batchcode);
+			Integer pageperorder,List<Long> batchcode, List<LSprojectmaster> lstproject);
 	
 	@Transactional
 	@Modifying

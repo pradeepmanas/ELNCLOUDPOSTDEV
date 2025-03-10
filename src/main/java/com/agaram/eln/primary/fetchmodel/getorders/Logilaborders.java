@@ -51,6 +51,7 @@ public class Logilaborders extends Logilabordermaster {
 	private String approvelaccept;
 	private Integer autoregistercount;
 	private Boolean teamselected;
+	private String sequenceid;
  
 	public Logilaborders(Long batchcode, String batchid, String orderflag, Integer approvelstatus,
 			Integer lockeduser, Integer testcode, String testname, LSsamplemaster lssamplemaster,
@@ -59,11 +60,11 @@ public class Logilaborders extends Logilabordermaster {
 			Lsrepositoriesdata lsrepositoriesdata,Lsrepositories lsrepositories,String keyword, Long directorycode,LStestmasterlocal lstestmasterlocal,
 			Integer ordercancell,Integer viewoption,Elnmaterial elnmaterial,MaterialInventory materialinventory,Integer approved,LSOrdernotification lsordernotification, 
 			Integer ordersaved,Boolean repeat,LsAutoregister lsautoregisterorders,Boolean sentforapprovel,String approvelaccept,Integer autoregistercount,
-			String sequenceid,Boolean teamselected) {
+			Boolean teamselected,String sequenceid) {
 		
 		super(batchcode, batchid, lsworkflow, testname, lsfile, lssamplemaster, lsprojectmaster, filetype, orderflag,assignedto, createdtimestamp,completedtimestamp,keyword,
 				lstestmasterlocal, ordercancell,viewoption,lsuserMaster,testcode, approvelstatus,lsordernotification, ordersaved,repeat,
-				lsautoregisterorders,sentforapprovel,approvelaccept,autoregistercount, elnmaterial,sequenceid,teamselected);
+				lsautoregisterorders,sentforapprovel,approvelaccept,autoregistercount, elnmaterial,teamselected,sequenceid);
 		 
 		if(lssamplefile != null)
 		{
@@ -103,6 +104,7 @@ public class Logilaborders extends Logilabordermaster {
         this.approvelaccept=approvelaccept!=null?approvelaccept:null;
         this.autoregistercount = autoregistercount != null ? autoregistercount:null;
         this.teamselected=teamselected;
+        this.sequenceid= sequenceid;
 	}
 	
 	
@@ -363,6 +365,16 @@ public class Logilaborders extends Logilabordermaster {
 
 	public void setAutoregistercount(Integer autoregistercount) {
 		this.autoregistercount = autoregistercount;
+	}
+
+
+	public String getSequenceid() {
+		return sequenceid;
+	}
+
+
+	public void setSequenceid(String sequenceid) {
+		this.sequenceid = sequenceid;
 	}
 	
 }

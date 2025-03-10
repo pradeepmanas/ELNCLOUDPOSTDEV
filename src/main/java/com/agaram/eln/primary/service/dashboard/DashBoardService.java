@@ -1,5 +1,6 @@
 package com.agaram.eln.primary.service.dashboard;
 
+import java.math.BigInteger;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,6 +14,10 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.cloudfoundry.com.fasterxml.jackson.core.type.TypeReference;
@@ -52,6 +57,7 @@ import com.agaram.eln.primary.model.protocols.LSlogilabprotocoldetail;
 import com.agaram.eln.primary.model.protocols.LSlogilabprotocoldetail.Protocolorder;
 import com.agaram.eln.primary.model.protocols.LSprotocolmaster;
 import com.agaram.eln.primary.model.protocols.LSprotocolselectedteam;
+import com.agaram.eln.primary.model.sheetManipulation.LSfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSparsedparameters;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplefile;
 import com.agaram.eln.primary.model.sheetManipulation.LSsamplemaster;
@@ -94,12 +100,15 @@ import com.agaram.eln.primary.repository.usermanagement.LSuserMasterRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSusersteamRepository;
 import com.agaram.eln.primary.repository.usermanagement.LSuserteammappingRepository;
 
+import javassist.expr.NewArray;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 import java.util.ArrayList;
+
 @EnableScheduling
 @Service
 public class DashBoardService {
@@ -150,7 +159,7 @@ public class DashBoardService {
 
 	@Autowired
 	private LSSelectedTeamRepository LSSelectedTeamRepository;
-	
+
 	@Autowired
 	private LSfileRepository lsfileRepository;
 
@@ -162,7 +171,7 @@ public class DashBoardService {
 
 	@Autowired
 	private LSprotocolselectedteamRepository lsprotoselectedteamRepo;
-	
+
 	@Autowired
 	private LSProtocolMasterRepository LSProtocolMasterRepository;
 
@@ -215,6 +224,9 @@ public class DashBoardService {
 //	private NotificationRepository notificationRepository;
 
 //	private Map<Integer, TimerTask> scheduledTasks = new HashMap<>();
+
+	@PersistenceContext
+	private EntityManager entityManager;
 
 	public Map<String, Object> Getdashboarddetails(LSuserMaster objuser) {
 
@@ -432,11 +444,11 @@ public class DashBoardService {
 		List<Integer> userlist = objuser.getUsernotify() != null
 				? objuser.getUsernotify().stream().map(LSuserMaster::getUsercode).collect(Collectors.toList())
 				: new ArrayList<Integer>();
-				
 
-				List<LSuserteammapping> teammapping = LSuserteammappingRepositoryObj.findByLsuserMasterAndTeamcodeNotNull(objuser);
-				List<LSusersteam> userteamlist = lsusersteamRepository.findByLsuserteammappingIn(teammapping);
-					        
+		List<LSuserteammapping> teammapping = LSuserteammappingRepositoryObj
+				.findByLsuserMasterAndTeamcodeNotNull(objuser);
+		List<LSusersteam> userteamlist = lsusersteamRepository.findByLsuserteammappingIn(teammapping);
+
 		if (objuser.getObjuser().getOrderfor() != 1) {
 			long orders = 0;
 			long pendingOrders = 0;
@@ -444,15 +456,13 @@ public class DashBoardService {
 			long rejectedOrders = 0;
 			long cancelledOrders = 0;
 
-			List<LSprotocolselectedteam> selectedteamorders = lsprotoselectedteamRepo.findByUserteamInAndCreatedtimestampBetween(userteamlist,fromdate,todate);
+			List<LSprotocolselectedteam> selectedteamorders = lsprotoselectedteamRepo
+					.findByUserteamInAndCreatedtimestampBetween(userteamlist, fromdate, todate);
 			List<Long> selectedteamprotcolorderList = (selectedteamorders != null && !selectedteamorders.isEmpty())
-				    ? selectedteamorders.stream()
-				        .map(LSprotocolselectedteam::getProtocolordercode)
-				        .filter(Objects::nonNull)
-				        .distinct()
-				        .collect(Collectors.toList())
-				    : Collections.singletonList(-1L);
-				        
+					? selectedteamorders.stream().map(LSprotocolselectedteam::getProtocolordercode)
+							.filter(Objects::nonNull).distinct().collect(Collectors.toList())
+					: Collections.singletonList(-1L);
+
 			if (lstproject != null && lstproject.size() > 0) {
 
 				if (testcode == -1 && objuser.getLstprojectforfilter() == null) {
@@ -486,15 +496,16 @@ public class DashBoardService {
 //									objuser.getLssitemaster().getSitecode(), 1, fromdate, todate, "N",
 //									objuser.getLssitemaster().getSitecode(), 2, objuser.getUsercode(), fromdate, todate,
 //									"N", objuser.getLssitemaster().getSitecode(), 3, fromdate, todate, userlist));
-					
+
 					mapOrders.put("pendingorder", LSlogilabprotocoldetailRepository
 							.countByOrderflagAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterInAndOrdercancellIsNullAndRejectedIsNullOrOrderflagAndSitecodeAndOrdercancellIsNullAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndRejectedIsNullOrOrderflagAndSitecodeAndOrdercancellIsNullAndLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndRejectedIsNullOrOrderflagAndSitecodeAndOrdercancellIsNullAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndRejectedIsNullAndCreatebyInAndTeamselectedOrTeamselectedAndProtocolordercodeInAndOrderflagAndSitecodeAndOrdercancellIsNullAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndRejectedIsNullAndCreatebyInOrderByProtocolordercodeDesc(
-									"N", objuser.getLssitemaster().getSitecode(), fromdate, todate, lstproject, 
-									"N",objuser.getLssitemaster().getSitecode(), 1, fromdate, todate, 
-									"N",objuser.getLssitemaster().getSitecode(), 2, objuser.getUsercode(), fromdate, todate,
-									"N", objuser.getLssitemaster().getSitecode(), 3, fromdate, todate, userlist,false,
-									true , selectedteamprotcolorderList,"N", objuser.getLssitemaster().getSitecode(), 3, fromdate, todate, userlist));
-					
+									"N", objuser.getLssitemaster().getSitecode(), fromdate, todate, lstproject, "N",
+									objuser.getLssitemaster().getSitecode(), 1, fromdate, todate, "N",
+									objuser.getLssitemaster().getSitecode(), 2, objuser.getUsercode(), fromdate, todate,
+									"N", objuser.getLssitemaster().getSitecode(), 3, fromdate, todate, userlist, false,
+									true, selectedteamprotcolorderList, "N", objuser.getLssitemaster().getSitecode(), 3,
+									fromdate, todate, userlist));
+
 //					mapOrders.put("completedorder", LSlogilabprotocoldetailRepository
 //							.countByOrderflagAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterInAndRejectedIsNullOrOrderflagAndSitecodeAndRejectedIsNullAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenOrOrderflagAndSitecodeAndRejectedIsNullAndLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenOrOrderflagAndSitecodeAndRejectedIsNullAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndCreatebyInOrderByProtocolordercodeDesc(
 //									"R", objuser.getLssitemaster().getSitecode(), fromdate, todate, lstproject, "R",
@@ -507,8 +518,9 @@ public class DashBoardService {
 									"R", objuser.getLssitemaster().getSitecode(), fromdate, todate, lstproject, "R",
 									objuser.getLssitemaster().getSitecode(), 1, fromdate, todate, "R",
 									objuser.getLssitemaster().getSitecode(), 2, objuser.getUsercode(), fromdate, todate,
-									"R", objuser.getLssitemaster().getSitecode(), 3, fromdate, todate, userlist,false,
-									true,selectedteamprotcolorderList,"R", objuser.getLssitemaster().getSitecode(), 3, fromdate, todate, userlist));
+									"R", objuser.getLssitemaster().getSitecode(), 3, fromdate, todate, userlist, false,
+									true, selectedteamprotcolorderList, "R", objuser.getLssitemaster().getSitecode(), 3,
+									fromdate, todate, userlist));
 
 //					mapOrders.put("rejectedorder", LSlogilabprotocoldetailRepository
 //							.countByRejectedAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterInOrRejectedAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenOrRejectedAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenOrRejectedAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndCreatebyInOrderByProtocolordercodeDesc(
@@ -516,30 +528,31 @@ public class DashBoardService {
 //									objuser.getLssitemaster().getSitecode(), 1, fromdate, todate, 1,
 //									objuser.getLssitemaster().getSitecode(), 2, objuser.getUsercode(), fromdate, todate,
 //									1, objuser.getLssitemaster().getSitecode(), 3, fromdate, todate, userlist));
-					
+
 					mapOrders.put("rejectedorder", LSlogilabprotocoldetailRepository
 							.countByRejectedAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterInOrRejectedAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenOrRejectedAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenOrRejectedAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndTeamselectedOrTeamselectedAndProtocolordercodeInAndRejectedAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndCreatebyInOrderByProtocolordercodeDesc(
-									1, objuser.getLssitemaster().getSitecode(), fromdate, todate, lstproject,
-									1,objuser.getLssitemaster().getSitecode(), 1, fromdate, todate,
-									1,objuser.getLssitemaster().getSitecode(), 2, objuser.getUsercode(), fromdate, todate,
-									1, objuser.getLssitemaster().getSitecode(), 3, fromdate, todate, userlist,false,
-									true,selectedteamprotcolorderList,1, objuser.getLssitemaster().getSitecode(), 3, fromdate, todate, userlist));
-					
+									1, objuser.getLssitemaster().getSitecode(), fromdate, todate, lstproject, 1,
+									objuser.getLssitemaster().getSitecode(), 1, fromdate, todate, 1,
+									objuser.getLssitemaster().getSitecode(), 2, objuser.getUsercode(), fromdate, todate,
+									1, objuser.getLssitemaster().getSitecode(), 3, fromdate, todate, userlist, false,
+									true, selectedteamprotcolorderList, 1, objuser.getLssitemaster().getSitecode(), 3,
+									fromdate, todate, userlist));
+
 //					mapOrders.put("canceledorder", LSlogilabprotocoldetailRepository
 //							.countByOrdercancellAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterInOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndCreatebyInOrderByProtocolordercodeDesc(
 //									1, objuser.getLssitemaster().getSitecode(), fromdate, todate, lstproject, 1,
 //									objuser.getLssitemaster().getSitecode(), 1, fromdate, todate, 1,
 //									objuser.getLssitemaster().getSitecode(), 2, objuser.getUsercode(), fromdate, todate,
 //									1, objuser.getLssitemaster().getSitecode(), 3, fromdate, todate, userlist));
-					
+
 					mapOrders.put("canceledorder", LSlogilabprotocoldetailRepository
 							.countByOrdercancellAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterInOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndTeamselectedOrTeamselectedAndProtocolordercodeInAndOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndCreatebyInOrderByProtocolordercodeDesc(
-									1, objuser.getLssitemaster().getSitecode(), fromdate, todate, lstproject,
-									1,objuser.getLssitemaster().getSitecode(), 1, fromdate, todate, 
-									1,objuser.getLssitemaster().getSitecode(), 2, objuser.getUsercode(), fromdate, todate,
-									1, objuser.getLssitemaster().getSitecode(), 3, fromdate, todate, userlist,false,
-									true,selectedteamprotcolorderList,1, objuser.getLssitemaster().getSitecode(), 3, fromdate, todate, userlist));
-
+									1, objuser.getLssitemaster().getSitecode(), fromdate, todate, lstproject, 1,
+									objuser.getLssitemaster().getSitecode(), 1, fromdate, todate, 1,
+									objuser.getLssitemaster().getSitecode(), 2, objuser.getUsercode(), fromdate, todate,
+									1, objuser.getLssitemaster().getSitecode(), 3, fromdate, todate, userlist, false,
+									true, selectedteamprotcolorderList, 1, objuser.getLssitemaster().getSitecode(), 3,
+									fromdate, todate, userlist));
 
 				} else if (testcode != -1 && objuser.getLstprojectforfilter() == null) {
 
@@ -798,17 +811,16 @@ public class DashBoardService {
 				}
 			}
 
-			List<LSSelectedTeam> selectedorders = LSSelectedTeamRepository.findByUserteamInAndCreatedtimestampBetween(userteamlist,fromdate,todate);
+			List<LSSelectedTeam> selectedorders = LSSelectedTeamRepository
+					.findByUserteamInAndCreatedtimestampBetween(userteamlist, fromdate, todate);
 			List<Long> selectedteambatchCodeList = new ArrayList<>();
-			selectedteambatchCodeList = selectedteambatchCodeList.isEmpty() ? Collections.singletonList(-1L) : selectedteambatchCodeList;
-			if (selectedorders != null && !selectedorders.isEmpty()) {		
-				selectedteambatchCodeList = selectedorders.stream()
-			        .map(LSSelectedTeam::getBatchcode)
-			        .filter(Objects::nonNull)
-			        .distinct()
-			        .collect(Collectors.toList());
+			selectedteambatchCodeList = selectedteambatchCodeList.isEmpty() ? Collections.singletonList(-1L)
+					: selectedteambatchCodeList;
+			if (selectedorders != null && !selectedorders.isEmpty()) {
+				selectedteambatchCodeList = selectedorders.stream().map(LSSelectedTeam::getBatchcode)
+						.filter(Objects::nonNull).distinct().collect(Collectors.toList());
 			}
-			
+
 			long countforsample = 0L;
 			int chunkSize = Integer.parseInt(env.getProperty("lssamplecount"));
 			int totalSamples = lstsample1.size();
@@ -820,19 +832,15 @@ public class DashBoardService {
 
 						lstlimscompleted.addAndGet(lslogilablimsorderdetailRepository
 								.countByOrderflagAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndTeamselectedAndApprovelstatusIsNullAndLsprojectmasterIsNullAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullOrOrderflagAndAssignedtoAndCreatedtimestampBetweenOrderByBatchcodeDesc(
-										"R", 0, fromdate, todate, 
-										"R", 1, objuser, fromdate, todate, 3, 
-										"R", 2, objuser,fromdate, todate, 3,
-										"R", 1, objuser, fromdate, todate, 
-										"R", 2, objuser,fromdate, todate, 
-										"R", 3, objuser, fromdate, todate,false,
-										"R", objuser, objuser,fromdate, todate,
-										"R", objuser, fromdate, todate));
-						/*for project team selection*/
+										"R", 0, fromdate, todate, "R", 1, objuser, fromdate, todate, 3, "R", 2, objuser,
+										fromdate, todate, 3, "R", 1, objuser, fromdate, todate, "R", 2, objuser,
+										fromdate, todate, "R", 3, objuser, fromdate, todate, false, "R", objuser,
+										objuser, fromdate, todate, "R", objuser, fromdate, todate));
+						/* for project team selection */
 						lstlimscompleted.addAndGet(LogilablimsorderdetailsRepository
-						.countByOrderflagAndTeamselectedAndLsprojectmasterIsNullAndViewoptionAndBatchcodeInAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullAndAssignedtoIsNullOrderByBatchcodeDesc(
-								"R",true, 3, selectedteambatchCodeList, fromdate, todate));
-						
+								.countByOrderflagAndTeamselectedAndLsprojectmasterIsNullAndViewoptionAndBatchcodeInAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullAndAssignedtoIsNullOrderByBatchcodeDesc(
+										"R", true, 3, selectedteambatchCodeList, fromdate, todate));
+
 						lstlimscompleted.addAndGet(lslogilablimsorderdetailRepository
 								.countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullAndAssignedtoIsNull(
 										"R", lstproject, fromdate, todate, 3));
@@ -840,9 +848,7 @@ public class DashBoardService {
 						lstlimscompleted.addAndGet(lslogilablimsorderdetailRepository
 								.countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullAndAssignedtoIsNull(
 										"R", lstproject, fromdate, todate));
-						lstlimscompleted.addAndGet(lslogilablimsorderdetailRepository
-								.countByOrderflagAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndLsprojectmasterInAndOrdercancellIsNullAndAssignedtoIsNull(
-										"R", 3, objuser, fromdate, todate, 3, lstproject));
+
 
 //						lstpending.addAndGet(LogilablimsorderdetailsRepository
 //								.countByOrderflagAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndApprovelstatusNotOrOrderflagAndFiletypeAndCreatedtimestampBetweenAndAssignedtoIsNullAndApprovelstatusIsNull(
@@ -878,9 +884,10 @@ public class DashBoardService {
 //								.countByOrderflagAndLsprojectmasterInAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullAndApprovelstatusNotOrOrderflagAndLsprojectmasterInAndViewoptionAndLsuserMasterAndOrdercancellIsNullAndCreatedtimestampBetweenAndAssignedtoIsNullAndApprovelstatusIsNull(
 //										"N", lstproject, 3, objuser, fromdate, todate, 3, "N", lstproject, 3, objuser,
 //										fromdate, todate));
-						lstpending.addAndGet(lslogilablimsorderdetailRepository
-								.countLSlogilablimsorderdetaildashboardforpending("N", 0, fromdate, todate, objuser, 1,
-										2, 3, objuser.getUsernotify(), objuser.getLssitemaster(), 3,selectedteambatchCodeList));
+						lstpending.addAndGet(
+								lslogilablimsorderdetailRepository.countLSlogilablimsorderdetaildashboardforpending("N",
+										0, fromdate, todate, objuser, 1, 2, 3, objuser.getUsernotify(),
+										objuser.getLssitemaster(), 3, selectedteambatchCodeList));
 //						System.out.println(kumu);
 
 						lstRejected.addAndGet(lslogilablimsorderdetailRepository
@@ -894,15 +901,13 @@ public class DashBoardService {
 
 						lstCancelled.addAndGet(lslogilablimsorderdetailRepository
 								.countByOrdercancellAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndTeamselectedAndLsprojectmasterIsNullAndAssignedtoIsNullOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndOrdercancellOrAssignedtoAndCreatedtimestampBetweenAndOrdercancell(
-										1, lstproject, fromdate, todate,
-										1, objuser, fromdate, todate, 1,
-										2, objuser,fromdate, todate, 1, 
-										3, objuser, fromdate, todate, 1,false,
-										objuser, objuser,fromdate, todate, 1,
-										objuser, fromdate, todate, 1));
-						/*for project team selection*/
-						lstCancelled.addAndGet(LogilablimsorderdetailsRepository.countByLsprojectmasterIsNullAndViewoptionAndTeamselectedAndBatchcodeInAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterIsNullAndAssignedtoIsNull(
-								3, true,selectedteambatchCodeList, fromdate, todate, 1));
+										1, lstproject, fromdate, todate, 1, objuser, fromdate, todate, 1, 2, objuser,
+										fromdate, todate, 1, 3, objuser, fromdate, todate, 1, false, objuser, objuser,
+										fromdate, todate, 1, objuser, fromdate, todate, 1));
+						/* for project team selection */
+						lstCancelled.addAndGet(LogilablimsorderdetailsRepository
+								.countByLsprojectmasterIsNullAndViewoptionAndTeamselectedAndBatchcodeInAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterIsNullAndAssignedtoIsNull(
+										3, true, selectedteambatchCodeList, fromdate, todate, 1));
 
 						long countcompleted = lslogilablimsorderdetailRepository
 								.getLSlogilablimsorderdetaildashboardforcount("R", 3, fromdate, todate, objuser,
@@ -1119,7 +1124,7 @@ public class DashBoardService {
 //							fromdate, todate, objuser, "R", directorycode, 3, fromdate, todate, objuser, "R", 3,
 //							directorycode, 3, fromdate, todate, objuser, "R");
 
-					//existing
+					// existing
 //					lstlimscompleted.addAndGet(lslogilablimsorderdetailRepository
 //							.countByViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndApprovelstatusNotAndOrdercancellIsNullOrViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndApprovelstatusIsNullAndOrdercancellIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndApprovelstatusNotAndOrdercancellIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndApprovelstatusIsNullAndOrdercancellIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndApprovelstatusNotAndOrdercancellIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndApprovelstatusIsNullAndOrdercancellIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndApprovelstatusNotAndOrdercancellIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndApprovelstatusIsNullAndOrdercancellIsNull(
 //									3, fromdate, todate, objuser, "R", 3, 3, fromdate, todate, objuser, "R",
@@ -1130,19 +1135,16 @@ public class DashBoardService {
 
 					lstlimscompleted.addAndGet(lslogilablimsorderdetailRepository
 							.countByViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndApprovelstatusNotAndOrdercancellIsNullOrViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndApprovelstatusIsNullAndOrdercancellIsNullAndTeamselectedOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndApprovelstatusNotAndOrdercancellIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndApprovelstatusIsNullAndOrdercancellIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndApprovelstatusNotAndOrdercancellIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndApprovelstatusIsNullAndOrdercancellIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndApprovelstatusNotAndOrdercancellIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndApprovelstatusIsNullAndOrdercancellIsNullAndTeamselected(
-									3, fromdate, todate, objuser, "R", 3,
-									3, fromdate, todate, objuser, "R",false,
-									directorycode, 1, fromdate, todate, "R", 3, 
-									directorycode, 1, fromdate, todate, "R",
-									directorycode, 2, fromdate, todate, objuser, "R", 3, 
-									directorycode, 2, fromdate,todate, objuser, "R",
-									directorycode, 3, fromdate, todate, objuser, "R", 3,
-									directorycode, 3, fromdate, todate, objuser, "R",false));
-					
+									3, fromdate, todate, objuser, "R", 3, 3, fromdate, todate, objuser, "R", false,
+									directorycode, 1, fromdate, todate, "R", 3, directorycode, 1, fromdate, todate, "R",
+									directorycode, 2, fromdate, todate, objuser, "R", 3, directorycode, 2, fromdate,
+									todate, objuser, "R", directorycode, 3, fromdate, todate, objuser, "R", 3,
+									directorycode, 3, fromdate, todate, objuser, "R", false));
+
 					lstlimscompleted.addAndGet(LogilablimsorderdetailsRepository
 							.countByViewoptionAndTeamselectedAndBatchcodeInAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndApprovelstatusIsNullAndOrdercancellIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndTeamselectedAndBatchcodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndApprovelstatusIsNullAndOrdercancellIsNull(
-									3, true, selectedteambatchCodeList,fromdate, todate, objuser, "R",
-									directorycode,true, selectedteambatchCodeList, 3, fromdate, todate, objuser, "R"));
+									3, true, selectedteambatchCodeList, fromdate, todate, objuser, "R", directorycode,
+									true, selectedteambatchCodeList, 3, fromdate, todate, objuser, "R"));
 //			lstordersinprogress = lslogilablimsorderdetailRepository
 //					.countByLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndOrdercancellIsNullAndApprovelstatusAndApprovedOrLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndOrdercancellIsNullAndApprovelstatusAndApprovedOrViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndOrdercancellIsNullAndApprovelstatusAndApprovedOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndOrdercancellIsNullAndApprovelstatusAndApprovedOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndOrdercancellIsNullAndApprovelstatusAndApprovedOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndOrdercancellIsNullAndApprovelstatusAndApprovedOrderByBatchcodeDesc(
 //							lstsample1, 1, fromdate, todate, "N", 1, 1, lstsample1, 2, fromdate, todate,
@@ -1156,23 +1158,21 @@ public class DashBoardService {
 //							3, fromdate, todate, objuser, "N", directorycode, 1, fromdate, todate, "N",
 //							directorycode, 2, fromdate, todate, objuser, "N", directorycode, 3, fromdate,
 //							todate, objuser, "N");
-					//existing
+					// existing
 //					lstpending.addAndGet(lslogilablimsorderdetailRepository
 //							.countByViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndOrdercancellIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndOrdercancellIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndOrdercancellIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndOrdercancellIsNullOrderByBatchcodeDesc(
 //									3, fromdate, todate, objuser, "N", directorycode, 1, fromdate, todate, "N",
 //									directorycode, 2, fromdate, todate, objuser, "N", directorycode, 3, fromdate,
 //									todate, objuser, "N"));
-					
+
 					lstpending.addAndGet(lslogilablimsorderdetailRepository
 							.countByViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndOrdercancellIsNullAndTeamselectedOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndOrdercancellIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndOrdercancellIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndOrdercancellIsNullAndTeamselectedOrViewoptionAndTeamselectedAndBatchcodeInAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndOrdercancellIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndTeamselectedAndBatchcodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndOrdercancellIsNullOrderByBatchcodeDesc(
-									3, fromdate, todate, objuser, "N", false,
-									directorycode, 1, fromdate, todate, "N",
-									directorycode, 2, fromdate, todate, objuser, "N", 
-									directorycode, 3, fromdate,todate, objuser, "N",false,
-									3, true,selectedteambatchCodeList,fromdate, todate, objuser, "N",
-									directorycode, true,selectedteambatchCodeList, 3, fromdate,todate, objuser, "N"));
-					
-					
+									3, fromdate, todate, objuser, "N", false, directorycode, 1, fromdate, todate, "N",
+									directorycode, 2, fromdate, todate, objuser, "N", directorycode, 3, fromdate,
+									todate, objuser, "N", false, 3, true, selectedteambatchCodeList, fromdate, todate,
+									objuser, "N", directorycode, true, selectedteambatchCodeList, 3, fromdate, todate,
+									objuser, "N"));
+
 //			lstRejected = lslogilablimsorderdetailRepository
 //					.countByLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndApprovelstatusOrLsprojectmasterIsNullAndLssamplemasterInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndApprovelstatusOrViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndApprovelstatusOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndApprovelstatusOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndApprovelstatusOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndApprovelstatusOrderByBatchcodeDesc(
 //							lstsample1, 1, fromdate, todate, 3, lstsample1, 2, fromdate, todate, objuser, 3, 3,
@@ -1189,7 +1189,7 @@ public class DashBoardService {
 //							lstsample1, 1, fromdate, todate, 1, lstsample1, 2, fromdate, todate, objuser, 1, 3,
 //							fromdate, todate, objuser, 1, directorycode, 1, fromdate, todate, 1, directorycode,
 //							2, fromdate, todate, objuser, 1, directorycode, 3, fromdate, todate, objuser, 1);
-					//existing
+					// existing
 //					lstCancelled.addAndGet(lslogilablimsorderdetailRepository
 //							.countByViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrdercancellOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndOrdercancellOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrdercancellOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrdercancellOrderByBatchcodeDesc(
 //									3, fromdate, todate, objuser, 1, directorycode, 1, fromdate, todate, 1,
@@ -1198,16 +1198,15 @@ public class DashBoardService {
 
 					lstCancelled.addAndGet(lslogilablimsorderdetailRepository
 							.countByViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrdercancellAndTeamselectedOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndOrdercancellOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrdercancellOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrdercancellAndTeamselectedOrderByBatchcodeDesc(
-									3, fromdate, todate, objuser, 1, false,
-									directorycode, 1, fromdate, todate, 1,
-									directorycode, 2, fromdate, todate, objuser, 1,
-									directorycode, 3, fromdate, todate,objuser, 1,false));
-					
+									3, fromdate, todate, objuser, 1, false, directorycode, 1, fromdate, todate, 1,
+									directorycode, 2, fromdate, todate, objuser, 1, directorycode, 3, fromdate, todate,
+									objuser, 1, false));
+
 					lstCancelled.addAndGet(LogilablimsorderdetailsRepository
 							.countByViewoptionAndTeamselectedAndBatchcodeInAndCreatedtimestampBetweenAndLsuserMasterAndOrdercancellOrLsprojectmasterIsNullAndDirectorycodeInAndTeamselectedAndBatchcodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrdercancellOrderByBatchcodeDesc(
-									3, true , selectedteambatchCodeList,fromdate, todate, objuser, 1, 
-									directorycode,true , selectedteambatchCodeList, 3, fromdate, todate,objuser, 1));
-					
+									3, true, selectedteambatchCodeList, fromdate, todate, objuser, 1, directorycode,
+									true, selectedteambatchCodeList, 3, fromdate, todate, objuser, 1));
+
 				} else if (testcode != -1 && objuser.getLstprojectforfilter() == null) {
 
 //			lstUserorder = lslogilablimsorderdetailRepository
@@ -1381,9 +1380,9 @@ public class DashBoardService {
 	}
 
 	private Map<String, Object> getallorders(List<LSprojectmaster> lstproject, Date fromdate, Date todate,
-			LSuserMaster objuser, Integer testcode, Pageable pageable, 
-			List<LSsamplemaster> lstsample1, List<LSworkflow> lstworkflow,List<Long> selectedteambatchCodeList) {
-		
+			LSuserMaster objuser, Integer testcode, Pageable pageable, List<LSsamplemaster> lstsample1,
+			List<LSworkflow> lstworkflow, List<Long> selectedteambatchCodeList) {
+
 		List<LogilabOrdermastersh> lstorders = new ArrayList<LogilabOrdermastersh>();
 		List<LogilabOrdermastersh> lstorderobj = new ArrayList<LogilabOrdermastersh>();
 		Map<String, Object> mapOrders = new HashMap<>();
@@ -1420,10 +1419,12 @@ public class DashBoardService {
 //						lslogilablimsorderdetailRepository.getLSlogilablimsorderdetaildashboardforrejectmaterial(3,
 //								fromdate, todate, objuser, objuser.getLssitemaster()));
 
-				List<LSlogilablimsorderdetail> lstordersdem = LogilablimsorderdetailsRepository.getLSlogilablimsorderdetaildashboardforallorders("N",
-						0, fromdate, todate, objuser, 1, 2, 3, objuser.getUsernotify(), objuser.getLssitemaster(),
-						objuser.getPagesize() * objuser.getPageperorder(), objuser.getPageperorder(), 3,"R",selectedteambatchCodeList);
-				
+			List<LSlogilablimsorderdetail> lstordersdem = LogilablimsorderdetailsRepository
+					.getLSlogilablimsorderdetaildashboardforallorders("N", 0, fromdate, todate, objuser, 1, 2, 3,
+							objuser.getUsernotify(), objuser.getLssitemaster(),
+							objuser.getPagesize() * objuser.getPageperorder(), objuser.getPageperorder(), 3, "R",
+							selectedteambatchCodeList);
+
 //				if(lstordersdem.size()<objuser.getPageperorder()) {
 //					Pageable pageableobj = new PageRequest(0, Integer.MAX_VALUE);
 //					 lstorders = lslogilablimsorderdetailRepository
@@ -1443,29 +1444,27 @@ public class DashBoardService {
 //										fromdate, todate, 1, 3, objuser, fromdate, todate, 1, objuser, objuser, fromdate,
 //										todate, 1, objuser, fromdate, todate, 1, pageableobj));
 //				}
-	           
-				if (!lstordersdem.isEmpty()) {
-					lstorders.addAll(lstordersdem.stream()
-							.map(lsOrderDetail -> new LogilabOrdermastersh(lsOrderDetail.getBatchcode(),
-									lsOrderDetail.getBatchid(), lsOrderDetail.getLsworkflow(),
-									lsOrderDetail.getTestname(), lsOrderDetail.getLsfile(),
-									lsOrderDetail.getLssamplemaster(), lsOrderDetail.getLsprojectmaster(),
-									lsOrderDetail.getFiletype(), lsOrderDetail.getOrderflag(),
-									lsOrderDetail.getAssignedto(), lsOrderDetail.getCreatedtimestamp(),
-									lsOrderDetail.getCompletedtimestamp(), lsOrderDetail.getKeyword(),
-									lsOrderDetail.getLstestmasterlocal(), lsOrderDetail.getOrdercancell(),
-									lsOrderDetail.getViewoption(), lsOrderDetail.getLsuserMaster(),
-									lsOrderDetail.getTestcode(), lsOrderDetail.getApprovelstatus(),
-									lsOrderDetail.getLsordernotification(), lsOrderDetail.getOrdersaved(),
-									lsOrderDetail.getRepeat(), lsOrderDetail.getLsautoregisterorders(),
-									lsOrderDetail.getSentforapprovel(), lsOrderDetail.getApprovelaccept(),
-									lsOrderDetail.getAutoregistercount(), lsOrderDetail.getElnmaterial(),
-									lsOrderDetail.getLockedusername(), lsOrderDetail.getApplicationsequence(),
-									lsOrderDetail.getSitesequence(), lsOrderDetail.getProjectsequence(), 
-									lsOrderDetail.getTasksequence(), lsOrderDetail.getOrdertypesequence(),
-									lsOrderDetail.getSequenceid(),lsOrderDetail.getTeamselected(), lsOrderDetail.getModifieddate()))
-							.collect(Collectors.toList()));
-				}
+
+			if (!lstordersdem.isEmpty()) {
+				lstorders.addAll(lstordersdem.stream().map(lsOrderDetail -> new LogilabOrdermastersh(
+						lsOrderDetail.getBatchcode(), lsOrderDetail.getBatchid(), lsOrderDetail.getLsworkflow(),
+						lsOrderDetail.getTestname(), lsOrderDetail.getLsfile(), lsOrderDetail.getLssamplemaster(),
+						lsOrderDetail.getLsprojectmaster(), lsOrderDetail.getFiletype(), lsOrderDetail.getOrderflag(),
+						lsOrderDetail.getAssignedto(), lsOrderDetail.getCreatedtimestamp(),
+						lsOrderDetail.getCompletedtimestamp(), lsOrderDetail.getKeyword(),
+						lsOrderDetail.getLstestmasterlocal(), lsOrderDetail.getOrdercancell(),
+						lsOrderDetail.getViewoption(), lsOrderDetail.getLsuserMaster(), lsOrderDetail.getTestcode(),
+						lsOrderDetail.getApprovelstatus(), lsOrderDetail.getLsordernotification(),
+						lsOrderDetail.getOrdersaved(), lsOrderDetail.getRepeat(),
+						lsOrderDetail.getLsautoregisterorders(), lsOrderDetail.getSentforapprovel(),
+						lsOrderDetail.getApprovelaccept(), lsOrderDetail.getAutoregistercount(),
+						lsOrderDetail.getElnmaterial(), lsOrderDetail.getLockedusername(),
+						lsOrderDetail.getApplicationsequence(), lsOrderDetail.getSitesequence(),
+						lsOrderDetail.getProjectsequence(), lsOrderDetail.getTasksequence(),
+						lsOrderDetail.getOrdertypesequence(), lsOrderDetail.getSequenceid(),
+						lsOrderDetail.getTeamselected(), lsOrderDetail.getModifieddate()))
+						.collect(Collectors.toList()));
+			}
 //			} else {
 //				List<LSlogilablimsorderdetail> lstordersdem = lslogilablimsorderdetailRepository
 //						.getLSlogilablimsorderdetaildashboard("R", 0, fromdate, todate, objuser, 3, 1, 2, 3, "N",
@@ -1568,7 +1567,7 @@ public class DashBoardService {
 
 			lstorders.addAll(lstorderobj);
 
-		} else if (testcode == -1 && objuser.getLstprojectforfilter() != null) {//project filter is choosen
+		} else if (testcode == -1 && objuser.getLstprojectforfilter() != null) {// project filter is choosen
 
 			lstorders = lslogilablimsorderdetailRepository
 					.findByOrderflagAndLsprojectmasterAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsprojectmasterAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndFiletypeAndCreatedtimestampBetweenAndLsprojectmasterAndOrdercancellIsNullAndAssignedtoIsNullOrOrderflagAndLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndLsprojectmasterOrOrderflagAndAssignedtoAndCreatedtimestampBetweenAndLsprojectmasterOrderByBatchcodeDesc(
@@ -1695,28 +1694,29 @@ public class DashBoardService {
 		Map<String, Object> mapOrders = new HashMap<String, Object>();
 		Integer testcode = objuser.getTestcode();
 		Pageable pageable = new PageRequest(objuser.getPagesize(), objuser.getPageperorder());
-		
+
 		List<LSprojectmaster> lstproject = objuser.getLstproject();
 		List<LogilabOrdermastersh> lstorders = new ArrayList<LogilabOrdermastersh>();
 		List<LSworkflow> lstworkflow = objuser.getLstworkflow();
 		List<Integer> lstsampleint = lssamplemasterrepository
 				.getDistinctByLssitemasterSitecodeAndStatus(objuser.getLssitemaster().getSitecode(), 1);
-		
-		List<LSuserteammapping> teammapping = LSuserteammappingRepositoryObj.findByLsuserMasterAndTeamcodeNotNull(objuser);
+
+		List<LSuserteammapping> teammapping = LSuserteammappingRepositoryObj
+				.findByLsuserMasterAndTeamcodeNotNull(objuser);
 		List<LSusersteam> userteamlist = lsusersteamRepository.findByLsuserteammappingIn(teammapping);
-		List<LSSelectedTeam> selectedorders = LSSelectedTeamRepository.findByUserteamInAndCreatedtimestampBetween(userteamlist,fromdate,todate);
-		//List<LSSelectedTeam> selectedorders  = LSSelectedTeamRepository.findByUserteamIn(userteamlist);
-		
+		List<LSSelectedTeam> selectedorders = LSSelectedTeamRepository
+				.findByUserteamInAndCreatedtimestampBetween(userteamlist, fromdate, todate);
+		// List<LSSelectedTeam> selectedorders =
+		// LSSelectedTeamRepository.findByUserteamIn(userteamlist);
+
 		List<Long> selectedteambatchCodeList = new ArrayList<>();
-		selectedteambatchCodeList = selectedteambatchCodeList.isEmpty() ? Collections.singletonList(-1L) : selectedteambatchCodeList;
-		if (selectedorders != null && !selectedorders.isEmpty()) {		
-			selectedteambatchCodeList = selectedorders.stream()
-		        .map(LSSelectedTeam::getBatchcode)
-		        .filter(Objects::nonNull)
-		        .distinct()
-		        .collect(Collectors.toList());
+		selectedteambatchCodeList = selectedteambatchCodeList.isEmpty() ? Collections.singletonList(-1L)
+				: selectedteambatchCodeList;
+		if (selectedorders != null && !selectedorders.isEmpty()) {
+			selectedteambatchCodeList = selectedorders.stream().map(LSSelectedTeam::getBatchcode)
+					.filter(Objects::nonNull).distinct().collect(Collectors.toList());
 		}
-		
+
 		List<LSsamplemaster> lstsample1 = new ArrayList<>();
 		LSsamplemaster sample = null;
 		if (lstsampleint.size() > 0) {
@@ -1736,7 +1736,8 @@ public class DashBoardService {
 			objuser.getUsernotify().add(objuser);
 			if (objuser.getObjuser().getOrderselectiontype() == 1) {
 
-				return mapOrders = getallorders(lstproject, fromdate, todate, objuser, testcode, pageable, lstsample1,lstworkflow,selectedteambatchCodeList);
+				return mapOrders = getallorders(lstproject, fromdate, todate, objuser, testcode, pageable, lstsample1,
+						lstworkflow, selectedteambatchCodeList);
 
 			} else if (objuser.getObjuser().getOrderselectiontype() == 2) {
 				if (testcode == -1 && objuser.getLstprojectforfilter() == null) {
@@ -1746,9 +1747,10 @@ public class DashBoardService {
 //							objuser.getPagesize() * objuser.getPageperorder(), objuser.getPageperorder());
 
 					lstordersdem = LogilablimsorderdetailsRepository.getLSlogilablimsorderdetaildashboardforcompleted(
-							"R", 0, fromdate, todate,objuser,  3, 1, 2, 3,
-							objuser.getPagesize() * objuser.getPageperorder(), objuser.getPageperorder(),selectedteambatchCodeList);
-					
+							"R", 0, fromdate, todate, objuser, 3, 1, 2, 3,
+							objuser.getPagesize() * objuser.getPageperorder(), objuser.getPageperorder(),
+							selectedteambatchCodeList,lstproject);
+
 				} else if (testcode != -1 && objuser.getLstprojectforfilter() == null) {
 
 					lstorders = lslogilablimsorderdetailRepository
@@ -1817,14 +1819,15 @@ public class DashBoardService {
 
 			} else if (objuser.getObjuser().getOrderselectiontype() == 3) {
 				if (testcode == -1 && objuser.getLstprojectforfilter() == null) {
-					lstordersdem.addAll(lslogilablimsorderdetailRepository.getLSlogilablimsorderdetaildashboardforpending(
-							"N", 0, fromdate, todate, objuser,1, 2 , 3 ,objuser.getUsernotify(),
-							objuser.getLssitemaster(), objuser.getPagesize() * objuser.getPageperorder(),
-							objuser.getPageperorder(), 3,selectedteambatchCodeList));
-			
+					lstordersdem.addAll(
+							lslogilablimsorderdetailRepository.getLSlogilablimsorderdetaildashboardforpending("N", 0,
+									fromdate, todate, objuser, 1, 2, 3, objuser.getUsernotify(),
+									objuser.getLssitemaster(), objuser.getPagesize() * objuser.getPageperorder(),
+									objuser.getPageperorder(), 3, selectedteambatchCodeList));
+
 //					lstordersdem.addAll(lslogilablimsorderdetailRepository.getLSlogilablimsorderdetaildashboardforpendingview(
 //							"N", 0, fromdate, todate, objuser, 1, 2, 3, objuser.getUsernotify(),3,selectedteambatchCodeList));
-					
+
 				} else if (testcode != -1 && objuser.getLstprojectforfilter() == null) {
 
 					lstorders = lslogilablimsorderdetailRepository
@@ -1922,7 +1925,7 @@ public class DashBoardService {
 
 				lstorders.addAll(lstorderobj);
 
-			} else if (objuser.getObjuser().getOrderselectiontype() == 6) { //cancelled orders
+			} else if (objuser.getObjuser().getOrderselectiontype() == 6) { // cancelled orders
 				if (testcode == -1 && objuser.getLstprojectforfilter() == null) {
 //existing
 //					lstorders = LogilablimsorderdetailsRepository
@@ -1931,16 +1934,16 @@ public class DashBoardService {
 //									fromdate, todate, 1, 3, objuser, fromdate, todate, 1, objuser, objuser, fromdate,
 //									todate, 1, objuser, fromdate, todate, 1, pageable);
 
-					lstorders = LogilablimsorderdetailsRepository.findByLsprojectmasterIsNullAndViewoptionAndTeamselectedAndBatchcodeInAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterIsNullAndAssignedtoIsNull(
-							 3,true,selectedteambatchCodeList, fromdate, todate, 1);
-					
+					lstorders = LogilablimsorderdetailsRepository
+							.findByLsprojectmasterIsNullAndViewoptionAndTeamselectedAndBatchcodeInAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterIsNullAndAssignedtoIsNull(
+									3, true, selectedteambatchCodeList, fromdate, todate, 1);
 
 					lstorders.addAll(lslogilablimsorderdetailRepository
 							.LsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullOrOrdercancellAndLsprojectmasterInAndCreatedtimestampBetweenAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndAssignedtoIsNullOrLsprojectmasterIsNullAndViewoptionAndTeamselectedAndLsuserMasterAndCreatedtimestampBetweenAndOrdercancellAndLsprojectmasterIsNullAndAssignedtoIsNullOrLsuserMasterAndAssignedtoNotAndCreatedtimestampBetweenAndAssignedtoNotNullAndOrdercancellOrAssignedtoAndCreatedtimestampBetweenAndOrdercancell(
 									1, objuser, fromdate, todate, 1, 1, lstproject, fromdate, todate, 2, objuser,
-									fromdate, todate, 1, 3,false, objuser, fromdate, todate, 1, objuser, objuser, fromdate,
-									todate, 1, objuser, fromdate, todate, 1));
-					
+									fromdate, todate, 1, 3, false, objuser, fromdate, todate, 1, objuser, objuser,
+									fromdate, todate, 1, objuser, fromdate, todate, 1));
+
 				} else if (testcode != -1 && objuser.getLstprojectforfilter() == null) {
 
 					lstorders = lslogilablimsorderdetailRepository
@@ -1968,26 +1971,25 @@ public class DashBoardService {
 
 			}
 			if (lstordersdem.size() > 0) {
-				lstorders = lstordersdem.parallelStream()
-						.map(lsOrderDetail -> new LogilabOrdermastersh(lsOrderDetail.getBatchcode(),
-								lsOrderDetail.getBatchid(), lsOrderDetail.getLsworkflow(), lsOrderDetail.getTestname(),
-								lsOrderDetail.getLsfile(), lsOrderDetail.getLssamplemaster(),
-								lsOrderDetail.getLsprojectmaster(), lsOrderDetail.getFiletype(),
-								lsOrderDetail.getOrderflag(), lsOrderDetail.getAssignedto(),
-								lsOrderDetail.getCreatedtimestamp(), lsOrderDetail.getCompletedtimestamp(),
-								lsOrderDetail.getKeyword(), lsOrderDetail.getLstestmasterlocal(),
-								lsOrderDetail.getOrdercancell(), lsOrderDetail.getViewoption(),
-								lsOrderDetail.getLsuserMaster(), lsOrderDetail.getTestcode(),
-								lsOrderDetail.getApprovelstatus(), lsOrderDetail.getLsordernotification(),
-								lsOrderDetail.getOrdersaved(), lsOrderDetail.getRepeat(),
-								lsOrderDetail.getLsautoregisterorders(), lsOrderDetail.getSentforapprovel(),
-								lsOrderDetail.getApprovelaccept(), lsOrderDetail.getAutoregistercount(),
-								lsOrderDetail.getElnmaterial(), lsOrderDetail.getLockedusername(), lsOrderDetail.getApplicationsequence(),
-								lsOrderDetail.getSitesequence(), lsOrderDetail.getProjectsequence(), 
-								lsOrderDetail.getTasksequence(), lsOrderDetail.getOrdertypesequence(),
-								lsOrderDetail.getSequenceid(),lsOrderDetail.getTeamselected(), lsOrderDetail.getModifieddate()
+				lstorders = lstordersdem.parallelStream().map(lsOrderDetail -> new LogilabOrdermastersh(
+						lsOrderDetail.getBatchcode(), lsOrderDetail.getBatchid(), lsOrderDetail.getLsworkflow(),
+						lsOrderDetail.getTestname(), lsOrderDetail.getLsfile(), lsOrderDetail.getLssamplemaster(),
+						lsOrderDetail.getLsprojectmaster(), lsOrderDetail.getFiletype(), lsOrderDetail.getOrderflag(),
+						lsOrderDetail.getAssignedto(), lsOrderDetail.getCreatedtimestamp(),
+						lsOrderDetail.getCompletedtimestamp(), lsOrderDetail.getKeyword(),
+						lsOrderDetail.getLstestmasterlocal(), lsOrderDetail.getOrdercancell(),
+						lsOrderDetail.getViewoption(), lsOrderDetail.getLsuserMaster(), lsOrderDetail.getTestcode(),
+						lsOrderDetail.getApprovelstatus(), lsOrderDetail.getLsordernotification(),
+						lsOrderDetail.getOrdersaved(), lsOrderDetail.getRepeat(),
+						lsOrderDetail.getLsautoregisterorders(), lsOrderDetail.getSentforapprovel(),
+						lsOrderDetail.getApprovelaccept(), lsOrderDetail.getAutoregistercount(),
+						lsOrderDetail.getElnmaterial(), lsOrderDetail.getLockedusername(),
+						lsOrderDetail.getApplicationsequence(), lsOrderDetail.getSitesequence(),
+						lsOrderDetail.getProjectsequence(), lsOrderDetail.getTasksequence(),
+						lsOrderDetail.getOrdertypesequence(), lsOrderDetail.getSequenceid(),
+						lsOrderDetail.getTeamselected(), lsOrderDetail.getModifieddate()
 
-						)).collect(Collectors.toList());
+				)).collect(Collectors.toList());
 			}
 			if (env.getProperty("client") != null && env.getProperty("client").equals("HPCL")) {
 				Collections.sort(lstorders, (order1, order2) -> order2.getCt().compareTo(order1.getCt()));
@@ -2002,7 +2004,7 @@ public class DashBoardService {
 							objuser.getLssitemaster(), 1, objuser, 2);
 			List<Long> directorycode = lstdir.stream().map(LSSheetOrderStructure::getDirectorycode)
 					.collect(Collectors.toList());
-			if (objuser.getObjuser().getOrderselectiontype() == 1) {//total orders
+			if (objuser.getObjuser().getOrderselectiontype() == 1) {// total orders
 
 				if (testcode == -1 && objuser.getLstprojectforfilter() == null) {
 //					lstorders = lslogilablimsorderdetailRepository
@@ -2011,37 +2013,34 @@ public class DashBoardService {
 //									1, fromdate, todate, directorycode, 
 //									2, fromdate, todate, objuser, directorycode, 
 //									3, fromdate, todate, objuser, pageable);
-					
+
 					lstorders = LogilablimsorderdetailsRepository
 							.findByViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndTeamselectedOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndTeamselectedOrViewoptionAndTeamselectedAndBatchcodeInAndCreatedtimestampBetweenAndLsuserMasterOrLsprojectmasterIsNullAndDirectorycodeInAndTeamselectedAndBatchcodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterOrderByBatchcodeDesc(
-									3, fromdate, todate, objuser,false,
-									directorycode, 1, fromdate, todate,
-									directorycode, 2, fromdate, todate, objuser,
-									directorycode, 3, fromdate, todate, objuser,false, 
-									3,true,selectedteambatchCodeList, fromdate, todate, objuser, 
-									directorycode, true,selectedteambatchCodeList,3, fromdate, todate, objuser, pageable);
-					
+									3, fromdate, todate, objuser, false, directorycode, 1, fromdate, todate,
+									directorycode, 2, fromdate, todate, objuser, directorycode, 3, fromdate, todate,
+									objuser, false, 3, true, selectedteambatchCodeList, fromdate, todate, objuser,
+									directorycode, true, selectedteambatchCodeList, 3, fromdate, todate, objuser,
+									pageable);
+
 //					lstorders.addAll(LogilablimsorderdetailsRepository
 //							.findByViewoptionAndTeamselectedAndBatchcodeInAndCreatedtimestampBetweenAndLsuserMasterOrLsprojectmasterIsNullAndDirectorycodeInAndTeamselectedAndBatchcodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterOrderByBatchcodeDesc(
 //									3,true,selectedteambatchCodeList, fromdate, todate, objuser, 
 //									directorycode, true,selectedteambatchCodeList,3, fromdate, todate, objuser, pageable));
 
-					
 				} else if (testcode != -1 && objuser.getLstprojectforfilter() == null) {
 //					lstorders = lslogilablimsorderdetailRepository
 //							.findByViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndTestcodeOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndTestcodeOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndTestcodeOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndTestcodeOrderByBatchcodeDesc(
 //									3, fromdate, todate, objuser, testcode, directorycode, 1, fromdate, todate,
 //									testcode, directorycode, 2, fromdate, todate, objuser, testcode, directorycode, 3,
 //									fromdate, todate, objuser, testcode, pageable);
-					
+
 					lstorders = LogilablimsorderdetailsRepository
 							.findByViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndTestcodeAndTeamselectedOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndTestcodeOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndTestcodeOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndTestcodeAndTeamselectedOrViewoptionAndTeamselectedAndBatchcodeInAndCreatedtimestampBetweenAndLsuserMasterAndTestcodeOrLsprojectmasterIsNullAndDirectorycodeInAndTeamselectedAndBatchcodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndTestcodeOrderByBatchcodeDesc(
-									3, fromdate, todate, objuser, testcode,false, 
-									directorycode, 1, fromdate, todate,testcode, 
-									directorycode, 2, fromdate, todate, objuser, testcode,
-									directorycode, 3,fromdate, todate, objuser, testcode, false,
-									3,true,selectedteambatchCodeList, fromdate, todate, objuser, testcode,
-									directorycode,true,selectedteambatchCodeList, 3,fromdate, todate, objuser, testcode, pageable);
+									3, fromdate, todate, objuser, testcode, false, directorycode, 1, fromdate, todate,
+									testcode, directorycode, 2, fromdate, todate, objuser, testcode, directorycode, 3,
+									fromdate, todate, objuser, testcode, false, 3, true, selectedteambatchCodeList,
+									fromdate, todate, objuser, testcode, directorycode, true, selectedteambatchCodeList,
+									3, fromdate, todate, objuser, testcode, pageable);
 
 //					lstorders.addAll(LogilablimsorderdetailsRepository
 //							.findByViewoptionAndTeamselectedAndBatchcodeInAndCreatedtimestampBetweenAndLsuserMasterAndTestcodeOrLsprojectmasterIsNullAndDirectorycodeInAndTeamselectedAndBatchcodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndTestcodeOrderByBatchcodeDesc(3,true,selectedteambatchCodeList, fromdate, todate, objuser, testcode, directorycode,true,selectedteambatchCodeList, 3,fromdate, todate, objuser, testcode, pageable));
@@ -2081,7 +2080,7 @@ public class DashBoardService {
 
 				lstorders.addAll(lstorderobj);
 
-			} else if (objuser.getObjuser().getOrderselectiontype() == 2) {//completed orders
+			} else if (objuser.getObjuser().getOrderselectiontype() == 2) {// completed orders
 				if (testcode == -1 && objuser.getLstprojectforfilter() == null) {
 //					lstorders = lslogilablimsorderdetailRepository
 //							.findByViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndApprovelstatusNotAndOrdercancellIsNullOrViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndApprovelstatusIsNullAndOrdercancellIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndApprovelstatusNotAndOrdercancellIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndApprovelstatusIsNullAndOrdercancellIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndApprovelstatusNotAndOrdercancellIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndApprovelstatusIsNullAndOrdercancellIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndApprovelstatusNotAndOrdercancellIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndApprovelstatusIsNullAndOrdercancellIsNullOrderByBatchcodeDesc(
@@ -2090,19 +2089,16 @@ public class DashBoardService {
 //									directorycode, 2, fromdate, todate, objuser, "R", 3, directorycode, 2, fromdate,
 //									todate, objuser, "R", directorycode, 3, fromdate, todate, objuser, "R", 3,
 //									directorycode, 3, fromdate, todate, objuser, "R", pageable);
-					
+
 					lstorders = lslogilablimsorderdetailRepository
 							.findByViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndApprovelstatusNotAndOrdercancellIsNullOrViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndApprovelstatusIsNullAndOrdercancellIsNullAndTeamselectedOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndApprovelstatusNotAndOrdercancellIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndApprovelstatusIsNullAndOrdercancellIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndApprovelstatusNotAndOrdercancellIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndApprovelstatusIsNullAndOrdercancellIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndApprovelstatusNotAndOrdercancellIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndApprovelstatusIsNullAndTeamselectedAndOrdercancellIsNullOrViewoptionAndTeamselectedAndBatchcodeInAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndApprovelstatusIsNullAndOrdercancellIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndTeamselectedAndBatchcodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndApprovelstatusIsNullAndOrdercancellIsNullOrderByBatchcodeDesc(
-									3, fromdate, todate, objuser, "R", 3,
-									3, fromdate, todate, objuser, "R",false,
-									directorycode, 1, fromdate, todate, "R", 3,
-									directorycode, 1, fromdate, todate, "R",
-									directorycode, 2, fromdate, todate, objuser, "R", 3, 
-									directorycode, 2, fromdate,todate, objuser, "R",
-									directorycode, 3, fromdate, todate, objuser, "R", 3,
-									directorycode, 3, fromdate, todate, objuser, "R",false,
-									3,true,selectedteambatchCodeList, fromdate, todate, objuser, "R",
-									directorycode, true,selectedteambatchCodeList,3,fromdate, todate, objuser, "R",pageable);
+									3, fromdate, todate, objuser, "R", 3, 3, fromdate, todate, objuser, "R", false,
+									directorycode, 1, fromdate, todate, "R", 3, directorycode, 1, fromdate, todate, "R",
+									directorycode, 2, fromdate, todate, objuser, "R", 3, directorycode, 2, fromdate,
+									todate, objuser, "R", directorycode, 3, fromdate, todate, objuser, "R", 3,
+									directorycode, 3, fromdate, todate, objuser, "R", false, 3, true,
+									selectedteambatchCodeList, fromdate, todate, objuser, "R", directorycode, true,
+									selectedteambatchCodeList, 3, fromdate, todate, objuser, "R", pageable);
 
 				} else if (testcode != -1 && objuser.getLstprojectforfilter() == null) {
 					lstorders = lslogilablimsorderdetailRepository
@@ -2160,7 +2156,7 @@ public class DashBoardService {
 
 				lstorders.addAll(lstorderobj);
 
-			} else if (objuser.getObjuser().getOrderselectiontype() == 3) {//last upadte
+			} else if (objuser.getObjuser().getOrderselectiontype() == 3) {// last upadte
 				if (testcode == -1 && objuser.getLstprojectforfilter() == null) {
 //					lstorders = lslogilablimsorderdetailRepository
 //							.findByViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndOrdercancellIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndOrdercancellIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndOrdercancellIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndOrdercancellIsNullOrderByBatchcodeDesc(
@@ -2168,16 +2164,15 @@ public class DashBoardService {
 //									1, fromdate, todate, "N",directorycode, 
 //									2, fromdate, todate, objuser, "N", directorycode, 
 //									3, fromdate,todate, objuser, "N", pageable);
-					
+
 					lstorders = LogilablimsorderdetailsRepository
 							.findByViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndTeamselectedAndOrdercancellIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndOrdercancellIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndOrdercancellIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndTeamselectedAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndOrdercancellIsNullOrViewoptionAndTeamselectedAndBatchcodeInAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndOrdercancellIsNullOrLsprojectmasterIsNullAndDirectorycodeInAndTeamselectedAndBatchcodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndOrdercancellIsNullOrderByBatchcodeDesc(
-									3, fromdate, todate, objuser, "N", false,
-									directorycode,1, fromdate, todate, "N",
-									directorycode, 2, fromdate, todate, objuser, "N",
-									directorycode,false, 3, fromdate,todate, objuser, "N", 
-									3,true,selectedteambatchCodeList, fromdate, todate, objuser, "N", 
-									directorycode,true,selectedteambatchCodeList, 3, fromdate,todate, objuser, "N", pageable);
-					
+									3, fromdate, todate, objuser, "N", false, directorycode, 1, fromdate, todate, "N",
+									directorycode, 2, fromdate, todate, objuser, "N", directorycode, false, 3, fromdate,
+									todate, objuser, "N", 3, true, selectedteambatchCodeList, fromdate, todate, objuser,
+									"N", directorycode, true, selectedteambatchCodeList, 3, fromdate, todate, objuser,
+									"N", pageable);
+
 				} else if (testcode != -1 && objuser.getLstprojectforfilter() == null) {
 
 					lstorders = lslogilablimsorderdetailRepository
@@ -2185,7 +2180,7 @@ public class DashBoardService {
 									3, fromdate, todate, objuser, "N", testcode, directorycode, 1, fromdate, todate,
 									"N", testcode, directorycode, 2, fromdate, todate, objuser, "N", testcode,
 									directorycode, 3, fromdate, todate, objuser, "N", testcode, pageable);
-					
+
 //					lstorders = LogilablimsorderdetailsRepository
 //							.findByViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndOrdercancellIsNullAndTestcodeAndTeamselectedOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndOrderflagAndOrdercancellIsNullAndTestcodeOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndOrdercancellIsNullAndTestcodeOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrderflagAndOrdercancellIsNullAndTestcodeAndTeamselectedOrderByBatchcodeDesc(
 //									3, fromdate, todate, objuser, "N", testcode,false,
@@ -2276,7 +2271,7 @@ public class DashBoardService {
 				}).flatMap(List::stream).collect(Collectors.toList());
 				lstorders.addAll(lstorderobj);
 
-			} else if (objuser.getObjuser().getOrderselectiontype() == 6) {//cancelled orders
+			} else if (objuser.getObjuser().getOrderselectiontype() == 6) {// cancelled orders
 				if (testcode == -1 && objuser.getLstprojectforfilter() == null) {
 //					lstorders = lslogilablimsorderdetailRepository
 //							.findByViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrdercancellOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndOrdercancellOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrdercancellOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrdercancellOrderByBatchcodeDesc(
@@ -2284,15 +2279,14 @@ public class DashBoardService {
 //									directorycode, 1, fromdate, todate, 1,
 //									directorycode, 2, fromdate, todate, objuser, 1, 
 //									directorycode, 3, fromdate, todate,objuser, 1, pageable);
-					
+
 					lstorders = lslogilablimsorderdetailRepository
 							.findByViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrdercancellAndTeamselectedOrViewoptionAndTeamselectedAndBatchcodeInAndCreatedtimestampBetweenAndLsuserMasterAndOrdercancellOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndOrdercancellOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrdercancellOrLsprojectmasterIsNullAndDirectorycodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrdercancellAndTeamselectedOrLsprojectmasterIsNullAndDirectorycodeInAndTeamselectedAndBatchcodeInAndViewoptionAndCreatedtimestampBetweenAndLsuserMasterAndOrdercancellOrderByBatchcodeDesc(
-									3, fromdate, todate, objuser, 1, false,
-									3, true,selectedteambatchCodeList,fromdate, todate, objuser, 1, 
-									directorycode, 1, fromdate, todate, 1,
-									directorycode, 2, fromdate, todate, objuser, 1,
-									directorycode, 3, fromdate, todate,objuser, 1,false,
-									directorycode,true,selectedteambatchCodeList, 3, fromdate, todate,objuser, 1,pageable);
+									3, fromdate, todate, objuser, 1, false, 3, true, selectedteambatchCodeList,
+									fromdate, todate, objuser, 1, directorycode, 1, fromdate, todate, 1, directorycode,
+									2, fromdate, todate, objuser, 1, directorycode, 3, fromdate, todate, objuser, 1,
+									false, directorycode, true, selectedteambatchCodeList, 3, fromdate, todate, objuser,
+									1, pageable);
 
 				} else if (testcode != -1 && objuser.getLstprojectforfilter() == null) {
 
@@ -2972,23 +2966,22 @@ public class DashBoardService {
 		List<Integer> userlist = objuser.getUsernotify() != null
 				? objuser.getUsernotify().stream().map(LSuserMaster::getUsercode).collect(Collectors.toList())
 				: new ArrayList<Integer>();
-				
-		List<LSuserteammapping> lstteammap = lsuserteammappingRepository.findBylsuserMaster(objuser);
-		List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(lstteammap,objuser.getLssitemaster());
 
-		List<LSprotocolselectedteam> selectedteamorders = lsprotoselectedteamRepo.findByUserteamInAndCreatedtimestampBetween(lstteam,fromdate,todate);
+		List<LSuserteammapping> lstteammap = lsuserteammappingRepository.findBylsuserMaster(objuser);
+		List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(lstteammap,
+				objuser.getLssitemaster());
+
+		List<LSprotocolselectedteam> selectedteamorders = lsprotoselectedteamRepo
+				.findByUserteamInAndCreatedtimestampBetween(lstteam, fromdate, todate);
 
 		List<Long> selectedteamprotcolorderList = (selectedteamorders != null && !selectedteamorders.isEmpty())
-			    ? selectedteamorders.stream()
-			        .map(LSprotocolselectedteam::getProtocolordercode)
-			        .filter(Objects::nonNull)
-			        .distinct()
-			        .collect(Collectors.toList())
-			    : Collections.singletonList(-1L);
-			        
+				? selectedteamorders.stream().map(LSprotocolselectedteam::getProtocolordercode).filter(Objects::nonNull)
+						.distinct().collect(Collectors.toList())
+				: Collections.singletonList(-1L);
+
 		if (lstproject != null) {
 
-			if (objuser.getObjuser().getOrderselectiontype() == 1) {//total  orders
+			if (objuser.getObjuser().getOrderselectiontype() == 1) {// total orders
 				if (testcode == -1 && objuser.getLstprojectforfilter() == null) {
 
 					if (env.getProperty("app.datasource.eln.url").toLowerCase().contains("postgres")) {
@@ -3000,15 +2993,16 @@ public class DashBoardService {
 //										lstproject, 3, objuser.getLssitemaster().getSitecode(), fromdate, todate,
 //										lstproject, fromdate, todate, objuser.getLssitemaster().getSitecode(),
 //										pageable);
-						/** change for p.team selection*/
+						/** change for p.team selection */
 						lstorders = LSlogilabprotocoldetailRepository
 								.findByLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatedtimestampBetweenOrLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatebyAndCreatedtimestampBetweenOrLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndCreatebyInAndTeamselectedOrTeamselectedAndProtocolordercodeInAndLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatedtimestampBetweenAndCreatebyInOrLsprojectmasterInAndViewoptionAndSitecodeAndCreatedtimestampBetweenOrLsprojectmasterInAndCreatedtimestampBetweenAndSitecodeOrderByProtocolordercodeDesc(
-										1, objuser.getLssitemaster().getSitecode(), fromdate, todate, 
-										2,objuser.getLssitemaster().getSitecode(), objuser.getUsercode(), fromdate,todate,
-										3, objuser.getLssitemaster().getSitecode(), fromdate, todate, userlist,false,
-										true,selectedteamprotcolorderList,3, objuser.getLssitemaster().getSitecode(), fromdate, todate, userlist,
-										lstproject, 3, objuser.getLssitemaster().getSitecode(), fromdate, todate,
-										lstproject, fromdate, todate, objuser.getLssitemaster().getSitecode(),pageable);
+										1, objuser.getLssitemaster().getSitecode(), fromdate, todate, 2,
+										objuser.getLssitemaster().getSitecode(), objuser.getUsercode(), fromdate,
+										todate, 3, objuser.getLssitemaster().getSitecode(), fromdate, todate, userlist,
+										false, true, selectedteamprotcolorderList, 3,
+										objuser.getLssitemaster().getSitecode(), fromdate, todate, userlist, lstproject,
+										3, objuser.getLssitemaster().getSitecode(), fromdate, todate, lstproject,
+										fromdate, todate, objuser.getLssitemaster().getSitecode(), pageable);
 
 					} else {
 						lstorders = LSlogilabprotocoldetailRepository
@@ -3116,7 +3110,7 @@ public class DashBoardService {
 //									objuser.getLstprojectforfilter(), testcode);
 
 				}
-			} else if (objuser.getObjuser().getOrderselectiontype() == 2) {//completed orders
+			} else if (objuser.getObjuser().getOrderselectiontype() == 2) {// completed orders
 				if (testcode == -1 && objuser.getLstprojectforfilter() == null) {
 
 //					lstorders = LSlogilabprotocoldetailRepository
@@ -3128,12 +3122,12 @@ public class DashBoardService {
 
 					lstorders = LSlogilabprotocoldetailRepository
 							.findByOrderflagAndSitecodeAndRejectedIsNullAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenOrOrderflagAndSitecodeAndRejectedIsNullAndLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenOrOrderflagAndSitecodeAndRejectedIsNullAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndTeamselectedOrTeamselectedAndProtocolordercodeInAndOrderflagAndSitecodeAndRejectedIsNullAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndCreatebyInOrderByProtocolordercodeDesc(
-									"R", objuser.getLssitemaster().getSitecode(), 1, fromdate, todate, 
-									"R",objuser.getLssitemaster().getSitecode(), 2, objuser.getUsercode(), fromdate, todate,
-									"R", objuser.getLssitemaster().getSitecode(), 3, fromdate, todate, userlist,false,
-									true,selectedteamprotcolorderList,"R", objuser.getLssitemaster().getSitecode(), 3, fromdate, todate, userlist,
-									pageable);
-					
+									"R", objuser.getLssitemaster().getSitecode(), 1, fromdate, todate, "R",
+									objuser.getLssitemaster().getSitecode(), 2, objuser.getUsercode(), fromdate, todate,
+									"R", objuser.getLssitemaster().getSitecode(), 3, fromdate, todate, userlist, false,
+									true, selectedteamprotcolorderList, "R", objuser.getLssitemaster().getSitecode(), 3,
+									fromdate, todate, userlist, pageable);
+
 					lstorders.addAll(LSlogilabprotocoldetailRepository
 							.findByOrderflagAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterInAndRejectedIsNullOrderByProtocolordercodeDesc(
 									"R", objuser.getLssitemaster().getSitecode(), fromdate, todate, lstproject,
@@ -3206,7 +3200,7 @@ public class DashBoardService {
 //									objuser.getLstprojectforfilter(), testcode);
 				}
 
-			} else if (objuser.getObjuser().getOrderselectiontype() == 3) {//pending order
+			} else if (objuser.getObjuser().getOrderselectiontype() == 3) {// pending order
 
 				if (testcode == -1 && objuser.getLstprojectforfilter() == null) {
 
@@ -3218,14 +3212,16 @@ public class DashBoardService {
 //										todate, "N", objuser.getLssitemaster().getSitecode(), 3, fromdate, todate,
 //										userlist, "N", objuser.getLssitemaster().getSitecode(), fromdate, todate,
 //										lstproject, pageable);
-						
+
 						lstorders = LSlogilabprotocoldetailRepository
 								.findByOrderflagAndSitecodeAndOrdercancellIsNullAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndRejectedIsNullOrOrderflagAndSitecodeAndOrdercancellIsNullAndLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndRejectedIsNullOrOrderflagAndSitecodeAndOrdercancellIsNullAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndRejectedIsNullAndCreatebyInAndTeamselectedOrTeamselectedAndProtocolordercodeInAndOrderflagAndSitecodeAndOrdercancellIsNullAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndRejectedIsNullAndCreatebyInOrOrderflagAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterInAndOrdercancellIsNullAndRejectedIsNullOrderByProtocolordercodeDesc(
-										"N", objuser.getLssitemaster().getSitecode(), 1, fromdate, todate, 
-										"N",objuser.getLssitemaster().getSitecode(), 2, objuser.getUsercode(), fromdate,todate, 
-										"N", objuser.getLssitemaster().getSitecode(), 3, fromdate, todate,userlist, false,
-										true ,selectedteamprotcolorderList ,"N", objuser.getLssitemaster().getSitecode(), 3, fromdate, todate,userlist, 
-										"N", objuser.getLssitemaster().getSitecode(), fromdate, todate,lstproject, pageable);
+										"N", objuser.getLssitemaster().getSitecode(), 1, fromdate, todate, "N",
+										objuser.getLssitemaster().getSitecode(), 2, objuser.getUsercode(), fromdate,
+										todate, "N", objuser.getLssitemaster().getSitecode(), 3, fromdate, todate,
+										userlist, false, true, selectedteamprotcolorderList, "N",
+										objuser.getLssitemaster().getSitecode(), 3, fromdate, todate, userlist, "N",
+										objuser.getLssitemaster().getSitecode(), fromdate, todate, lstproject,
+										pageable);
 					} else {
 //						lstorders = LSlogilabprotocoldetailRepository
 //								.findByOrderflagAndSitecodeAndOrdercancellIsNullAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndRejectedIsNullOrOrderflagAndSitecodeAndOrdercancellIsNullAndLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndRejectedIsNullOrOrderflagAndSitecodeAndOrdercancellIsNullAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndRejectedIsNullAndCreatebyInOrderByProtocolordercodeDesc(
@@ -3233,13 +3229,15 @@ public class DashBoardService {
 //										objuser.getLssitemaster().getSitecode(), 2, objuser.getUsercode(), fromdate,
 //										todate, "N", objuser.getLssitemaster().getSitecode(), 3, fromdate, todate,
 //										userlist, pageable);
-						
+
 						lstorders = LSlogilabprotocoldetailRepository
 								.findByOrderflagAndSitecodeAndOrdercancellIsNullAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndRejectedIsNullOrOrderflagAndSitecodeAndOrdercancellIsNullAndLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndRejectedIsNullOrOrderflagAndSitecodeAndOrdercancellIsNullAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndRejectedIsNullAndCreatebyInAndTeamselectedOrTeamselectedAndProtocolordercodeInAndOrderflagAndSitecodeAndOrdercancellIsNullAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndRejectedIsNullAndCreatebyInOrderByProtocolordercodeDesc(
-										"N", objuser.getLssitemaster().getSitecode(), 1, fromdate, todate, 
-										"N",objuser.getLssitemaster().getSitecode(), 2, objuser.getUsercode(), fromdate,todate, 
-										"N", objuser.getLssitemaster().getSitecode(), 3, fromdate, todate,userlist, false,
-										true , selectedteamprotcolorderList,"N", objuser.getLssitemaster().getSitecode(), 3, fromdate, todate,userlist,pageable);
+										"N", objuser.getLssitemaster().getSitecode(), 1, fromdate, todate, "N",
+										objuser.getLssitemaster().getSitecode(), 2, objuser.getUsercode(), fromdate,
+										todate, "N", objuser.getLssitemaster().getSitecode(), 3, fromdate, todate,
+										userlist, false, true, selectedteamprotcolorderList, "N",
+										objuser.getLssitemaster().getSitecode(), 3, fromdate, todate, userlist,
+										pageable);
 
 						lstorders.addAll(LSlogilabprotocoldetailRepository
 								.findByOrderflagAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterInAndOrdercancellIsNullAndRejectedIsNullOrderByProtocolordercodeDesc(
@@ -3314,7 +3312,7 @@ public class DashBoardService {
 //									objuser.getLstprojectforfilter(), testcode);
 
 				}
-			} else if (objuser.getObjuser().getOrderselectiontype() == 5) {//rejected orders
+			} else if (objuser.getObjuser().getOrderselectiontype() == 5) {// rejected orders
 				if (testcode == -1 && objuser.getLstprojectforfilter() == null) {
 
 //					lstorders = LSlogilabprotocoldetailRepository
@@ -3326,12 +3324,12 @@ public class DashBoardService {
 
 					lstorders = LSlogilabprotocoldetailRepository
 							.findByRejectedAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenOrRejectedAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenOrRejectedAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndTeamselectedOrTeamselectedAndProtocolordercodeInAndRejectedAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndCreatebyInOrderByProtocolordercodeDesc(
-									1, objuser.getLssitemaster().getSitecode(), 1, fromdate, todate,
-									1,objuser.getLssitemaster().getSitecode(), 2, objuser.getUsercode(), fromdate, todate,
-									1, objuser.getLssitemaster().getSitecode(), 3, fromdate, todate, userlist,false,
-									true,selectedteamprotcolorderList,1, objuser.getLssitemaster().getSitecode(), 3, fromdate, todate, userlist,
-									pageable);
-					
+									1, objuser.getLssitemaster().getSitecode(), 1, fromdate, todate, 1,
+									objuser.getLssitemaster().getSitecode(), 2, objuser.getUsercode(), fromdate, todate,
+									1, objuser.getLssitemaster().getSitecode(), 3, fromdate, todate, userlist, false,
+									true, selectedteamprotcolorderList, 1, objuser.getLssitemaster().getSitecode(), 3,
+									fromdate, todate, userlist, pageable);
+
 					lstorders.addAll(LSlogilabprotocoldetailRepository
 							.findByRejectedAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterInOrderByProtocolordercodeDesc(
 									1, objuser.getLssitemaster().getSitecode(), fromdate, todate, lstproject,
@@ -3403,7 +3401,7 @@ public class DashBoardService {
 //									objuser.getLstprojectforfilter(), testcode);
 				}
 
-			} else if (objuser.getObjuser().getOrderselectiontype() == 6) {//cancelled order
+			} else if (objuser.getObjuser().getOrderselectiontype() == 6) {// cancelled order
 				if (testcode == -1 && objuser.getLstprojectforfilter() == null) {
 
 //					lstorders = LSlogilabprotocoldetailRepository
@@ -3415,11 +3413,12 @@ public class DashBoardService {
 
 					lstorders = LSlogilabprotocoldetailRepository
 							.findByOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenOrOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndCreatebyInAndTeamselectedOrTeamselectedAndProtocolordercodeInAndOrdercancellAndSitecodeAndLsprojectmasterIsNullAndViewoptionAndCreatedtimestampBetweenAndCreatebyInOrderByProtocolordercodeDesc(
-									1, objuser.getLssitemaster().getSitecode(), 1, fromdate, todate, 
-									1,objuser.getLssitemaster().getSitecode(), 2, objuser.getUsercode(), fromdate, todate,
-									1, objuser.getLssitemaster().getSitecode(), 3, fromdate, todate, userlist,false,
-									true , selectedteamprotcolorderList,1, objuser.getLssitemaster().getSitecode(), 3, fromdate, todate, userlist,pageable);
-					
+									1, objuser.getLssitemaster().getSitecode(), 1, fromdate, todate, 1,
+									objuser.getLssitemaster().getSitecode(), 2, objuser.getUsercode(), fromdate, todate,
+									1, objuser.getLssitemaster().getSitecode(), 3, fromdate, todate, userlist, false,
+									true, selectedteamprotcolorderList, 1, objuser.getLssitemaster().getSitecode(), 3,
+									fromdate, todate, userlist, pageable);
+
 					lstorders.addAll(LSlogilabprotocoldetailRepository
 							.findByOrdercancellAndSitecodeAndCreatedtimestampBetweenAndLsprojectmasterInOrderByProtocolordercodeDesc(
 									1, objuser.getLssitemaster().getSitecode(), fromdate, todate, lstproject,
@@ -3502,12 +3501,11 @@ public class DashBoardService {
 
 					lstorders = LSlogilabprotocoldetailRepository
 							.findByLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatedtimestampBetweenOrLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenOrLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenAndTeamselectedOrTeamselectedAndProtocolordercodeInAndLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
-									1, objuser.getLssitemaster().getSitecode(), fromdate, todate, 
-									2,objuser.getUsercode(), fromdate, todate, 
-									3, objuser.getUsercode(), fromdate, todate,false,
-									true,selectedteamprotcolorderList,3, objuser.getUsercode(), fromdate, todate,
-									pageable);
-					
+									1, objuser.getLssitemaster().getSitecode(), fromdate, todate, 2,
+									objuser.getUsercode(), fromdate, todate, 3, objuser.getUsercode(), fromdate, todate,
+									false, true, selectedteamprotcolorderList, 3, objuser.getUsercode(), fromdate,
+									todate, pageable);
+
 //					count = LSlogilabprotocoldetailRepository
 //							.countByLsprojectmasterIsNullAndViewoptionAndSitecodeAndCreatedtimestampBetweenOrLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenOrLsprojectmasterIsNullAndViewoptionAndCreatebyAndCreatedtimestampBetweenOrderByProtocolordercodeDesc(
 //									1, objuser.getLssitemaster().getSitecode(), fromdate, todate, 2,
@@ -3637,6 +3635,7 @@ public class DashBoardService {
 //		mapOrders.put("count", count);
 		return mapOrders;
 	}
+
 	public Map<String, Object> Getdashboardsheets(LSuserMaster objuser) {
 		Date fromdate = objuser.getObjuser().getFromdate();
 		Date todate = objuser.getObjuser().getTodate();
@@ -4107,6 +4106,211 @@ public class DashBoardService {
 		return obj;
 	}
 
+	public Query globalSearchQueryprepare(String Query, LSuserMaster objuser, List<Long> selectedteambatchCodeList,
+			List<Integer> usercodeList) {
+		String sql = "SELECT * FROM LSlogilablimsorderdetail o "
+				+ "INNER JOIN lsfile l ON l.filecode = o.lsfile_filecode " + "WHERE ("
+				+ "    o.lsprojectmaster_projectcode IN ("
+				+ "        SELECT lsprojectmaster_projectcode FROM LSlogilablimsorderdetail "
+				+ "        WHERE lsprojectmaster_projectcode IN ("
+				+ "            SELECT projectcode FROM LSprojectmaster " + "            WHERE lsusersteam_teamcode IN ("
+				+ "                SELECT teamcode FROM LSuserteammapping WHERE lsuserMaster_usercode = :userCode"
+				+ "            ) AND status = 1" + "        )" + "    ) " + "    AND (" + Query + ")" + ") " + "OR ("
+				+ "    o.filetype = 0 " + "    AND (" + Query + ")" + ") " + "OR ("
+				+ "    o.lsprojectmaster_projectcode IS NULL " + "    AND o.lssamplemaster_samplecode IN ("
+				+ "        SELECT DISTINCT m.samplecode FROM LSsamplemaster m "
+				+ "        JOIN lslogilablimsorderdetail d ON m.samplecode = d.lssamplemaster_samplecode "
+				+ "        WHERE m.lssitemaster_sitecode = :sitecode AND m.status = 1" + "    ) " + "    AND (" + Query
+				+ ")" + ") " + "OR (" + "    o.lsprojectmaster_projectcode IS NULL " + "    AND o.viewoption = 1 "
+				+ "    AND o.lsusermaster_usercode = :userCode " + "    AND (" + Query + ")" + ") " + "OR ("
+				+ "    o.lsprojectmaster_projectcode IS NULL " + "    AND o.viewoption = 2 "
+				+ "    AND o.lsusermaster_usercode = :userCode " + "    AND (" + Query + ")" + ") " + "OR ("
+				+ "    o.viewoption = 3 " + "    AND o.lsusermaster_usercode = :userCode "
+				+ "    AND o.lsprojectmaster_projectcode IN ("
+				+ "        SELECT lsprojectmaster_projectcode FROM LSlogilablimsorderdetail "
+				+ "        WHERE lsprojectmaster_projectcode IN ("
+				+ "            SELECT projectcode FROM LSprojectmaster " + "            WHERE lsusersteam_teamcode IN ("
+				+ "                SELECT teamcode FROM LSuserteammapping WHERE lsuserMaster_usercode = :userCode"
+				+ "            ) AND status = 1" + "        )" + "    ) " + "    AND (" + Query + ")" + ") " + "OR ("
+				+ "    o.viewoption = 3 " + "    AND o.lsusermaster_usercode IN (:userCodes) "
+				+ "    AND o.teamselected = false " + "    AND o.lsprojectmaster_projectcode IS NULL " + "    AND ("
+				+ Query + ")" + ") " + "OR (" + "    o.viewoption = 3 " + "    AND o.teamselected = true "
+				+ "    AND o.batchcode IN (:selectedteambatchCodes) " + "    AND o.lsprojectmaster_projectcode IS NULL "
+				+ "    AND (" + Query + ")" + ") " + "ORDER BY batchcode DESC "
+				+ "OFFSET :offset ROWS FETCH NEXT :pageSize ROWS ONLY";
+//		System.out.println(sql);
+		Query query = entityManager.createNativeQuery(sql, LSlogilablimsorderdetail.class);
+		query.setParameter("userCode", objuser.getUsercode());
+//		List<Integer> usercodeList = objuser.getUsernotify().stream().map(LSuserMaster::getUsercode)
+//				.collect(Collectors.toList());
+		query.setParameter("sitecode", objuser.getLssitemaster().getSitecode());
+		query.setParameter("userCodes", usercodeList);
+		query.setParameter("selectedteambatchCodes", selectedteambatchCodeList);
+		query.setParameter("offset", objuser.getPagesize() * objuser.getPageperorder());
+		return query.setParameter("pageSize", objuser.getPageperorder());
+	}
+
+	public Query globalSearchQueryprepareTotalCount(String Query, LSuserMaster objuser,
+			List<Long> selectedteambatchCodeList, List<Integer> usercodeList) {
+		String sql = "SELECT COUNT(*) FROM LSlogilablimsorderdetail o "
+				+ "INNER JOIN lsfile l ON l.filecode = o.lsfile_filecode " + "WHERE ("
+				+ "    o.lsprojectmaster_projectcode IN ("
+				+ "        SELECT lsprojectmaster_projectcode FROM LSlogilablimsorderdetail "
+				+ "        WHERE lsprojectmaster_projectcode IN ("
+				+ "            SELECT projectcode FROM LSprojectmaster " + "            WHERE lsusersteam_teamcode IN ("
+				+ "                SELECT teamcode FROM LSuserteammapping WHERE lsuserMaster_usercode = :userCode"
+				+ "            ) AND status = 1" + "        )" + "    ) " + "    AND (" + Query + ")" + ") " + "OR ("
+				+ "    o.filetype = 0 " + "    AND (" + Query + ")" + ") " + "OR ("
+				+ "    o.lsprojectmaster_projectcode IS NULL " + "    AND o.lssamplemaster_samplecode IN ("
+				+ "        SELECT DISTINCT m.samplecode FROM LSsamplemaster m "
+				+ "        JOIN lslogilablimsorderdetail d ON m.samplecode = d.lssamplemaster_samplecode "
+				+ "        WHERE m.lssitemaster_sitecode = :sitecode AND m.status = 1" + "    ) " + "    AND (" + Query
+				+ ")" + ") " + "OR (" + "    o.lsprojectmaster_projectcode IS NULL " + "    AND o.viewoption = 1 "
+				+ "    AND o.lsusermaster_usercode = :userCode " + "    AND (" + Query + ")" + ") " + "OR ("
+				+ "    o.lsprojectmaster_projectcode IS NULL " + "    AND o.viewoption = 2 "
+				+ "    AND o.lsusermaster_usercode = :userCode " + "    AND (" + Query + ")" + ") " + "OR ("
+				+ "    o.viewoption = 3 " + "    AND o.lsusermaster_usercode = :userCode "
+				+ "    AND o.lsprojectmaster_projectcode IN ("
+				+ "        SELECT lsprojectmaster_projectcode FROM LSlogilablimsorderdetail "
+				+ "        WHERE lsprojectmaster_projectcode IN ("
+				+ "            SELECT projectcode FROM LSprojectmaster " + "            WHERE lsusersteam_teamcode IN ("
+				+ "                SELECT teamcode FROM LSuserteammapping WHERE lsuserMaster_usercode = :userCode"
+				+ "            ) AND status = 1" + "        )" + "    ) " + "    AND (" + Query + ")" + ") " + "OR ("
+				+ "    o.viewoption = 3 " + "    AND o.lsusermaster_usercode IN (:userCodes) "
+				+ "    AND o.teamselected = false " + "    AND o.lsprojectmaster_projectcode IS NULL " + "    AND ("
+				+ Query + ")" + ") " + "OR (" + "    o.viewoption = 3 " + "    AND o.teamselected = true "
+				+ "    AND o.batchcode IN (:selectedteambatchCodes) " + "    AND o.lsprojectmaster_projectcode IS NULL "
+				+ "    AND (" + Query + ")" + ") ";
+		Query query = entityManager.createNativeQuery(sql);
+		query.setParameter("userCode", objuser.getUsercode());
+		query.setParameter("sitecode", objuser.getLssitemaster().getSitecode());
+		query.setParameter("userCodes", usercodeList);
+		return query.setParameter("selectedteambatchCodes", selectedteambatchCodeList);
+	}
+
+	private Query getprotocolordercustomQueryCount(String Query, Integer usercode, List<Integer> userlist,
+			List<Lsprotocolorderstructure> lstdir, LSuserMaster objuser, List<Long> selectedteamprotcolorderList) {
+		String query = "SELECT COUNT(*) FROM lslogilabprotocoldetail o "
+				+ "INNER JOIN lsprotocolmaster l ON o.lsprotocolmaster_protocolmastercode = l.protocolmastercode "
+				+ "INNER JOIN lstestmasterlocal m ON m.testcode = o.testcode " + "WHERE ("
+				+ "  o.lsprojectmaster_projectcode IN (" + "    SELECT lsprojectmaster_projectcode "
+				+ "    FROM LSlogilablimsorderdetail " + "    WHERE lsprojectmaster_projectcode IN ("
+				+ "      SELECT projectcode FROM LSprojectmaster " + "      WHERE lsusersteam_teamcode IN ("
+				+ "        SELECT teamcode FROM LSuserteammapping WHERE lsuserMaster_usercode = :usercode" + "      )"
+				+ "    )" + "  )" + "  AND o.ordercancell IS NULL " + "  AND (" + Query + "  )" + ")" + " OR ("
+				+ "  o.lsprojectmaster_projectcode IS NULL " + "  AND o.assignedto_usercode IS NULL "
+				+ "  AND o.elnmaterial_nmaterialcode IN (SELECT nmaterialcode FROM elnmaterial WHERE nsitecode = :sitecode) "
+				+ "  AND (" + Query + "  )" + "  AND o.viewoption = :viewoption2 " + "  AND o.ordercancell IS NULL"
+				+ ")" + " OR (" + "(" + "  o.lsprojectmaster_projectcode IS NULL "
+				+ "  AND o.assignedto_usercode IS NULL "
+				+ "  AND o.elnmaterial_nmaterialcode IN (SELECT nmaterialcode FROM elnmaterial WHERE nsitecode = :sitecode) "
+				+ "  AND (" + Query + "  )" + "  AND o.viewoption = :viewoption3 " + "  AND o.teamselected = false "
+				+ "  AND o.createby = :usercode " + "  AND o.ordercancell IS NULL" + ")" + "OR" + "("
+				+ "  o.lsprojectmaster_projectcode IS NULL " + "  AND o.assignedto_usercode IS NULL "
+				+ "  AND o.elnmaterial_nmaterialcode IN (SELECT nmaterialcode FROM elnmaterial WHERE nsitecode = :sitecode) "
+				+ "  AND (" + Query + "  )" + "  AND o.viewoption = :viewoption3 " + "  AND o.teamselected = true "
+				+ "  AND o.protocolordercode IN (:protocolordercode)" + "  AND o.createby = :usercode "
+				+ "  AND o.ordercancell IS NULL" + ")" + ")" + " OR (" + "("
+				+ "  o.lsprojectmaster_projectcode IS NULL " + "  AND o.assignedto_usercode IS NULL "
+				+ "  AND o.elnmaterial_nmaterialcode IN (SELECT nmaterialcode FROM elnmaterial WHERE nsitecode = :sitecode) "
+				+ "  AND (" + Query + "  )" + "  AND o.viewoption = :viewoption3 " + "  AND o.teamselected = false "
+				+ "  AND o.createby IN (:userlist) " + "  AND o.ordercancell IS NULL" + ")" + "OR" + "("
+				+ "  o.lsprojectmaster_projectcode IS NULL " + "  AND o.assignedto_usercode IS NULL "
+				+ "  AND o.elnmaterial_nmaterialcode IN (SELECT nmaterialcode FROM elnmaterial WHERE nsitecode = :sitecode) "
+				+ "  AND (" + Query + "  )" + "  AND o.viewoption = :viewoption3 " + "  AND o.teamselected = true "
+				+ "  AND o.protocolordercode IN (:protocolordercode)" + "  AND o.createby IN (:userlist) "
+				+ "  AND o.ordercancell IS NULL" + ")" + ")" + " OR (" + "  o.directorycode IN (:lstdir) "
+				+ "  AND o.viewoption = :viewoption1 " + "  AND o.lsprojectmaster_projectcode IS NULL "
+				+ "  AND o.assignedto_usercode IS NULL " + "  AND o.ordercancell IS NULL " + "  AND (" + Query + "  )"
+				+ ")" + " OR (" + "  o.directorycode IN (:lstdir) " + "  AND o.viewoption = :viewoption2 "
+				+ "  AND o.lsuserMaster_usercode = :usercode " + "  AND o.lsprojectmaster_projectcode IS NULL "
+				+ "  AND o.assignedto_usercode IS NULL " + "  AND o.ordercancell IS NULL " + "  AND (" + Query + "  )"
+				+ ")" + " OR (" + "  (" + "  o.directorycode IN (:lstdir) " + "  AND o.viewoption = :viewoption3 "
+				+ "  AND o.teamselected = false" + "  AND o.createby IN (:userlist) "
+				+ "  AND o.lsprojectmaster_projectcode IS NULL " + "  AND o.assignedto_usercode IS NULL "
+				+ "  AND o.ordercancell IS NULL " + "  AND (" + Query + "  )" + "  )" + "OR" + "  ("
+				+ "  o.directorycode IN (:lstdir) " + "  AND o.viewoption = :viewoption3 "
+				+ "  AND o.teamselected = true" + "  AND o.protocolordercode IN (:protocolordercode)"
+				+ "  AND o.createby IN (:userlist) " + "  AND o.lsprojectmaster_projectcode IS NULL "
+				+ "  AND o.assignedto_usercode IS NULL " + "  AND o.ordercancell IS NULL " + "  AND (" + Query + "  )"
+				+ "  ))";
+//		        + "ORDER BY protocolordercode DESC OFFSET :offset ROWS FETCH NEXT :pageSize ROWS ONLY ";
+
+		Query customquery = entityManager.createNativeQuery(query);
+		customquery.setParameter("usercode", objuser.getUsercode());
+		customquery.setParameter("viewoption1", 1);
+		customquery.setParameter("viewoption2", 2);
+		customquery.setParameter("viewoption3", 3);
+		customquery.setParameter("userlist", userlist);
+		customquery.setParameter("lstdir", lstdir);
+		customquery.setParameter("sitecode", objuser.getLssitemaster().getSitecode());
+//		customquery.setParameter("offset", objuser.getPagesize() * objuser.getPageperorder());
+//		customquery.setParameter("pageSize", objuser.getPageperorder());
+		return customquery.setParameter("protocolordercode", selectedteamprotcolorderList);
+
+	}
+
+	private Query getprotocolordercustomQuery(String Query, Integer usercode, List<Integer> userlist,
+			List<Lsprotocolorderstructure> lstdir, LSuserMaster objuser, List<Long> selectedteamprotcolorderList) {
+		String query = "SELECT * FROM lslogilabprotocoldetail o "
+				+ "INNER JOIN lsprotocolmaster l ON o.lsprotocolmaster_protocolmastercode = l.protocolmastercode "
+				+ "INNER JOIN lstestmasterlocal m ON m.testcode = o.testcode " + "WHERE ("
+				+ "  o.lsprojectmaster_projectcode IN (" + "    SELECT lsprojectmaster_projectcode "
+				+ "    FROM LSlogilablimsorderdetail " + "    WHERE lsprojectmaster_projectcode IN ("
+				+ "      SELECT projectcode FROM LSprojectmaster " + "      WHERE lsusersteam_teamcode IN ("
+				+ "        SELECT teamcode FROM LSuserteammapping WHERE lsuserMaster_usercode = :usercode" + "      )"
+				+ "    )" + "  )" + "  AND o.ordercancell IS NULL " + "  AND (" + Query + "  )" + ")" + " OR ("
+				+ "  o.lsprojectmaster_projectcode IS NULL " + "  AND o.assignedto_usercode IS NULL "
+				+ "  AND o.elnmaterial_nmaterialcode IN (SELECT nmaterialcode FROM elnmaterial WHERE nsitecode = :sitecode) "
+				+ "  AND (" + Query + "  )" + "  AND o.viewoption = :viewoption2 " + "  AND o.ordercancell IS NULL"
+				+ ")" + " OR (" + "(" + "  o.lsprojectmaster_projectcode IS NULL "
+				+ "  AND o.assignedto_usercode IS NULL "
+				+ "  AND o.elnmaterial_nmaterialcode IN (SELECT nmaterialcode FROM elnmaterial WHERE nsitecode = :sitecode) "
+				+ "  AND (" + Query + "  )" + "  AND o.viewoption = :viewoption3 " + "  AND o.teamselected = false "
+				+ "  AND o.createby = :usercode " + "  AND o.ordercancell IS NULL" + ")" + "OR" + "("
+				+ "  o.lsprojectmaster_projectcode IS NULL " + "  AND o.assignedto_usercode IS NULL "
+				+ "  AND o.elnmaterial_nmaterialcode IN (SELECT nmaterialcode FROM elnmaterial WHERE nsitecode = :sitecode) "
+				+ "  AND (" + Query + "  )" + "  AND o.viewoption = :viewoption3 " + "  AND o.teamselected = true "
+				+ "  AND o.protocolordercode IN (:protocolordercode)" + "  AND o.createby = :usercode "
+				+ "  AND o.ordercancell IS NULL" + ")" + ")" + " OR (" + "("
+				+ "  o.lsprojectmaster_projectcode IS NULL " + "  AND o.assignedto_usercode IS NULL "
+				+ "  AND o.elnmaterial_nmaterialcode IN (SELECT nmaterialcode FROM elnmaterial WHERE nsitecode = :sitecode) "
+				+ "  AND (" + Query + "  )" + "  AND o.viewoption = :viewoption3 " + "  AND o.teamselected = false "
+				+ "  AND o.createby IN (:userlist) " + "  AND o.ordercancell IS NULL" + ")" + "OR" + "("
+				+ "  o.lsprojectmaster_projectcode IS NULL " + "  AND o.assignedto_usercode IS NULL "
+				+ "  AND o.elnmaterial_nmaterialcode IN (SELECT nmaterialcode FROM elnmaterial WHERE nsitecode = :sitecode) "
+				+ "  AND (" + Query + "  )" + "  AND o.viewoption = :viewoption3 " + "  AND o.teamselected = true "
+				+ "  AND o.protocolordercode IN (:protocolordercode)" + "  AND o.createby IN (:userlist) "
+				+ "  AND o.ordercancell IS NULL" + ")" + ")" + " OR (" + "  o.directorycode IN (:lstdir) "
+				+ "  AND o.viewoption = :viewoption1 " + "  AND o.lsprojectmaster_projectcode IS NULL "
+				+ "  AND o.assignedto_usercode IS NULL " + "  AND o.ordercancell IS NULL " + "  AND (" + Query + "  )"
+				+ ")" + " OR (" + "  o.directorycode IN (:lstdir) " + "  AND o.viewoption = :viewoption2 "
+				+ "  AND o.lsuserMaster_usercode = :usercode " + "  AND o.lsprojectmaster_projectcode IS NULL "
+				+ "  AND o.assignedto_usercode IS NULL " + "  AND o.ordercancell IS NULL " + "  AND (" + Query + "  )"
+				+ ")" + " OR (" + "  (" + "  o.directorycode IN (:lstdir) " + "  AND o.viewoption = :viewoption3 "
+				+ "  AND o.teamselected = false" + "  AND o.createby IN (:userlist) "
+				+ "  AND o.lsprojectmaster_projectcode IS NULL " + "  AND o.assignedto_usercode IS NULL "
+				+ "  AND o.ordercancell IS NULL " + "  AND (" + Query + "  )" + "  )" + "OR" + "  ("
+				+ "  o.directorycode IN (:lstdir) " + "  AND o.viewoption = :viewoption3 "
+				+ "  AND o.teamselected = true" + "  AND o.protocolordercode IN (:protocolordercode)"
+				+ "  AND o.createby IN (:userlist) " + "  AND o.lsprojectmaster_projectcode IS NULL "
+				+ "  AND o.assignedto_usercode IS NULL " + "  AND o.ordercancell IS NULL " + "  AND (" + Query + "  )"
+				+ "  )" + ")ORDER BY protocolordercode DESC OFFSET :offset ROWS FETCH NEXT :pageSize ROWS ONLY ";
+
+		Query customquery = entityManager.createNativeQuery(query, LSlogilabprotocoldetail.class);
+		customquery.setParameter("usercode", objuser.getUsercode());
+		customquery.setParameter("viewoption1", 1);
+		customquery.setParameter("viewoption2", 2);
+		customquery.setParameter("viewoption3", 3);
+		customquery.setParameter("userlist", userlist);
+		customquery.setParameter("lstdir", lstdir);
+		customquery.setParameter("sitecode", objuser.getLssitemaster().getSitecode());
+		customquery.setParameter("offset", objuser.getPagesize() * objuser.getPageperorder());
+		customquery.setParameter("pageSize", objuser.getPageperorder());
+		return customquery.setParameter("protocolordercode", selectedteamprotcolorderList);
+
+	}
+
 	public Map<String, Object> Getglobalsearchorders(Map<String, Object> obj) {
 		Map<String, Object> rtnobj = new HashMap<>();
 		ObjectMapper objectmapper = new ObjectMapper();
@@ -4133,35 +4337,27 @@ public class DashBoardService {
 				sample = null;
 			}
 		}
-		
-		List<LSuserteammapping> teammapping = LSuserteammappingRepositoryObj.findByLsuserMasterAndTeamcodeNotNull(objuser);
-		List<LSusersteam> userteamlist = lsusersteamRepository.findByLsuserteammappingIn(teammapping);
-		List<LSSelectedTeam> selectedorders = LSSelectedTeamRepository.findByUserteamInAndCreatedtimestampBetween(userteamlist,fromdate,todate);
-		//List<LSSelectedTeam> selectedorders  = LSSelectedTeamRepository.findByUserteamIn(userteamlist);
-		
-		List<Long> selectedteambatchCodeList = new ArrayList<>();
-		selectedteambatchCodeList = selectedteambatchCodeList.isEmpty() ? Collections.singletonList(-1L) : selectedteambatchCodeList;
-		if (selectedorders != null && !selectedorders.isEmpty()) {		
-			selectedteambatchCodeList = selectedorders.stream()
-		        .map(LSSelectedTeam::getBatchcode)
-		        .filter(Objects::nonNull)
-		        .distinct()
-		        .collect(Collectors.toList());
-		}
-		
-//		List<LSuserteammapping> lstteammap = lsuserteammappingRepository.findBylsuserMaster(objuser);
-//		List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(lstteammap,objuser.getLssitemaster());
 
-		List<LSprotocolselectedteam> selectedteamorders = lsprotoselectedteamRepo.findByUserteamInAndCreatedtimestampBetween(userteamlist,fromdate,todate);
+		List<LSuserteammapping> teammapping = LSuserteammappingRepositoryObj
+				.findByLsuserMasterAndTeamcodeNotNull(objuser);
+		List<LSusersteam> userteamlist = lsusersteamRepository.findByLsuserteammappingIn(teammapping);
+		List<LSSelectedTeam> selectedorders = LSSelectedTeamRepository
+				.findByUserteamInAndCreatedtimestampBetween(userteamlist, fromdate, todate);
+		List<Long> selectedteambatchCodeList = new ArrayList<>();
+		selectedteambatchCodeList = selectedteambatchCodeList.isEmpty() ? Collections.singletonList(-1L)
+				: selectedteambatchCodeList;
+		if (selectedorders != null && !selectedorders.isEmpty()) {
+			selectedteambatchCodeList = selectedorders.stream().map(LSSelectedTeam::getBatchcode)
+					.filter(Objects::nonNull).distinct().collect(Collectors.toList());
+		}
+		List<LSprotocolselectedteam> selectedteamorders = lsprotoselectedteamRepo
+				.findByUserteamInAndCreatedtimestampBetween(userteamlist, fromdate, todate);
 
 		List<Long> selectedteamprotcolorderList = (selectedteamorders != null && !selectedteamorders.isEmpty())
-			    ? selectedteamorders.stream()
-			        .map(LSprotocolselectedteam::getProtocolordercode)
-			        .filter(Objects::nonNull)
-			        .distinct()
-			        .collect(Collectors.toList())
-			    : Collections.singletonList(-1L);
-			        
+				? selectedteamorders.stream().map(LSprotocolselectedteam::getProtocolordercode).filter(Objects::nonNull)
+						.distinct().collect(Collectors.toList())
+				: Collections.singletonList(-1L);
+
 		List<Integer> userlist = objuser.getUsernotify() != null
 				? objuser.getUsernotify().stream().map(LSuserMaster::getUsercode).collect(Collectors.toList())
 				: new ArrayList<Integer>();
@@ -4170,180 +4366,39 @@ public class DashBoardService {
 			if (objuser.getObjuser().getOrderselectiontype() == 1) {
 
 				if (testcode == -1 && objuser.getLstprojectforfilter() == null) {
+					List<String> searchKeyword = Arrays.stream(searchkeywords.split(" ")).map(String::trim)
+							.filter(item -> !item.isEmpty()).map(word -> "%" + word.toLowerCase() + "%")
+							.collect(Collectors.toList());
+					String Query = "";
 					if (objuser.getObjuser().getOrderfor() == 1) {
-//						lstorders = lslogilablimsorderdetailRepository
-//								.findByLsprojectmasterInAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterInAndBatchidContainingIgnoreCaseAndKeywordIsNullOrLsprojectmasterInAndBatchidContainingIgnoreCaseAndAndTestnameIsNullOrFiletypeAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrFiletypeAndBatchidContainingIgnoreCaseAndKeywordIsNullOrFiletypeAndBatchidContainingIgnoreCaseAndTestnameIsNullOrLsprojectmasterIsNullAndLssamplemasterInAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndLssamplemasterInAndBatchidContainingIgnoreCaseAndKeywordIsNullOrLsprojectmasterIsNullAndLssamplemasterInAndBatchidContainingIgnoreCaseAndTestnameIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndBatchidContainingIgnoreCaseAndTestnameIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndBatchidContainingIgnoreCaseAndTestnameIsNullOrViewoptionAndLsuserMasterAndLsprojectmasterInAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrViewoptionAndLsuserMasterAndLsprojectmasterInAndBatchidContainingIgnoreCaseAndKeywordIsNullOrViewoptionAndLsuserMasterAndLsprojectmasterInAndBatchidContainingIgnoreCaseAndTestnameIsNullOrViewoptionAndLsuserMasterInAndLsprojectmasterIsNullAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrViewoptionAndLsuserMasterInAndLsprojectmasterIsNullAndBatchidContainingIgnoreCaseAndKeywordIsNullOrViewoptionAndLsuserMasterInAndLsprojectmasterIsNullAndBatchidContainingIgnoreCaseAndTestnameIsNullOrderByBatchcodeDesc(
-//										lstproject, searchkeywords, searchkeywords, searchkeywords, lstproject,
-//										searchkeywords, lstproject, searchkeywords, 0, searchkeywords, searchkeywords,
-//										searchkeywords, 0, searchkeywords, 0, searchkeywords, lstsample, searchkeywords,
-//										searchkeywords, searchkeywords, lstsample, searchkeywords, lstsample,
-//										searchkeywords, 1, objuser, searchkeywords, searchkeywords, searchkeywords, 1,
-//										objuser, searchkeywords, 1, objuser, searchkeywords, 2, objuser, searchkeywords,
-//										searchkeywords, searchkeywords, 2, objuser, searchkeywords, 2, objuser,
-//										searchkeywords, 3, objuser, lstproject, searchkeywords, searchkeywords,
-//										searchkeywords, 3, objuser, lstproject, searchkeywords, 3, objuser, lstproject,
-//										searchkeywords, 3, objuser.getUsernotify(), searchkeywords, searchkeywords,
-//										searchkeywords, 3, objuser.getUsernotify(), searchkeywords, 3,
-//										objuser.getUsernotify(), searchkeywords, pageable);
-//						count = lslogilablimsorderdetailRepository
-//								.countByLsprojectmasterInAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterInAndBatchidContainingIgnoreCaseAndKeywordIsNullOrLsprojectmasterInAndBatchidContainingIgnoreCaseAndAndTestnameIsNullOrFiletypeAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrFiletypeAndBatchidContainingIgnoreCaseAndKeywordIsNullOrFiletypeAndBatchidContainingIgnoreCaseAndTestnameIsNullOrLsprojectmasterIsNullAndLssamplemasterInAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndLssamplemasterInAndBatchidContainingIgnoreCaseAndKeywordIsNullOrLsprojectmasterIsNullAndLssamplemasterInAndBatchidContainingIgnoreCaseAndTestnameIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndBatchidContainingIgnoreCaseAndTestnameIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndBatchidContainingIgnoreCaseAndTestnameIsNullOrViewoptionAndLsuserMasterAndLsprojectmasterInAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrViewoptionAndLsuserMasterAndLsprojectmasterInAndBatchidContainingIgnoreCaseAndKeywordIsNullOrViewoptionAndLsuserMasterAndLsprojectmasterInAndBatchidContainingIgnoreCaseAndTestnameIsNullOrViewoptionAndLsuserMasterInAndLsprojectmasterIsNullAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrViewoptionAndLsuserMasterInAndLsprojectmasterIsNullAndBatchidContainingIgnoreCaseAndKeywordIsNullOrViewoptionAndLsuserMasterInAndLsprojectmasterIsNullAndBatchidContainingIgnoreCaseAndTestnameIsNullOrderByBatchcodeDesc(
-//										lstproject, searchkeywords, searchkeywords, searchkeywords, lstproject,
-//										searchkeywords, lstproject, searchkeywords, 0, searchkeywords, searchkeywords,
-//										searchkeywords, 0, searchkeywords, 0, searchkeywords, lstsample, searchkeywords,
-//										searchkeywords, searchkeywords, lstsample, searchkeywords, lstsample,
-//										searchkeywords, 1, objuser, searchkeywords, searchkeywords, searchkeywords, 1,
-//										objuser, searchkeywords, 1, objuser, searchkeywords, 2, objuser, searchkeywords,
-//										searchkeywords, searchkeywords, 2, objuser, searchkeywords, 2, objuser,
-//										searchkeywords, 3, objuser, lstproject, searchkeywords, searchkeywords,
-//										searchkeywords, 3, objuser, lstproject, searchkeywords, 3, objuser, lstproject,
-//										searchkeywords, 3, objuser.getUsernotify(), searchkeywords, searchkeywords,
-//										searchkeywords, 3, objuser.getUsernotify(), searchkeywords, 3,
-//										objuser.getUsernotify(), searchkeywords);
+//						
+						List<String> searchFields = new ArrayList<>(Arrays.asList("o.batchid", "o.sequenceid",
+								"o.tittle", "o.testname", "o.keyword", "l.filenameuser"));
+						for (String name : searchKeyword) {
+							for (String columnName : searchFields) {
+								if (!Query.isEmpty()) {
+									Query += " OR LOWER(" + columnName + ") LIKE LOWER('" + name + "') AND sitecode =:sitecode";
+								} else {
+									Query += "LOWER(" + columnName + ") LIKE LOWER('" + name + "') AND sitecode =:sitecode";
+								}
+							}
+						}
 
-//						lstorders = lslogilablimsorderdetailRepository
-//								.findByLsprojectmasterInAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterInAndBatchidContainingIgnoreCaseAndKeywordIsNullOrLsprojectmasterInAndBatchidContainingIgnoreCaseAndAndTestnameIsNullOrFiletypeAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrFiletypeAndBatchidContainingIgnoreCaseAndKeywordIsNullOrFiletypeAndBatchidContainingIgnoreCaseAndTestnameIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndBatchidContainingIgnoreCaseAndTestnameIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndBatchidContainingIgnoreCaseAndTestnameIsNullOrViewoptionAndLsuserMasterAndLsprojectmasterInAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrViewoptionAndLsuserMasterAndLsprojectmasterInAndBatchidContainingIgnoreCaseAndKeywordIsNullOrViewoptionAndLsuserMasterAndLsprojectmasterInAndBatchidContainingIgnoreCaseAndTestnameIsNullOrViewoptionAndLsuserMasterInAndLsprojectmasterIsNullAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrViewoptionAndLsuserMasterInAndLsprojectmasterIsNullAndBatchidContainingIgnoreCaseAndKeywordIsNullOrViewoptionAndLsuserMasterInAndLsprojectmasterIsNullAndBatchidContainingIgnoreCaseAndTestnameIsNullOrderByBatchcodeDesc(
-//										lstproject, searchkeywords, searchkeywords, searchkeywords, lstproject,
-//										searchkeywords, lstproject, searchkeywords, 0, searchkeywords, searchkeywords,
-//										searchkeywords, 0, searchkeywords, 0, searchkeywords, 1, objuser,
-//										searchkeywords, searchkeywords, searchkeywords, 1, objuser, searchkeywords, 1,
-//										objuser, searchkeywords, 2, objuser, searchkeywords, searchkeywords,
-//										searchkeywords, 2, objuser, searchkeywords, 2, objuser, searchkeywords, 3,
-//										objuser, lstproject, searchkeywords, searchkeywords, searchkeywords, 3, objuser,
-//										lstproject, searchkeywords, 3, objuser, lstproject, searchkeywords, 3,
-//										objuser.getUsernotify(), searchkeywords, searchkeywords, searchkeywords, 3,
-//										objuser.getUsernotify(), searchkeywords, 3, objuser.getUsernotify(),
-//										searchkeywords, pageable);
-//
-//						lstorders.addAll(lslogilablimsorderdetailRepository
-//								.findByLsprojectmasterIsNullAndLssamplemasterInAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseAndLsuserMasterNotOrderByBatchcodeDesc(
-//										lstsample, searchkeywords, searchkeywords, searchkeywords, objuser, pageable));
-//						lstorders.addAll(lslogilablimsorderdetailRepository
-//								.findByLsprojectmasterIsNullAndLssamplemasterInAndBatchidContainingIgnoreCaseAndKeywordIsNullAndLsuserMasterNotOrderByBatchcodeDesc(
-//										lstsample, searchkeywords, objuser, pageable));
-//						lstorders.addAll(lslogilablimsorderdetailRepository
-//								.findByLsprojectmasterIsNullAndLssamplemasterInAndBatchidContainingIgnoreCaseAndTestnameIsNullAndLsuserMasterNotOrderByBatchcodeDesc(
-//										lstsample, searchkeywords, objuser, pageable));
-//
-//						count = lslogilablimsorderdetailRepository
-//								.countByLsprojectmasterInAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterInAndBatchidContainingIgnoreCaseAndKeywordIsNullOrLsprojectmasterInAndBatchidContainingIgnoreCaseAndAndTestnameIsNullOrFiletypeAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrFiletypeAndBatchidContainingIgnoreCaseAndKeywordIsNullOrFiletypeAndBatchidContainingIgnoreCaseAndTestnameIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndBatchidContainingIgnoreCaseAndTestnameIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndBatchidContainingIgnoreCaseAndKeywordIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndBatchidContainingIgnoreCaseAndTestnameIsNullOrViewoptionAndLsuserMasterAndLsprojectmasterInAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrViewoptionAndLsuserMasterAndLsprojectmasterInAndBatchidContainingIgnoreCaseAndKeywordIsNullOrViewoptionAndLsuserMasterAndLsprojectmasterInAndBatchidContainingIgnoreCaseAndTestnameIsNullOrViewoptionAndLsuserMasterInAndLsprojectmasterIsNullAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrViewoptionAndLsuserMasterInAndLsprojectmasterIsNullAndBatchidContainingIgnoreCaseAndKeywordIsNullOrViewoptionAndLsuserMasterInAndLsprojectmasterIsNullAndBatchidContainingIgnoreCaseAndTestnameIsNullOrderByBatchcodeDesc(
-//										lstproject, searchkeywords, searchkeywords, searchkeywords, lstproject,
-//										searchkeywords, lstproject, searchkeywords, 0, searchkeywords, searchkeywords,
-//										searchkeywords, 0, searchkeywords, 0, searchkeywords, 1, objuser,
-//										searchkeywords, searchkeywords, searchkeywords, 1, objuser, searchkeywords, 1,
-//										objuser, searchkeywords, 2, objuser, searchkeywords, searchkeywords,
-//										searchkeywords, 2, objuser, searchkeywords, 2, objuser, searchkeywords, 3,
-//										objuser, lstproject, searchkeywords, searchkeywords, searchkeywords, 3, objuser,
-//										lstproject, searchkeywords, 3, objuser, lstproject, searchkeywords, 3,
-//										objuser.getUsernotify(), searchkeywords, searchkeywords, searchkeywords, 3,
-//										objuser.getUsernotify(), searchkeywords, 3, objuser.getUsernotify(),
-//										searchkeywords);
-//
-//						count = count + lslogilablimsorderdetailRepository
-//								.countByLsprojectmasterIsNullAndLssamplemasterInAndBatchidContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseAndLsuserMasterNotOrderByBatchcodeDesc(
-//										lstsample, searchkeywords, searchkeywords, searchkeywords, objuser);
-//
-//						count = count + lslogilablimsorderdetailRepository
-//								.countByLsprojectmasterIsNullAndLssamplemasterInAndBatchidContainingIgnoreCaseAndKeywordIsNullAndLsuserMasterNotOrderByBatchcodeDesc(
-//										lstsample, searchkeywords, objuser);
-//						count = count + lslogilablimsorderdetailRepository
-//								.countByLsprojectmasterIsNullAndLssamplemasterInAndBatchidContainingIgnoreCaseAndTestnameIsNullAndLsuserMasterNotOrderByBatchcodeDesc(
-//										lstsample, searchkeywords, objuser);
-//
-//						lstorders.addAll(lslogilablimsorderdetailRepository
-//								.findByLsprojectmasterInAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterInAndCreatedtimestampBetweenAndKeywordContainingIgnoreCaseAndTestnameIsNullOrFiletypeAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrFiletypeAndCreatedtimestampBetweenAndKeywordContainingIgnoreCaseAndTestnameIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndKeywordContainingIgnoreCaseAndTestnameIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndKeywordContainingIgnoreCaseAndTestnameIsNullOrViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterInAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterInAndKeywordContainingIgnoreCaseAndTestnameIsNullOrViewoptionAndLsuserMasterInAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrViewoptionAndLsuserMasterInAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndKeywordContainingIgnoreCaseAndTestnameIsNullOrderByBatchcodeDesc(
-//										lstproject, fromdate, todate, searchkeywords, searchkeywords, searchkeywords,
-//										lstproject, fromdate, todate, searchkeywords, 0, fromdate, todate,
-//										searchkeywords, searchkeywords, searchkeywords, 0, fromdate, todate,
-//										searchkeywords, 1, objuser, fromdate, todate, searchkeywords, searchkeywords,
-//										searchkeywords, 1, objuser, fromdate, todate, searchkeywords, 2, objuser,
-//										fromdate, todate, searchkeywords, searchkeywords, searchkeywords, 2, objuser,
-//										fromdate, todate, searchkeywords, 3, objuser, fromdate, todate, lstproject,
-//										searchkeywords, searchkeywords, searchkeywords, 3, objuser, fromdate, todate,
-//										lstproject, searchkeywords, 3, objuser.getUsernotify(), fromdate, todate,
-//										searchkeywords, searchkeywords, searchkeywords, 3, objuser.getUsernotify(),
-//										fromdate, todate, searchkeywords, pageable));
-//						lstorders.addAll(lslogilablimsorderdetailRepository
-//								.findByLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseAndLsuserMasterNotOrderByBatchcodeDesc(
-//										lstsample, fromdate, todate, searchkeywords, searchkeywords, searchkeywords,
-//										objuser, pageable));
-//						lstorders.addAll(lslogilablimsorderdetailRepository
-//								.findByLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndKeywordContainingIgnoreCaseAndTestnameIsNullAndLsuserMasterNotOrderByBatchcodeDesc(
-//										lstsample, fromdate, todate, searchkeywords, objuser, pageable));
-//
-//						count = count + lslogilablimsorderdetailRepository
-//								.countByLsprojectmasterInAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterInAndCreatedtimestampBetweenAndKeywordContainingIgnoreCaseAndTestnameIsNullOrFiletypeAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrFiletypeAndCreatedtimestampBetweenAndKeywordContainingIgnoreCaseAndTestnameIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndKeywordContainingIgnoreCaseAndTestnameIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndKeywordContainingIgnoreCaseAndTestnameIsNullOrViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterInAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterInAndKeywordContainingIgnoreCaseAndTestnameIsNullOrViewoptionAndLsuserMasterInAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseOrViewoptionAndLsuserMasterInAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndKeywordContainingIgnoreCaseAndTestnameIsNullOrderByBatchcodeDesc(
-//										lstproject, fromdate, todate, searchkeywords, searchkeywords, searchkeywords,
-//										lstproject, fromdate, todate, searchkeywords, 0, fromdate, todate,
-//										searchkeywords, searchkeywords, searchkeywords, 0, fromdate, todate,
-//										searchkeywords, 1, objuser, fromdate, todate, searchkeywords, searchkeywords,
-//										searchkeywords, 1, objuser, fromdate, todate, searchkeywords, 2, objuser,
-//										fromdate, todate, searchkeywords, searchkeywords, searchkeywords, 2, objuser,
-//										fromdate, todate, searchkeywords, 3, objuser, fromdate, todate, lstproject,
-//										searchkeywords, searchkeywords, searchkeywords, 3, objuser, fromdate, todate,
-//										lstproject, searchkeywords, 3, objuser.getUsernotify(), fromdate, todate,
-//										searchkeywords, searchkeywords, searchkeywords, 3, objuser.getUsernotify(),
-//										fromdate, todate, searchkeywords);
-//
-//						count = count + lslogilablimsorderdetailRepository
-//								.countByLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordContainingIgnoreCaseAndTestnameNotContainingIgnoreCaseAndLsuserMasterNotOrderByBatchcodeDesc(
-//										lstsample, fromdate, todate, searchkeywords, searchkeywords, searchkeywords,
-//										objuser);
-//						count = count + lslogilablimsorderdetailRepository
-//								.countByLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndKeywordContainingIgnoreCaseAndTestnameIsNullAndLsuserMasterNotOrderByBatchcodeDesc(
-//										lstsample, fromdate, todate, searchkeywords, objuser);
-//
-//						lstorders.addAll(lslogilablimsorderdetailRepository
-//								.findByLsprojectmasterInAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrLsprojectmasterInAndCreatedtimestampBetweenAndTestnameContainingIgnoreCaseAndKeywordIsNullOrFiletypeAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrFiletypeAndCreatedtimestampBetweenAndTestnameContainingIgnoreCaseAndKeywordIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndTestnameContainingIgnoreCaseAndKeywordIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndTestnameContainingIgnoreCaseAndKeywordIsNullOrViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterInAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterInAndTestnameContainingIgnoreCaseAndKeywordIsNullOrViewoptionAndLsuserMasterInAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrViewoptionAndLsuserMasterInAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndTestnameContainingIgnoreCaseAndKeywordIsNullOrderByBatchcodeDesc(
-//										lstproject, fromdate, todate, searchkeywords, searchkeywords, searchkeywords,
-//										lstproject, fromdate, todate, searchkeywords, 0, fromdate, todate,
-//										searchkeywords, searchkeywords, searchkeywords, 0, fromdate, todate,
-//										searchkeywords, 1, objuser, fromdate, todate, searchkeywords, searchkeywords,
-//										searchkeywords, 1, objuser, fromdate, todate, searchkeywords, 2, objuser,
-//										fromdate, todate, searchkeywords, searchkeywords, searchkeywords, 2, objuser,
-//										fromdate, todate, searchkeywords, 3, objuser, fromdate, todate, lstproject,
-//										searchkeywords, searchkeywords, searchkeywords, 3, objuser, fromdate, todate,
-//										lstproject, searchkeywords, 3, objuser.getUsernotify(), fromdate, todate,
-//										searchkeywords, searchkeywords, searchkeywords, 3, objuser.getUsernotify(),
-//										fromdate, todate, searchkeywords, pageable));
-//
-//						lstorders.addAll(lslogilablimsorderdetailRepository
-//								.findByLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseAndLsuserMasterNotOrderByBatchcodeDesc(
-//										lstsample, fromdate, todate, searchkeywords, searchkeywords, searchkeywords,
-//										pageable, objuser));
-//						lstorders.addAll(lslogilablimsorderdetailRepository
-//								.findByLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndTestnameContainingIgnoreCaseAndKeywordIsNullAndLsuserMasterNotOrderByBatchcodeDesc(
-//										lstsample, fromdate, todate, searchkeywords, pageable, objuser));
-//
-//						count = count + lslogilablimsorderdetailRepository
-//								.countByLsprojectmasterInAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrLsprojectmasterInAndCreatedtimestampBetweenAndTestnameContainingIgnoreCaseAndKeywordIsNullOrFiletypeAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrFiletypeAndCreatedtimestampBetweenAndTestnameContainingIgnoreCaseAndKeywordIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndTestnameContainingIgnoreCaseAndKeywordIsNullOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrLsprojectmasterIsNullAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndTestnameContainingIgnoreCaseAndKeywordIsNullOrViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterInAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndLsprojectmasterInAndTestnameContainingIgnoreCaseAndKeywordIsNullOrViewoptionAndLsuserMasterInAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseOrViewoptionAndLsuserMasterInAndCreatedtimestampBetweenAndLsprojectmasterIsNullAndTestnameContainingIgnoreCaseAndKeywordIsNullOrderByBatchcodeDesc(
-//										lstproject, fromdate, todate, searchkeywords, searchkeywords, searchkeywords,
-//										lstproject, fromdate, todate, searchkeywords, 0, fromdate, todate,
-//										searchkeywords, searchkeywords, searchkeywords, 0, fromdate, todate,
-//										searchkeywords, 1, objuser, fromdate, todate, searchkeywords, searchkeywords,
-//										searchkeywords, 1, objuser, fromdate, todate, searchkeywords, 2, objuser,
-//										fromdate, todate, searchkeywords, searchkeywords, searchkeywords, 2, objuser,
-//										fromdate, todate, searchkeywords, 3, objuser, fromdate, todate, lstproject,
-//										searchkeywords, searchkeywords, searchkeywords, 3, objuser, fromdate, todate,
-//										lstproject, searchkeywords, 3, objuser.getUsernotify(), fromdate, todate,
-//										searchkeywords, searchkeywords, searchkeywords, 3, objuser.getUsernotify(),
-//										fromdate, todate, searchkeywords);
-//
-//						count = count + lslogilablimsorderdetailRepository
-//								.countByLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndBatchidNotContainingIgnoreCaseAndKeywordNotContainingIgnoreCaseAndTestnameContainingIgnoreCaseAndLsuserMasterNotOrderByBatchcodeDesc(
-//										lstsample, fromdate, todate, searchkeywords, searchkeywords, searchkeywords,
-//										objuser);
-//
-//						count = count + lslogilablimsorderdetailRepository
-//								.countByLsprojectmasterIsNullAndLssamplemasterInAndCreatedtimestampBetweenAndTestnameContainingIgnoreCaseAndKeywordIsNullAndLsuserMasterNotOrderByBatchcodeDesc(
-//										lstsample, fromdate, todate, searchkeywords, objuser);
-						List<LSlogilablimsorderdetail> lsResults = lslogilablimsorderdetailRepository
-								.getLSlogilablimsorderdetailsearchrecords("%" + searchkeywords.toLowerCase() + "%",
-										objuser.getUsercode(), objuser.getUsernotify(),
-										objuser.getLssitemaster().getSitecode(),
-										objuser.getPagesize() * objuser.getPageperorder(), objuser.getPageperorder(),selectedteambatchCodeList);
-						count = lslogilablimsorderdetailRepository.countLSlogilablimsorderdetail(
-								"%" + searchkeywords.toLowerCase() + "%", objuser.getUsercode(),
-								objuser.getUsernotify(), objuser.getLssitemaster().getSitecode());
+						Query query = globalSearchQueryprepare(Query, objuser, selectedteambatchCodeList, userlist);
+						Query querycount = globalSearchQueryprepareTotalCount(Query, objuser, selectedteambatchCodeList,
+								userlist);
+						List<LSlogilablimsorderdetail> lsResults = query.getResultList();
+						BigInteger countValues = (BigInteger) querycount.getSingleResult();
+						count = countValues.longValue();
+//						List<LSlogilablimsorderdetail> lsResults = lslogilablimsorderdetailRepository
+//								.getLSlogilablimsorderdetailsearchrecords("%" + searchkeywords.toLowerCase() + "%",
+//										objuser.getUsercode(), objuser.getUsernotify(),
+//										objuser.getLssitemaster().getSitecode(),
+//										objuser.getPagesize() * objuser.getPageperorder(), objuser.getPageperorder(),
+//										selectedteambatchCodeList);
+//						count = lslogilablimsorderdetailRepository.countLSlogilablimsorderdetail(
+//								"%" + searchkeywords.toLowerCase() + "%", objuser.getUsercode(),
+//								objuser.getUsernotify(), objuser.getLssitemaster().getSitecode());
 						lstorders = lsResults.stream()
 								.map(lsOrderDetail -> new Logilabordermaster(lsOrderDetail.getBatchcode(),
 										lsOrderDetail.getBatchid(), lsOrderDetail.getLsworkflow(),
@@ -4358,7 +4413,8 @@ public class DashBoardService {
 										lsOrderDetail.getLsordernotification(), lsOrderDetail.getOrdersaved(),
 										lsOrderDetail.getRepeat(), lsOrderDetail.getLsautoregisterorders(),
 										lsOrderDetail.getSentforapprovel(), lsOrderDetail.getApprovelaccept(),
-										lsOrderDetail.getAutoregistercount(), lsOrderDetail.getElnmaterial(), lsOrderDetail.getSequenceid(),lsOrderDetail.getTeamselected()))
+										lsOrderDetail.getAutoregistercount(), lsOrderDetail.getElnmaterial(),
+										 lsOrderDetail.getTeamselected(),lsOrderDetail.getSequenceid()))
 								.collect(Collectors.toList());
 						rtnobj.put("orders", lstorders);
 
@@ -4382,13 +4438,34 @@ public class DashBoardService {
 						List<Long> Directory_Code = lstdir.stream().map(Lsprotocolorderstructure::getDirectorycode)
 								.collect(Collectors.toList());
 
-						List<LSlogilabprotocoldetail> objt = LSlogilabprotocoldetailRepository.getSearchedRecords(
-								objuser.getUsercode(), "%" + searchkeywords.toLowerCase() + "%", 1, 2, 3, userlist,
-								lstdir, objuser.getPagesize() * objuser.getPageperorder(), objuser.getPageperorder(),selectedteamprotcolorderList);
-						count = LSlogilabprotocoldetailRepository.getcountSearchedRecords(objuser.getUsercode(),
-								"%" + searchkeywords.toLowerCase() + "%", 1, 2, 3, userlist, lstdir);
+						List<String> searchFields = new ArrayList<>(Arrays.asList("o.protocolordername", "m.testname",
+								"o.tittle", "o.keyword", "o.sequenceid", "l.protocolmastername"));
+						for (String name : searchKeyword) {
+							for (String columnName : searchFields) {
+								if (!Query.isEmpty()) {
+									Query += " OR LOWER(" + columnName + ") LIKE LOWER('" + name + "')";
+								} else {
+									Query += "LOWER(" + columnName + ") LIKE LOWER('" + name + "')";
+								}
+							}
+						}
 
-						lstordersprotocol = objt.stream()
+						Query customquery = getprotocolordercustomQuery(Query, objuser.getUsercode(), userlist, lstdir,
+								objuser, selectedteamprotcolorderList);
+						List<LSlogilabprotocoldetail> lsResults = customquery.getResultList();
+						customquery = getprotocolordercustomQueryCount(Query, objuser.getUsercode(), userlist, lstdir,
+								objuser, selectedteamprotcolorderList);
+						BigInteger countValues = (BigInteger) customquery.getSingleResult();
+						count = countValues.longValue();
+
+//						List<LSlogilabprotocoldetail> objt = LSlogilabprotocoldetailRepository.getSearchedRecords(
+//								objuser.getUsercode(), "%" + searchkeywords.toLowerCase() + "%", 1, 2, 3, userlist,
+//								lstdir, objuser.getPagesize() * objuser.getPageperorder(), objuser.getPageperorder(),
+//								selectedteamprotcolorderList);
+//						count = LSlogilabprotocoldetailRepository.getcountSearchedRecords(objuser.getUsercode(),
+//								"%" + searchkeywords.toLowerCase() + "%", 1, 2, 3, userlist, lstdir);
+
+						lstordersprotocol = lsResults.stream()
 								.map(protocolrecord -> new Logilabprotocolorders(protocolrecord.getProtocolordercode(),
 										protocolrecord.getTestcode(), protocolrecord.getProtoclordername(),
 										protocolrecord.getOrderflag(), protocolrecord.getProtocoltype(),
@@ -4408,7 +4485,8 @@ public class DashBoardService {
 										protocolrecord.getLsordernotification(), protocolrecord.getLsautoregister(),
 										protocolrecord.getRepeat(), protocolrecord.getSentforapprovel(),
 										protocolrecord.getApprovelaccept(), protocolrecord.getAutoregistercount(),
-										protocolrecord.getLsuserMaster(), protocolrecord.getSequenceid(), protocolrecord.getModifiedby(), protocolrecord.getModifieddate()))
+										protocolrecord.getLsuserMaster(), protocolrecord.getSequenceid(),
+										protocolrecord.getModifiedby(), protocolrecord.getModifieddate()))
 								.collect(Collectors.toList());
 
 //						lstordersprotocol = LSlogilabprotocoldetailRepository
@@ -4670,6 +4748,26 @@ public class DashBoardService {
 		return rtnobj;
 	}
 
+	public Query setparameters(Query query, LSuserMaster objuser, List<Integer> usercodelist, boolean count,
+			boolean usercode, boolean viewoption3) {
+		query.setParameter("sitecode", objuser.getLssitemaster().getSitecode());
+		query.setParameter("viewoption1", 1);
+		query.setParameter("usecodelist", usercodelist);
+		query.setParameter("viewoption2", 2);
+		if (!count) {
+			query.setParameter("offset", objuser.getPagesize() * objuser.getPageperorder());
+			query.setParameter("pageSize", objuser.getPageperorder());
+		}
+		if (usercode) {
+			query.setParameter("usercode", objuser.getUsercode());
+		}
+		if (viewoption3) {
+			query.setParameter("viewoption3", 3);
+		}
+		return query;
+	}
+
+	@SuppressWarnings("unchecked")
 	public Map<String, Object> Getglobalsearchforsheettemplate(LSuserMaster objuser) {
 		Date fromdate = objuser.getObjuser().getFromdate();
 		Date todate = objuser.getObjuser().getTodate();
@@ -4678,50 +4776,153 @@ public class DashBoardService {
 		List<Sheettemplateget> lstfile = new ArrayList<>();
 		Pageable pageable = new PageRequest(objuser.getPagesize(), objuser.getPageperorder());
 		long count = 0;
-		String Search_Key = "%" + objuser.getToken() + "%"; // search key porpose kumu
+		String CustomLikeQuery = "";
+//		String Search_Key = "%" + objuser.getToken() + "%"; // search key porpose kumu
+		List<String> SearchKey = Arrays.stream(objuser.getToken().split(" ")).map(String::trim)
+				.filter(item -> !item.isEmpty()).map(word -> "%" + word.toLowerCase() + "%")
+				.collect(Collectors.toList());
+		List<String> searchFields = new ArrayList<>(Arrays.asList("o.category", "o.filenameuser"));
+		for (String name : SearchKey) {
+			for (String columnName : searchFields) {
+				if (!CustomLikeQuery.isEmpty()) {
+					CustomLikeQuery += " OR LOWER(" + columnName + ") LIKE LOWER('" + name + "')";
+				} else {
+					CustomLikeQuery += "LOWER(" + columnName + ") LIKE LOWER('" + name + "')";
+				}
+			}
+		}
+		String customQuery = "";
+		List<Integer> usercodelist = new ArrayList<>();
 		if (objuser.getUsername().equals("Administrator")) {
+			usercodelist.add(objuser.getUsercode());
+			customQuery = "SELECT * FROM LSFILE o WHERE "
+					+ "( filecode > 1 AND lssitemaster_sitecode = :sitecode AND VIEWOPTION = :viewoption1 " + "AND ("
+					+ CustomLikeQuery + ")) " + "OR ( (" + CustomLikeQuery + ") "
+					+ "AND createby_usercode IN(:usecodelist) AND VIEWOPTION = :viewoption2 ) "
+					+ "ORDER BY filecode DESC OFFSET :offset ROWS FETCH NEXT :pageSize ROWS ONLY";
+			Query query = entityManager.createNativeQuery(customQuery, LSfile.class);
+			query = setparameters(query, objuser, usercodelist, false, false, false);
+			lstfile = query.getResultList();
+//			lstfile = lsfileRepository
+//					.findByFilecodeGreaterThanAndLssitemasterAndViewoptionAndFilenameuserLikeOrFilecodeGreaterThanAndCreatebyInAndViewoptionAndFilenameuserLikeOrderByFilecodeDesc(
+//							1, objuser.getLssitemaster(), 1, Search_Key, 1, objuser, 2, Search_Key, pageable);
 
-			lstfile = lsfileRepository
-					.findByFilecodeGreaterThanAndLssitemasterAndViewoptionAndFilenameuserLikeOrFilecodeGreaterThanAndCreatebyInAndViewoptionAndFilenameuserLikeOrderByFilecodeDesc(
-							1, objuser.getLssitemaster(), 1, Search_Key, 1, objuser, 2, Search_Key, pageable);
-
-			count = lsfileRepository
-					.countByFilecodeGreaterThanAndLssitemasterAndViewoptionAndFilenameuserLikeOrFilecodeGreaterThanAndCreatebyInAndViewoptionAndFilenameuserLikeOrderByFilecodeDesc(
-							1, objuser.getLssitemaster(), 1, Search_Key, 1, objuser, 2, Search_Key);
-			lstfile.forEach(
-					objFile -> objFile.setVersioncout(lsfileversionRepository.countByFilecode(objFile.getFilecode())));
+			customQuery = "SELECT COUNT(*) FROM LSFILE o WHERE "
+					+ "( filecode > 1 AND lssitemaster_sitecode = :sitecode AND VIEWOPTION = :viewoption1 " + "AND ("
+					+ CustomLikeQuery + ")) " + "OR ( (" + CustomLikeQuery + ") "
+					+ "AND createby_usercode IN(:usecodelist) AND VIEWOPTION = :viewoption2 ) ";
+			query = entityManager.createNativeQuery(customQuery);
+			query = setparameters(query, objuser, usercodelist, true, false, false);
+			BigInteger countValues = (BigInteger) query.getSingleResult();
+			count = countValues.longValue();
+//			count = lsfileRepository
+//					.countByFilecodeGreaterThanAndLssitemasterAndViewoptionAndFilenameuserLikeOrFilecodeGreaterThanAndCreatebyInAndViewoptionAndFilenameuserLikeOrderByFilecodeDesc(
+//							1, objuser.getLssitemaster(), 1, Search_Key, 1, objuser, 2, Search_Key);
+//			lstfile.forEach(
+//					objFile -> objFile.setVersioncout(lsfileversionRepository.countByFilecode(objFile.getFilecode())));
 		} else {
 
 			if (lstteamuser != null && lstteamuser.size() > 0) {
 				lstteamuser.add(objuser);
-				lstfile = lsfileRepository
-						.findByFilecodeGreaterThanAndLssitemasterAndViewoptionAndFilenameuserLikeOrFilecodeGreaterThanAndCreatebyAndViewoptionAndFilenameuserLikeOrFilecodeGreaterThanAndCreatebyInAndViewoptionAndFilenameuserLikeOrderByFilecodeDesc(
-								1, objuser.getLssitemaster(), 1, Search_Key, 1, objuser, 2, Search_Key, 1, lstteamuser,
-								3, Search_Key, pageable);
+				usercodelist = lstteamuser.stream().map(LSuserMaster::getUsercode).collect(Collectors.toList());
+				customQuery = "SELECT * FROM LSFILE o WHERE "
+						+ "(filecode > 1 AND lssitemaster_sitecode = :sitecode AND VIEWOPTION = :viewoption1 AND ("
+						+ CustomLikeQuery + ")) "
+						+ "OR (filecode > 1 AND createby_usercode = :usercode AND VIEWOPTION = :viewoption2 AND ("
+						+ CustomLikeQuery + ")) "
+						+ "OR (filecode > 1 AND createby_usercode IN(:usecodelist) AND VIEWOPTION = :viewoption3 AND ("
+						+ CustomLikeQuery + ")) "
+						+ "ORDER BY filecode DESC OFFSET :offset ROWS FETCH NEXT :pageSize ROWS ONLY";
 
-				count = lsfileRepository
-						.countByFilecodeGreaterThanAndLssitemasterAndViewoptionAndFilenameuserLikeOrFilecodeGreaterThanAndCreatebyAndViewoptionAndFilenameuserLikeOrFilecodeGreaterThanAndCreatebyInAndViewoptionAndFilenameuserLikeOrderByFilecodeDesc(
-								1, objuser.getLssitemaster(), 1, Search_Key, 1, objuser, 2, Search_Key, 1, lstteamuser,
-								3, Search_Key);
+				Query query = entityManager.createNativeQuery(customQuery, LSfile.class);
+				query = setparameters(query, objuser, usercodelist, false, true, true);
+				lstfile = query.getResultList();
+
+				customQuery = "SELECT COUNT(*) FROM LSFILE o WHERE "
+						+ "(filecode > 1 AND lssitemaster_sitecode = :sitecode AND VIEWOPTION = :viewoption1 AND ("
+						+ CustomLikeQuery + ")) "
+						+ "OR (filecode > 1 AND createby_usercode = :usercode AND VIEWOPTION = :viewoption2 AND ("
+						+ CustomLikeQuery + ")) "
+						+ "OR (filecode > 1 AND createby_usercode IN(:usecodelist) AND VIEWOPTION = :viewoption3 AND ("
+						+ CustomLikeQuery + ")) ";
+				query = entityManager.createNativeQuery(customQuery);
+				query = setparameters(query, objuser, usercodelist, true, true, true);
+				BigInteger countValues = (BigInteger) query.getSingleResult();
+				count = countValues.longValue();
+//				lstfile = lsfileRepository
+//						.findByFilecodeGreaterThanAndLssitemasterAndViewoptionAndFilenameuserLikeOrFilecodeGreaterThanAndCreatebyAndViewoptionAndFilenameuserLikeOrFilecodeGreaterThanAndCreatebyInAndViewoptionAndFilenameuserLikeOrderByFilecodeDesc(
+//								1, objuser.getLssitemaster(), 1, Search_Key, 1, objuser, 2, Search_Key, 1, lstteamuser,
+//								3, Search_Key, pageable);
+//
+//				count = lsfileRepository
+//						.countByFilecodeGreaterThanAndLssitemasterAndViewoptionAndFilenameuserLikeOrFilecodeGreaterThanAndCreatebyAndViewoptionAndFilenameuserLikeOrFilecodeGreaterThanAndCreatebyInAndViewoptionAndFilenameuserLikeOrderByFilecodeDesc(
+//								1, objuser.getLssitemaster(), 1, Search_Key, 1, objuser, 2, Search_Key, 1, lstteamuser,
+//								3, Search_Key);
 
 			} else {
-
-				lstfile = lsfileRepository
-						.findByFilecodeGreaterThanAndLssitemasterAndViewoptionAndFilenameuserLikeOrFilecodeGreaterThanAndCreatebyAndViewoptionAndFilenameuserLikeOrderByFilecodeDesc(
-								1, objuser.getLssitemaster(), 1, objuser.getToken(), 1, objuser, 2, Search_Key,
-								pageable);
-
-				count = lsfileRepository
-						.countByFilecodeGreaterThanAndLssitemasterAndViewoptionAndFilenameuserLikeOrFilecodeGreaterThanAndCreatebyAndViewoptionAndFilenameuserLikeOrderByFilecodeDesc(
-								1, objuser.getLssitemaster(), 1, objuser.getToken(), 1, objuser, 2, Search_Key);
+				customQuery = "SELECT * FROM LSFILE o WHERE "
+						+ "(filecode > 1 AND lssitemaster_sitecode = :sitecode AND VIEWOPTION = :viewoption1 AND ("
+						+ CustomLikeQuery + ")) "
+						+ "OR (filecode > 1 AND createby_usercode = :usercode AND VIEWOPTION = :viewoption2 AND ("
+						+ CustomLikeQuery + ")) "
+						+ "ORDER BY filecode DESC OFFSET :offset ROWS FETCH NEXT :pageSize ROWS ONLY";
+				Query query = entityManager.createNativeQuery(customQuery, LSfile.class);
+				query = setparameters(query, objuser, usercodelist, false, false, false);
+				lstfile = query.getResultList();
+//				lstfile = lsfileRepository
+//						.findByFilecodeGreaterThanAndLssitemasterAndViewoptionAndFilenameuserLikeOrFilecodeGreaterThanAndCreatebyAndViewoptionAndFilenameuserLikeOrderByFilecodeDesc(
+//								1, objuser.getLssitemaster(), 1, objuser.getToken(), 1, objuser, 2, Search_Key,
+//								pageable);
+				customQuery = "SELECT * FROM LSFILE o WHERE "
+						+ "(filecode > 1 AND lssitemaster_sitecode = :sitecode AND VIEWOPTION = :viewoption1 AND ("
+						+ CustomLikeQuery + ")) "
+						+ "OR (filecode > 1 AND createby_usercode = :usercode AND VIEWOPTION = :viewoption2 AND ("
+						+ CustomLikeQuery + ")) ";
+				query = entityManager.createNativeQuery(customQuery);
+				query = setparameters(query, objuser, usercodelist, true, true, true);
+				BigInteger countValues = (BigInteger) query.getSingleResult();
+				count = countValues.longValue();
+//				count = lsfileRepository
+//						.countByFilecodeGreaterThanAndLssitemasterAndViewoptionAndFilenameuserLikeOrFilecodeGreaterThanAndCreatebyAndViewoptionAndFilenameuserLikeOrderByFilecodeDesc(
+//								1, objuser.getLssitemaster(), 1, objuser.getToken(), 1, objuser, 2, Search_Key);
 			}
-			lstfile.forEach(
-					objFile -> objFile.setVersioncout(lsfileversionRepository.countByFilecode(objFile.getFilecode())));
+//			lstfile.forEach(
+//					objFile -> objFile.setVersioncout(lsfileversionRepository.countByFilecode(objFile.getFilecode())));
 
 		}
 		mapSheets.put("Sheets", lstfile);
 		mapSheets.put("count", count);
 		return mapSheets;
+	}
+
+	private Query setparametersforprotocol(Query query,Integer sitecode, boolean viewoption1, boolean viewoption2, boolean viewoption3, Integer usercode,
+			List<Integer> usercodelist, boolean status,boolean count,LSuserMaster objuser) {
+		if(sitecode!=null) {
+			query.setParameter("sitecode", sitecode);
+		}
+		if(viewoption1) {
+			query.setParameter("viewoption1", 1);
+		}
+		if(usercode!=null) {
+			query.setParameter("createdby", usercode);
+		}
+		if(usercodelist!=null) {
+			query.setParameter("createdbylist", usercodelist);
+		}
+		if(viewoption2) {
+			query.setParameter("viewoption2", 2);
+		}
+		if(viewoption3) {
+			query.setParameter("viewoption3", 3);
+		}
+		if(status) {
+			query.setParameter("status", 1);
+		}
+		if (!count) {
+			query.setParameter("offset", objuser.getPagesize() * objuser.getPageperorder());
+			query.setParameter("pageSize", objuser.getPageperorder());
+		}
+		return query;
 	}
 
 	public Map<String, Object> Getglobalsearchforprotocoltemplate(LSuserMaster objuser) {
@@ -4731,40 +4932,133 @@ public class DashBoardService {
 		List<LSuserMaster> lstteamuser = objuser.getObjuser().getTeamusers();
 		Pageable pageable = new PageRequest(objuser.getPagesize(), objuser.getPageperorder());
 		String Search_Key = "%" + objuser.getToken() + "%"; // search key porpose kumu
+
+		String CustomLikeQuery = "";
+		List<String> SearchKey = Arrays.stream(objuser.getToken().split(" ")).map(String::trim)
+				.filter(item -> !item.isEmpty()).map(word -> "%" + word.toLowerCase() + "%")
+				.collect(Collectors.toList());
+		List<String> searchFields = new ArrayList<>(Arrays.asList("o.category", "o.protocolmastername"));
+		for (String name : SearchKey) {
+			for (String columnName : searchFields) {
+				if (!CustomLikeQuery.isEmpty()) {
+					CustomLikeQuery += " OR LOWER(" + columnName + ") LIKE LOWER('" + name + "')";
+				} else {
+					CustomLikeQuery += "LOWER(" + columnName + ") LIKE LOWER('" + name + "')";
+				}
+			}
+		}
+		String customQuery = "";
+
 		long count = 0;
+		List<Protocoltemplateget> lstprotocolmaster = new ArrayList<>();
 		if (objuser.getUsername().equals("Administrator")) {
-			mapSheets.put("Protocol", LSProtocolMasterRepository.findByLssitemasterAndStatusAndProtocolmasternameLike(
-					objuser.getLssitemaster().getSitecode(), 1, Search_Key, pageable));
-			mapSheets.put("count", LSProtocolMasterRepository.countByLssitemasterAndStatusAndProtocolmasternameLike(
-					objuser.getLssitemaster().getSitecode(), 1, Search_Key));
+
+//			usercodelist.add(objuser.getUsercode());
+			customQuery = "SELECT * FROM lsprotocolmaster o WHERE lssitemaster_sitecode =:sitecode AND status =:status AND "
+					+ CustomLikeQuery
+					+ "ORDER BY protocolmastercode DESC OFFSET :offset ROWS FETCH NEXT :pageSize ROWS ONLY";
+			Query query = entityManager.createNativeQuery(customQuery, LSprotocolmaster.class);
+			query = setparametersforprotocol(query, objuser.getLssitemaster().getSitecode(), false, false, false,
+					objuser.getUsercode(), null, true, false, objuser);
+			lstprotocolmaster = query.getResultList();
+
+			customQuery = "SELECT COUNT(*) FROM lsprotocolmaster o WHERE lssitemaster_sitecode =:sitecode AND status =1 AND "
+					+ CustomLikeQuery + "";
+
+			query = entityManager.createNativeQuery(customQuery);
+			query = setparametersforprotocol(query, objuser.getLssitemaster().getSitecode(), false, false, false,
+					objuser.getUsercode(), null, false, false, objuser);
+			BigInteger countValues = (BigInteger) query.getSingleResult();
+			count = countValues.longValue();
+//			query = entityManager.createNativeQuery(customQuery);
+//			query = setparameters(query, objuser, usercodelist, true, true, true);
+//			BigInteger countValues = (BigInteger) query.getSingleResult();
+//			count = countValues.longValue();
+
+//			mapSheets.put("Protocol", LSProtocolMasterRepository.findByLssitemasterAndStatusAndProtocolmasternameLike(
+//					objuser.getLssitemaster().getSitecode(), 1, Search_Key, pageable));
+//			mapSheets.put("count", LSProtocolMasterRepository.countByLssitemasterAndStatusAndProtocolmasternameLike(
+//					objuser.getLssitemaster().getSitecode(), 1, Search_Key));
+			mapSheets.put("count", count);
+			mapSheets.put("Protocol", lstprotocolmaster);
 		} else {
 
-			List<Protocoltemplateget> lstprotocolmaster = new ArrayList<>();
+		
 			if (lstteamuser != null && lstteamuser.size() > 0) {
 				lstteamuser.add(objuser);
 				List<Integer> usercodelist = lstteamuser.stream().map(LSuserMaster::getUsercode)
 						.collect(Collectors.toList());
-				lstprotocolmaster = LSProtocolMasterRepository
-						.findByLssitemasterAndStatusAndViewoptionAndProtocolmasternameLikeOrCreatedbyAndStatusAndViewoptionAndLssitemasterAndProtocolmasternameLikeOrCreatedbyInAndStatusAndViewoptionAndLssitemasterAndProtocolmasternameLikeOrderByProtocolmastercodeDesc(
-								objuser.getLssitemaster().getSitecode(), 1, 1, Search_Key, objuser.getUsercode(), 1, 2,
-								objuser.getLssitemaster().getSitecode(), Search_Key, usercodelist, 1, 3,
-								objuser.getLssitemaster().getSitecode(), Search_Key, pageable);
-				count = LSProtocolMasterRepository
-						.countByLssitemasterAndStatusAndViewoptionAndProtocolmasternameLikeOrCreatedbyAndStatusAndViewoptionAndLssitemasterAndProtocolmasternameLikeOrCreatedbyInAndStatusAndViewoptionAndLssitemasterAndProtocolmasternameLikeOrderByProtocolmastercodeDesc(
-								objuser.getLssitemaster().getSitecode(), 1, 1, Search_Key, objuser.getUsercode(), 1, 2,
-								objuser.getLssitemaster().getSitecode(), Search_Key, usercodelist, 1, 3,
-								objuser.getLssitemaster().getSitecode(), Search_Key);
+
+//				
+				customQuery = "SELECT * FROM lsprotocolmaster o WHERE  (lssitemaster_sitecode=:sitecode AND viewoption =:viewoption1 AND ("
+						+ CustomLikeQuery
+						+ ")) OR (createdby =:createdby AND status =:status AND viewoption =:viewoption2 AND lssitemaster_sitecode=:sitecode AND ("
+						+ CustomLikeQuery
+						+ "))OR (createdby IN(:createdbylist)AND status =:status AND viewoption =:viewoption3 AND lssitemaster_sitecode=:sitecode AND ("
+						+ CustomLikeQuery + "))ORDER BY protocolmastercode DESC OFFSET :offset ROWS FETCH NEXT :pageSize ROWS ONLY";
+				Query query = entityManager.createNativeQuery(customQuery, LSprotocolmaster.class);
+				query = setparametersforprotocol(query, objuser.getLssitemaster().getSitecode(), true, true, true,
+						objuser.getUsercode(), usercodelist, true, false, objuser);
+				lstprotocolmaster = query.getResultList();
+				
+				
+				customQuery = "SELECT COUNT(*) FROM lsprotocolmaster o WHERE  (lssitemaster_sitecode=:sitecode AND viewoption =:viewoption1 AND ("
+						+ CustomLikeQuery
+						+ ")) OR (createdby =:createdby AND status =:status AND viewoption =:viewoption2 AND lssitemaster_sitecode=:sitecode AND ("
+						+ CustomLikeQuery
+						+ "))OR (createdby IN(:createdbylist)AND status =:status AND viewoption =:viewoption3 AND lssitemaster_sitecode=:sitecode AND ("
+						+ CustomLikeQuery + "))";
+				
+				query = entityManager.createNativeQuery(customQuery);
+				query = setparametersforprotocol(query, objuser.getLssitemaster().getSitecode(), true, true, true,
+						objuser.getUsercode(), usercodelist, true, true, objuser);
+				BigInteger countValues = (BigInteger) query.getSingleResult();
+				count = countValues.longValue();
+
+//				lstprotocolmaster = LSProtocolMasterRepository
+//						.findByLssitemasterAndStatusAndViewoptionAndProtocolmasternameLikeOrCreatedbyAndStatusAndViewoptionAndLssitemasterAndProtocolmasternameLikeOrCreatedbyInAndStatusAndViewoptionAndLssitemasterAndProtocolmasternameLikeOrderByProtocolmastercodeDesc(
+//								objuser.getLssitemaster().getSitecode(), 1, 1, Search_Key, objuser.getUsercode(), 1, 2,
+//								objuser.getLssitemaster().getSitecode(), Search_Key, usercodelist, 1, 3,
+//								objuser.getLssitemaster().getSitecode(), Search_Key, pageable);
+//				count = LSProtocolMasterRepository
+//						.countByLssitemasterAndStatusAndViewoptionAndProtocolmasternameLikeOrCreatedbyAndStatusAndViewoptionAndLssitemasterAndProtocolmasternameLikeOrCreatedbyInAndStatusAndViewoptionAndLssitemasterAndProtocolmasternameLikeOrderByProtocolmastercodeDesc(
+//								objuser.getLssitemaster().getSitecode(), 1, 1, Search_Key, objuser.getUsercode(), 1, 2,
+//								objuser.getLssitemaster().getSitecode(), Search_Key, usercodelist, 1, 3,
+//								objuser.getLssitemaster().getSitecode(), Search_Key);
 
 			} else {
-				lstprotocolmaster = LSProtocolMasterRepository
-						.findByLssitemasterAndStatusAndViewoptionAndProtocolmasternameLikeOrCreatedbyAndStatusAndViewoptionAndLssitemasterAndProtocolmasternameLikeOrderByProtocolmastercodeDesc(
-								objuser.getLssitemaster().getSitecode(), 1, 1, Search_Key, objuser.getUsercode(), 1, 2,
-								objuser.getLssitemaster().getSitecode(), Search_Key, pageable);
+				
+				customQuery = "SELECT * FROM lsprotocolmaster o WHERE  (lssitemaster_sitecode=:sitecode AND status =:status AND viewoption =:viewoption1 AND ("
+						+ CustomLikeQuery
+						+ ")) OR (createdby =:createdby AND status =:status AND viewoption =:viewoption2 AND lssitemaster_sitecode=:sitecode AND ("
+						+ CustomLikeQuery
+						+ ")))ORDER BY protocolmastercode DESC OFFSET :offset ROWS FETCH NEXT :pageSize ROWS ONLY";
+				Query query = entityManager.createNativeQuery(customQuery, LSprotocolmaster.class);
+				query = setparametersforprotocol(query, objuser.getLssitemaster().getSitecode(), true, true, false,
+						objuser.getUsercode(), null, true, false, objuser);
+				lstprotocolmaster = query.getResultList();
+				
 
-				count = LSProtocolMasterRepository
-						.countByLssitemasterAndStatusAndViewoptionAndProtocolmasternameLikeOrCreatedbyAndStatusAndViewoptionAndLssitemasterAndProtocolmasternameLikeOrderByProtocolmastercodeDesc(
-								objuser.getLssitemaster().getSitecode(), 1, 1, Search_Key, objuser.getUsercode(), 1, 2,
-								objuser.getLssitemaster().getSitecode(), Search_Key);
+				customQuery = "SELECT COUNT(*) FROM lsprotocolmaster o WHERE  (lssitemaster_sitecode=:sitecode AND status =:status AND viewoption =:viewoption1 AND ("
+						+ CustomLikeQuery
+						+ ")) OR (createdby =:createdby AND status =:status AND viewoption =:viewoption2 AND lssitemaster_sitecode=:sitecode AND ("
+						+ CustomLikeQuery
+						+ ")))";
+				
+				query = entityManager.createNativeQuery(customQuery);
+				query = setparametersforprotocol(query, objuser.getLssitemaster().getSitecode(), true, true, false,
+						objuser.getUsercode(), null, true, false, objuser);
+				BigInteger countValues = (BigInteger) query.getSingleResult();
+				count = countValues.longValue();
+//				lstprotocolmaster = LSProtocolMasterRepository
+//						.findByLssitemasterAndStatusAndViewoptionAndProtocolmasternameLikeOrCreatedbyAndStatusAndViewoptionAndLssitemasterAndProtocolmasternameLikeOrderByProtocolmastercodeDesc(
+//								objuser.getLssitemaster().getSitecode(), 1, 1, Search_Key, objuser.getUsercode(), 1, 2,
+//								objuser.getLssitemaster().getSitecode(), Search_Key, pageable);
+//
+//				count = LSProtocolMasterRepository
+//						.countByLssitemasterAndStatusAndViewoptionAndProtocolmasternameLikeOrCreatedbyAndStatusAndViewoptionAndLssitemasterAndProtocolmasternameLikeOrderByProtocolmastercodeDesc(
+//								objuser.getLssitemaster().getSitecode(), 1, 1, Search_Key, objuser.getUsercode(), 1, 2,
+//								objuser.getLssitemaster().getSitecode(), Search_Key);
 			}
 
 			lstprotocolmaster = lstprotocolmaster.stream().distinct().collect(Collectors.toList());
@@ -4969,98 +5263,101 @@ public class DashBoardService {
 		lsActiveWidgetsRepository.save(activeWidgets);
 		return activeWidgets;
 	}
-	
+
 	public List<LSprojectmaster> Getprojectsonuser(LSuserMaster objuser) {
 		List<LSprojectmaster> lstprojectmaster = new ArrayList<LSprojectmaster>();
 		if (objuser.getUsercode() != null) {
-			
+
 			List<LSuserteammapping> lstteammap = lsuserteammappingRepository
 					.findByLsuserMasterAndTeamcodeNotNull(objuser);
 			List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(lstteammap,
 					objuser.getLssitemaster());
-			 lstprojectmaster = lsprojectmasterRepository.findByLsusersteamInAndStatusOrderByProjectcodeDesc(lstteam, 1);
+			lstprojectmaster = lsprojectmasterRepository.findByLsusersteamInAndStatusOrderByProjectcodeDesc(lstteam, 1);
 
-			
-		} 
+		}
 		return lstprojectmaster;
 	}
+
 	public List<LSprojectmaster> Getprojectsoverdueonuser(LSuserMaster objuser) {
-	    List<LSprojectmaster> lstprojectmaster = new ArrayList<LSprojectmaster>();
-	    
-	    if (objuser.getUsercode() != null) {
-	        List<LSuserteammapping> lstteammap = lsuserteammappingRepository
-	                .findByLsuserMasterAndTeamcodeNotNull(objuser);
-	        List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(lstteammap, objuser.getLssitemaster());
-	        
-	        lstprojectmaster = lsprojectmasterRepository.findByLsusersteamInAndStatusOrderByProjectcodeDesc(lstteam, 1 );
-	        
-	        lstprojectmaster = lstprojectmaster.stream()
-	            .filter(project -> "1".equals(project.getDuedate()))
-	            .collect(Collectors.toList());
-	    }
-	  
-	    return lstprojectmaster;
+		List<LSprojectmaster> lstprojectmaster = new ArrayList<LSprojectmaster>();
+
+		if (objuser.getUsercode() != null) {
+			List<LSuserteammapping> lstteammap = lsuserteammappingRepository
+					.findByLsuserMasterAndTeamcodeNotNull(objuser);
+			List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(lstteammap,
+					objuser.getLssitemaster());
+
+			lstprojectmaster = lsprojectmasterRepository.findByLsusersteamInAndStatusOrderByProjectcodeDesc(lstteam, 1);
+
+			lstprojectmaster = lstprojectmaster.stream().filter(project -> "1".equals(project.getDuedate()))
+					.collect(Collectors.toList());
+		}
+
+		return lstprojectmaster;
 	}
-	public List<LogilabOrdermastersh> Getorderonproject(LSprojectmaster objproject)throws Exception
-	{
+
+	public List<LogilabOrdermastersh> Getorderonproject(LSprojectmaster objproject) throws Exception {
 		return lslogilablimsorderdetailRepository.findByLsprojectmasterOrderByBatchcodeDesc(objproject);
 	}
-	
-	public List<LogilabProtocolOrderssh> Getprotocolorderonproject(LSprojectmaster objproject)throws Exception
-	{
+
+	public List<LogilabProtocolOrderssh> Getprotocolorderonproject(LSprojectmaster objproject) throws Exception {
 		return LSlogilabprotocoldetailRepository.findByLsprojectmasterOrderByProtocolordercodeDesc(objproject);
 	}
-	
+
 	public Map<String, Object> Getprojectscountonuser(LSuserMaster objuser) {
 		Map<String, Object> rtnobject = new HashMap<>();
 		if (objuser.getUsercode() != null) {
-			
+
 			List<LSuserteammapping> lstteammap = lsuserteammappingRepository
 					.findByLsuserMasterAndTeamcodeNotNull(objuser);
 			List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(lstteammap,
 					objuser.getLssitemaster());
 			rtnobject.put("count", lsprojectmasterRepository.countByLsusersteamInAndStatus(lstteam, 1));
-		} 
+		}
 		return rtnobject;
 	}
-	public List<LSprojectmaster> GetInitprojectsonuser(LSuserMaster objuser) throws ParseException {
-	    List<LSprojectmaster> lstprojectmaster = new ArrayList<LSprojectmaster>();
-	    
-	    if (objuser.getUsercode() != null) {
-	        Date currentdate = commonfunction.getCurrentUtcTime();
 
-	        List<LSuserteammapping> lstteammap = lsuserteammappingRepository.findByLsuserMasterAndTeamcodeNotNull(objuser);
-	        List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(lstteammap, objuser.getLssitemaster());
-	        
-	        lstprojectmaster = lsprojectmasterRepository.findByLsusersteamInAndStatusAndStartdateGreaterThanOrderByProjectcodeDesc(lstteam, 1, currentdate);
-	        
-	        lstprojectmaster = lstprojectmaster.stream()
-	            .filter(project -> "1".equals(project.getDuedate())) 
-	            .collect(Collectors.toList());
-	    }
-	    
-	    return lstprojectmaster;
+	public List<LSprojectmaster> GetInitprojectsonuser(LSuserMaster objuser) throws ParseException {
+		List<LSprojectmaster> lstprojectmaster = new ArrayList<LSprojectmaster>();
+
+		if (objuser.getUsercode() != null) {
+			Date currentdate = commonfunction.getCurrentUtcTime();
+
+			List<LSuserteammapping> lstteammap = lsuserteammappingRepository
+					.findByLsuserMasterAndTeamcodeNotNull(objuser);
+			List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(lstteammap,
+					objuser.getLssitemaster());
+
+			lstprojectmaster = lsprojectmasterRepository
+					.findByLsusersteamInAndStatusAndStartdateGreaterThanOrderByProjectcodeDesc(lstteam, 1, currentdate);
+
+			lstprojectmaster = lstprojectmaster.stream().filter(project -> "1".equals(project.getDuedate()))
+					.collect(Collectors.toList());
+		}
+
+		return lstprojectmaster;
 	}
 
 	public List<LSprojectmaster> Getinprogressprojectsonuser(LSuserMaster objuser) throws ParseException {
-	    List<LSprojectmaster> lstprojectmaster = new ArrayList<LSprojectmaster>();
-	    if (objuser.getUsercode() != null) {
-	        Date currentdate = commonfunction.getCurrentUtcTime();
-	        
-	        List<LSuserteammapping> lstteammap = lsuserteammappingRepository
-	                .findByLsuserMasterAndTeamcodeNotNull(objuser);
-	        
-	        List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(lstteammap,
-	                objuser.getLssitemaster());
-	        
-	        lstprojectmaster = lsprojectmasterRepository.findByLsusersteamInAndStatusAndStartdateBeforeAndEnddateAfterOrderByProjectcodeDesc(
-	                lstteam, 1, currentdate, currentdate);
-	        lstprojectmaster = lstprojectmaster.stream()
-		            .filter(project -> "1".equals(project.getDuedate()))
-		            .collect(Collectors.toList());
-	    }
-	    return lstprojectmaster;
+		List<LSprojectmaster> lstprojectmaster = new ArrayList<LSprojectmaster>();
+		if (objuser.getUsercode() != null) {
+			Date currentdate = commonfunction.getCurrentUtcTime();
+
+			List<LSuserteammapping> lstteammap = lsuserteammappingRepository
+					.findByLsuserMasterAndTeamcodeNotNull(objuser);
+
+			List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(lstteammap,
+					objuser.getLssitemaster());
+
+			lstprojectmaster = lsprojectmasterRepository
+					.findByLsusersteamInAndStatusAndStartdateBeforeAndEnddateAfterOrderByProjectcodeDesc(lstteam, 1,
+							currentdate, currentdate);
+			lstprojectmaster = lstprojectmaster.stream().filter(project -> "1".equals(project.getDuedate()))
+					.collect(Collectors.toList());
+		}
+		return lstprojectmaster;
 	}
+
 	public List<LSprojectmaster> Getcomprojectsonuser(LSuserMaster objuser) throws ParseException {
 		List<LSprojectmaster> lstprojectmaster = new ArrayList<LSprojectmaster>();
 		if (objuser.getUsercode() != null) {
@@ -5069,37 +5366,41 @@ public class DashBoardService {
 					.findByLsuserMasterAndTeamcodeNotNull(objuser);
 			List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(lstteammap,
 					objuser.getLssitemaster());
-		 lstprojectmaster = lsprojectmasterRepository.findByLsusersteamInAndStatusAndEnddateLessThanOrderByProjectcodeDesc(lstteam, 1, currentdate);
-		 lstprojectmaster = lstprojectmaster.stream()
-		            .filter(project -> "1".equals(project.getDuedate())) 
-		            .collect(Collectors.toList());
-			
-		} 
+			lstprojectmaster = lsprojectmasterRepository
+					.findByLsusersteamInAndStatusAndEnddateLessThanOrderByProjectcodeDesc(lstteam, 1, currentdate);
+			lstprojectmaster = lstprojectmaster.stream().filter(project -> "1".equals(project.getDuedate()))
+					.collect(Collectors.toList());
+
+		}
 		return lstprojectmaster;
 	}
+
 	public List<LSprojectmaster> GetOverdueprojectsonuser(LSuserMaster objuser) throws ParseException {
-	    List<LSprojectmaster> lstprojectmaster = new ArrayList<LSprojectmaster>();
-	    List<LSprojectmaster> lstrtnprojectmaster = new ArrayList<LSprojectmaster>();
-	    List<LSlogilablimsorderdetail> lstorder = new ArrayList<LSlogilablimsorderdetail>();  
-	    if (objuser.getUsercode() != null) {
-	        Date currentdate = commonfunction.getCurrentUtcTime();
-	        
-	        List<LSuserteammapping> lstteammap = lsuserteammappingRepository.findByLsuserMasterAndTeamcodeNotNull(objuser);
-	        List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(lstteammap, objuser.getLssitemaster());
-	        
-	        lstprojectmaster = lsprojectmasterRepository.findByLsusersteamInAndStatusAndEnddateLessThanOrderByProjectcodeDesc(lstteam, 1, currentdate);
-	        lstorder = lslogilablimsorderdetailRepository.findByOrderflagAndLsprojectmasterIn("R", lstprojectmaster);
-	        if(lstorder != null)
-	        {
-	        	lstrtnprojectmaster = lstorder.stream().map(LSlogilablimsorderdetail::getLsprojectmaster).collect(Collectors.toList());
-	        }
-	        lstprojectmaster = lstprojectmaster.stream()
-		            .filter(project -> "1".equals(project.getDuedate())) 
-		            .collect(Collectors.toList());
-	    }
-	    
-	    return lstrtnprojectmaster;
+		List<LSprojectmaster> lstprojectmaster = new ArrayList<LSprojectmaster>();
+		List<LSprojectmaster> lstrtnprojectmaster = new ArrayList<LSprojectmaster>();
+		List<LSlogilablimsorderdetail> lstorder = new ArrayList<LSlogilablimsorderdetail>();
+		if (objuser.getUsercode() != null) {
+			Date currentdate = commonfunction.getCurrentUtcTime();
+
+			List<LSuserteammapping> lstteammap = lsuserteammappingRepository
+					.findByLsuserMasterAndTeamcodeNotNull(objuser);
+			List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(lstteammap,
+					objuser.getLssitemaster());
+
+			lstprojectmaster = lsprojectmasterRepository
+					.findByLsusersteamInAndStatusAndEnddateLessThanOrderByProjectcodeDesc(lstteam, 1, currentdate);
+			lstorder = lslogilablimsorderdetailRepository.findByOrderflagAndLsprojectmasterIn("R", lstprojectmaster);
+			if (lstorder != null) {
+				lstrtnprojectmaster = lstorder.stream().map(LSlogilablimsorderdetail::getLsprojectmaster)
+						.collect(Collectors.toList());
+			}
+			lstprojectmaster = lstprojectmaster.stream().filter(project -> "1".equals(project.getDuedate()))
+					.collect(Collectors.toList());
+		}
+
+		return lstrtnprojectmaster;
 	}
+
 	public Map<String, Object> Getintprojectscountonuser(LSuserMaster objuser) throws ParseException {
 		Map<String, Object> rtnobject = new HashMap<>();
 		if (objuser.getUsercode() != null) {
@@ -5108,10 +5409,12 @@ public class DashBoardService {
 					.findByLsuserMasterAndTeamcodeNotNull(objuser);
 			List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(lstteammap,
 					objuser.getLssitemaster());
-			rtnobject.put("count", lsprojectmasterRepository.countByLsusersteamInAndStatusAndStartdateGreaterThan(lstteam, 1,currentdate));
-		} 
+			rtnobject.put("count", lsprojectmasterRepository
+					.countByLsusersteamInAndStatusAndStartdateGreaterThan(lstteam, 1, currentdate));
+		}
 		return rtnobject;
 	}
+
 	public Map<String, Object> Getinprojectscountonuser(LSuserMaster objuser) throws ParseException {
 		Map<String, Object> rtnobject = new HashMap<>();
 		if (objuser.getUsercode() != null) {
@@ -5120,10 +5423,13 @@ public class DashBoardService {
 					.findByLsuserMasterAndTeamcodeNotNull(objuser);
 			List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(lstteammap,
 					objuser.getLssitemaster());
-			rtnobject.put("count", lsprojectmasterRepository.countByLsusersteamInAndStatusAndStartdateBeforeAndEnddateAfter(lstteam, 1,currentdate, currentdate));
-		} 
+			rtnobject.put("count",
+					lsprojectmasterRepository.countByLsusersteamInAndStatusAndStartdateBeforeAndEnddateAfter(lstteam, 1,
+							currentdate, currentdate));
+		}
 		return rtnobject;
 	}
+
 	public Map<String, Object> Getcomprojectscountonuser(LSuserMaster objuser) throws ParseException {
 		Map<String, Object> rtnobject = new HashMap<>();
 		if (objuser.getUsercode() != null) {
@@ -5132,13 +5438,15 @@ public class DashBoardService {
 					.findByLsuserMasterAndTeamcodeNotNull(objuser);
 			List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(lstteammap,
 					objuser.getLssitemaster());
-			rtnobject.put("count", lsprojectmasterRepository.countByLsusersteamInAndStatusAndEnddateLessThan(lstteam, 1,currentdate));
-		} 
+			rtnobject.put("count",
+					lsprojectmasterRepository.countByLsusersteamInAndStatusAndEnddateLessThan(lstteam, 1, currentdate));
+		}
 		return rtnobject;
 	}
+
 	public Map<String, Object> Getoverdueprojectscountonuser(LSuserMaster objuser) throws ParseException {
 		Map<String, Object> rtnobject = new HashMap<>();
-		 
+
 		if (objuser.getUsercode() != null) {
 			Date currentdate = commonfunction.getCurrentUtcTime();
 			List<LSuserteammapping> lstteammap = lsuserteammappingRepository
@@ -5146,40 +5454,38 @@ public class DashBoardService {
 			List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(lstteammap,
 					objuser.getLssitemaster());
 			List<LSprojectmaster> lstprojectmaster = new ArrayList<LSprojectmaster>();
-			 lstprojectmaster = lsprojectmasterRepository.findByLsusersteamInAndStatusAndEnddateLessThanOrderByProjectcodeDesc(lstteam, 1, currentdate);
-			rtnobject.put("count", lslogilablimsorderdetailRepository.countByOrderflagAndLsprojectmasterIn("R",lstprojectmaster));
-		} 
+			lstprojectmaster = lsprojectmasterRepository
+					.findByLsusersteamInAndStatusAndEnddateLessThanOrderByProjectcodeDesc(lstteam, 1, currentdate);
+			rtnobject.put("count",
+					lslogilablimsorderdetailRepository.countByOrderflagAndLsprojectmasterIn("R", lstprojectmaster));
+		}
 		return rtnobject;
 	}
 
 	public Map<String, Object> Getprojectsoverduecountonuser(LSuserMaster objuser) throws ParseException {
-	    Map<String, Object> rtnobject = new HashMap<>();
-	    List<LSprojectmaster> lstprojectmaster = new ArrayList<>();
+		Map<String, Object> rtnobject = new HashMap<>();
+		List<LSprojectmaster> lstprojectmaster = new ArrayList<>();
 
-	    if (objuser.getUsercode() != null) {
-	        Date currentdate = commonfunction.getCurrentUtcTime();
+		if (objuser.getUsercode() != null) {
+			Date currentdate = commonfunction.getCurrentUtcTime();
 
-	        List<LSuserteammapping> lstteammap = lsuserteammappingRepository
-	                .findByLsuserMasterAndTeamcodeNotNull(objuser);
+			List<LSuserteammapping> lstteammap = lsuserteammappingRepository
+					.findByLsuserMasterAndTeamcodeNotNull(objuser);
 
-	        List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(lstteammap,
-	                objuser.getLssitemaster());
+			List<LSusersteam> lstteam = lsusersteamRepository.findByLsuserteammappingInAndLssitemaster(lstteammap,
+					objuser.getLssitemaster());
 
-	        long count = lsprojectmasterRepository.countByLsusersteamInAndStatusAndDuedate(lstteam, 1, "1");
-	        rtnobject.put("count", count);
+			long count = lsprojectmasterRepository.countByLsusersteamInAndStatusAndDuedate(lstteam, 1, "1");
+			rtnobject.put("count", count);
 
-	        lstprojectmaster = lsprojectmasterRepository.findByLsusersteamInAndStatusAndDuedate(lstteam, 1, "1");
+			lstprojectmaster = lsprojectmasterRepository.findByLsusersteamInAndStatusAndDuedate(lstteam, 1, "1");
 
-	        lstprojectmaster = lstprojectmaster.stream()
-	                .filter(project -> "1".equals(project.getDuedate())) 
-	                .collect(Collectors.toList());
-	        rtnobject.put("projects", lstprojectmaster);
-	    }
+			lstprojectmaster = lstprojectmaster.stream().filter(project -> "1".equals(project.getDuedate()))
+					.collect(Collectors.toList());
+			rtnobject.put("projects", lstprojectmaster);
+		}
 
-	    return rtnobject;
+		return rtnobject;
 	}
 
 }
-
-
-

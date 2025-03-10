@@ -1654,9 +1654,6 @@ public interface LSlogilablimsorderdetailRepository extends JpaRepository<LSlogi
 	long countByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndApprovelstatusIsNullAndOrdercancellIsNullAndAssignedtoIsNull(
 			String string, List<LSprojectmaster> lstproject, Date fromdate, Date todate);
 
-	long countByOrderflagAndViewoptionAndLsuserMasterAndCreatedtimestampBetweenAndApprovelstatusNotAndLsprojectmasterInAndOrdercancellIsNullAndAssignedtoIsNull(
-			String string, int i, LSuserMaster objuser, Date fromdate, Date todate, int j,
-			List<LSprojectmaster> lstproject);
 
 //	List<Logilabordermaster> findByOrderflagAndLsprojectmasterInAndCreatedtimestampBetweenAndApprovelstatusNotAndOrdercancellIsNullAndAssignedtoIsNullOrderByBatchcodeDesc(
 //			String string, List<LSprojectmaster> lstproject, Date fromdate, Date todate, int i, Pageable pageable);

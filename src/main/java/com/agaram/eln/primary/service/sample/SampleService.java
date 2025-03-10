@@ -755,7 +755,10 @@ public ResponseEntity<Object> getSampleonCategoryFillter(@RequestBody Map<String
 				String oldSamplename=itemsv.getSamplename();
 				if (existMaterialList.get(itemsv.getSamplename()) > 0) {
 					Long existcount = existMaterialList.get(itemsv.getSamplename()) + 1;
-					itemsv.setSamplename(itemsv.getSamplename() + "(" + existcount + ")");
+					String sequence =itemsv.getSequenceid();
+					sequence=sequence.replace(itemsv.getSamplename(), itemsv.getSamplename() + "(" + existcount + ")");
+					itemsv.setSequenceid(sequence);
+					itemsv.setSamplename(itemsv.getSamplename() + "(" + existcount + ")");		
 				}
 				SequenceTableProjectLevel objprojectseq = new SequenceTableProjectLevel();
 				SequenceTableTaskLevel objtaskseq = new SequenceTableTaskLevel();
