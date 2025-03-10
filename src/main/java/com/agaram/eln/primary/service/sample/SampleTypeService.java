@@ -33,6 +33,13 @@ public class SampleTypeService {
 		return new ResponseEntity<>(lstsampletype, HttpStatus.OK);
 	}
 	
+	public ResponseEntity<Object> getActiveSampleType(Integer nsitecode) {
+		List<SampleType> lstgetSampleType = sampleTypeRepository
+				.findByNsampletypecodeNotAndNstatusAndNsitecodeOrderByNsampletypecodeDesc(-1,
+						1, nsitecode);
+		return new ResponseEntity<>(lstgetSampleType, HttpStatus.OK);
+	}
+	
 	public ResponseEntity<Object> modifySampleType(SampleType objSampleType) throws JsonParseException, JsonMappingException, IOException, ParseException {
 		
 		if(objSampleType.getNsampletypecode() == null) {

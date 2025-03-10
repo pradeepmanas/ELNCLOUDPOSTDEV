@@ -28,4 +28,8 @@ public interface SampleTypeRepository extends JpaRepository<SampleType,Integer> 
 			int i, int j, Integer nsitecode, int k, int l, int m);
 
 
+	List<SampleType> findByNsampletypecodeNotAndNstatusAndNsitecodeOrderByNsampletypecodeDesc(int i, int j,
+			Integer nsitecode);
+
+
 }

@@ -393,18 +393,18 @@ public class BarcodeMasterService {
 						.replace("$samplename$", element.getSamplename())
 						.replace("$storagepath$", element.getSamplestoragemapping().getStoragepath())
 						.replace("$generatedby$", username).replace("$generateddate$", dateFormat.format(currentdata));
-				if (element.getQuantity() != null) {
-					data = data.replace("$quantity$", element.getQuantity().toString());
-				}
-				SimpleDateFormat dateFormatExpiry = new SimpleDateFormat("yyyy-MM-dd");
-				if (element.getExpirydate() != null) {
-
-					data = data.replace("$expirydate$", dateFormatExpiry.format(element.getExpirydate()));
-				}
-
-				if(element.getUnit()!=null && element.getUnit().getSunitname()!=null) {
-					data = data.replace("$unit$", element.getUnit().getSunitname());
-				}
+//				if (element.getQuantity() != null) {
+//					data = data.replace("$quantity$", element.getQuantity().toString());
+//				}
+//				SimpleDateFormat dateFormatExpiry = new SimpleDateFormat("yyyy-MM-dd");
+//				if (element.getExpirydate() != null) {
+//
+//					data = data.replace("$expirydate$", dateFormatExpiry.format(element.getExpirydate()));
+//				}
+//
+//				if(element.getUnit()!=null && element.getUnit().getSunitname()!=null) {
+//					data = data.replace("$unit$", element.getUnit().getSunitname());
+//				}
 				lstdata.add(replaceddata);
 			}
 			

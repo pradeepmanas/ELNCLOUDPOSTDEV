@@ -1,5 +1,7 @@
 package com.agaram.eln.primary.controller.sample;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +25,11 @@ public class SampleTypeController {
 	@RequestMapping(value = "/getSampleType", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> getSampleType(@RequestBody SampleType objSampleType) throws Exception {		
 		return (ResponseEntity<Object>) sampleTypeService.getSampleType(objSampleType);
+	}
+	@PostMapping(value = "/getActiveSampleType")
+	public ResponseEntity<Object> getActiveSampleType(@RequestBody Map<String, Object> inputMap) throws Exception {
+		Integer nsiteInteger = (Integer) inputMap.get("nsitecode");
+		return sampleTypeService.getActiveSampleType(nsiteInteger);
 	}
 	
 	@RequestMapping(value = "/modifySampleType", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
