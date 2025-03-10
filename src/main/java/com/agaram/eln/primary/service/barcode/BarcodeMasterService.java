@@ -290,47 +290,79 @@ public class BarcodeMasterService {
 			DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd ");
 			data = data.replace("$materialid$", inventory.getSinventoryid())
 					.replace("$materialname$", inventory.getMaterial().getSmaterialname())
-					.replace("$storagepath$", path)
-//					.replace("$batchno$", inventory.getSbatchno())
+					.replace("$storagepath$", path).replace("$batchno$", inventory.getSbatchno())
 					.replace("$generatedby$", username).replace("$generateddate$", dateFormat.format(currentdata));
 			MaterialCategory materialCategory = inventory.getMaterialcategory();
-			if (materialCategory != null && "Cell Bank".equals(materialCategory.getSmaterialtypename())) {
-				JsonParser parser = new JsonParser();
-				JsonObject jsonObject = parser.parse(inventory.getJsondata()).getAsJsonObject();
-				JsonObject materialJsonDataObject = parser.parse(inventory.getMaterial().getJsondata())
-						.getAsJsonObject();
-				JsonElement dynamicfields = materialJsonDataObject.get("dynamicfields");
-				if (jsonObject.has("depositorName") && !jsonObject.get("depositorName").getAsString().isEmpty()) {
-					data = data.replace("$depositor$", jsonObject.get("depositorName").getAsString());
+			JsonParser parser = new JsonParser();
+			JsonObject jsonObject = parser.parse(inventory.getJsondata()).getAsJsonObject();
+			JsonObject materialJsonDataObject = parser.parse(inventory.getMaterial().getJsondata()).getAsJsonObject();
+			JsonElement dynamicfields = materialJsonDataObject.get("dynamicfields");
+			if (jsonObject.has("depositorName") && !jsonObject.get("depositorName").getAsString().isEmpty()) {
+				data = data.replace("$depositor$", jsonObject.get("depositorName").getAsString());
+			}
+			if (inventory.getMaterial() != null && inventory.getMaterial().getNmaterialcode() != null) {
+				String Remarks = inventory.getMaterial().getRemarks();
+				if (Remarks != null && !Remarks.isEmpty()) {
+					data = data.replace("$remarks$", Remarks);
 				}
-				if (dynamicfields.isJsonArray()) {
-					JsonArray dynamicFieldsArray = dynamicfields.getAsJsonArray();
+			}
+			if (inventory.getSavailablequantity() != null && !inventory.getSavailablequantity().isEmpty()) {
+				data = data.replace("$quantity$", inventory.getSavailablequantity());
+			}
+			SimpleDateFormat dateFormatExpiry = new SimpleDateFormat("yyyy-MM-dd");
+			if (inventory.getExpirydate() != null) {
 
-					for (JsonElement element : dynamicFieldsArray) {
-						if (element.isJsonObject()) {
-							JsonObject field = element.getAsJsonObject();
-							int datatype = field.get("datatype").getAsInt();
-							String fieldName = field.get("fieldname").getAsString();
+				data = data.replace("$expirydate$", dateFormatExpiry.format(inventory.getExpirydate()));
+			}
+			if (inventory.getReceiveddate() != null) {
+				data = data.replace("$receiveddate$", dateFormatExpiry.format(inventory.getReceiveddate()));
+			}
+			if(inventory.getUnit()!=null && inventory.getUnit().getSunitname()!=null) {
+				data = data.replace("$unit$", inventory.getUnit().getSunitname());
+			}
 
-							if (datatype == 4 && "Storage Condition".equalsIgnoreCase(fieldName)) {
-								JsonElement valueElement = field.get("value");
-								if (valueElement.isJsonObject()) {
-									String storageCondition = valueElement.getAsJsonObject().get("value").getAsString();
-									data = data.replace("$storagecondition$", storageCondition);
+			if (dynamicfields.isJsonArray()) {
+				JsonArray dynamicFieldsArray = dynamicfields.getAsJsonArray();
+				for (JsonElement element : dynamicFieldsArray) {
+					if (element.isJsonObject()) {
+						JsonObject field = element.getAsJsonObject();
+						int datatype = field.get("datatype").getAsInt();
+						String fieldName = field.get("fieldname").getAsString();
+						JsonElement valueElement1 = field.get("value");
+						if (valueElement1 != null) {
+							if (valueElement1.isJsonObject()) {
+								String valuestring = valueElement1.getAsJsonObject().get("value").getAsString();
+								if (valuestring != null) {
+									String result = fieldName.replace(" ", "");
+									data = data.replace("$" + result.toLowerCase() + "$", valuestring);
 								}
-							} else if (datatype == 0 && "Project id".equalsIgnoreCase(fieldName)) {
-								String projectId = field.get("value").getAsString();
-								data = data.replace("$projectid$", projectId);
+							} else {
+								String valuestring = field.get("value").getAsString();
+								if (valuestring != null) {
+									String result = fieldName.replace(" ", "");
+									data = data.replace("$" + result.toLowerCase() + "$", valuestring);
+								}
 							}
+						}
+
+						if (datatype == 4 && "Storage Condition".equalsIgnoreCase(fieldName)) {
+							JsonElement valueElement = field.get("value");
+							if (valueElement.isJsonObject()) {
+								String storageCondition = valueElement.getAsJsonObject().get("value").getAsString();
+								data = data.replace("$storagecondition$", storageCondition);
+							}
+						} else if (datatype == 0 && "Project id".equalsIgnoreCase(fieldName)) {
+							String projectId = field.get("value").getAsString();
+							data = data.replace("$projectid$", projectId);
 						}
 					}
 				}
-				if (jsonObject.has("dateofarrival") && !jsonObject.get("dateofarrival").getAsString().isEmpty()) {
-					data = data.replace("$freezingdate$", jsonObject.get("dateofarrival").getAsString());
-				}
-
-				System.out.println(data);
 			}
+			if (jsonObject.has("dateofarrival") && !jsonObject.get("dateofarrival").getAsString().isEmpty()) {
+				data = data.replace("$freezingdate$", jsonObject.get("dateofarrival").getAsString());
+			}
+
+			System.out.println(data);
 		}
 		return data;
 	}
@@ -345,6 +377,7 @@ public class BarcodeMasterService {
 					.replace("$samplename$", sampleObj.getSamplename())
 					.replace("$storagepath$", path)
 					.replace("$generatedby$", username).replace("$generateddate$", dateFormat.format(currentdata));
+
 		}
 		return data;
 	}
@@ -360,7 +393,18 @@ public class BarcodeMasterService {
 						.replace("$samplename$", element.getSamplename())
 						.replace("$storagepath$", element.getSamplestoragemapping().getStoragepath())
 						.replace("$generatedby$", username).replace("$generateddate$", dateFormat.format(currentdata));
-				
+				if (element.getQuantity() != null) {
+					data = data.replace("$quantity$", element.getQuantity().toString());
+				}
+				SimpleDateFormat dateFormatExpiry = new SimpleDateFormat("yyyy-MM-dd");
+				if (element.getExpirydate() != null) {
+
+					data = data.replace("$expirydate$", dateFormatExpiry.format(element.getExpirydate()));
+				}
+
+				if(element.getUnit()!=null && element.getUnit().getSunitname()!=null) {
+					data = data.replace("$unit$", element.getUnit().getSunitname());
+				}
 				lstdata.add(replaceddata);
 			}
 			

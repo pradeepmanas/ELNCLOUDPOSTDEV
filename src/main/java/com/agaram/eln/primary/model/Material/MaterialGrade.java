@@ -55,6 +55,15 @@ public class MaterialGrade {
 
 	private transient String sDate;
 	
+	private transient String mDate;
+
+	public String getmDate() {
+		return mDate;
+	}
+	public void setmDate(String mDate) {
+		this.mDate = mDate;
+	}
+	
 	public Date getModifieddate() {
 		return modifieddate;
 	}

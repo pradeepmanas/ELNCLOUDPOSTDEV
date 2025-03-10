@@ -43,6 +43,14 @@ public class Manufacturer {
 	private Date createdate;
 	
 	private transient String sDate;
+	private transient String mDate;
+
+	public String getmDate() {
+		return mDate;
+	}
+	public void setmDate(String mDate) {
+		this.mDate = mDate;
+	}
 
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date modifieddate;

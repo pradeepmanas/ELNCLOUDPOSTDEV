@@ -872,4 +872,6 @@ public interface LogilablimsorderdetailsRepository extends JpaRepository<LSlogil
 
 	Long countBySitecode(Integer sitecode);
 
+	LSlogilablimsorderdetail findBySequenceid(String batchid);
+
 }

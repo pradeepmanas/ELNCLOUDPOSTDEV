@@ -81,6 +81,15 @@ public class Supplier {
 	@Column(name = "modifiedby")
 	private String modifiedby;
 	
+	private transient String mDate;
+
+	public String getmDate() {
+		return mDate;
+	}
+	public void setmDate(String mDate) {
+		this.mDate = mDate;
+	}
+
 	public String getsDate() {
 		return sDate;
 	}

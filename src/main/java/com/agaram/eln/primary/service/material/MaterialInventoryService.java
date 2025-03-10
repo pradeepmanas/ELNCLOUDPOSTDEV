@@ -3151,6 +3151,9 @@ public class MaterialInventoryService {
 		List<ElnmaterialInventory> objInventory = objmapper.convertValue(inputMap.get("selectedInventory"),
 				new TypeReference<List<ElnmaterialInventory>>() {
 				});
+		
+		List<ElnmaterialInventory> savedmaterialinventory = new ArrayList<ElnmaterialInventory>();
+		
 		final LScfttransaction cft = objmapper.convertValue(inputMap.get("objsilentaudit"), LScfttransaction.class);
 		List<SelectedInventoryMapped> objStorageLocation = objmapper.convertValue(
 				inputMap.get("selectedStorageLocation"), new TypeReference<List<SelectedInventoryMapped>>() {
@@ -3194,8 +3197,17 @@ public class MaterialInventoryService {
 			}
 		});
 
-		elnmaterialInventoryReppository.save(objInventory);
+	   elnmaterialInventoryReppository.save(objInventory);
 
+	    objInventory.forEach(item ->{
+			if(isdefault) {
+				item.setSequenceid(item.getSinventoryid());
+    	     }
+		});
+		
+		elnmaterialInventoryReppository.save(objInventory);
+		
+		
 		List<SelectedInventoryMapped> newStorageEntry = new ArrayList<>();
 		IntStream.range(0, objStorageLocation.size()).forEach(i -> {
 			SelectedInventoryMapped storage = objStorageLocation.get(i);
@@ -3348,11 +3360,11 @@ public class MaterialInventoryService {
 		Map<String, Object> objmap = new LinkedHashMap<String, Object>();
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 		simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-		Integer nsiteInteger = (Integer) inputMap.get("nsitecode");
+//		Integer nsiteInteger = (Integer) inputMap.get("nsitecode");
 		boolean isallmaterial = (boolean) inputMap.get("isallmaterial");
-		int page = (int) inputMap.get("page");
-		int size = (int) inputMap.get("size");
-		Pageable pageable = new PageRequest(page, size);
+//		int page = (int) inputMap.get("page");
+//		int size = (int) inputMap.get("size");
+//		Pageable pageable = new PageRequest(page, size);
 		ObjectMapper objmapper = new ObjectMapper();
 
 		MaterialCategory objCategory = objmapper.convertValue(inputMap.get("materialcategory"), MaterialCategory.class);
@@ -3906,6 +3918,7 @@ public class MaterialInventoryService {
 		objElnmaterialInventory2.setCreateddate(commonfunction.getCurrentUtcTime());
 		objElnmaterialInventory2.setCreatedby(objMaster);
 		objElnmaterialInventory2.setNmaterialinventorycode(null);
+		
 
 		elnmaterialInventoryReppository.save(objElnmaterialInventory2);
 
@@ -3919,6 +3932,12 @@ public class MaterialInventoryService {
 			updateinventorytransactiondetails(objElnmaterialInventory.getCreatedby(),0,objInventory,Ntransactionstatus,-2L,objElnmaterialInventory2);
 		}
 
+		if(objElnmaterialInventory.getIsDefault()) {
+			objElnmaterialInventory2.setSequenceid(objElnmaterialInventory2.getSinventoryid());
+		}else {
+			objElnmaterialInventory2.setSequenceid(objElnmaterialInventory.getSequenceid());
+		}
+		
 		elnmaterialInventoryReppository.save(objElnmaterialInventory2);
 
 		setStorageInventoryStorageOnNode(objStorageLocation, objElnmaterialInventory2, lstIntegerInventory);

@@ -10283,11 +10283,21 @@ public class InstrumentService {
 					containerName = tenant + "protocolfolderfiles";
 				}
 			}
-			byte[] documentBytes = objCloudFileManipulationservice.retrieveCloudReportFile(containerName, fileid);
-			MockMultipartFile mockMultipartFile = new MockMultipartFile("tempFileName", documentBytes);
-			Map<String, String> mapObj1 = documenteditorService.importFile(mockMultipartFile);
-			mapObj.put("templatecontent", mapObj1);
-			mapObj.put("status", true);
+			if (screenname.equals("Sheet") || screenname.equals("Protocol") || ontabkey.isEmpty()
+					|| ontabkey.equals("sheet") || ontabkey.equals("protocol")) {
+				byte[] documentBytes = objCloudFileManipulationservice.retrieveCloudReportFile(containerName, fileid);
+				MockMultipartFile mockMultipartFile = new MockMultipartFile("tempFileName", documentBytes);
+				Map<String, String> mapObj1 = documenteditorService.importFile(mockMultipartFile);
+				mapObj.put("templatecontent", mapObj1);
+				mapObj.put("status", true);
+			} else {
+				InputStream fileDtream = cloudFileManipulationservice.retrieveLargeFile(fileid);
+				byte[] content = IOUtils.toByteArray(fileDtream);
+				MockMultipartFile mockMultipartFile = new MockMultipartFile("tempFileName", content);
+				Map<String, String> mapObj1 = documenteditorService.importFile(mockMultipartFile);
+				mapObj.put("templatecontent", mapObj1);
+				mapObj.put("status", true);
+			}
 		}
 		return mapObj;
 	}

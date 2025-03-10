@@ -2271,5 +2271,8 @@ List<Logilabprotocolorders> findByLsprojectmasterInAndElnmaterialAndTestcodeAndC
 
 	List<LogilabProtocolOrderssh> findBySitecodeAndCreatedtimestampBetweenOrderByCreatedtimestampDesc(
 			 Integer sitecode, Date fromdate,Date todate);
+
+
+	LSlogilabprotocoldetail findBySequenceid(String batchid);
 	}
 

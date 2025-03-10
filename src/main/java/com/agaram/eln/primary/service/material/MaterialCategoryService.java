@@ -92,7 +92,7 @@ public class MaterialCategoryService {
 	public ResponseEntity<Object> getMaterialType(Integer nsitecode) {
 
 		List<MaterialType> lstgetMaterialType = MaterialTypeRepository
-				.findByNmaterialtypecodeNotAndNstatusAndNsitecodeOrNmaterialtypecodeNotAndNstatusAndNdefaultstatus(-1,
+				.findByNmaterialtypecodeNotAndNstatusAndNsitecodeOrNmaterialtypecodeNotAndNstatusAndNdefaultstatusOrderByNmaterialtypecodeDesc(-1,
 						1, nsitecode, -1, 1, 4);
 		return new ResponseEntity<>(lstgetMaterialType, HttpStatus.OK);
 	}

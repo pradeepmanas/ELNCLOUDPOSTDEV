@@ -78,6 +78,7 @@ import com.agaram.eln.primary.model.sheetManipulation.LStestmasterlocal;
 import com.agaram.eln.primary.model.sheetManipulation.LSworkflow;
 import com.agaram.eln.primary.model.sheetManipulation.Notification;
 import com.agaram.eln.primary.model.usermanagement.LSSiteMaster;
+import com.agaram.eln.primary.model.usermanagement.LSnotification;
 import com.agaram.eln.primary.model.usermanagement.LSprojectmaster;
 import com.agaram.eln.primary.model.usermanagement.LSuserMaster;
 import com.agaram.eln.primary.repository.multitenant.DataSourceConfigRepository;
@@ -185,7 +186,8 @@ public class StarterRunner {
 		ordernot.setCreatedtimestamp(rs.getTimestamp("createdtimestamp"));
 		ordernot.setKeyword(rs.getString("keyword"));
 		ordernot.setProtocoltype(rs.getInt("protocoltype"));
-
+		ordernot.setSequenceid(rs.getString("sequenceid"));
+		
 		LSprojectmaster lsprojectmaster = new LSprojectmaster();
 		lsprojectmaster.setProjectcode(rs.getInt("lsprojectmaster_projectcode"));
 		ordernot.setLsprojectmaster(lsprojectmaster);
@@ -2961,9 +2963,7 @@ public class StarterRunner {
 			}else {
 				String sequencequery = "SELECT * FROM sequencetable where sequencecode = 2";
 				try (PreparedStatement pst = con.prepareStatement(sequencequery)) {
-	
-					pst.setLong(1, objNotification.getBatchcode());
-	
+		
 					try (ResultSet rs = pst.executeQuery()) {
 						while (rs.next()) {
 							Sequence = mapResultSetToSequence(rs);
@@ -2979,6 +2979,45 @@ public class StarterRunner {
 		}
 	}
 	
+	public SequenceTable getsequenceforalert (Notification objNotification, HikariConfig configuration) throws SQLException {
+		
+		SequenceTable Sequence = null;
+
+		try (HikariDataSource dataSource = new HikariDataSource(configuration);
+				Connection con = dataSource.getConnection()) {
+			
+			if (objNotification.getScreen().equals("Sheet Order")) {
+				String sequencequery = "SELECT * FROM sequencetable where sequencecode = 1";
+				try (PreparedStatement pst = con.prepareStatement(sequencequery)) {
+	
+					try (ResultSet rs = pst.executeQuery()) {
+						while (rs.next()) {
+							Sequence = mapResultSetToSequence(rs);
+						}
+					} catch (SQLException e) {
+						e.printStackTrace(); // Consider logging this properly
+					}
+					sequencequery = "";
+			    }
+			}else {
+				String sequencequery = "SELECT * FROM sequencetable where sequencecode = 2";
+				try (PreparedStatement pst = con.prepareStatement(sequencequery)) {
+		
+					try (ResultSet rs = pst.executeQuery()) {
+						while (rs.next()) {
+							Sequence = mapResultSetToSequence(rs);
+						}
+					} catch (SQLException e) {
+						e.printStackTrace(); // Consider logging this properly
+					}
+					sequencequery = "";
+			    }
+			}
+			con.close();
+			return Sequence;
+		}
+	}
+
 	public void executecautiondatenotification(LSOrdernotification objNotification, HikariConfig configuration)
 			throws ParseException, InterruptedException, SQLException {
 
@@ -3128,6 +3167,8 @@ public class StarterRunner {
 		batchid = null;
 		protocolordername = null;
 		Details = null;
+		order = null;
+		protocolorder = null;
 	}
 
 	public void executeduedatenotification(LSOrdernotification objNotification, HikariConfig configuration)
@@ -3282,6 +3323,8 @@ public class StarterRunner {
 		batchid = null;
 		protocolordername = null;
 		Details = null;
+		order = null;
+		protocolorder = null;
 	}
 
 	public void insernotification(HikariConfig configuration, String Details, String notification, String path,
@@ -3349,10 +3392,10 @@ public class StarterRunner {
 
 		try (HikariDataSource dataSource = new HikariDataSource(configuration);
 				Connection con = dataSource.getConnection()) {
-			if (objNotification.getScreen().equals("sheetorder")) {
-
-				Sequence = getsequence(objNotification, configuration);
-				
+			
+			Sequence = getsequence(objNotification, configuration);
+			
+			if (objNotification.getScreen().equals("sheetorder")) {				
 				String orderobj = "SELECT * FROM lslogilablimsorderdetail WHERE batchcode=?";
 				try (PreparedStatement pst = con.prepareStatement(orderobj)) {
 
@@ -3484,6 +3527,8 @@ public class StarterRunner {
 		batchid = null;
 		protocolordername = null;
 		Details = null;
+		order = null;
+		protocolorder = null;
 		
 	}
 
@@ -3540,13 +3585,79 @@ public class StarterRunner {
 		try (HikariDataSource dataSource = new HikariDataSource(configuration);
 				Connection con = dataSource.getConnection()) {
 
+			SequenceTable Sequence = null;
+			String batchid = null;
+			String protocolordername = null;
+			String details = null;
+			LSlogilablimsorderdetail order = null;
+			LSlogilabprotocoldetail protocolorder = null;
+			
+			Sequence = getsequenceforalert(notification, configuration);
+			
+			if (notification.getScreen().equals("Sheet Order")) {				
+				String orderobj = "SELECT * FROM lslogilablimsorderdetail WHERE batchcode=?";
+				try (PreparedStatement pst = con.prepareStatement(orderobj)) {
+
+					pst.setLong(1, notification.getOrderid());
+
+					try (ResultSet rs = pst.executeQuery()) {
+						while (rs.next()) {
+							order = mapResultSetToLslogilabOrder(rs);
+							
+							Boolean Applicationseq = Sequence.getSequenceview().equals(2) ? true : false;
+							 batchid = Applicationseq 
+								?  order.getSequenceid() != null 
+									? order.getSequenceid() : order.getBatchid() 
+								: order.getBatchid();
+						}
+					} catch (SQLException e) {
+						e.printStackTrace(); // Consider logging this properly
+					}
+				}
+				orderobj = "";
+			} else {
+
+				String protoobj = "SELECT * FROM lslogilabprotocoldetail WHERE protocolordercode=?";
+				try (PreparedStatement pst = con.prepareStatement(protoobj)) {
+
+					pst.setLong(1, notification.getOrderid());
+
+					try (ResultSet rs = pst.executeQuery()) {
+						while (rs.next()) {
+							protocolorder = mapResultSetToOrderLSlogilabprotocoldetail(rs);
+
+							Boolean Applicationseq = Sequence.getSequenceview().equals(2) ? true : false;
+							protocolordername = Applicationseq 
+									?  protocolorder.getSequenceid() != null
+										? protocolorder.getSequenceid() : protocolorder.getProtoclordername()
+									: protocolorder.getProtoclordername();
+										
+						}
+					} catch (SQLException e) {
+						e.printStackTrace(); // Consider logging this properly
+					}
+
+				}
+				protoobj = "";
+			}
+			
+		
+		
+			if(notification.getScreen().equals("Sheet Order")) {
+				details = "{\"ordercode\" :\"" + notification.getOrderid() + "\",\"order\" :\""
+						+ batchid + "\",\"description\":\"" + notification.getDescription()
+						+ "\",\"screen\":\"" + notification.getScreen() + "\"}";
+			}else {
+				details = "{\"ordercode\" :\"" + notification.getOrderid() + "\",\"order\" :\""
+						+ protocolordername + "\",\"description\":\"" + notification.getDescription()
+						+ "\",\"screen\":\"" + notification.getScreen() + "\"}";
+			}
+			
 			LocalDateTime localDateTime = LocalDateTime.now();
 			Instant instant = localDateTime.atZone(ZoneId.systemDefault()).toInstant();
 			Date cDate = Date.from(instant);
 
-			String details = "{\"ordercode\" :\"" + notification.getOrderid() + "\",\"order\" :\""
-					+ notification.getBatchid() + "\",\"description\":\"" + notification.getDescription()
-					+ "\",\"screen\":\"" + notification.getScreen() + "\"}";
+			
 			String path = notification.getScreen().equals("Sheet Order") ? "/registertask" : "/Protocolorder";
 
 			String updateString = "INSERT INTO public.lsnotification(isnewnotification, notification, "
@@ -3565,6 +3676,12 @@ public class StarterRunner {
 				pst.executeUpdate();
 			}
 			con.close();
+		    batchid = null;
+			protocolordername = null;
+			details = null;
+			order = null;
+			protocolorder = null;
+			
 		} catch (SQLException e) {
 			e.printStackTrace(); // Consider logging this properly
 		}

@@ -56,6 +56,7 @@ import com.agaram.eln.primary.model.protocols.ElnprotocolTemplateworkflow;
 import com.agaram.eln.primary.model.protocols.ElnprotocolTemplateworkflowgroupmap;
 import com.agaram.eln.primary.model.protocols.Elnprotocolworkflow;
 import com.agaram.eln.primary.model.protocols.LSlogilabprotocoldetail;
+import com.agaram.eln.primary.model.sequence.SequenceTable;
 import com.agaram.eln.primary.model.sheetManipulation.LSfile;
 import com.agaram.eln.primary.model.sheetManipulation.LSfileparameter;
 import com.agaram.eln.primary.model.sheetManipulation.LSfiletest;
@@ -94,6 +95,7 @@ import com.agaram.eln.primary.repository.protocol.LSProtocolMasterRepository;
 import com.agaram.eln.primary.repository.protocol.LSlogilabprotocoldetailRepository;
 import com.agaram.eln.primary.repository.protocol.LSprotocolorderworkflowhistoryRepository;
 import com.agaram.eln.primary.repository.protocol.LSprotocolworkflowhistoryRepository;
+import com.agaram.eln.primary.repository.sequence.SequenceTableRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSfileRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSfileelnmethodRepository;
 import com.agaram.eln.primary.repository.sheetManipulation.LSfilemethodRepository;
@@ -251,6 +253,9 @@ public class FileService {
 	@Autowired
 	private ElnprotocolTemplateworkflowRepository elnprotocoltemplateworkflowRepository;
 
+	@Autowired
+	private SequenceTableRepository  sequenceTableRepository;
+	
 	@Autowired
 	private ElnprotocolTemplateworkflowgroupmapRepository elnprotocolTemplateworkflowgroupmapRepository;
 
@@ -1839,6 +1844,14 @@ public class FileService {
 	}
 
 	public void ValidateNotification(Notification objnotification) throws ParseException {
+		if(objnotification.getScreen().equals("Sheet Order"))
+		{
+			LSlogilablimsorderdetail orderobj = logilablimsorderdetailsRepository.findBySequenceid(objnotification.getBatchid());
+			objnotification.setBatchid(orderobj.getBatchid());
+		}else {
+			LSlogilabprotocoldetail protocolorder = LSlogilabprotocoldetailRepository.findBySequenceid(objnotification.getBatchid());
+			objnotification.setBatchid(protocolorder.getProtoclordername());
+		}
 		NotificationRepository.save(objnotification);
 		scheduleNotification(objnotification);
 	}
@@ -1905,15 +1918,47 @@ public class FileService {
 	
 	public void loginnotification(Notification objNotification) throws ParseException {
 
+		LSlogilablimsorderdetail order = null;
+		LSlogilabprotocoldetail protocolorder = null;
+		String batchid = null;
+		String protocolordername = null;
+		String Details = null;
+			
+		if(objNotification.getScreen().equals("Sheet Order")) {
+		    order = LSlogilablimsorderdetailRepository.findByBatchcodeOrderByBatchcodeDesc(objNotification.getOrderid());
+
+			SequenceTable seqobj =  sequenceTableRepository.findBySequencecodeOrderBySequencecode(1);
+			Boolean Applicationseq = seqobj.getSequenceview().equals(2) ? true : false;
+			batchid = Applicationseq 
+					?  order.getSequenceid() != null 
+						? order.getSequenceid() : order.getBatchid() 
+					: order.getBatchid();			
+		}else {
+			protocolorder = LSlogilabprotocoldetailRepository.findByProtocolordercode(objNotification.getOrderid());
+
+			SequenceTable seqobj =  sequenceTableRepository.findBySequencecodeOrderBySequencecode(2);
+			Boolean Applicationseq = seqobj.getSequenceview().equals(2) ? true : false;
+			protocolordername = Applicationseq 
+					?  protocolorder.getSequenceid() != null
+						? protocolorder.getSequenceid() : protocolorder.getProtoclordername()
+					: protocolorder.getProtoclordername();
+		}
+		
 		LSuserMaster LSuserMaster = new LSuserMaster();
 		LSuserMaster.setUsercode(objNotification.getUsercode());
 
 		LSnotification LSnotification = new LSnotification();
 
-		String Details = "{\"ordercode\" :\"" + objNotification.getOrderid() + "\",\"order\" :\""
-				+ objNotification.getBatchid() + "\",\"description\":\"" + objNotification.getDescription()
-				+ "\",\"screen\":\"" + objNotification.getScreen() + "\"}";
-
+		if(objNotification.getScreen().equals("Sheet Order")) {
+			Details = "{\"ordercode\" :\"" + objNotification.getOrderid() + "\",\"order\" :\""
+					+ batchid + "\",\"description\":\"" + objNotification.getDescription()
+					+ "\",\"screen\":\"" + objNotification.getScreen() + "\"}";
+		}else {
+			Details = "{\"ordercode\" :\"" + objNotification.getOrderid() + "\",\"order\" :\""
+					+ protocolordername + "\",\"description\":\"" + objNotification.getDescription()
+					+ "\",\"screen\":\"" + objNotification.getScreen() + "\"}";
+		}
+		
 		LSnotification.setIsnewnotification(1);
 		LSnotification.setNotification("CAUTIONALERT");
 		LSnotification.setNotificationdate(objNotification.getCurrentdate());
@@ -1928,7 +1973,9 @@ public class FileService {
 		objNotification.setStatus(0);
 		LSnotificationRepository.save(LSnotification);
 		NotificationRepository.save(objNotification);
-		
+		batchid = null;
+		protocolordername = null;
+		Details = null;
 	}
 
 	public Map<String, Object> UploadLimsFile(MultipartFile file, Long batchcode, String filename) throws IOException {
