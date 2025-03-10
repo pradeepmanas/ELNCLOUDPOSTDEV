@@ -15,6 +15,7 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -22,6 +23,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.stream.Collectors;
@@ -1720,9 +1722,33 @@ public class LoginService {
 //			    	{
 					List<LSMultiusergroup> LSMultiusergroup = new ArrayList<LSMultiusergroup>();
 					LSMultiusergroup = LSMultiusergroupRepositery.findByusercode(objExitinguser.getUsercode());
-					List<LSMultiusergroup> objGroup = objExitinguser.getMultiusergroupcode().stream()
-							.filter(obj1 -> (obj1.getDefaultusergroup() != null && obj1.getDefaultusergroup() == 1))
-							.collect(Collectors.toList());
+//					List<LSMultiusergroup> objGroup = objExitinguser.getMultiusergroupcode().stream()
+//							.filter(obj1 -> ((obj1.getDefaultusergroup() != null && obj1.getDefaultusergroup() == 1 && obj1.getLsusergroup().getLssitemaster()!=null && obj1.getLsusergroup().getLssitemaster()==objsite.getSitecode()|| (obj1.getLsusergroup().getLssitemaster()==objsite.getSitecode()))))
+//							.collect(Collectors.toList());
+					List<LSMultiusergroup> objGroup = Optional.ofNullable(objExitinguser.getMultiusergroupcode())
+						    .orElse(Collections.emptyList())
+						    .stream()
+						    .filter(obj1 -> obj1 != null
+						        && obj1.getDefaultusergroup() != null
+						        && obj1.getDefaultusergroup() == 1
+						        && obj1.getLsusergroup() != null
+						        && obj1.getLsusergroup().getLssitemaster() != null
+						        && objsite != null
+						        && objsite.getSitecode() != null
+						        && obj1.getLsusergroup().getLssitemaster().equals(objsite.getSitecode()))
+						    .collect(Collectors.toList());
+					if(objGroup.isEmpty()) {
+					    objGroup = Optional.ofNullable(objExitinguser.getMultiusergroupcode())
+					            .orElse(Collections.emptyList())
+					            .stream()
+					            .filter(obj1 -> obj1 != null
+					                && obj1.getLsusergroup() != null
+					                && obj1.getLsusergroup().getLssitemaster() != null
+					                && objsite != null
+					                && objsite.getSitecode() != null
+					                && obj1.getLsusergroup().getLssitemaster().equals(objsite.getSitecode()))
+					            .collect(Collectors.toList());
+					}
 					if (objGroup.isEmpty()) {
 						obj.put("multiusergroupcode",
 								objExitinguser.getMultiusergroupcode().get(0).getLsusergroup().getUsergroupcode());

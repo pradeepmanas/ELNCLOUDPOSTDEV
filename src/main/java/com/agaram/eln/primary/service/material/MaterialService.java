@@ -1226,7 +1226,7 @@ public class MaterialService {
 
 	public void updatesequencefordefault(List<Elnmaterial> objInv) {
 
-		String seqid = "Mat" + objInv.get(0).getNmaterialcode();
+		String seqid = "Mat_" + objInv.get(0).getNmaterialcode();
 		objInv.get(0).setSequenceid(seqid);
 		elnmaterialRepository.save(objInv.get(0));
 	}
