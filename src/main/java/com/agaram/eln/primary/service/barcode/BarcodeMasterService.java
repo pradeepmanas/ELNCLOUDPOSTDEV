@@ -393,6 +393,9 @@ public class BarcodeMasterService {
 						.replace("$samplename$", element.getSamplename())
 						.replace("$storagepath$", element.getSamplestoragemapping().getStoragepath())
 						.replace("$generatedby$", username).replace("$generateddate$", dateFormat.format(currentdata));
+				if(element.getSamplestoragemapping()!=null && element.getSamplestoragemapping().getStoragepath()!=null) {
+					replaceddata=replaceddata.replace("$storagepath$", element.getSamplestoragemapping().getStoragepath());
+				}
 //				if (element.getQuantity() != null) {
 //					data = data.replace("$quantity$", element.getQuantity().toString());
 //				}
