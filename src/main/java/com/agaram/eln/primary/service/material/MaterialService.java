@@ -1325,6 +1325,10 @@ public class MaterialService {
 			objMaterial.setOpenexpiryperiod(obj.getOpenexpiryperiod());
 			objMaterial.setOpenexpiryvalue(obj.getOpenexpiryvalue());
 			objMaterial.setQuarantine(obj.getQuarantine());
+			objMaterial.setUsageoption(obj.getUsageoption());
+			objMaterial.setTrackconsumption(obj.getTrackconsumption());
+			objMaterial.setReusable(obj.getReusable());
+			objMaterial.setReusabletype(obj.getReusabletype());
 			if (obj.getMaterialprojectmap() != null && obj.getMaterialprojectmap().size() > 0) {
 				objMaterial.setMaterialprojectmap(obj.getMaterialprojectmap());
 				materialprojectmapRepository.save(objMaterial.getMaterialprojectmap());
